@@ -69,7 +69,12 @@ module.exports = function (grunt) {
           join: true
         },
         files: {
-          '.tmp/livingdocs_engine.js': 'src/{,*/}*.coffee'
+          '.tmp/livingdocs_engine.js': [
+            'src/utils/*.coffee',
+            'src/mixins/*.coffee',
+            'src/!(api).coffee',
+            'src/api.coffee'
+          ]
         }
       },
       test: {
@@ -78,15 +83,18 @@ module.exports = function (grunt) {
         },
         files: {
           '.tmp/livingdocs_engine_test.js': [
-            'src/{,*/}*.coffee',
-            'spec/{,*/}*.coffee'
+            'src/utils/*.coffee',
+            'src/mixins/*.coffee',
+            'src/{,*/}!(api).coffee',
+            'src/api.coffee',
+            'test/spec/{,*/}*.coffee'
           ]
         }
       }
     },
     docco: {
       src: {
-        src: ['src/*.coffee'],
+        src: ['src/**/*.coffee'],
         options: {
           output: 'docs'
         }
