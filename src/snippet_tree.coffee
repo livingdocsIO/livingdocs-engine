@@ -6,18 +6,28 @@
 class SnippetTree
 
   constructor: () ->
-    @root = {}
+    @first = @last = undefined
     @history = new History()
 
 
   # insert snippet at the beginning
   prepend: (snippet) ->
-    #todo
+    if @first
+      @first.before(snippet)
+    else
+      @last = snippet
+
+    @first = snippet
     @ #chaining
 
   # insert snippet at the end
   append: (snippet) ->
-    #todo
+    if @last
+      @last.after(snippet)
+    else
+      @first = snippet
+
+    @last = snippet
     @ #chaining
 
 

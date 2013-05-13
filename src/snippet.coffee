@@ -28,6 +28,3 @@ class Snippet extends mixins TreeNode
   # a snippet is detached if it is not contained by a snippetTree
   isDetached: () ->
     !snippetTree?
-
-
-
