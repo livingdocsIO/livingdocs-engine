@@ -39,3 +39,19 @@ grunt karma:browsers
 grunt build
 ```
 
+
+Documentation
+-------------
+
+[Docco](http://jashkenas.github.io/docco/):
+```bash
+# install Pygments (required by docco)
+sudo easy_install Pygments
+
+# globally install docco
+sudo npm install -g docco
+
+# build documentation
+grunt docco
+```
+

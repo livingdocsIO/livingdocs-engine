@@ -84,6 +84,21 @@ module.exports = function (grunt) {
         }
       }
     },
+    docco: {
+      src: {
+        src: ['src/*.coffee'],
+        options: {
+          output: 'docs'
+        }
+      },
+      test: {
+        src: ['test/spec/*.coffee'],
+        options: {
+          output: 'docs/test'
+        }
+      }
+
+    },
     karma: {
       unit: {
         configFile: 'karma.conf.js',
