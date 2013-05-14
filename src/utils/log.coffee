@@ -2,9 +2,16 @@
 # ----------
 
 # Default logging helper
+# @params: pass `"trace"` as last parameter to output the call stack
 log = ->
 
   args = Array.prototype.slice.call(arguments)
+
+  if args.length
+    if args[args.length - 1] == "trace"
+      args.pop()
+      console.trace() if window.console?.trace
+
   args = args[0] if args.length == 1
 
   if (window.console)
