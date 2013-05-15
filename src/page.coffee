@@ -4,13 +4,15 @@
 
 page = do ->
 
-  initialize: ({ rootNode } = {}) ->
-    rootNode ||= document
+  setup: ({ rootNode, snippetTree } = {}) ->
+    if !rootNode
+      rootNode = $(".doc-section").first()
+    else
+      rootNode.addClass(".doc-section")
 
-    $(rootNode).findIn(".doc-section").each (node) ->
-      @tree = new SnippetTree()
+    @tree = snippetTree || new SnippetTree(root: snippetTree)
 
 
 # auto-initialization
 $(document).ready ->
-  page.initialize()
+  page.setup()

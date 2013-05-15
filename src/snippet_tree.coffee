@@ -5,7 +5,8 @@
 
 class SnippetTree
 
-  constructor: () ->
+  constructor: ({ rootNode } = {}) ->
+    @_rootNode = rootNode
     @first = @last = undefined
     @history = new History()
 
@@ -29,6 +30,13 @@ class SnippetTree
 
     @last = snippet
     @ #chaining
+
+
+  root: (rootNode) ->
+    if rootNode
+      @_rootNode = rootNode
+    else
+      @_rootNode
 
 
   # returns a readable string representation

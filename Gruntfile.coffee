@@ -52,7 +52,8 @@ module.exports = (grunt) ->
           '.tmp/livingdocs_engine.js': [
             'src/utils/*.coffee',
             'src/mixins/*.coffee',
-            'src/!(api).coffee',
+            'src/config.coffee',
+            'src/!(api|config).coffee',
             'src/api.coffee'
           ]
       test:
@@ -62,7 +63,8 @@ module.exports = (grunt) ->
           '.tmp/livingdocs_engine_test.js': [
             'src/utils/*.coffee',
             'src/mixins/*.coffee',
-            'src/{,*/}!(api).coffee',
+            'src/config.coffee',
+            'src/!(api|config).coffee',
             'src/api.coffee',
             'test/spec/{,*/}*.coffee'
           ]

@@ -7,10 +7,8 @@
 class Snippet extends mixins TreeNode
 
   snippetTree: undefined
-  template: undefined
 
-
-  constructor: ({ @template }) ->
+  constructor: ({ @$snippet, @template } = {}) ->
     #test
 
 
