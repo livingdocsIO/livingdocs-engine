@@ -68,6 +68,11 @@ module.exports = (grunt) ->
             'src/api.coffee',
             'test/spec/{,*/}*.coffee'
           ]
+      snippetCollections:
+        files:
+          '.tmp/snippet_collections.js': [
+            'src/snippet_collections/*.coffee'
+          ]
     docco:
       src:
         src: ['src/**/*.coffee']
