@@ -3,9 +3,10 @@
 # inspired by [https://github.com/epeli/underscore.string]()
 @S = do ->
 
-  # convert 'camelCase' to 'camel case'
+  # convert 'camelCase' to 'Camel Case'
   humanize: (str) ->
-    $.trim(str).replace(/([a-z\d])([A-Z]+)/g, '$1 $2').toLowerCase()
+    uncamelized = $.trim(str).replace(/([a-z\d])([A-Z]+)/g, '$1 $2').toLowerCase()
+    @titleize( uncamelized )
 
   capitalize : (str) ->
       str = if !str? then '' else String(str)

@@ -12,37 +12,50 @@
 
 class SnippetTemplate
 
-  constructor: ({ @name, html, @namespace, @id, version } = {}) ->
+  constructor: ({ html, @namespace, @name, identifier, title, version } = {}) ->
+    if identifier
+      { @namespace, @name } = SnippetTemplate.parseIdentifier(identifier)
+
+    @identifier = if @namespace && @name
+      "#{ @namespace }.#{ @name }"
+
     @version = version || 1
 
-    @$template = $(html).wrap("<div>")
+    @$template = $( @pruneHtml(html) ).wrap("<div>")
     @$wrap = @$template.parent()
-
-    @identifier = if @namespace && @id
-      "#{ @namespace }.#{ @id }"
-    else
-      undefined
+    @title = title || S.humanize( @name )
 
     @parseEditables()
     @lists = @createLists()
 
 
-  # create a snippet instance from this template
-  snippet: (content) ->
-    $snippet = @$template.clone()
-    $snippet.addClass(docClass.snippet)
-    $snippet.attr(docAttr.template, @identifier) if @identifier
-
+  # create a new snippet instance from this template
+  create: (content) ->
+    $snippet = @createHtml()
     @content(content, $snippet)
 
-    snippetInstance = new Snippet($snippet: $snippet, template: this)
+    snippetInstance = new Snippet(template: this, $snippet: $snippet)
     snippetInstance
 
 
-  create: (content) ->
-    $node = @$template.clone()
-    @content(content, $node)
-    $node
+  createHtml: (content) ->
+    $snippet = @$template.clone()
+    $snippet.addClass(docClass.snippet)
+    $snippet.attr(docAttr.template, @identifier) if @identifier
+    $snippet
+
+
+  # todo
+  pruneHtml: (html) ->
+    # remove ids
+    html
+
+
+  # output the accepted content of the snippet
+  # that can be passed to create
+  # e.g: { title: "Itchy and Scratchy" }
+  doc: () ->
+    #todo
 
 
   content: (content, $snippet) ->
@@ -83,6 +96,9 @@ class SnippetTemplate
 
 SnippetTemplate.parseIdentifier = (identifier) ->
   if identifier && (parts = identifier.split(".")).length == 2
-    { namespace: parts[0], id: parts[1] }
+    { namespace: parts[0], name: parts[1] }
+  else
+    error("could not parse snippet template identifier: #{ identifier }")
+    { namespace: undefined , name: undefined }
 
 

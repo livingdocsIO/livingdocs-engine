@@ -21,6 +21,19 @@ describe "Simple Template", ->
   it "should have stored the html", ->
     expect(template.$template.outerHtml()).toEqual("<h1 #{ docAttr.editable }=\"title\" class=\"#{ docClass.editable }\"></h1>")
 
+  it "should return a snippet", ->
+    snippet = template.create()
+    expect(snippet instanceof Snippet).toBe(true)
+
+  it "should return a snippet", ->
+    snippet = template.create
+      title: "Humble Bundle"
+
+    expect(snippet.$snippet.outerHtml()).toEqual(
+      """
+      <h1 #{ docAttr.editable }="title" class="#{ docClass.editable } #{ docClass.snippet }">Humble Bundle</h1>
+      """
+    )
 
 # Dropdown Template
 # -----------------
@@ -58,7 +71,7 @@ describe "Dropdown Template", ->
     expect(template.list("links").name).toEqual("links")
 
   it "should return a snippet", ->
-    snippet = template.snippet
+    snippet = template.create
       links: { dropdownLink: "one" }
 
     expect(snippet instanceof Snippet).toBe(true)
@@ -69,17 +82,31 @@ describe "SnippetTemplate.parseIdentifier()", ->
   it "should parse 'bootstrap.title'", ->
     identifier = SnippetTemplate.parseIdentifier("bootstrap.title")
     expect(identifier.namespace).toEqual("bootstrap")
-    expect(identifier.id).toEqual("title")
+    expect(identifier.name).toEqual("title")
 
   it "should not parse 'bootstrap'", ->
     identifier = SnippetTemplate.parseIdentifier("bootstrap")
-    expect(identifier).toBeUndefined()
+    expect(identifier.namespace).toBeUndefined()
+    expect(identifier.name).toBeUndefined()
 
   it "should not parse emtpy string", ->
     identifier = SnippetTemplate.parseIdentifier("")
-    expect(identifier).toBeUndefined()
+    expect(identifier.namespace).toBeUndefined()
+    expect(identifier.name).toBeUndefined()
 
   it "should not parse undefined", ->
     identifier = SnippetTemplate.parseIdentifier()
-    expect(identifier).toBeUndefined()
+    expect(identifier.namespace).toBeUndefined()
+    expect(identifier.name).toBeUndefined()
+
+
+describe "new SnippetTemplate()", ->
+
+  it "should accept idenfitier param", ->
+    template = new SnippetTemplate
+      identifier: "bootstrap.title"
+      html: """<h1 #{ docAttr.editable }="title"></h1>"""
+
+    expect(template.namespace).toEqual("bootstrap")
+    expect(template.name).toEqual("title")
 

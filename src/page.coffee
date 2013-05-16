@@ -1,18 +1,22 @@
 # page
 # ----
-# The page implements the main API to a livingdocs document.
+# Defines the API between the DOM and the document
 
 page = do ->
 
-  setup: ({ rootNode, snippetTree } = {}) ->
+  # initialize document sections
+  #
+  # @params
+  # - rootNode (optional) DOM node that should contain the content
+  initializeSection: ({ rootNode, snippetTree } = {}) ->
+    error("no snippet tree specified") if !snippetTree
+
     if !rootNode
-      rootNode = $(".doc-section").first()
+      @$root = $(".doc-section").first()
     else
-      rootNode.addClass(".doc-section")
+      @$root = $(rootNode).addClass(".doc-section")
 
-    @tree = snippetTree || new SnippetTree(root: snippetTree)
+    error("no rootNode found") if !@$root.length
 
+    snippetTree?.link(@$root)
 
-# auto-initialization
-$(document).ready ->
-  page.setup()

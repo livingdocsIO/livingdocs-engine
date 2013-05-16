@@ -7,13 +7,22 @@
 class Snippet extends mixins TreeNode
 
   snippetTree: undefined
+  attachedToDom: false
 
-  constructor: ({ @$snippet, @template } = {}) ->
-    #test
+  constructor: ({ @template, @$snippet } = {}) ->
+    if !@template
+      error("cannot instantiate snippet without template reference")
+
+    # if !@$snippet
+    #   @$snippet = @template.createHtml()
+
+    @identifier = @template.identifier
 
 
-  remove: () ->
-    #todo
+
+  removeFromDom: () ->
+    @$snippet.remove()
+    @attachedToDom = false
     @ #chaining
 
 
@@ -23,6 +32,26 @@ class Snippet extends mixins TreeNode
     #todo
 
 
-  # a snippet is detached if it is not contained by a snippetTree
-  isDetached: () ->
-    !snippetTree?
+  insertIntoDom: ($node) ->
+
+    if !@attachedToDom
+      if $node
+        $node.append(@$snippet)
+        @afterDomInsert()
+      else if @previous && @previous.attachedToDom
+        @previous.$snippet.after(@$snippet)
+        @afterDomInsert()
+      else if @next && @next.attachedToDom
+        @next.$snippet.before(@$snippet)
+        @afterDomInsert()
+
+    @ #chaining
+
+
+  afterDomInsert: () ->
+    @attachedToDom = true
+
+
+
+
+
