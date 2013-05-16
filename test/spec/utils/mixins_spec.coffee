@@ -1,7 +1,7 @@
 describe "mixins util", ->
 
   # Setup
-  # =====
+  # -----
   beforeEach ->
 
     # mixin
@@ -11,7 +11,7 @@ describe "mixins util", ->
 
 
   # Tests
-  # =====
+  # -----
 
   it "should return a function with prototype", ->
     mixinClass = mixins @Indestructible
