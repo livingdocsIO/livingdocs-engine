@@ -1,12 +1,14 @@
 # Twitter Bootstrap Snippet Collection
 # ------------------------------------
 
-@snippetCollections = @snippetCollections || {}
+@snippetCollections ||= {}
 
 snippetCollections.bootstrap = do ->
 
   config:
     namespace: "bootstrap"
+    css: "/test/manual/bootstrap/css/bootstrap.css"
+
 
   hero:
     name: "Hero"

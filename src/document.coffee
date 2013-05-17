@@ -31,11 +31,17 @@ document = do ->
 
   # *Public API*
   addSnippetCollection: (snippetCollection) ->
-    namespace = snippetCollection.config?.namespace || "snippet"
+    config = snippetCollection.config
+    delete snippetCollection.config
+
+    namespace = config?.namespace || "snippet"
+
+    if config.css
+      loader.css(config.css)
+
     @snippets[namespace] ||= {}
 
     for name, template of snippetCollection
-      continue if name == "config"
 
       @snippets[namespace][name] = new SnippetTemplate
         namespace: namespace
@@ -69,7 +75,6 @@ document = do ->
       res.push(snippet) if snippet.identifier == identifier
 
     res
-
 
 
   # print documentation for a snippet template

@@ -15,3 +15,9 @@ describe "string helper util", ->
   it "S.capitalize should convert first letters to uppercase", ->
     expect(S.capitalize("a sentence")).toEqual("A sentence")
 
+  it "S.prefix should add a prefix to a string", ->
+    expect(S.prefix("ms-", "word")).toEqual("ms-word")
+
+  it "S.prefix should not add a prefix twice", ->
+    expect(S.prefix("ms-", "ms-word")).toEqual("ms-word")
+

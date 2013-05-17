@@ -22,6 +22,14 @@
       String(str).replace /(?:^|\s)\S/g, (c) ->
         c.toUpperCase()
 
+  # add a prefix to a string if its not already present
+  prefix: (prefix, string) ->
+    if string.indexOf(prefix) == 0
+      string
+    else
+      "" + prefix + string
+
+
   # camelize: (str) ->
   #   $.trim(str).replace(/[-_\s]+(.)?/g, (match, c) ->
   #     c.toUpperCase()
