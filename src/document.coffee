@@ -45,18 +45,27 @@ document = do ->
 
 
   # *Public API*
-  add: (identifier) ->
+  add: (input) ->
+    if jQuery.type(input) == "string"
+      template = @getTemplate(input)
+      snippet = template.create() if template
+    else
+      snippet = input
+
+    @snippetTree.append(snippet) if snippet
+    snippet
+
+
+  # *Public API*
+  create: (identifier) ->
     template = @getTemplate(identifier)
-    if template
-      snippet = template.create()
-      @snippetTree.append( snippet )
+    template.create() if template
 
 
   # find all instances of a certain SnippetTemplate
   find: (identifier) ->
     res = []
     @snippetTree.each (snippet) ->
-      console.log(snippet.identifier)
       res.push(snippet) if snippet.identifier == identifier
 
     res

@@ -35,9 +35,21 @@ chainable = (fn, context) ->
 # add public API methods to the doc function
 ( ->
 
+  # Initialize the document
   @loadDocument = chainable(document, "loadDocument")
+
+  # Add SnippetTemplates to the documents
   @addSnippetCollection = chainable(document, "addSnippetCollection")
-  @add = chainable(document, "add")
+
+  # Append a snippet to the document
+  # @param input: (String) snippet identifier e.g. "bootstrap.title" or (Snippet)
+  # @return Snippet
+  @add = $.proxy(document, "add")
+
+  # Create a new snippet instance (not inserted into the document)
+  # @return Snippet
+  @create = $.proxy(document, "create")
+
   @document = document
 
 ).call(doc)

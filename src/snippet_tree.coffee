@@ -27,7 +27,6 @@ class SnippetTree
   each: (callback) ->
 
     walker = (snippet) ->
-      return unless snippet
       callback(snippet)
 
       #todo: walk children
@@ -35,7 +34,7 @@ class SnippetTree
       if snippet.next
         walker(snippet.next)
 
-    walker(@first)
+    walker(@first) if @first
 
 
   # insert snippet at the beginning

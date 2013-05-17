@@ -1,6 +1,7 @@
 # String Helpers
 # --------------
 # inspired by [https://github.com/epeli/underscore.string]()
+
 @S = do ->
 
   # convert 'camelCase' to 'Camel Case'
@@ -8,6 +9,7 @@
     uncamelized = $.trim(str).replace(/([a-z\d])([A-Z]+)/g, '$1 $2').toLowerCase()
     @titleize( uncamelized )
 
+  # convert the first letter to uppercase
   capitalize : (str) ->
       str = if !str? then '' else String(str)
       return str.charAt(0).toUpperCase() + str.slice(1);
