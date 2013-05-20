@@ -9,6 +9,24 @@ snippetCollections.bootstrap = do ->
     namespace: "bootstrap"
     css: "/test/manual/bootstrap/css/bootstrap.css"
 
+  column:
+    name: "Single Centered Column"
+    html:
+      """
+      <div class="row-fluid">
+        <div class="span8 offset4" data-doc-container></div>
+      </div>
+      """
+
+  mainSidebar:
+    name: "Main and Sidebar Columns"
+    html:
+      """
+      <div class="row-fluid">
+        <div class="span8" data-doc-container="main"></div>
+        <div class="span4" data-doc-container="sidebar"></div>
+      </div>
+      """
 
   hero:
     name: "Hero"

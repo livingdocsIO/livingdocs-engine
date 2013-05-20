@@ -1,7 +1,7 @@
 # Simple Template
 # ---------------
 
-describe "Simple Template", ->
+describe "Simple H1 Template", ->
 
   # Setup
   # -----
@@ -78,6 +78,7 @@ describe "Dropdown Template", ->
     expect(snippet instanceof Snippet).toBe(true)
 
 
+# Static function SnippetTemplate.parseIdentifier()
 describe "SnippetTemplate.parseIdentifier()", ->
 
   it "should parse 'bootstrap.title'", ->
@@ -101,6 +102,7 @@ describe "SnippetTemplate.parseIdentifier()", ->
     expect(identifier.name).toBeUndefined()
 
 
+# SnippetTemplate constructor
 describe "new SnippetTemplate()", ->
 
   it "should accept idenfitier param", ->
@@ -110,4 +112,22 @@ describe "new SnippetTemplate()", ->
 
     expect(template.namespace).toEqual("bootstrap")
     expect(template.name).toEqual("title")
+
+
+# Snippet with snippet containers
+describe "container template", ->
+
+  template = null
+  beforeEach ->
+    template = test.getRowTemplate()
+
+  it "should initialize SnippetContainers", ->
+    snippet = template.create()
+    treeNode = snippet.snippetTreeNode
+    expect(treeNode).toBeDefined()
+    expect(treeNode.containers.main instanceof SnippetContainer).toBe(true)
+    expect(treeNode.containers.sidebar instanceof SnippetContainer).toBe(true)
+
+
+
 

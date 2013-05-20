@@ -50,6 +50,13 @@ document = do ->
         title: template.name
 
 
+  listSnippets: ->
+    for namespace, value of @snippets
+      for name, snippet of value
+        snippet.identifier
+
+
+
   # *Public API*
   add: (input) ->
     if jQuery.type(input) == "string"
@@ -78,7 +85,8 @@ document = do ->
 
   # print documentation for a snippet template
   help: (identifier) ->
-    #todo
+    template = @getTemplate(identifier)
+    template.printDoc()
 
 
   nextId: (prefix = "doc") ->

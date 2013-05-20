@@ -29,6 +29,11 @@
     else
       "" + prefix + string
 
+  # JSON.stringify with readability in mind
+  # @param object: javascript object
+  readableJson: (obj) ->
+    JSON.stringify(obj, null, 2) # "\t"
+
 
   # camelize: (str) ->
   #   $.trim(str).replace(/[-_\s]+(.)?/g, (match, c) ->

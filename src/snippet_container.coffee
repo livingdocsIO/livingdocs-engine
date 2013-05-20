@@ -3,7 +3,7 @@
 
 class SnippetContainer
 
-  constructor: ({ @parent, @$domNode, @snippetTree }) ->
+  constructor: ({ @parent, @$domNode, @snippetTree, @name }) ->
     @first = @last = undefined
 
 

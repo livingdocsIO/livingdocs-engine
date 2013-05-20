@@ -15,4 +15,19 @@ test =
 
 
   getH1Snippet: ->
-    new Snippet(template: @getH1Template())
+    @getH1Template().create()
+
+
+  getRowTemplate: ->
+    new SnippetTemplate
+      name: "row"
+      html:
+        """
+        <div class="row-fluid">
+          <div class="span8" #{ docAttr.container }="main"></div>
+          <div class="span4" #{ docAttr.container }="sidebar"></div>
+        </div>
+        """
+
+  getRowSnippet: ->
+    @getRowTemplate().create()

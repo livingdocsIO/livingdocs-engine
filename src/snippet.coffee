@@ -15,9 +15,6 @@ class Snippet
     @snippetTreeNodeChanged = false
     @attachedToDom = false
 
-    if !@$snippet
-      @$snippet = @template.createHtml()
-
 
   # move up (previous)
   up: () ->
@@ -33,9 +30,22 @@ class Snippet
     this #chaining
 
 
+  append: (containerName, snippet) ->
+    @snippetTreeNode.append(containerName, snippet)
+    snippet.updateDomPosition()
+    this #chaining
+
+
+  prepend: (containerName, snippet) ->
+    @snippetTreeNode.prepend(containerName, snippet)
+    snippet.updateDomPosition()
+    this #chaining
+
+
   updateDomPosition: () ->
     @detachFromDom() if @attachedToDom
     @insertIntoDom()
+
 
   # insert the snippet into the Dom according to its position
   # in the SnippetTree

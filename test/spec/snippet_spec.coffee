@@ -1,4 +1,4 @@
-describe "Snippet", ->
+describe "H1 Snippet", ->
 
   # Setup
   # -----
@@ -19,4 +19,6 @@ describe "Snippet", ->
 
   it "should have and identifier", ->
     expect(@snippet.identifier).toEqual("test.h1")
+
+
 

@@ -47,8 +47,16 @@ chainable = (fn, context) ->
   @add = $.proxy(document, "add")
 
   # Create a new snippet instance (not inserted into the document)
+  # @param identifier: (String) snippet identifier e.g. "bootstrap.title"
   # @return Snippet
   @create = $.proxy(document, "createSnippet")
+
+  # Get help about a snippet
+  # @param identifier: (String) snippet identifier e.g. "bootstrap.title"
+  @help = $.proxy(document, "help")
+
+  # Print a list of all available snippets
+  @listSnippets = $.proxy(document, "listSnippets")
 
   @document = document
 

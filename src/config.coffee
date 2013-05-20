@@ -20,6 +20,7 @@ docAttr =
   # snippet attributes
   template: "doc-template"
   editable: "doc-editable"
+  container: "doc-container"
   list: "doc-list"
 
 

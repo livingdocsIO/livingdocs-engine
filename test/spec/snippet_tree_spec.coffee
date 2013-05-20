@@ -83,7 +83,27 @@ describe "SnippetTree with two snippets", ->
     expect(@treeNodeB.next).not.toBeDefined()
 
 
+describe "SnippetTree with a row snippet", ->
 
+  beforeEach ->
+    @tree = new SnippetTree()
+
+    @rowSnippet = test.getRowSnippet()
+    @tree.append(@rowSnippet)
+    @treeNodeRow = @rowSnippet.snippetTreeNode
+
+  it "should append a snippet to the main column via the snippetContainer", ->
+    titleSnippet = test.getH1Snippet()
+    mainContainer = @treeNodeRow.containers["main"]
+    mainContainer.append(titleSnippet)
+    expect(mainContainer.first).toEqual(titleSnippet.snippetTreeNode)
+
+  it "should append a snippet to the main column via snippet", ->
+    titleSnippet = test.getH1Snippet()
+    @rowSnippet.append("main", titleSnippet)
+
+    mainContainer = @treeNodeRow.containers["main"]
+    expect(mainContainer.first).toEqual(titleSnippet.snippetTreeNode)
 
 
 

@@ -12,7 +12,6 @@
 class SnippetTreeNode
 
   constructor: ({ parentContainer, snippet }) ->
-    error("Missing param parentContainer") if !parentContainer?
     error("Missing param snippet") if !snippet?
 
     @setParent(parentContainer) if parentContainer
@@ -31,7 +30,24 @@ class SnippetTreeNode
   setParent: (parentContainer) ->
     @parentContainer = parentContainer
     @snippetTree = parentContainer?.snippetTree
-    @ #chaining
+    this #chaining
+
+
+  addContainer: (snippetContainer) ->
+    error("SnippetContainer must have a name") if !snippetContainer.name
+    @containers ||= {}
+    @containers[snippetContainer.name] = snippetContainer
+    this #chaining
+
+
+  append: (containerName, snippet) ->
+    @containers[containerName].append(snippet)
+    this #chaining
+
+
+  prepend: (containerName, snippet) ->
+    @containers[containerName].prepend(snippet)
+    this #chaining
 
 
   # @param snippet: Snippet or SnippetTreeNode instance
@@ -45,7 +61,7 @@ class SnippetTreeNode
       if treeNode.isFirst()
         @parentContainer.first = treeNode
 
-      @ #chaining
+      this #chaining
     else
       @previous
 
@@ -61,7 +77,7 @@ class SnippetTreeNode
       if treeNode.isLast()
         @parentContainer.last = treeNode
 
-      @ #chaining
+      this #chaining
     else
       @next
 
@@ -73,7 +89,7 @@ class SnippetTreeNode
       @unlink()
       previous.before(this)
 
-    @ #chaining
+    this #chaining
 
 
   # move down (next)
@@ -83,7 +99,7 @@ class SnippetTreeNode
       @unlink()
       next.after(this)
 
-    @ #chaining
+    this #chaining
 
 
   isFirst: () ->
@@ -109,6 +125,6 @@ class SnippetTreeNode
     @next = undefined
     @setParent(undefined)
 
-    @ #chaining
+    this #chaining
 
 

@@ -50,8 +50,10 @@ class SnippetTree
 
 
   # returns a readable string representation
-  toString: () ->
-    #todo
+  print: () ->
+    tree = []
+    @each snippet ->
+      tree.push snippet.identifier
 
 
   # returns a JSON representation of the whole tree
