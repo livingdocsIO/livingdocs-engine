@@ -22,7 +22,7 @@
       String(str).replace /(?:^|\s)\S/g, (c) ->
         c.toUpperCase()
 
-  # add a prefix to a string if its not already present
+  # prepend a prefix to a string if it is not already present
   prefix: (prefix, string) ->
     if string.indexOf(prefix) == 0
       string

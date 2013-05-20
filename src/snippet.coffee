@@ -4,52 +4,78 @@
 # Each snippet has a SnippetTemplate which allows to generate HTML
 # from a snippet or generate a snippet instance from HTML.
 
-class Snippet extends mixins TreeNode
-
-  snippetTree: undefined
-  attachedToDom: false
+class Snippet
 
   constructor: ({ @template, @$snippet } = {}) ->
     if !@template
       error("cannot instantiate snippet without template reference")
 
-    # if !@$snippet
-    #   @$snippet = @template.createHtml()
-
     @identifier = @template.identifier
-
-
-
-  removeFromDom: () ->
-    @$snippet.remove()
+    @snippetTreeNode = undefined
+    @snippetTreeNodeChanged = false
     @attachedToDom = false
-    @ #chaining
+
+    if !@$snippet
+      @$snippet = @template.createHtml()
 
 
-  # return an array of all parent snippets in snippetTree
-  # (starting from the top)
-  parents: () ->
-    #todo
+  # move up (previous)
+  up: () ->
+    @snippetTreeNode.up()
+    @updateDomPosition()
+    this #chaining
 
 
-  insertIntoDom: ($node) ->
+  # move down (next)
+  down: () ->
+    @snippetTreeNode.down()
+    @updateDomPosition()
+    this #chaining
+
+
+  updateDomPosition: () ->
+    @detachFromDom() if @attachedToDom
+    @insertIntoDom()
+
+  # insert the snippet into the Dom according to its position
+  # in the SnippetTree
+  insertIntoDom: () ->
+    previous = @snippetTreeNode.previous
+    next = @snippetTreeNode.next
+    parentContainer = @snippetTreeNode.parentContainer
 
     if !@attachedToDom
-      if $node
-        $node.append(@$snippet)
+      if previous && previous.snippet.attachedToDom
+        previous.snippet.$snippet.after(@$snippet)
         @afterDomInsert()
-      else if @previous && @previous.attachedToDom
-        @previous.$snippet.after(@$snippet)
+      else if next && next.snippet.attachedToDom
+        next.snippet.$snippet.before(@$snippet)
         @afterDomInsert()
-      else if @next && @next.attachedToDom
-        @next.$snippet.before(@$snippet)
+      else if parentContainer
+        parentContainer.$domNode.append(@$snippet)
         @afterDomInsert()
+      else
+        error("could not insert snippet into Dom")
 
-    @ #chaining
+    this #chaining
 
 
   afterDomInsert: () ->
     @attachedToDom = true
+
+
+  detachFromDom: () ->
+    @$snippet.detach()
+    @attachedToDom = false
+    this #chaining
+
+
+  removeFromDom: () ->
+    if @attachedToDom
+      @$snippet.remove()
+      @attachedToDom = false
+
+    this #chaining
 
 
 

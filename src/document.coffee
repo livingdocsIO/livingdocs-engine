@@ -53,8 +53,7 @@ document = do ->
   # *Public API*
   add: (input) ->
     if jQuery.type(input) == "string"
-      template = @getTemplate(input)
-      snippet = template.create() if template
+      snippet = @createSnippet(input)
     else
       snippet = input
 
@@ -63,7 +62,7 @@ document = do ->
 
 
   # *Public API*
-  create: (identifier) ->
+  createSnippet: (identifier) ->
     template = @getTemplate(identifier)
     template.create() if template
 

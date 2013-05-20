@@ -36,3 +36,5 @@ loader = do ->
 
     for url in cssUrl
       $("link[rel=stylesheet][href~='#{ url }']").remove()
+
+    loadedCssFiles = []

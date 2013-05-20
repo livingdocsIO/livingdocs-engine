@@ -48,7 +48,7 @@ chainable = (fn, context) ->
 
   # Create a new snippet instance (not inserted into the document)
   # @return Snippet
-  @create = $.proxy(document, "create")
+  @create = $.proxy(document, "createSnippet")
 
   @document = document
 

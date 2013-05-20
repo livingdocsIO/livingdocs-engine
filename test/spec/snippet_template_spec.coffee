@@ -1,5 +1,6 @@
 # Simple Template
 # ---------------
+
 describe "Simple Template", ->
 
   # Setup

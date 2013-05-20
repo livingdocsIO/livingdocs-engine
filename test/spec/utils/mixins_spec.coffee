@@ -13,7 +13,7 @@ describe "mixins util", ->
   # Tests
   # -----
 
-  it "should return a function with prototype", ->
+  it "should return a function with a prototype", ->
     mixinClass = mixins @Indestructible
     expect( $.isFunction(mixinClass) ).toBe(true)
     expect( mixinClass::destroy ).toBeDefined

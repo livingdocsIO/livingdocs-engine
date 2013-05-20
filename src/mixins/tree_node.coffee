@@ -1,5 +1,13 @@
 # TreeNode Mixin
 # --------------
+# Represents a node in a SnippetTree
+#
+# Every node has a parent node, possibly siblings and multiple
+# ChildContainers. ChildContainers are the parents of the
+# child nodes, not the TreeNode itself.
+#
+# E.g. a grid row would have as many ChildContainers as it has
+# columns
 
 TreeNode = do ->
 

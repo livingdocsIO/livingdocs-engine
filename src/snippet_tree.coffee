@@ -8,7 +8,7 @@
 class SnippetTree
 
   constructor: ({ content, rootNode } = {}) ->
-    @first = @last = undefined
+    @root = new SnippetContainer($domNode: $(rootNode), snippetTree: this)
     @history = new History()
 
     # link the snippet tree with a DOM node
@@ -16,11 +16,7 @@ class SnippetTree
 
 
   link: (rootNode) ->
-    @$root = $(rootNode)
-
-    #todo: parse contents instead of just deleting them
-    @$root.html()
-
+    @root.$domNode = $(rootNode)
 
   # Traverse the whole snippet tree.
   # Depth first: in the order of html source code appearance
@@ -34,41 +30,23 @@ class SnippetTree
       if snippet.next
         walker(snippet.next)
 
-    walker(@first) if @first
+    walker(@root.first) if @root.first
 
 
   # insert snippet at the beginning
   prepend: (snippet) ->
-    if @first
-      @first.before(snippet)
-      snippet.insertIntoDom()
-    else
-      @last = snippet
-      snippet.insertIntoDom(@$root)
+    @root.prepend(snippet)
+    snippet.insertIntoDom()
 
-    @first = snippet
     @ #chaining
 
 
   # insert snippet at the end
   append: (snippet) ->
-    if @last
-      @last.after(snippet)
-      snippet.insertIntoDom()
-    else
-      @first = snippet
-      snippet.insertIntoDom(@$root)
-
-    @last = snippet
+    @root.append(snippet)
+    snippet.insertIntoDom()
 
     @ #chaining
-
-
-  root: (rootNode) ->
-    if rootNode
-      @_rootNode = rootNode
-    else
-      @_rootNode
 
 
   # returns a readable string representation
