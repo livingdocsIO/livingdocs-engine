@@ -2,8 +2,20 @@
 # -----------
 # Livingdocs equivalent to the DOM tree.
 # A snippet tree containes all the snippets of a page in hierarchical order.
-# The tree can be linked with a DOM node that functions as the container of
-# all the snippets.
+#
+# The root of the SnippetTree is a SnippetContainer. A SnippetContainer
+# contains a list of SnippetNodes.
+#
+# SnippetNodes can have multible SnippetContainers themselves.
+#
+# ### Example:
+#     - SnippetContainer (root)
+#       - SnippetNode 'Hero'
+#       - SnippetNode '2 Columns'
+#         - SnippetContainer 'main'
+#           - SnippetNode 'Title'
+#         - SnippetContainer 'sidebar'
+#           - SnippetNode 'Info-Box''
 
 class SnippetTree
 
