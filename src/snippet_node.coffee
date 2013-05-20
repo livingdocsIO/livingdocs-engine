@@ -1,12 +1,14 @@
 # SnippetNode
 # ---------------
-# Represents a node in a SnippetTree
+# Represents a node in a SnippetTree.
 #
-# Every node has a parent node, possibly siblings and multiple
-# ChildContainers. ChildContainers are the parents of the
-# child nodes, not the TreeNode itself.
+# Every snippetNode can have a parent (SnippetContainer),
+# siblings (SnippetNodes) and multiple containers (SnippetContainer).
 #
-# E.g. a grid row would have as many ChildContainers as it has
+# The containers are the parents of the
+# child SnippetNodes, not the SnippetNode itself.
+#
+# E.g. a grid row would have as many containers as it has
 # columns
 
 class SnippetNode

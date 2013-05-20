@@ -55,6 +55,9 @@ chainable = (fn, context) ->
   # @param identifier: (String) snippet identifier e.g. "bootstrap.title"
   @help = $.proxy(document, "help")
 
+  # Print the content of the snippetTree in a readable string
+  @printTree = $.proxy(document, "printTree")
+
   # Print a list of all available snippets
   @listSnippets = $.proxy(document, "listSnippets")
 

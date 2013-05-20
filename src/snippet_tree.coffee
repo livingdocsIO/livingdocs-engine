@@ -34,13 +34,15 @@ class SnippetTree
   # Depth first: in the order of html source code appearance
   each: (callback) ->
 
-    walker = (snippet) ->
-      callback(snippet)
+    walker = (snippetNode) ->
+      callback(snippetNode)
 
-      #todo: walk children
+      # traverse children
+      for name, snippetContainer of snippetNode.containers
+        walker(snippetContainer.first) if snippetContainer.first
 
-      if snippet.next
-        walker(snippet.next)
+      # traverse siblings
+      walker(snippetNode.next) if snippetNode.next
 
     walker(@root.first) if @root.first
 
@@ -61,11 +63,26 @@ class SnippetTree
     @ #chaining
 
 
-  # returns a readable string representation
+  # returns a readable string representation of the whole tree
   print: () ->
-    tree = []
-    @each snippet ->
-      tree.push snippet.identifier
+    output = "SnippetTree\n-----------\n"
+
+    addLine = (text, indentation = 0) ->
+      output += "#{ Array(indentation + 1).join(" ") }#{ text }\n"
+
+    walker = (snippetNode, indentation = 0) ->
+      addLine("-#{ snippetNode.snippet.identifier }", indentation)
+
+      # traverse children
+      for name, snippetContainer of snippetNode.containers
+        addLine("#{ name }:", indentation + 2)
+        walker(snippetContainer.first, indentation + 4) if snippetContainer.first
+
+      # traverse siblings
+      walker(snippetNode.next, indentation) if snippetNode.next
+
+    walker(@root.first) if @root.first
+    return output
 
 
   # returns a JSON representation of the whole tree

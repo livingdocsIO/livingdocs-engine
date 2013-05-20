@@ -50,6 +50,7 @@ document = do ->
         title: template.name
 
 
+  # list available snippetTemplates
   listSnippets: ->
     for namespace, value of @snippets
       for name, snippet of value
@@ -87,6 +88,10 @@ document = do ->
   help: (identifier) ->
     template = @getTemplate(identifier)
     template.printDoc()
+
+
+  printTree: () ->
+    @snippetTree.print()
 
 
   nextId: (prefix = "doc") ->
