@@ -12,17 +12,17 @@ describe "SnippetTree", ->
   it "should have a SnippetContainer as root", ->
     expect(@tree.root instanceof SnippetContainer).toBe(true)
 
-  it "append() should set snippetTreeNode property of the appended snippet", ->
+  it "append() should set snippetNode property of the appended snippet", ->
     snippet = test.getH1Snippet()
     @tree.append(snippet)
-    expect(snippet.snippetTreeNode).toBeDefined()
-    expect(snippet.snippetTreeNode.snippetTree).toEqual(@tree)
+    expect(snippet.snippetNode).toBeDefined()
+    expect(snippet.snippetNode.snippetTree).toEqual(@tree)
 
   it "append() should append a snippet to root", ->
     snippet = test.getH1Snippet()
     @tree.append(snippet)
-    expect(@tree.root.first).toEqual(snippet.snippetTreeNode)
-    expect(@tree.root.last).toEqual(snippet.snippetTreeNode)
+    expect(@tree.root.first).toEqual(snippet.snippetNode)
+    expect(@tree.root.last).toEqual(snippet.snippetNode)
 
 
 describe "SnippetTree with two snippets", ->
@@ -32,14 +32,14 @@ describe "SnippetTree with two snippets", ->
 
     @firstSnippet = test.getH1Snippet()
     @tree.append(@firstSnippet)
-    @treeNodeA = @firstSnippet.snippetTreeNode
+    @treeNodeA = @firstSnippet.snippetNode
 
     @secondSnippet = test.getH1Snippet()
     @tree.append(@secondSnippet)
-    @treeNodeB = @secondSnippet.snippetTreeNode
+    @treeNodeB = @secondSnippet.snippetNode
 
   it "should set properties of snippetTreeNdoe", ->
-    expect(@treeNodeA instanceof SnippetTreeNode).toBe(true)
+    expect(@treeNodeA instanceof SnippetNode).toBe(true)
     expect(@treeNodeA.previous).not.toBeDefined()
     expect(@treeNodeA.next).toEqual(@treeNodeB)
 
@@ -90,20 +90,20 @@ describe "SnippetTree with a row snippet", ->
 
     @rowSnippet = test.getRowSnippet()
     @tree.append(@rowSnippet)
-    @treeNodeRow = @rowSnippet.snippetTreeNode
+    @treeNodeRow = @rowSnippet.snippetNode
 
   it "should append a snippet to the main column via the snippetContainer", ->
     titleSnippet = test.getH1Snippet()
     mainContainer = @treeNodeRow.containers["main"]
     mainContainer.append(titleSnippet)
-    expect(mainContainer.first).toEqual(titleSnippet.snippetTreeNode)
+    expect(mainContainer.first).toEqual(titleSnippet.snippetNode)
 
   it "should append a snippet to the main column via snippet", ->
     titleSnippet = test.getH1Snippet()
     @rowSnippet.append("main", titleSnippet)
 
     mainContainer = @treeNodeRow.containers["main"]
-    expect(mainContainer.first).toEqual(titleSnippet.snippetTreeNode)
+    expect(mainContainer.first).toEqual(titleSnippet.snippetNode)
 
 
 

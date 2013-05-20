@@ -1,4 +1,4 @@
-# SnippetTreeNode
+# SnippetNode
 # ---------------
 # Represents a node in a SnippetTree
 #
@@ -9,14 +9,14 @@
 # E.g. a grid row would have as many ChildContainers as it has
 # columns
 
-class SnippetTreeNode
+class SnippetNode
 
   constructor: ({ parentContainer, snippet }) ->
     error("Missing param snippet") if !snippet?
 
     @setParent(parentContainer) if parentContainer
     @snippet = snippet
-    @snippet.snippetTreeNode = this
+    @snippet.snippetNode = this
     @next = undefined
     @previous = undefined
 
@@ -50,7 +50,7 @@ class SnippetTreeNode
     this #chaining
 
 
-  # @param snippet: Snippet or SnippetTreeNode instance
+  # @param snippet: Snippet or SnippetNode instance
   before: (snippet) ->
     if snippet
       treeNode = @parentContainer.attachSnippet(snippet)
@@ -66,7 +66,7 @@ class SnippetTreeNode
       @previous
 
 
-  # @param snippet: Snippet or SnippetTreeNode instance
+  # @param snippet: Snippet or SnippetNode instance
   after: (snippet) ->
     if snippet
       treeNode = @parentContainer.attachSnippet(snippet)

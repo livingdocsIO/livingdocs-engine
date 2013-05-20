@@ -11,33 +11,33 @@ class Snippet
       error("cannot instantiate snippet without template reference")
 
     @identifier = @template.identifier
-    @snippetTreeNode = undefined
-    @snippetTreeNodeChanged = false
+    @snippetNode = undefined
+    @snippetNodeChanged = false
     @attachedToDom = false
 
 
   # move up (previous)
   up: () ->
-    @snippetTreeNode.up()
+    @snippetNode.up()
     @updateDomPosition()
     this #chaining
 
 
   # move down (next)
   down: () ->
-    @snippetTreeNode.down()
+    @snippetNode.down()
     @updateDomPosition()
     this #chaining
 
 
   append: (containerName, snippet) ->
-    @snippetTreeNode.append(containerName, snippet)
+    @snippetNode.append(containerName, snippet)
     snippet.updateDomPosition()
     this #chaining
 
 
   prepend: (containerName, snippet) ->
-    @snippetTreeNode.prepend(containerName, snippet)
+    @snippetNode.prepend(containerName, snippet)
     snippet.updateDomPosition()
     this #chaining
 
@@ -50,9 +50,9 @@ class Snippet
   # insert the snippet into the Dom according to its position
   # in the SnippetTree
   insertIntoDom: () ->
-    previous = @snippetTreeNode.previous
-    next = @snippetTreeNode.next
-    parentContainer = @snippetTreeNode.parentContainer
+    previous = @snippetNode.previous
+    next = @snippetNode.next
+    parentContainer = @snippetNode.parentContainer
 
     if !@attachedToDom
       if previous && previous.snippet.attachedToDom

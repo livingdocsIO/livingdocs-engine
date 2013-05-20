@@ -100,11 +100,11 @@ class SnippetTemplate
     for containerName, value of @containers
       $container = snippet.$snippet.findIn("[#{ docAttr.container }=#{ containerName }]")
 
-      snippet.snippetTreeNode ||= new SnippetTreeNode(snippet: snippet)
-      snippet.snippetTreeNode.addContainer new SnippetContainer
+      snippet.snippetNode ||= new SnippetNode(snippet: snippet)
+      snippet.snippetNode.addContainer new SnippetContainer
         $domNode: $container
         name: containerName
-        parent: snippet.snippetTreeNode
+        parent: snippet.snippetNode
 
 
   # alias to lists

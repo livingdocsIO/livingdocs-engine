@@ -123,7 +123,7 @@ describe "container template", ->
 
   it "should initialize SnippetContainers", ->
     snippet = template.create()
-    treeNode = snippet.snippetTreeNode
+    treeNode = snippet.snippetNode
     expect(treeNode).toBeDefined()
     expect(treeNode.containers.main instanceof SnippetContainer).toBe(true)
     expect(treeNode.containers.sidebar instanceof SnippetContainer).toBe(true)

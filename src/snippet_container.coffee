@@ -8,7 +8,7 @@ class SnippetContainer
 
 
   # insert snippet at the beginning
-  # @param snippet: Snippet or SnippetTreeNode instance
+  # @param snippet: Snippet or SnippetNode instance
   prepend: (snippet) ->
     snippetNode = @attachSnippet(snippet)
 
@@ -22,7 +22,7 @@ class SnippetContainer
 
 
   # insert snippet at the end
-  # @param snippet: Snippet or SnippetTreeNode instance
+  # @param snippet: Snippet or SnippetNode instance
   append: (snippet) ->
     snippetNode = @attachSnippet(snippet)
 
@@ -36,16 +36,16 @@ class SnippetContainer
     @ #chaining
 
 
-  # set SnippetTreeNode parent of snippet
-  # @return SnippetTreeNode
+  # set SnippetNode parent of snippet
+  # @return SnippetNode
   attachSnippet: (snippet) ->
-    if snippet instanceof SnippetTreeNode
+    if snippet instanceof SnippetNode
       snippet.setParent(this)
     else if snippet instanceof Snippet
-      if snippet.snippetTreeNode
-        snippet.snippetTreeNode.setParent(this)
+      if snippet.snippetNode
+        snippet.snippetNode.setParent(this)
       else
-        new SnippetTreeNode(parentContainer: this, snippet: snippet)
+        new SnippetNode(parentContainer: this, snippet: snippet)
     else
       error("incompatible type: param snippet")
 
