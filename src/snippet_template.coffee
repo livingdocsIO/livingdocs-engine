@@ -94,6 +94,8 @@ class SnippetTemplate
     # todo custom finder to search for attributes inside the snippet nodes
     # but not beyond. This means do not continue the search in snippet containers
 
+    # check out: NodeIterator in rangy could work fine with some modifications
+
 
   initializeContainers: (snippet) ->
 
