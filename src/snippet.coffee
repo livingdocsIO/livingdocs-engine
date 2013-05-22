@@ -30,6 +30,22 @@ class Snippet
     this #chaining
 
 
+  before: (snippet) ->
+    if snippet
+      @snippetNode.before(snippet)
+      this #chaining
+    else
+      @snippetNode.before()?.snippet
+
+
+  after: (snippet) ->
+    if snippet
+      @snippetNode.after(snippet)
+      this #chaining
+    else
+      @snippetNode.after()?.snippet
+
+
   append: (containerName, snippet) ->
     @snippetNode.append(containerName, snippet)
     snippet.updateDomPosition()
@@ -72,6 +88,10 @@ class Snippet
 
   afterDomInsert: () ->
     @attachedToDom = true
+
+    # initialize editables
+    editableNodes = @$snippet.findIn("[#{ docAttr.editable }]")
+    Editable.add(editableNodes)
 
 
   detachFromDom: () ->

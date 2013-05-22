@@ -9,16 +9,30 @@
 
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-<!--     <link rel="stylesheet" href="test/manual/css/normalize.css">
+    <!-- livingdocs-engine base css -->
+    <link rel="stylesheet" href="test/manual/css/livingdocs.css">
+
+    <!--
+    <link rel="stylesheet" href="test/manual/css/normalize.css">
     <link rel="stylesheet" href="test/manual/css/main.css"> -->
   </head>
   <body>
-    <section class="doc-section">
-    </section>
+    <div class="container-fluid">
+      <section class="doc-section">
+      </section>
+    </div>
 
+    <!-- jQuery: requirement for editableJS and livingdocs-engine -->
     <script src="vendor/jquery-1.9.1.min.js"></script>
+
+    <!-- dependencies of livingdocs-engine -->
     <script src="vendor/yepnope/yepnope.1.5.3-min.js"></script>
+    <script src="vendor/editableJS/editable.js"></script>
+
+    <!-- snippet collections for manual testing -->
     <script src=".tmp/snippet_collections.js"></script>
+
+    <!-- livingdocs-engine. yeah! -->
     <script src=".tmp/livingdocs_engine.js"></script>
 
     <script>
@@ -26,6 +40,12 @@
 
         doc.addSnippetCollection(snippetCollections.bootstrap);
         doc.loadDocument();
+
+        var row = doc.add("bootstrap.mainSidebar");
+        row.append("main", doc.create("bootstrap.hero"));
+        row.append("main", doc.create("bootstrap.text"));
+        row.append("sidebar", doc.create("bootstrap.title"));
+
 
       });
     </script>

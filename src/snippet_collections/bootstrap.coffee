@@ -7,7 +7,10 @@ snippetCollections.bootstrap = do ->
 
   config:
     namespace: "bootstrap"
-    css: "/test/manual/bootstrap/css/bootstrap.css"
+    css: [
+      "/test/manual/bootstrap/css/bootstrap.css"
+      "/test/manual/css/bootstrap-adjust.css"
+    ]
 
   column:
     name: "Single Centered Column"

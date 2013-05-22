@@ -1,0 +1,28 @@
+
+/**
+ * Highlighting
+ */
+
+.doc-snippet-highlight {
+  /* Default */
+  outline: thin dotted #333;
+  box-shadow: 0 0 1px 2px rgba(123, 215, 253, 0.5);
+
+  /* Webkit */
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: 1px;
+}
+
+.doc-container-highlight {
+  outline: medium dashed rgba(255, 196, 13, 0.5);
+}
+
+
+/**
+ * Content Editable
+ */
+
+.doc-editable {
+  /* disable browser highlight of contenteditable */
+  outline: none;
+}
