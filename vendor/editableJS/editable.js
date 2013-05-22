@@ -3381,6 +3381,15 @@ var string = (function() {
 (function() {
   var isInitialized = false;
 
+  var initialize = function() {
+    if (!isInitialized) {
+      // TODO check config file integrity
+
+      isInitialized = true;
+      dispatcher.setup();
+    }
+  };
+
   /**
    * Singleton for the Editable.JS API that is externally visible.
    * Note that the Editable literal is defined
@@ -3405,12 +3414,7 @@ var string = (function() {
      * @chainable
      */
     add: function(target, options) {
-      if (!isInitialized) {
-        // TODO check config file integrity
-
-        isInitialized = true;
-        dispatcher.setup();
-      }
+      initialize();
 
       $(target).attr('contenteditable', true);
       $(target).addClass('-js-editable');
