@@ -1,9 +1,13 @@
+# DOM helper methods
+# ------------------
+# Methods to parse and update the Dom tree.
+
 dom = do ->
   snippetClass = docClass.snippet
   snippetRegex = new RegExp("(?: |^)#{ snippetClass }(?: |$)")
 
   # Find the snippet this node is contained within.
-  # Snippets are marked by class.
+  # Snippets are marked by a class at the moment.
   parentSnippet: (node) ->
     node = node[0] if node.jquery
 

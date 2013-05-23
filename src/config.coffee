@@ -13,6 +13,10 @@ docClass =
   snippet: "doc-snippet"
   editable: "doc-editable"
 
+  # highlight classes
+  snippetHighlight: "doc-snippet-highlight"
+  containerHighlight: "doc-container-highlight"
+
 
 # constants for attributes used in a document
 docAttr =

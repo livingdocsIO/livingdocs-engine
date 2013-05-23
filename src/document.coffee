@@ -1,12 +1,22 @@
 # Document
 # --------
-# Manage the document content and its dependencies.
+# Manage the document and its dependencies.
+# Initialze everyting.
 #
-# ### Content:
-# SnippetTree and corresponding DOM root node
+# ### Design:
+# Manage available SnippetTemplates
 #
 # ### Assets:
-# load and manage CSS and Javascript dependencies
+# Load and manage CSS and Javascript dependencies
+# of the designs
+#
+# ### Content:
+# Initialize the SnippetTree.
+#
+# ### Page:
+# Initialize event listeners.
+# Link the SnippetTree with the DomTree.
+
 
 document = do ->
 
@@ -43,10 +53,12 @@ document = do ->
     else
       new SnippetTree(content: contentJson)
 
+    # Page initialization
     page.initializeSection(snippetTree: @snippetTree)
+    page.initializeListeners()
 
     # EditableJS initialization
-    setupEditable()
+    editableController()
 
     documentReady()
 
@@ -112,6 +124,7 @@ document = do ->
     template.printDoc()
 
 
+  # print the SnippetTree
   printTree: () ->
     @snippetTree.print()
 
