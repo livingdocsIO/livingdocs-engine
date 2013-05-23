@@ -10,6 +10,8 @@
 #
 # E.g. a grid row would have as many containers as it has
 # columns
+#
+# # @prop parentContainer: parent SnippetContainer
 
 class SnippetNode
 

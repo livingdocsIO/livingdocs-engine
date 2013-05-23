@@ -106,7 +106,7 @@ class SnippetTemplate
       snippet.snippetNode.addContainer new SnippetContainer
         $domNode: $container
         name: containerName
-        parent: snippet.snippetNode
+        parentNode: snippet.snippetNode
 
 
   # alias to lists

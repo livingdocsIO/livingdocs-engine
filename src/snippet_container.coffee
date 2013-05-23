@@ -1,9 +1,11 @@
 # SnippetContainer
 # ----------------
+#
+# @prop parentNode: parent SnippetNode
 
 class SnippetContainer
 
-  constructor: ({ @parent, @$domNode, @snippetTree, @name }) ->
+  constructor: ({ @parentNode, @$domNode, @snippetTree, @name }) ->
     @first = @last = undefined
 
 

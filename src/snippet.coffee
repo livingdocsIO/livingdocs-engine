@@ -61,6 +61,11 @@ class Snippet
     this #chaining
 
 
+  # get the parent snippet
+  parent: () ->
+     @snippetNode.parentContainer?.parentNode?.snippet
+
+
   updateDomPosition: () ->
     @detachFromDom() if @attachedToDom
     @insertIntoDom()

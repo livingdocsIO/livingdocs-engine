@@ -105,6 +105,11 @@ describe "SnippetTree with a row snippet", ->
     mainContainer = @treeNodeRow.containers["main"]
     expect(mainContainer.first).toEqual(titleSnippet.snippetNode)
 
+  it "appended snippet should have a parent snippet", ->
+    titleSnippet = test.getH1Snippet()
+    @rowSnippet.append("main", titleSnippet)
+    expect( titleSnippet.parent() ).toEqual(@rowSnippet)
+
 
 
 
