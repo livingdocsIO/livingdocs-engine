@@ -3361,6 +3361,53 @@ var $ = (function() {
   };
 })();
 
+var log, error;
+
+// Allows for safe console logging
+// If the last param is the string "trace" console.trace will be called
+// configuration: disable with config.log = false
+log = function() {
+  if (Editable.config.log === false) { return; }
+
+  var args, _ref;
+  args = Array.prototype.slice.call(arguments);
+  if (args.length) {
+    if (args[args.length - 1] === "trace") {
+      args.pop();
+      if ((_ref = window.console) ? _ref.trace : void 0) {
+        console.trace();
+      }
+    }
+  }
+
+  if (args.length === 1) {
+    args = args[0];
+  }
+
+  if (window.console) {
+    return console.log(args);
+  }
+};
+
+// Allows for safe error logging
+// Falls back to console.log if console.error is not available
+// configuration: disable with config.log = false
+error = function() {
+  if (Editable.config.log === false) { return; }
+
+  var args;
+  args = Array.prototype.slice.call(arguments);
+  if (args.length === 1) {
+    args = args[0];
+  }
+
+  if (window.console && typeof window.console.error === "function") {
+    return console.error(args);
+  } else if (window.console) {
+    return console.log(args);
+  }
+};
+
 var string = (function() {
   return {
     trimRight: function(text) {
@@ -3680,44 +3727,44 @@ var behavior = (function() {
     */
   return {
     focus: function(element) {
-      console.log('Default focus behavior');
+      log('Default focus behavior');
     },
 
     blur: function(element) {
-      console.log('Default blur behavior');
+      log('Default blur behavior');
       element.innerHTML = content.cleanInternals(element.innerHTML);
     },
 
     flow: function(element, action) {
-      console.log('Default flow behavior');
+      log('Default flow behavior');
     },
 
     selection: function(element, selection) {
       if (selection) {
-        console.log('Default selection behavior');
+        log('Default selection behavior');
       } else {
-        console.log('Default selection empty behavior');
+        log('Default selection empty behavior');
       }
     },
 
     cursor: function(element, cursor) {
       if (cursor) {
-        console.log('Default cursor behavior');
+        log('Default cursor behavior');
       } else {
-        console.log('Default cursor empty behavior');
+        log('Default cursor empty behavior');
       }
     },
 
     newline: function(element, cursor) {
-      console.log(cursor);
-      console.log('Default newline behavior');
+      log(cursor);
+      log('Default newline behavior');
 
       var atTheEnd = cursor.isAtTheEnd();
       var br = document.createElement('br');
       cursor.insertBefore(br);
 
       if(atTheEnd) {
-        console.log('at the end');
+        log('at the end');
 
         var noWidthSpace = document.createTextNode('\u200B');
         cursor.insertAfter(noWidthSpace);
@@ -3727,38 +3774,38 @@ var behavior = (function() {
         // cursor.insertAfter(trailingBr);
 
       } else {
-        console.log('not at the end');
+        log('not at the end');
       }
 
       cursor.update();
     },
 
     insert: function(element, direction) {
-      console.log('Default insert behavior');
+      log('Default insert behavior');
     },
 
     split: function(element, before, after) {
-      console.log('Default split behavior');
+      log('Default split behavior');
     },
 
     merge: function(element, direction) {
-      console.log('Default merge behavior');
+      log('Default merge behavior');
     },
 
     empty: function(element) {
-      console.log('Default empty behavior');
+      log('Default empty behavior');
     },
 
     'switch': function(element, direction) {
-      console.log('Default switch behavior');
+      log('Default switch behavior');
     },
 
     move: function(element, selection, direction) {
-      console.log('Default move behavior');
+      log('Default move behavior');
     },
 
     clipboard: function(element, selection, action) {
-      console.log('Default clipboard behavior');
+      log('Default clipboard behavior');
     }
   };
 })();
@@ -3773,6 +3820,8 @@ var behavior = (function() {
    * @type {Object}
    */
   Editable.config = {
+    log: true,
+
     event: {
       /**
        * The focus event is triggered when an element gains focus.
@@ -4046,11 +4095,11 @@ var dispatcher = (function() {
     }).on('blur.editable', '.-js-editable', function(event) {
       notifier('blur', this);
     }).on('copy.editable', '.-js-editable', function(event) {
-      console.log('Copy');
+      log('Copy');
     }).on('cut.editable', '.-js-editable', function(event) {
-      console.log('Cut');
+      log('Cut');
     }).on('paste.editable', '.-js-editable', function(event) {
-      console.log('Paste');
+      log('Paste');
     });
   };
 
@@ -4068,25 +4117,25 @@ var dispatcher = (function() {
     });
 
     keyboard.on('left', function(event) {
-      console.log('Left key pressed');
+      log('Left key pressed');
     }).on('up', function(event) {
-      console.log('Up key pressed');
+      log('Up key pressed');
     }).on('right', function(event) {
-      console.log('Right key pressed');
+      log('Right key pressed');
     }).on('down', function(event) {
-      console.log('Down key pressed');
+      log('Down key pressed');
     }).on('tab', function(event) {
-      console.log('Tab key pressed');
+      log('Tab key pressed');
     }).on('shiftTab', function(event) {
-      console.log('Shift+Tab key pressed');
+      log('Shift+Tab key pressed');
     }).on('esc', function(event) {
-      console.log('Esc key pressed');
+      log('Esc key pressed');
     }).on('backspace', function(event) {
-      console.log('Backspace key pressed');
+      log('Backspace key pressed');
     }).on('delete', function(event) {
-      console.log('Delete key pressed');
+      log('Delete key pressed');
     }).on('enter', function(event) {
-      console.log('Enter key pressed');
+      log('Enter key pressed');
 
       event.preventDefault();
       event.stopPropagation();
@@ -4102,7 +4151,7 @@ var dispatcher = (function() {
       }
 
     }).on('shiftEnter', function(event) {
-      console.log('Shift+Enter key pressed');
+      log('Shift+Enter key pressed');
       event.preventDefault();
       event.stopPropagation();
       var cursor = selectionWatcher.getCursor();
@@ -4593,7 +4642,7 @@ var selectionWatcher = (function() {
     },
 
     selectionChanged: function() {
-      console.log('selection changed');
+      log('selection changed');
       var newRange = getRangeContainer();
       if (newRange.isDifferentFrom(currentRange)) {
         currentRange = newRange;

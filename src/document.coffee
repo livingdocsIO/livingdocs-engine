@@ -10,9 +10,27 @@
 
 document = do ->
 
+  # Private
+  # -------
+
+  waitingCalls = 1 # 1 -> loadDocument
+
+  documentReady = =>
+    waitingCalls -= 1
+    if waitingCalls == 0
+      document.ready.fire()
+
+  doBeforeDocumentReady = () ->
+    waitingCalls += 1
+    return documentReady
+
+  # Document object
+  # ---------------
+
   initialized: false
   snippets: {}
   uniqueId: 0
+  ready: $.Callbacks("memory once")
 
 
   # *Public API*
@@ -25,8 +43,9 @@ document = do ->
     else
       new SnippetTree(content: contentJson)
 
-
     page.initializeSection(snippetTree: @snippetTree)
+
+    documentReady()
 
 
   # *Public API*
@@ -37,7 +56,7 @@ document = do ->
     namespace = config?.namespace || "snippet"
 
     if config.css
-      loader.css(config.css)
+      loader.css config.css, doBeforeDocumentReady()
 
     @snippets[namespace] ||= {}
 
@@ -94,6 +113,8 @@ document = do ->
     @snippetTree.print()
 
 
+  # consider: use guids so transferring snippets between documents
+  # can not cause id conflicts
   nextId: (prefix = "doc") ->
     @uniqueId += 1
     "#{ prefix }-#{ @uniqueId }"

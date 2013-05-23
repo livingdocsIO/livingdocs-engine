@@ -36,16 +36,17 @@
     <script src=".tmp/livingdocs_engine.js"></script>
 
     <script>
-      $(document).ready(function() {
+      doc.addSnippetCollection(snippetCollections.bootstrap);
 
-        doc.addSnippetCollection(snippetCollections.bootstrap);
+      $(document).ready(function() {
         doc.loadDocument();
 
-        var row = doc.add("bootstrap.mainSidebar");
-        row.append("main", doc.create("bootstrap.hero"));
-        row.append("main", doc.create("bootstrap.text"));
-        row.append("sidebar", doc.create("bootstrap.title"));
-
+        doc.ready(function() {
+          var row = doc.add("bootstrap.mainSidebar");
+          row.append("main", doc.create("bootstrap.hero"));
+          row.append("main", doc.create("bootstrap.text"));
+          row.append("sidebar", doc.create("bootstrap.title"));
+        });
 
       });
     </script>

@@ -18,6 +18,8 @@ files = [
 
   // vendor files
   'vendor/jquery-*.js',
+  'vendor/yepnope/yepnope.1.5.3-min.js',
+  'vendor/editableJS/editable.js',
 
   // source files
   '.tmp/livingdocs_engine_test.js',

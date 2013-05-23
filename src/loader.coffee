@@ -22,10 +22,15 @@ loader = do ->
       loadedCssFiles.push(url)
       S.prefix("css!", url)
 
+    # yepnope calls the callback for each file to load
+    # but we want to execute the callback only once all files are loaded
+    filesToLoad = cssUrl.length
+
     yepnope
       load: cssUrl
       callback: () ->
-        callback() if callback
+        filesToLoad -= 1
+        callback() if callback && filesToLoad == 0
 
 
   # @param cssUrl: string or array. if not passed all loaded css files

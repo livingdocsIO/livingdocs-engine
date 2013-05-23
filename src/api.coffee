@@ -61,6 +61,8 @@ chainable = (fn, context) ->
   # Print a list of all available snippets
   @listSnippets = $.proxy(document, "listSnippets")
 
+  @ready = chainable(document.ready, "add")
+
   @document = document
 
 ).call(doc)
