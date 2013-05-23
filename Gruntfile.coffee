@@ -118,7 +118,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask('server', [
     'clean:tmp',
-    'coffee:engine',
+    'coffee',
     'livereload-start',
     'connect:livereload',
     'open',
