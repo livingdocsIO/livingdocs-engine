@@ -15,6 +15,9 @@ class Snippet
     @snippetNodeChanged = false
     @attachedToDom = false
 
+    # add a reference to the DOM
+    @$snippet.data("snippet", this)
+
 
   # move up (previous)
   up: () ->

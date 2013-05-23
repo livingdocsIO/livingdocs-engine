@@ -8,7 +8,7 @@ describe "H1 Snippet", ->
       namespace: "test"
       html: """<h1 #{ docAttr.editable }="title"></h1>"""
 
-    @snippet = new Snippet(template: template)
+    @snippet = template.create()
 
 
   # Tests

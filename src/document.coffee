@@ -45,6 +45,9 @@ document = do ->
 
     page.initializeSection(snippetTree: @snippetTree)
 
+    # EditableJS initialization
+    setupEditable()
+
     documentReady()
 
 
