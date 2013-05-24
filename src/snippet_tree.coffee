@@ -49,6 +49,7 @@ class SnippetTree
 
     # content changes
     @snippetContentChanged = $.Callbacks()
+    @snippetHtmlChanged = $.Callbacks()
     @snippetSettingsChanged = $.Callbacks()
 
 
