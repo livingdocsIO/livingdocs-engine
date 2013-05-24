@@ -64,10 +64,7 @@ document = do ->
 
 
   # *Public API*
-  addSnippetCollection: (snippetCollection) ->
-    config = snippetCollection.config
-    delete snippetCollection.config
-
+  addSnippetCollection: (snippetCollection, config) ->
     namespace = config?.namespace || "snippet"
 
     if config.css

@@ -37,8 +37,7 @@
 
     <script>
       Editable.config.log = false;
-
-      doc.addSnippetCollection(snippetCollections.bootstrap);
+      doc.addSnippetCollection(snippetCollections.bootstrap.snippets, snippetCollections.bootstrap.config);
 
       $(document).ready(function() {
         doc.loadDocument();
