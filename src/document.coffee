@@ -68,7 +68,7 @@ document = do ->
     namespace = config?.namespace || "snippet"
 
     if config.css
-      loader.css config.css, doBeforeDocumentReady()
+      loader.css(config.css, doBeforeDocumentReady())
 
     @snippets[namespace] ||= {}
 

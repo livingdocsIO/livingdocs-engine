@@ -30,7 +30,7 @@ loader = do ->
       load: cssUrl
       callback: () ->
         filesToLoad -= 1
-        callback() if callback && filesToLoad == 0
+        callback() if callback && filesToLoad <= 0 # < is for the case where the array is empty
 
 
   # @param cssUrl: string or array. if not passed all loaded css files
