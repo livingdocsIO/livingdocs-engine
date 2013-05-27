@@ -1,53 +1,43 @@
 # SnippetContainer
 # ----------------
 #
-# @prop parentNode: parent SnippetNode
+# @prop parentSnippet: parent Snippet
 
 class SnippetContainer
 
-  constructor: ({ @parentNode, @$domNode, @snippetTree, @name }) ->
+  constructor: ({ @parentSnippet, @$domNode, @snippetTree, @name }) ->
     @first = @last = undefined
 
 
   # insert snippet at the beginning
-  # @param snippet: Snippet or SnippetNode instance
   prepend: (snippet) ->
-    snippetNode = @attachSnippet(snippet)
+    snippet = @attachSnippet(snippet)
 
     if @first
-      @first.before(snippetNode)
+      @first.before(snippet)
     else
-      @last = snippetNode
+      @last = snippet
 
-    @first = snippetNode
+    @first = snippet
     @ #chaining
 
 
   # insert snippet at the end
-  # @param snippet: Snippet or SnippetNode instance
   append: (snippet) ->
-    snippetNode = @attachSnippet(snippet)
+    snippet = @attachSnippet(snippet)
 
     if @last
-      @last.after(snippetNode)
+      @last.after(snippet)
     else
-      @first = snippetNode
+      @first = snippet
 
-    @last = snippetNode
+    @last = snippet
 
     @ #chaining
 
 
-  # set SnippetNode parent of snippet
-  # @return SnippetNode
+  # set this container as the parent of a snippet
+  # @return Snippet
   attachSnippet: (snippet) ->
-    if snippet instanceof SnippetNode
-      snippet.setParent(this)
-    else if snippet instanceof Snippet
-      if snippet.snippetNode
-        snippet.snippetNode.setParent(this)
-      else
-        new SnippetNode(parentContainer: this, snippet: snippet)
-    else
-      error("incompatible type: param snippet")
+    snippet.setParent(this)
 

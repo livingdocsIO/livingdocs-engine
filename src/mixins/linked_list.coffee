@@ -9,12 +9,10 @@
 # E.g. a grid row would have as many ChildContainers as it has
 # columns
 
-TreeNode = do ->
+LinkedList = do ->
 
-  parent: undefined
   next: undefined
   previous: undefined
-
 
   before: (node) ->
     if node

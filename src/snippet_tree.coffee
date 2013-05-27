@@ -4,18 +4,18 @@
 # A snippet tree containes all the snippets of a page in hierarchical order.
 #
 # The root of the SnippetTree is a SnippetContainer. A SnippetContainer
-# contains a list of SnippetNodes.
+# contains a list of snippets.
 #
-# SnippetNodes can have multible SnippetContainers themselves.
+# snippets can have multible SnippetContainers themselves.
 #
 # ### Example:
 #     - SnippetContainer (root)
-#       - SnippetNode 'Hero'
-#       - SnippetNode '2 Columns'
+#       - snippet 'Hero'
+#       - snippet '2 Columns'
 #         - SnippetContainer 'main'
-#           - SnippetNode 'Title'
+#           - snippet 'Title'
 #         - SnippetContainer 'sidebar'
-#           - SnippetNode 'Info-Box''
+#           - snippet 'Info-Box''
 #
 # ### Events:
 # The first set of SnippetTree Events are concerned with layout changes like
@@ -59,16 +59,16 @@ class SnippetTree
     @root.$domNode = $(rootNode)
     @root.$domNode.html("") if overwriteContent
 
-    if @root.$domNode.html() == ""
-      # render SnippetTree from scratch
 
+
+    if !@root.$domNode.children().length
+      # render SnippetTree from scratch
       # consider: replace $domNode with a documentFragment and reswap after
       # everything is inserted (but I don't know if this is actually faster)
 
-      @each (snippetNode) ->
-        snippet = snippetNode
-        snippet.insertIntoDom()
-
+      @each (snippet) ->
+        # snippet.insertIntoDom()
+        # todo:
 
     else
       # initialize while leaving the exisitng Html as is
@@ -84,16 +84,15 @@ class SnippetTree
   # Traverse the whole snippet tree.
   # Depth first: in the order of html source code appearance
   each: (callback) ->
-
-    walker = (snippetNode) ->
-      callback(snippetNode)
+    walker = (snippet) ->
+      callback(snippet)
 
       # traverse children
-      for name, snippetContainer of snippetNode.containers
+      for name, snippetContainer of snippet.containers
         walker(snippetContainer.first) if snippetContainer.first
 
       # traverse siblings
-      walker(snippetNode.next) if snippetNode.next
+      walker(snippet.next) if snippet.next
 
     walker(@root.first) if @root.first
 
@@ -101,7 +100,7 @@ class SnippetTree
   # insert snippet at the beginning
   prepend: (snippet) ->
     @root.prepend(snippet)
-    snippet.insertIntoDom()
+    # snippet.insertIntoDom()
 
     @ #chaining
 
@@ -109,7 +108,7 @@ class SnippetTree
   # insert snippet at the end
   append: (snippet) ->
     @root.append(snippet)
-    snippet.insertIntoDom()
+    # snippet.insertIntoDom()
 
     @ #chaining
 
@@ -121,17 +120,17 @@ class SnippetTree
     addLine = (text, indentation = 0) ->
       output += "#{ Array(indentation + 1).join(" ") }#{ text }\n"
 
-    walker = (snippetNode, indentation = 0) ->
-      template = snippetNode.snippet.template
+    walker = (snippet, indentation = 0) ->
+      template = snippet.template
       addLine("- #{ template.title } (#{ template.identifier })", indentation)
 
       # traverse children
-      for name, snippetContainer of snippetNode.containers
+      for name, snippetContainer of snippet.containers
         addLine("#{ name }:", indentation + 2)
         walker(snippetContainer.first, indentation + 4) if snippetContainer.first
 
       # traverse siblings
-      walker(snippetNode.next, indentation) if snippetNode.next
+      walker(snippet.next, indentation) if snippet.next
 
     walker(@root.first) if @root.first
     return output

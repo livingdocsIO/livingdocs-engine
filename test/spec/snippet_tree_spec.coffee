@@ -12,17 +12,17 @@ describe "SnippetTree", ->
   it "should have a SnippetContainer as root", ->
     expect(@tree.root instanceof SnippetContainer).toBe(true)
 
-  it "append() should set snippetNode property of the appended snippet", ->
+  it "append() should set snippetTree property of the appended snippet", ->
     snippet = test.getH1Snippet()
     @tree.append(snippet)
-    expect(snippet.snippetNode).toBeDefined()
-    expect(snippet.snippetNode.snippetTree).toEqual(@tree)
+    expect(snippet).toBeDefined()
+    expect(snippet.snippetTree).toEqual(@tree)
 
   it "append() should append a snippet to root", ->
     snippet = test.getH1Snippet()
     @tree.append(snippet)
-    expect(@tree.root.first).toEqual(snippet.snippetNode)
-    expect(@tree.root.last).toEqual(snippet.snippetNode)
+    expect(@tree.root.first).toEqual(snippet)
+    expect(@tree.root.last).toEqual(snippet)
 
 
 describe "SnippetTree with two snippets", ->
@@ -30,57 +30,54 @@ describe "SnippetTree with two snippets", ->
   beforeEach ->
     @tree = new SnippetTree()
 
-    @firstSnippet = test.getH1Snippet()
-    @tree.append(@firstSnippet)
-    @treeNodeA = @firstSnippet.snippetNode
+    @snippetA = test.getH1Snippet()
+    @tree.append(@snippetA)
 
-    @secondSnippet = test.getH1Snippet()
-    @tree.append(@secondSnippet)
-    @treeNodeB = @secondSnippet.snippetNode
+    @snippetB = test.getH1Snippet()
+    @tree.append(@snippetB)
 
-  it "should set properties of snippetTreeNdoe", ->
-    expect(@treeNodeA instanceof SnippetNode).toBe(true)
-    expect(@treeNodeA.previous).not.toBeDefined()
-    expect(@treeNodeA.next).toEqual(@treeNodeB)
+  it "should set previous and next props of snippet", ->
+    expect(@snippetA.previous).not.toBeDefined()
+    expect(@snippetA.next).toEqual(@snippetB)
 
   it "should update first and last pointer of the container", ->
-    expect(@tree.root.first).toEqual(@treeNodeA)
-    expect(@tree.root.last).toEqual(@treeNodeB)
+    expect(@tree.root.first).toEqual(@snippetA)
+    expect(@tree.root.last).toEqual(@snippetB)
 
   it "should be linked correctly", ->
     expect(@tree.root.first.previous).not.toBeDefined()
-    expect(@tree.root.first.next).toEqual(@treeNodeB)
-    expect(@tree.root.last.previous).toEqual(@treeNodeA)
+    expect(@tree.root.first.next).toEqual(@snippetB)
+    expect(@tree.root.last.previous).toEqual(@snippetA)
     expect(@tree.root.last.next).not.toBeDefined()
 
   it "up() should move the second snippet up", ->
-    @treeNodeB.up()
+    @snippetB.up()
 
-    expect(@treeNodeB.previous).not.toBeDefined()
-    expect(@treeNodeB.next).toEqual(@treeNodeA)
+    expect(@snippetB.previous).not.toBeDefined()
+    expect(@snippetB.next).toEqual(@snippetA)
 
-    expect(@treeNodeA.previous).toEqual(@treeNodeB)
-    expect(@treeNodeA.next).not.toBeDefined()
+    expect(@snippetA.previous).toEqual(@snippetB)
+    expect(@snippetA.next).not.toBeDefined()
 
   it "up() should update first and last pointers of the container", ->
-    @treeNodeB.up()
+    @snippetB.up()
 
-    expect(@tree.root.first).toEqual(@treeNodeB)
-    expect(@tree.root.last).toEqual(@treeNodeA)
+    expect(@tree.root.first).toEqual(@snippetB)
+    expect(@tree.root.last).toEqual(@snippetA)
 
-  it "unlink() should remove the second TreeNode", ->
-    @treeNodeB.unlink()
+  it "unlink() should remove the second Snippet", ->
+    @snippetB.unlink()
 
-    expect(@treeNodeA.previous).not.toBeDefined()
-    expect(@treeNodeA.next).not.toBeDefined()
+    expect(@snippetA.previous).not.toBeDefined()
+    expect(@snippetA.next).not.toBeDefined()
 
-    expect(@tree.root.first).toEqual(@treeNodeA)
-    expect(@tree.root.last).toEqual(@treeNodeA)
+    expect(@tree.root.first).toEqual(@snippetA)
+    expect(@tree.root.last).toEqual(@snippetA)
 
-    expect(@treeNodeB.parentContainer).not.toBeDefined()
-    expect(@treeNodeB.snippetTree).not.toBeDefined()
-    expect(@treeNodeB.previous).not.toBeDefined()
-    expect(@treeNodeB.next).not.toBeDefined()
+    expect(@snippetB.parentContainer).not.toBeDefined()
+    expect(@snippetB.snippetTree).not.toBeDefined()
+    expect(@snippetB.previous).not.toBeDefined()
+    expect(@snippetB.next).not.toBeDefined()
 
 
 describe "SnippetTree with a row snippet", ->
@@ -90,20 +87,20 @@ describe "SnippetTree with a row snippet", ->
 
     @rowSnippet = test.getRowSnippet()
     @tree.append(@rowSnippet)
-    @treeNodeRow = @rowSnippet.snippetNode
+
 
   it "should append a snippet to the main column via the snippetContainer", ->
     titleSnippet = test.getH1Snippet()
-    mainContainer = @treeNodeRow.containers["main"]
+    mainContainer = @rowSnippet.containers["main"]
     mainContainer.append(titleSnippet)
-    expect(mainContainer.first).toEqual(titleSnippet.snippetNode)
+    expect(mainContainer.first).toEqual(titleSnippet)
 
   it "should append a snippet to the main column via snippet", ->
     titleSnippet = test.getH1Snippet()
     @rowSnippet.append("main", titleSnippet)
 
-    mainContainer = @treeNodeRow.containers["main"]
-    expect(mainContainer.first).toEqual(titleSnippet.snippetNode)
+    mainContainer = @rowSnippet.containers["main"]
+    expect(mainContainer.first).toEqual(titleSnippet)
 
   it "appended snippet should have a parent snippet", ->
     titleSnippet = test.getH1Snippet()
