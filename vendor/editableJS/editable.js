@@ -3412,6 +3412,10 @@ var string = (function() {
   return {
     trimRight: function(text) {
       return text.replace(/\s+$/, "");
+    },
+
+    trimLeft: function(text) {
+      return text.replace(/^\s+/, "");
     }
   };
 })();
@@ -3431,6 +3435,12 @@ var string = (function() {
   var initialize = function() {
     if (!isInitialized) {
       // TODO check config file integrity
+
+      // make sure rangy is initialized. e.g Rangy doesn't initialize
+      // when loaded after the document is ready.
+      if (!rangy.initialized) {
+        rangy.init();
+      }
 
       isInitialized = true;
       dispatcher.setup();
@@ -3463,12 +3473,21 @@ var string = (function() {
     add: function(target, options) {
       initialize();
 
-      $(target).attr('contenteditable', true);
-      $(target).addClass('-js-editable');
+      if (!this.isDisabled) {
+        $(target)
+          .attr('contenteditable', true)
+          .addClass('-js-editable');
+      } else {
+        $(target)
+          .removeAttr('contenteditable')
+          .addClass('-js-editable-disabled');
+      }
+
       // todo: check css whitespace settings
       // todo: much much more obviously...
       return this;
     },
+
 
     /**
      * Removes the Editable.JS API from the given target elements.
@@ -3482,10 +3501,34 @@ var string = (function() {
      * @chainable
      */
     remove: function(target) {
-      $(target).removeAttr('contenteditable');
-      $(target).removeClass('-js-editable');
+      $(target)
+        .removeAttr('contenteditable')
+        .removeClass('-js-editable')
+        .removeClass('-js-editable-disabled');
       return this;
     },
+
+
+    isDisabled: false,
+
+    disable: function() {
+      this.isDisabled = true;
+
+      $('.-js-editable')
+        .removeAttr('contenteditable')
+        .removeClass('-js-editable')
+        .addClass('-js-editable-disabled');
+    },
+
+    enable: function() {
+      this.isDisabled = false;
+
+      $('.-js-editable-disabled')
+        .attr('contenteditable', true)
+        .removeClass('-js-editable-disabled')
+        .addClass('-js-editable');
+    },
+
 
     /**
      * Subscribe a callback function to a custom event fired by the API.
@@ -3782,11 +3825,15 @@ var behavior = (function() {
     },
 
     insert: function(element, direction) {
-      log('Default insert behavior');
+      log('Default insert ' + direction + ' behavior');
     },
 
-    split: function(element, before, after) {
-      log('Default split behavior');
+    split: function(element, cursor, before, after) {
+      var parent = element.parentNode;
+      var newStart = after.firstChild;
+      parent.insertBefore(before, element);
+      parent.replaceChild(after, element);
+      newStart.focus();
     },
 
     merge: function(element, direction) {
@@ -3822,6 +3869,8 @@ var behavior = (function() {
    */
   Editable.config = {
     log: true,
+    cssClass: '-js-editable',
+    cssClassDisabled: '-js-editable-disabled',
 
     event: {
       /**
@@ -3917,11 +3966,12 @@ var behavior = (function() {
        *
        * @event split
        * @param {HTMLElement} element The element triggering the event.
+       * @param {Cursor} cursor The actual cursor object.
        * @param {String} before The HTML string before the split.
        * @param {String} after The HTML string after the split.
        */
-      split: function(element, before, after) {
-        behavior.split(element, before, after);
+      split: function(element, cursor, before, after) {
+        behavior.split(element, cursor, before, after);
       },
 
       /**
@@ -4035,8 +4085,13 @@ var Cursor = (function() {
       },
 
       isAtTheBeginning: function() {
-        // todo
-        return false;
+        //TODO discuss if this should be
+        //startContainer/startOffset as to 
+        //deal with selections. See #12
+        return parser.isBeginningOfHost(
+          this.host,
+          this.range.endContainer,
+          this.range.endOffset);
       },
 
       insertBefore: function(element) {
@@ -4059,6 +4114,24 @@ var Cursor = (function() {
         var sel = rangy.getSelection();
         sel.removeAllRanges();
         sel.addRange(this.range);
+      },
+
+      before: function() {
+        var fragment = null;
+        var range = this.range.cloneRange();
+        range.setStartBefore(this.host);
+        fragment = range.cloneContents();
+        range.detach();
+        return fragment;
+      },
+
+      after: function() {
+        var fragment = null;
+        var range = this.range.cloneRange();
+        range.setEndAfter(this.host);
+        fragment = range.cloneContents();
+        range.detach();
+        return fragment;
       }
     };
   })();
@@ -4143,12 +4216,11 @@ var dispatcher = (function() {
       var cursor = selectionWatcher.getCursor();
 
       if (cursor.isAtTheEnd()) {
-        notifier('insert', this, 'end');
+        notifier('insert', this, 'after');
       } else if(cursor.isAtTheBeginning()) {
-        notifier('insert', this, 'beginning');
+        notifier('insert', this, 'before');
       } else {
-        var firstPart, secondPart;
-        notifier('split', this, firstPart, secondPart);
+        notifier('split', this, cursor, cursor.before(), cursor.after());
       }
 
     }).on('shiftEnter', function(event) {
@@ -4520,17 +4592,41 @@ var parser = (function() {
       return node.nodeType === 3 && !node.nodeValue;
     },
 
-    isEndOfHost: function(editable, endContainer, endOffset) {
-      if (endContainer === editable) {
-        return this.isEndOffset(endContainer, endOffset);
+    isBeginningOfHost: function(host, container, offset) {
+      if (container === host) {
+        return this.isStartOffset(container, offset);
       }
 
-      if (this.isEndOffset(endContainer, endOffset)) {
-        var parentContainer = endContainer.parentNode;
-        var offsetInParent = this.getNodeIndex(endContainer);
-        return this.isEndOfHost(editable, parentContainer, offsetInParent);
+      if (this.isStartOffset(container, offset)) {
+        var parentContainer = container.parentNode;
+        var offsetInParent = this.getNodeIndex(container);
+        return this.isBeginningOfHost(host, parentContainer, offsetInParent);
       } else {
         return false;
+      }
+    },
+
+    isEndOfHost: function(host, container, offset) {
+      if (container === host) {
+        return this.isEndOffset(container, offset);
+      }
+
+      if (this.isEndOffset(container, offset)) {
+        var parentContainer = container.parentNode;
+        var offsetInParent = this.getNodeIndex(container);
+        return this.isEndOfHost(host, parentContainer, offsetInParent);
+      } else {
+        return false;
+      }
+    },
+
+    isStartOffset: function (container, offset) {
+      if (container.nodeType === 3) {
+        var text = container.nodeValue;
+        var actualStart = text.length - string.trimLeft(text).length;
+        return offset <= actualStart;
+      } else {
+        return container.childNodes[offset] === container.firstChild;
       }
     },
 
@@ -4545,7 +4641,6 @@ var parser = (function() {
         return container.childNodes[offset] === container.lastChild;
       }
     }
-
   };
 })();
 
@@ -4643,7 +4738,6 @@ var selectionWatcher = (function() {
     },
 
     selectionChanged: function() {
-      log('selection changed');
       var newRange = getRangeContainer();
       if (newRange.isDifferentFrom(currentRange)) {
         currentRange = newRange;
