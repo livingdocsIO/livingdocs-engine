@@ -1,7 +1,9 @@
 # Configuration
 # -------------
 
-config = {}
+config = {
+  wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?"
+}
 
 # constants for classes used in a document
 docClass =

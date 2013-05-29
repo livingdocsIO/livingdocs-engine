@@ -16,20 +16,15 @@
 
 class Snippet
 
-  constructor: ({ @template, @$snippet, parentContainer } = {}) ->
+  test = "hey"
+
+  constructor: ({ @template, @$snippet } = {}) ->
     if !@template
       error("cannot instantiate snippet without template reference")
 
     @identifier = @template.identifier
-    @setParent(parentContainer) if parentContainer
     @next = undefined
     @previous = undefined
-
-
-  setParent: (parentContainer) ->
-    @parentContainer = parentContainer
-    @snippetTree = parentContainer?.snippetTree
-    this #chaining
 
 
   addContainer: (snippetContainer) ->
@@ -41,14 +36,7 @@ class Snippet
 
   before: (snippet) ->
     if snippet
-      snippet = @parentContainer.attachSnippet(snippet)
-      snippet.previous = @previous
-      snippet.next = this
-      @previous = snippet
-
-      if snippet.isFirst()
-        @parentContainer.first = snippet
-
+      @parentContainer.insertBefore(this, snippet)
       this #chaining
     else
       @previous
@@ -56,14 +44,7 @@ class Snippet
 
   after: (snippet) ->
     if snippet
-      snippet = @parentContainer.attachSnippet(snippet)
-      snippet.previous = this
-      snippet.next = @next
-      @next = snippet
-
-      if snippet.isLast()
-        @parentContainer.last = snippet
-
+      @parentContainer.insertAfter(this, snippet)
       this #chaining
     else
       @next
@@ -81,52 +62,56 @@ class Snippet
 
   # move up (previous)
   up: () ->
-    if @previous?
-      previous = @previous
-      @unlink()
-      previous.before(this)
-
+    @parentContainer.up(this)
     this #chaining
 
 
   # move down (next)
   down: () ->
-    if @next?
-      next = @next
-      @unlink()
-      next.after(this)
-
+    @parentContainer.down(this)
     this #chaining
-
-
-  isFirst: () ->
-    !@previous?
-
-
-  isLast: () ->
-    !@next?
 
 
   # remove TreeNode from its container and SnippetTree
-  unlink: () ->
-
-    # update parentContainer links
-    @parentContainer.first = @next if @isFirst()
-    @parentContainer.last = @previous if @isLast()
-
-    # update previous and next nodes
-    @next?.previous = @previous
-    @previous?.next = @next
-
-    @previous = undefined
-    @next = undefined
-    @setParent(undefined)
-
-    this #chaining
+  remove: () ->
+    @parentContainer.remove(this)
 
 
   # get the parent snippet
-  parent: () ->
+  getParent: () ->
      @parentContainer?.parentSnippet
+
+
+  parents: (callback) ->
+    snippet = this
+    while (snippet = snippet.getParent())
+      callback(snippet)
+
+
+  children: (callback) ->
+    for name, snippetContainer of @containers
+      snippet = snippetContainer.first
+      while (snippet)
+        callback(snippet)
+        snippet = snippet.next
+
+
+  descendants: (callback) ->
+    for name, snippetContainer of @containers
+      snippet = snippetContainer.first
+      while (snippet)
+        snippet.descendants(callback)
+        callback(snippet)
+        snippet = snippet.next
+
+
+  descendantsAndSelf: (callback) ->
+    callback(this)
+    @descendants(callback)
+
+
+  childrenAndSelf: (callback) ->
+    callback(this)
+    @children(callback)
 
 

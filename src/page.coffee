@@ -26,7 +26,7 @@ page = do ->
 
     error("no rootNode found") if !@$root.length
 
-    snippetTree?.link(@$root)
+    # snippetTree?.link(@$root)
 
 
   initializeListeners: () ->

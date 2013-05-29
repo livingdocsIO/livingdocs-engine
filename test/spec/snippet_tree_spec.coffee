@@ -1,7 +1,7 @@
 # SnippetTree
 # -----------
 
-describe "SnippetTree", ->
+describe "SnippetTree ->", ->
 
   beforeEach ->
     @tree = new SnippetTree()
@@ -25,7 +25,7 @@ describe "SnippetTree", ->
     expect(@tree.root.last).toEqual(snippet)
 
 
-describe "SnippetTree with two snippets", ->
+describe "SnippetTree with two snippets ->", ->
 
   beforeEach ->
     @tree = new SnippetTree()
@@ -65,8 +65,8 @@ describe "SnippetTree with two snippets", ->
     expect(@tree.root.first).toEqual(@snippetB)
     expect(@tree.root.last).toEqual(@snippetA)
 
-  it "unlink() should remove the second Snippet", ->
-    @snippetB.unlink()
+  it "remove() should remove the second Snippet", ->
+    @snippetB.remove()
 
     expect(@snippetA.previous).not.toBeDefined()
     expect(@snippetA.next).not.toBeDefined()
@@ -80,7 +80,7 @@ describe "SnippetTree with two snippets", ->
     expect(@snippetB.next).not.toBeDefined()
 
 
-describe "SnippetTree with a row snippet", ->
+describe "SnippetTree with a row snippet ->", ->
 
   beforeEach ->
     @tree = new SnippetTree()
@@ -105,8 +105,30 @@ describe "SnippetTree with a row snippet", ->
   it "appended snippet should have a parent snippet", ->
     titleSnippet = test.getH1Snippet()
     @rowSnippet.append("main", titleSnippet)
-    expect( titleSnippet.parent() ).toEqual(@rowSnippet)
+    expect( titleSnippet.getParent() ).toEqual(@rowSnippet)
 
+
+  it "each() should visit the row snippet", ->
+    visits = 0
+    @tree.each ->
+      visits += 1
+    expect(visits).toEqual(1)
+
+  it "each() should visit the row snippet", ->
+    # add 2 snippets to main container
+    for num in [0..2]
+      @rowSnippet.append("main", test.getH1Snippet())
+
+    # add 3 snippets to sidebar container
+    for num in [0..1]
+      @rowSnippet.append("sidebar", test.getH1Snippet())
+
+    visits = 0
+    @tree.each ->
+      visits += 1
+
+    # check that all 6 snippets where visited by each
+    expect(visits).toEqual(6)
 
 
 

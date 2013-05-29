@@ -54,7 +54,7 @@ document = do ->
       new SnippetTree(content: contentJson)
 
     # Page initialization
-    page.initializeSection(snippetTree: @snippetTree)
+    # page.initializeSection(snippetTree: @snippetTree)
     page.initializeListeners()
 
     # EditableJS initialization
