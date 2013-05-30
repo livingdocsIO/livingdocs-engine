@@ -28,7 +28,7 @@
 class SnippetTree
 
   constructor: ({ content } = {}) ->
-    @root = new SnippetContainer(snippetTree: this)
+    @root = new SnippetContainer(snippetTree: this, root: true)
     @history = new History()
     @initializeEvents()
 

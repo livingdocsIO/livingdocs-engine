@@ -16,11 +16,11 @@
 
 class Snippet
 
-  test = "hey"
-
   constructor: ({ @template, @$snippet } = {}) ->
     if !@template
       error("cannot instantiate snippet without template reference")
+
+    @$snippet.data("snippet", this) if @$snippet
 
     @identifier = @template.identifier
     @next = undefined
@@ -81,6 +81,9 @@ class Snippet
   getParent: () ->
      @parentContainer?.parentSnippet
 
+
+  # Iterators
+  # ---------
 
   parents: (callback) ->
     snippet = this
