@@ -1,25 +1,18 @@
 describe "mixins util", ->
 
-  # Setup
-  # -----
   beforeEach ->
-
-    # mixin
     @Indestructible =
       destroy: ->
         "nope"
 
 
-  # Tests
-  # -----
-
-  it "should return a function with a prototype", ->
+  it "returns a function with a prototype", ->
     mixinClass = mixins @Indestructible
     expect( $.isFunction(mixinClass) ).toBe(true)
     expect( mixinClass::destroy ).toBeDefined
 
 
-  it "should generally work", ->
+  it "generally works", ->
 
     # class witch uses the mixin
     class Superhero extends mixins @Indestructible

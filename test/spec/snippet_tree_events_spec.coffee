@@ -11,7 +11,7 @@ describe "SnippetTree (Events) ->", ->
     @expectSnippetMoved = test.createCallbackMonitor(@tree.snippetMoved)
 
 
-  it "should raise snippetAdded event", ->
+  it "raises snippetAdded event", ->
     snippet = test.getH1Snippet()
 
     @expectSnippetRemoved 0, =>
@@ -20,7 +20,7 @@ describe "SnippetTree (Events) ->", ->
           @tree.append(snippet)
 
 
-  describe "SnippetTree with two snippets (Events) ->", ->
+  describe "with two snippets (Events) ->", ->
 
     beforeEach ->
       @snippetA = test.getH1Snippet()
@@ -28,17 +28,19 @@ describe "SnippetTree (Events) ->", ->
       @tree.append(@snippetA).append(@snippetB)
 
 
-    it "should raise snippetRemoved event", ->
+    it "raises snippetRemoved event", ->
       @expectSnippetAdded 0, =>
         @expectSnippetMoved 0, =>
           @expectSnippetRemoved 1, =>
             @snippetB.remove()
 
-    it "should raise snippetMoved event", ->
+
+    it "raises snippetMoved event", ->
       @expectSnippetMoved 2, =>
         @snippetB.up()
         @snippetA.up()
 
-    it "should not raise snippetMoved event if snippet did not move", ->
+
+    it "does not raise snippetMoved event if snippet did not move", ->
       @expectSnippetMoved 0, =>
         @snippetA.up()

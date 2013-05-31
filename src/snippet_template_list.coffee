@@ -8,7 +8,6 @@
 #
 # Consider: Implement limitations. An attribute like `list-repetitions="{1,3}"`
 # could deifine how many elements can be created (here with a regex-like syntax).
-
 class SnippetTemplateList
 
   constructor: (@name, $list) ->

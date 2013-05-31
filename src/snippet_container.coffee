@@ -9,35 +9,32 @@
 # @prop first: first snippet in the container
 # @prop last: last snippet in the container
 # @prop parentSnippet: parent Snippet
-
-
 class SnippetContainer
 
+
   constructor: ({ @parentSnippet, @$domNode, @name, @snippetTree, root }) ->
-    @root = root?
+    @isRoot = root?
     @first = @last = undefined
 
 
-  # insert snippet at the beginning
   prepend: (snippet) ->
     if @first
       @insertBefore(@first, snippet)
     else
       @first = @last = snippet
-      @_attachSnippet(snippet)
+      @attachSnippet(snippet)
 
-    @ #chaining
+    this
 
 
-  # insert snippet at the end
   append: (snippet) ->
     if @last
       @insertAfter(@last, snippet)
     else
       @first = @last = snippet
-      @_attachSnippet(snippet)
+      @attachSnippet(snippet)
 
-    @ #chaining
+    this
 
 
   insertBefore: (snippet, insertedSnippet) ->
@@ -46,7 +43,7 @@ class SnippetContainer
       next: snippet
 
     snippet.previous = insertedSnippet
-    @_attachSnippet(insertedSnippet, position)
+    @attachSnippet(insertedSnippet, position)
 
     if !insertedSnippet.previous?
       @first = insertedSnippet
@@ -58,7 +55,7 @@ class SnippetContainer
       next: snippet.next
 
     snippet.next = insertedSnippet
-    @_attachSnippet(insertedSnippet, position)
+    @attachSnippet(insertedSnippet, position)
 
     if !insertedSnippet.next?
       @last = insertedSnippet
@@ -74,7 +71,7 @@ class SnippetContainer
       @insertAfter(snippet.next, snippet)
 
 
-  getSnippetTree: () ->
+  getSnippetTree: ->
     @snippetTree || @parentSnippet.snippetTree
 
 
@@ -95,9 +92,10 @@ class SnippetContainer
   # Every snippet added or moved most come through here.
   # Notifies the snippetTree if the parent snippet is
   # attached to one.
-  _attachSnippet: (snippet, position = {}) ->
+  # @api private
+  attachSnippet: (snippet, position = {}) ->
     func = =>
-      @_link(snippet, position)
+      @link(snippet, position)
 
     if snippetTree = @getSnippetTree()
       snippetTree.attachingSnippet(snippet, func)
@@ -111,10 +109,11 @@ class SnippetContainer
   # Snippets that are moved inside a snippetTree should not
   # call _detachSnippet since we don't want to raise
   # SnippetRemoved events on the snippet tree, in these
-  # cases _unlink can be used
+  # cases unlink can be used
+  # @api private
   _detachSnippet: (snippet) ->
     func = =>
-      @_unlink(snippet)
+      @unlink(snippet)
 
     if snippetTree = @getSnippetTree()
       snippetTree.detachingSnippet(snippet, func)
@@ -122,30 +121,33 @@ class SnippetContainer
       func()
 
 
-  _link: (snippet, position) ->
+  # @api private
+  link: (snippet, position) ->
     if snippet.parentContainer
-        @_unlink(snippet)
+        @unlink(snippet)
 
       position.parentContainer = this
-      @_setSnippetPosition(snippet, position)
+      @setSnippetPosition(snippet, position)
 
 
-  _unlink: (snippet) ->
+  # @api private
+  unlink: (snippet) ->
     container = snippet.parentContainer
     if container
 
       # update parentContainer links
-      container.first = snippet.next if !snippet.previous?
-      container.last = snippet.previous if !snippet.next?
+      container.first = snippet.next unless snippet.previous?
+      container.last = snippet.previous unless snippet.next?
 
       # update previous and next nodes
       snippet.next?.previous = snippet.previous
       snippet.previous?.next = snippet.next
 
-      @_setSnippetPosition(snippet, {})
+      @setSnippetPosition(snippet, {})
 
 
-  _setSnippetPosition: (snippet, { parentContainer, previous, next }) ->
+  # @api private
+  setSnippetPosition: (snippet, { parentContainer, previous, next }) ->
     snippet.parentContainer = parentContainer
     snippet.previous = previous
     snippet.next = next

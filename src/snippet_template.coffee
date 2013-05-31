@@ -15,7 +15,6 @@
 # Consider: Replace lists with inline SnippetTemplates. Inline
 # SnippetTemplates are repeatable and can only be used inside their
 # defining snippet.
-
 class SnippetTemplate
 
   constructor: ({ html, @namespace, @name, identifier, title, version } = {}) ->

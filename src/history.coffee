@@ -1,7 +1,6 @@
 # History
 # -------
 # Represents the performed actions in a document
-
 class History
 
   history: []

@@ -16,12 +16,10 @@
 # ### Page:
 # Initialize event listeners.
 # Link the SnippetTree with the DomTree.
-
-
 document = do ->
 
-  # Private
-  # -------
+  # Private Closure
+  # ---------------
 
   waitingCalls = 1 # 1 -> loadDocument
 

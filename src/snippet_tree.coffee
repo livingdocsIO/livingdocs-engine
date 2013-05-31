@@ -24,7 +24,6 @@
 # Consider: Have a documentFragment as the rootNode if no rootNode is given
 # maybe this would help simplify some code (since snippets are always
 # attached to the DOM).
-
 class SnippetTree
 
   constructor: ({ content } = {}) ->
@@ -36,13 +35,13 @@ class SnippetTree
   # insert snippet at the beginning
   prepend: (snippet) ->
     @root.prepend(snippet)
-    @ #chaining
+    this
 
 
   # insert snippet at the end
   append: (snippet) ->
     @root.append(snippet)
-    @ #chaining
+    this
 
 
   initializeEvents: () ->

@@ -1,6 +1,5 @@
 # Configuration
 # -------------
-
 config = {
   wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?"
 }

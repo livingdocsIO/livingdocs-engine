@@ -1,7 +1,5 @@
 describe "H1 Snippet", ->
 
-  # Setup
-  # -----
   beforeEach ->
     template = new SnippetTemplate
       name: "h1"
@@ -11,13 +9,11 @@ describe "H1 Snippet", ->
     @snippet = template.create()
 
 
-  # Tests
-  # -----
-
-  it "should instantiate", ->
+  it "instantiates from template", ->
     expect(@snippet).toBeDefined()
 
-  it "should have and identifier", ->
+
+  it "has an identifier", ->
     expect(@snippet.identifier).toEqual("test.h1")
 
 

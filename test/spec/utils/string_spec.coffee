@@ -1,23 +1,32 @@
-describe "string helper util", ->
+describe "string helper", ->
 
-  # Tests
-  # -----
+  describe "humanize", ->
 
-  it "S.humanize should work with camel case", ->
-    expect(S.humanize("camelCase")).toEqual("Camel Case")
+    it "works with camel case", ->
+      expect(S.humanize("camelCase")).toEqual("Camel Case")
 
-  it "S.humanize should trim the input", ->
-    expect(S.humanize(" camelCase   ")).toEqual("Camel Case")
+    it "trims the input", ->
+      expect(S.humanize(" camelCase   ")).toEqual("Camel Case")
 
-  it "S.titleize should convert first letters to uppercase", ->
-    expect(S.titleize("my fair lady")).toEqual("My Fair Lady")
 
-  it "S.capitalize should convert first letters to uppercase", ->
-    expect(S.capitalize("a sentence")).toEqual("A sentence")
+  describe "titleize", ->
 
-  it "S.prefix should add a prefix to a string", ->
-    expect(S.prefix("ms-", "word")).toEqual("ms-word")
+    it "converts first letters to uppercase", ->
+      expect(S.titleize("my fair lady")).toEqual("My Fair Lady")
 
-  it "S.prefix should not add a prefix twice", ->
-    expect(S.prefix("ms-", "ms-word")).toEqual("ms-word")
+
+  describe "capitalize", ->
+
+    it "converts first letters to uppercase", ->
+      expect(S.capitalize("a sentence")).toEqual("A sentence")
+
+
+  describe "prefix", ->
+
+    it "adds a prefix to a string", ->
+      expect(S.prefix("ms-", "word")).toEqual("ms-word")
+
+
+    it "does not add a prefix twice", ->
+      expect(S.prefix("ms-", "ms-word")).toEqual("ms-word")
 

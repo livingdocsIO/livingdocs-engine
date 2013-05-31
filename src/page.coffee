@@ -1,7 +1,6 @@
 # page
 # ----
 # Defines the API between the DOM and the document
-
 page = do ->
 
   # Private
@@ -29,7 +28,7 @@ page = do ->
     #   focus.focusChange(event)
 
     $document
-    .on "click.livingdocs", $.proxy(@pageClick, @)
+      .on "click.livingdocs", $.proxy(@pageClick, @)
 
 
   removeListeners: () ->

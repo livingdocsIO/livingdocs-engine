@@ -1,7 +1,6 @@
 # String Helpers
 # --------------
 # inspired by [https://github.com/epeli/underscore.string]()
-
 @S = do ->
 
   # convert 'camelCase' to 'Camel Case'

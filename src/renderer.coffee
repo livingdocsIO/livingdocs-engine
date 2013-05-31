@@ -72,7 +72,7 @@ class Renderer
         next.$snippet.before($snippet)
         @afterDomInsert(snippet)
       else if parentContainer
-        if parentContainer.root
+        if parentContainer.isRoot
           @$root.append($snippet)
         else
           parentContainer.$domNode.append($snippet)

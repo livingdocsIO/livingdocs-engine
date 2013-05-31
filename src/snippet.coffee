@@ -13,8 +13,8 @@
 # columns
 #
 # # @prop parentContainer: parent SnippetContainer
-
 class Snippet
+
 
   constructor: ({ @template, @$snippet } = {}) ->
     if !@template
@@ -31,13 +31,14 @@ class Snippet
     error("SnippetContainer must have a name") if !snippetContainer.name
     @containers ||= {}
     @containers[snippetContainer.name] = snippetContainer
-    this #chaining
+
+    this
 
 
   before: (snippet) ->
     if snippet
       @parentContainer.insertBefore(this, snippet)
-      this #chaining
+      this
     else
       @previous
 
@@ -45,40 +46,39 @@ class Snippet
   after: (snippet) ->
     if snippet
       @parentContainer.insertAfter(this, snippet)
-      this #chaining
+      this
     else
       @next
 
 
   append: (containerName, snippet) ->
     @containers[containerName].append(snippet)
-    this #chaining
+    this
 
 
   prepend: (containerName, snippet) ->
     @containers[containerName].prepend(snippet)
-    this #chaining
+    this
 
 
   # move up (previous)
-  up: () ->
+  up: ->
     @parentContainer.up(this)
-    this #chaining
+    this
 
 
   # move down (next)
-  down: () ->
+  down: ->
     @parentContainer.down(this)
-    this #chaining
+    this
 
 
   # remove TreeNode from its container and SnippetTree
-  remove: () ->
+  remove: ->
     @parentContainer.remove(this)
 
 
-  # get the parent snippet
-  getParent: () ->
+  getParent: ->
      @parentContainer?.parentSnippet
 
 
@@ -116,5 +116,4 @@ class Snippet
   childrenAndSelf: (callback) ->
     callback(this)
     @children(callback)
-
 
