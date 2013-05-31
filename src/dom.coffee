@@ -2,7 +2,6 @@
 # ------------------
 # Methods to parse and update the Dom tree in accordance to
 # the SnippetTree and Livingdocs classes and attributes
-
 dom = do ->
   snippetClass = docClass.snippet
   snippetRegex = new RegExp("(?: |^)#{ snippetClass }(?: |$)")

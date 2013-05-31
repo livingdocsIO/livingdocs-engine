@@ -1,8 +1,6 @@
-
 # EditableJS Controller
 # ---------------------
 # Integrate EditableJS into Livingdocs
-
 editableController = ->
 
   Editable

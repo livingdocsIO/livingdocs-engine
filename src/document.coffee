@@ -16,12 +16,10 @@
 # ### Page:
 # Initialize event listeners.
 # Link the SnippetTree with the DomTree.
-
-
 document = do ->
 
-  # Private
-  # -------
+  # Private Closure
+  # ---------------
 
   waitingCalls = 1 # 1 -> loadDocument
 
@@ -49,16 +47,20 @@ document = do ->
     @initialized = true
 
     @snippetTree = if contentJson
-      new SnippetTree()
-    else
       new SnippetTree(content: contentJson)
+    else
+      new SnippetTree()
 
     # Page initialization
-    page.initializeSection(snippetTree: @snippetTree)
     page.initializeListeners()
 
     # EditableJS initialization
     editableController()
+
+    # render document
+    $root = page.getDocumentSection()
+    @renderer = new Renderer(snippetTree: @snippetTree, rootNode: $root[0])
+    @renderer.render()
 
     documentReady()
 

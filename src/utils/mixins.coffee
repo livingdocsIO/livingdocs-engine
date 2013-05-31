@@ -5,7 +5,6 @@
 #
 # __Usage:__
 # `class Superhero extends mixins Flying, SuperAngry, Indestructible`
-
 mixins = (mixins...) ->
 
   # create an empty function

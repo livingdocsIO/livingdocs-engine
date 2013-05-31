@@ -4,18 +4,18 @@
 # A snippet tree containes all the snippets of a page in hierarchical order.
 #
 # The root of the SnippetTree is a SnippetContainer. A SnippetContainer
-# contains a list of SnippetNodes.
+# contains a list of snippets.
 #
-# SnippetNodes can have multible SnippetContainers themselves.
+# snippets can have multible SnippetContainers themselves.
 #
 # ### Example:
 #     - SnippetContainer (root)
-#       - SnippetNode 'Hero'
-#       - SnippetNode '2 Columns'
+#       - snippet 'Hero'
+#       - snippet '2 Columns'
 #         - SnippetContainer 'main'
-#           - SnippetNode 'Title'
+#           - snippet 'Title'
 #         - SnippetContainer 'sidebar'
-#           - SnippetNode 'Info-Box''
+#           - snippet 'Info-Box''
 #
 # ### Events:
 # The first set of SnippetTree Events are concerned with layout changes like
@@ -24,22 +24,27 @@
 # Consider: Have a documentFragment as the rootNode if no rootNode is given
 # maybe this would help simplify some code (since snippets are always
 # attached to the DOM).
-
 class SnippetTree
 
-  constructor: ({ content, rootNode } = {}) ->
-    @root = new SnippetContainer($domNode: $(rootNode), snippetTree: this)
+  constructor: ({ content } = {}) ->
+    @root = new SnippetContainer(snippetTree: this, root: true)
     @history = new History()
     @initializeEvents()
 
-    # link the snippet tree with a DOM node
-    @link(rootNode) if rootNode
+
+  # insert snippet at the beginning
+  prepend: (snippet) ->
+    @root.prepend(snippet)
+    this
+
+
+  # insert snippet at the end
+  append: (snippet) ->
+    @root.append(snippet)
+    this
 
 
   initializeEvents: () ->
-    # ready event: fires once a SnippetTree is linked to its DOM node
-    # and initialized
-    @ready = $.Callbacks("memory once")
 
     # layout changes
     @snippetAdded = $.Callbacks()
@@ -53,65 +58,9 @@ class SnippetTree
     @snippetSettingsChanged = $.Callbacks()
 
 
-  # attach a SnippetTree to its DOM root node
-  # @param overwriteContent: force rendering of the SnippetTree (overwrite html in rootNode)
-  link: (rootNode, overwriteContent) ->
-    @root.$domNode = $(rootNode)
-    @root.$domNode.html("") if overwriteContent
-
-    if @root.$domNode.html() == ""
-      # render SnippetTree from scratch
-
-      # consider: replace $domNode with a documentFragment and reswap after
-      # everything is inserted (but I don't know if this is actually faster)
-
-      @each (snippetNode) ->
-        snippet = snippetNode
-        snippet.insertIntoDom()
-
-
-    else
-      # initialize while leaving the exisitng Html as is
-
-      # todo: parse DOM and check if has exactly the same structure
-      # as the SnippetTree
-
-      # todo: init snippets and editables
-
-    @ready.fire(this)
-
-
   # Traverse the whole snippet tree.
-  # Depth first: in the order of html source code appearance
   each: (callback) ->
-
-    walker = (snippetNode) ->
-      callback(snippetNode)
-
-      # traverse children
-      for name, snippetContainer of snippetNode.containers
-        walker(snippetContainer.first) if snippetContainer.first
-
-      # traverse siblings
-      walker(snippetNode.next) if snippetNode.next
-
-    walker(@root.first) if @root.first
-
-
-  # insert snippet at the beginning
-  prepend: (snippet) ->
-    @root.prepend(snippet)
-    snippet.insertIntoDom()
-
-    @ #chaining
-
-
-  # insert snippet at the end
-  append: (snippet) ->
-    @root.append(snippet)
-    snippet.insertIntoDom()
-
-    @ #chaining
+    @root.each(callback)
 
 
   # returns a readable string representation of the whole tree
@@ -121,21 +70,59 @@ class SnippetTree
     addLine = (text, indentation = 0) ->
       output += "#{ Array(indentation + 1).join(" ") }#{ text }\n"
 
-    walker = (snippetNode, indentation = 0) ->
-      template = snippetNode.snippet.template
+    walker = (snippet, indentation = 0) ->
+      template = snippet.template
       addLine("- #{ template.title } (#{ template.identifier })", indentation)
 
       # traverse children
-      for name, snippetContainer of snippetNode.containers
+      for name, snippetContainer of snippet.containers
         addLine("#{ name }:", indentation + 2)
         walker(snippetContainer.first, indentation + 4) if snippetContainer.first
 
       # traverse siblings
-      walker(snippetNode.next, indentation) if snippetNode.next
+      walker(snippet.next, indentation) if snippet.next
 
     walker(@root.first) if @root.first
     return output
 
+
+  # Tree Change Events
+  # ------------------
+  # Raise events for Add, Remove and Move of snippets
+  # These functions should only be called by snippetContainers
+
+  attachingSnippet: (snippet, attachSnippetFunc) ->
+
+    if snippet.snippetTree == this
+      # move snippet
+      attachSnippetFunc()
+      @snippetMoved.fire(snippet)
+    else
+      if snippet.snippetTree?
+        # remove from other snippet tree
+        snippet.snippetContainer.detachSnippet(snippet)
+
+      snippet.descendantsAndSelf (sni) =>
+        sni?.snippetTree = this
+
+      attachSnippetFunc()
+      @snippetAdded.fire(snippet)
+
+
+  detachingSnippet: (snippet, detachSnippetFunc) ->
+    if snippet.snippetTree == this
+
+      snippet.descendantsAndSelf (sni) ->
+        sni.snippetTree = undefined
+
+      detachSnippetFunc()
+      @snippetRemoved.fire(snippet)
+    else
+      error("cannot remove snippet from another SnippetTree")
+
+
+  # Serialization
+  # -------------
 
   # returns a JSON representation of the whole tree
   toJson: () ->
