@@ -1,7 +1,6 @@
 # page
 # ----
 # Defines the API between the DOM and the document
-
 page = do ->
 
   # Private
@@ -12,21 +11,16 @@ page = do ->
   # page object
   # -----------
 
-  # initialize document sections
-  #
-  # @params
-  # - rootNode (optional) DOM node that should contain the content
-  initializeSection: ({ rootNode, snippetTree } = {}) ->
-    error("no snippet tree specified") if !snippetTree
-
+  # @param rootNode (optional) DOM node that should contain the content
+  # @return jQuery object: the root node of the document
+  getDocumentSection: ({ rootNode } = {}) ->
     if !rootNode
-      @$root = $(".doc-section").first()
+      $root = $(".#{ docClass.section }").first()
     else
-      @$root = $(rootNode).addClass(".doc-section")
+      $root = $(rootNode).addClass(".#{ docClass.section }")
 
-    error("no rootNode found") if !@$root.length
-
-    snippetTree?.link(@$root)
+    error("no rootNode found") if !$root.length
+    $root
 
 
   initializeListeners: () ->
@@ -34,7 +28,7 @@ page = do ->
     #   focus.focusChange(event)
 
     $document
-    .on "click.livingdocs", $.proxy(@pageClick, @)
+      .on "click.livingdocs", $.proxy(@pageClick, @)
 
 
   removeListeners: () ->
@@ -55,7 +49,6 @@ page = do ->
     # on a margin of a snippet
 
     # todo: check if the click was meant for a snippet container
-
     if snippet
       focus.snippetFocused(snippet)
     else

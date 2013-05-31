@@ -1,53 +1,155 @@
 # SnippetContainer
 # ----------------
+# A SnippetContainer contains and manages a linked list
+# of snippets.
 #
-# @prop parentNode: parent SnippetNode
-
+# The snippetContainer is responsible for keeping its snippetTree
+# informed about changes (only if they are attached to one).
+# 
+# @prop first: first snippet in the container
+# @prop last: last snippet in the container
+# @prop parentSnippet: parent Snippet
 class SnippetContainer
 
-  constructor: ({ @parentNode, @$domNode, @snippetTree, @name }) ->
+
+  constructor: ({ @parentSnippet, @$domNode, @name, @snippetTree, root }) ->
+    @isRoot = root?
     @first = @last = undefined
 
 
-  # insert snippet at the beginning
-  # @param snippet: Snippet or SnippetNode instance
   prepend: (snippet) ->
-    snippetNode = @attachSnippet(snippet)
-
     if @first
-      @first.before(snippetNode)
+      @insertBefore(@first, snippet)
     else
-      @last = snippetNode
+      @first = @last = snippet
+      @attachSnippet(snippet)
 
-    @first = snippetNode
-    @ #chaining
+    this
 
 
-  # insert snippet at the end
-  # @param snippet: Snippet or SnippetNode instance
   append: (snippet) ->
-    snippetNode = @attachSnippet(snippet)
-
     if @last
-      @last.after(snippetNode)
+      @insertAfter(@last, snippet)
     else
-      @first = snippetNode
+      @first = @last = snippet
+      @attachSnippet(snippet)
 
-    @last = snippetNode
-
-    @ #chaining
+    this
 
 
-  # set SnippetNode parent of snippet
-  # @return SnippetNode
-  attachSnippet: (snippet) ->
-    if snippet instanceof SnippetNode
-      snippet.setParent(this)
-    else if snippet instanceof Snippet
-      if snippet.snippetNode
-        snippet.snippetNode.setParent(this)
-      else
-        new SnippetNode(parentContainer: this, snippet: snippet)
+  insertBefore: (snippet, insertedSnippet) ->
+    position =
+      previous: snippet.previous
+      next: snippet
+
+    snippet.previous = insertedSnippet
+    @attachSnippet(insertedSnippet, position)
+
+    if !insertedSnippet.previous?
+      @first = insertedSnippet
+
+
+  insertAfter: (snippet, insertedSnippet) ->
+    position =
+      previous: snippet
+      next: snippet.next
+
+    snippet.next = insertedSnippet
+    @attachSnippet(insertedSnippet, position)
+
+    if !insertedSnippet.next?
+      @last = insertedSnippet
+
+
+  up: (snippet) ->
+    if snippet.previous?
+      @insertBefore(snippet.previous, snippet)
+
+
+  down: (snippet) ->
+    if snippet.next?
+      @insertAfter(snippet.next, snippet)
+
+
+  getSnippetTree: ->
+    @snippetTree || @parentSnippet.snippetTree
+
+
+  each: (callback) ->
+    snippet = @first
+    while (snippet)
+      snippet.descendantsAndSelf(callback)
+      snippet = snippet.next
+
+
+  remove: (snippet) ->
+    @_detachSnippet(snippet)
+
+
+  # Private
+  # -------
+
+  # Every snippet added or moved most come through here.
+  # Notifies the snippetTree if the parent snippet is
+  # attached to one.
+  # @api private
+  attachSnippet: (snippet, position = {}) ->
+    func = =>
+      @link(snippet, position)
+
+    if snippetTree = @getSnippetTree()
+      snippetTree.attachingSnippet(snippet, func)
     else
-      error("incompatible type: param snippet")
+      func()
+
+
+  # Every snippet that is removed must come through here.
+  # Notifies the snippetTree if the parent snippet is
+  # attached to one.
+  # Snippets that are moved inside a snippetTree should not
+  # call _detachSnippet since we don't want to raise
+  # SnippetRemoved events on the snippet tree, in these
+  # cases unlink can be used
+  # @api private
+  _detachSnippet: (snippet) ->
+    func = =>
+      @unlink(snippet)
+
+    if snippetTree = @getSnippetTree()
+      snippetTree.detachingSnippet(snippet, func)
+    else
+      func()
+
+
+  # @api private
+  link: (snippet, position) ->
+    if snippet.parentContainer
+        @unlink(snippet)
+
+      position.parentContainer = this
+      @setSnippetPosition(snippet, position)
+
+
+  # @api private
+  unlink: (snippet) ->
+    container = snippet.parentContainer
+    if container
+
+      # update parentContainer links
+      container.first = snippet.next unless snippet.previous?
+      container.last = snippet.previous unless snippet.next?
+
+      # update previous and next nodes
+      snippet.next?.previous = snippet.previous
+      snippet.previous?.next = snippet.next
+
+      @setSnippetPosition(snippet, {})
+
+
+  # @api private
+  setSnippetPosition: (snippet, { parentContainer, previous, next }) ->
+    snippet.parentContainer = parentContainer
+    snippet.previous = previous
+    snippet.next = next
+
 

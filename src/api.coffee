@@ -6,7 +6,6 @@
 #
 # `doc()`: primary function interface similar to jquery
 # with snippet selectors and stuff...
-
 @doc = (search) ->
   if search
     document.find(search)

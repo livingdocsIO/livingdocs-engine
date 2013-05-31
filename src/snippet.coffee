@@ -3,119 +3,117 @@
 # Snippets are more or less the equivalent to nodes in the DOM tree.
 # Each snippet has a SnippetTemplate which allows to generate HTML
 # from a snippet or generate a snippet instance from HTML.
-
+#
+# Represents a node in a SnippetTree.
+# Every snippet can have a parent (SnippetContainer),
+# siblings (other snippets) and multiple containers (SnippetContainers).
+#
+# The containers are the parents of the child Snippets.
+# E.g. a grid row would have as many containers as it has
+# columns
+#
+# # @prop parentContainer: parent SnippetContainer
 class Snippet
+
 
   constructor: ({ @template, @$snippet } = {}) ->
     if !@template
       error("cannot instantiate snippet without template reference")
 
+    @$snippet.data("snippet", this) if @$snippet
+
     @identifier = @template.identifier
-    @snippetNode = undefined
-    @snippetNodeChanged = false
-    @attachedToDom = false
-
-    # add a reference to the DOM
-    @$snippet.data("snippet", this)
+    @next = undefined
+    @previous = undefined
 
 
-  # move up (previous)
-  up: () ->
-    @snippetNode.up()
-    @updateDomPosition()
-    this #chaining
+  addContainer: (snippetContainer) ->
+    error("SnippetContainer must have a name") if !snippetContainer.name
+    @containers ||= {}
+    @containers[snippetContainer.name] = snippetContainer
 
-
-  # move down (next)
-  down: () ->
-    @snippetNode.down()
-    @updateDomPosition()
-    this #chaining
+    this
 
 
   before: (snippet) ->
     if snippet
-      @snippetNode.before(snippet)
-      this #chaining
+      @parentContainer.insertBefore(this, snippet)
+      this
     else
-      @snippetNode.before()?.snippet
+      @previous
 
 
   after: (snippet) ->
     if snippet
-      @snippetNode.after(snippet)
-      this #chaining
+      @parentContainer.insertAfter(this, snippet)
+      this
     else
-      @snippetNode.after()?.snippet
+      @next
 
 
   append: (containerName, snippet) ->
-    @snippetNode.append(containerName, snippet)
-    snippet.updateDomPosition()
-    this #chaining
+    @containers[containerName].append(snippet)
+    this
 
 
   prepend: (containerName, snippet) ->
-    @snippetNode.prepend(containerName, snippet)
-    snippet.updateDomPosition()
-    this #chaining
+    @containers[containerName].prepend(snippet)
+    this
 
 
-  # get the parent snippet
-  parent: () ->
-     @snippetNode.parentContainer?.parentNode?.snippet
+  # move up (previous)
+  up: ->
+    @parentContainer.up(this)
+    this
 
 
-  updateDomPosition: () ->
-    @detachFromDom() if @attachedToDom
-    @insertIntoDom()
+  # move down (next)
+  down: ->
+    @parentContainer.down(this)
+    this
 
 
-  # insert the snippet into the Dom according to its position
-  # in the SnippetTree
-  insertIntoDom: () ->
-    previous = @snippetNode.previous
-    next = @snippetNode.next
-    parentContainer = @snippetNode.parentContainer
-
-    if !@attachedToDom
-      if previous && previous.snippet.attachedToDom
-        previous.snippet.$snippet.after(@$snippet)
-        @afterDomInsert()
-      else if next && next.snippet.attachedToDom
-        next.snippet.$snippet.before(@$snippet)
-        @afterDomInsert()
-      else if parentContainer
-        parentContainer.$domNode.append(@$snippet)
-        @afterDomInsert()
-      else
-        error("could not insert snippet into Dom")
-
-    this #chaining
+  # remove TreeNode from its container and SnippetTree
+  remove: ->
+    @parentContainer.remove(this)
 
 
-  afterDomInsert: () ->
-    @attachedToDom = true
-
-    # initialize editables
-    editableNodes = @$snippet.findIn("[#{ docAttr.editable }]")
-    Editable.add(editableNodes)
+  getParent: ->
+     @parentContainer?.parentSnippet
 
 
-  detachFromDom: () ->
-    @$snippet.detach()
-    @attachedToDom = false
-    this #chaining
+  # Iterators
+  # ---------
+
+  parents: (callback) ->
+    snippet = this
+    while (snippet = snippet.getParent())
+      callback(snippet)
 
 
-  removeFromDom: () ->
-    if @attachedToDom
-      @$snippet.remove()
-      @attachedToDom = false
-
-    this #chaining
-
-
+  children: (callback) ->
+    for name, snippetContainer of @containers
+      snippet = snippetContainer.first
+      while (snippet)
+        callback(snippet)
+        snippet = snippet.next
 
 
+  descendants: (callback) ->
+    for name, snippetContainer of @containers
+      snippet = snippetContainer.first
+      while (snippet)
+        snippet.descendants(callback)
+        callback(snippet)
+        snippet = snippet.next
+
+
+  descendantsAndSelf: (callback) ->
+    callback(this)
+    @descendants(callback)
+
+
+  childrenAndSelf: (callback) ->
+    callback(this)
+    @children(callback)
 

@@ -1,7 +1,6 @@
 # Script Loader
 # -------------
 # Loading of Javascript and CSS files using yepnope
-
 loader = do ->
 
   loadedCssFiles = []

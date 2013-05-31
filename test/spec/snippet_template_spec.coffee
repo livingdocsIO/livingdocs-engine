@@ -1,32 +1,30 @@
-# Simple Template
-# ---------------
-
 describe "Simple H1 Template", ->
 
-  # Setup
-  # -----
   template = undefined
   beforeEach ->
     template = new SnippetTemplate
       name: "h1"
       html: """<h1 #{ docAttr.editable }="title"></h1>"""
 
-  # Tests
-  # -----
-  it "should have $template Property", ->
+
+  it "has $template Property", ->
     expect(template.$template).toBeDefined()
 
-  it "should have a name", ->
+
+  it "has a name", ->
     expect(template.name).toEqual("h1")
 
-  it "should have stored the html", ->
+
+  it "has stored the html", ->
     expect(template.$template.outerHtml()).toEqual("<h1 #{ docAttr.editable }=\"title\" class=\"#{ docClass.editable }\"></h1>")
 
-  it "should return a snippet", ->
+
+  it "returns a snippet", ->
     snippet = template.create()
     expect(snippet instanceof Snippet).toBe(true)
 
-  it "should return a snippet", ->
+
+  it "returns a snippet", ->
     snippet = template.create
       title: "Humble Bundle"
 
@@ -36,8 +34,7 @@ describe "Simple H1 Template", ->
       """
     )
 
-# Dropdown Template
-# -----------------
+
 describe "Dropdown Template", ->
 
   template = null
@@ -58,7 +55,8 @@ describe "Dropdown Template", ->
         </div>
         """
 
-  it "should have stored the html", ->
+
+  it "has stored the html", ->
     $template = template.$template
     expect($template.findIn("div").length).toEqual(1)
     expect($template.findIn("a").length).toEqual(1)
@@ -68,35 +66,39 @@ describe "Dropdown Template", ->
     # the <li> element should have been cut out and stored in a list item template
     expect($template.findIn("li").length).toEqual(0)
 
-  it "should have a list called 'links'", ->
+
+  it "has a list called 'links'", ->
     expect(template.list("links").name).toEqual("links")
 
-  it "should return a snippet", ->
+
+  it "returns a snippet", ->
     snippet = template.create
       links: { dropdownLink: "one" }
 
     expect(snippet instanceof Snippet).toBe(true)
 
 
-# Static function SnippetTemplate.parseIdentifier()
 describe "SnippetTemplate.parseIdentifier()", ->
 
-  it "should parse 'bootstrap.title'", ->
+  it "parses 'bootstrap.title'", ->
     identifier = SnippetTemplate.parseIdentifier("bootstrap.title")
     expect(identifier.namespace).toEqual("bootstrap")
     expect(identifier.name).toEqual("title")
 
-  it "should not parse 'bootstrap'", ->
+
+  it "does not parse 'bootstrap'", ->
     identifier = SnippetTemplate.parseIdentifier("bootstrap")
     expect(identifier.namespace).toBeUndefined()
     expect(identifier.name).toBeUndefined()
 
-  it "should not parse emtpy string", ->
+
+  it "does not parse emtpy string", ->
     identifier = SnippetTemplate.parseIdentifier("")
     expect(identifier.namespace).toBeUndefined()
     expect(identifier.name).toBeUndefined()
 
-  it "should not parse undefined", ->
+
+  it "does not parse undefined", ->
     identifier = SnippetTemplate.parseIdentifier()
     expect(identifier.namespace).toBeUndefined()
     expect(identifier.name).toBeUndefined()
@@ -105,7 +107,7 @@ describe "SnippetTemplate.parseIdentifier()", ->
 # SnippetTemplate constructor
 describe "new SnippetTemplate()", ->
 
-  it "should accept idenfitier param", ->
+  it "accepts idenfitier param", ->
     template = new SnippetTemplate
       identifier: "bootstrap.title"
       html: """<h1 #{ docAttr.editable }="title"></h1>"""
@@ -121,12 +123,12 @@ describe "container template", ->
   beforeEach ->
     template = test.getRowTemplate()
 
-  it "should initialize SnippetContainers", ->
+
+  it "initializes SnippetContainers", ->
     snippet = template.create()
-    treeNode = snippet.snippetNode
-    expect(treeNode).toBeDefined()
-    expect(treeNode.containers.main instanceof SnippetContainer).toBe(true)
-    expect(treeNode.containers.sidebar instanceof SnippetContainer).toBe(true)
+    expect(snippet).toBeDefined()
+    expect(snippet.containers.main instanceof SnippetContainer).toBe(true)
+    expect(snippet.containers.sidebar instanceof SnippetContainer).toBe(true)
 
 
 

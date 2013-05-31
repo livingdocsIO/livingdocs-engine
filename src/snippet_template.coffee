@@ -15,7 +15,6 @@
 # Consider: Replace lists with inline SnippetTemplates. Inline
 # SnippetTemplates are repeatable and can only be used inside their
 # defining snippet.
-
 class SnippetTemplate
 
   constructor: ({ html, @namespace, @name, identifier, title, version } = {}) ->
@@ -102,11 +101,10 @@ class SnippetTemplate
     for containerName, value of @containers
       $container = snippet.$snippet.findIn("[#{ docAttr.container }=#{ containerName }]")
 
-      snippet.snippetNode ||= new SnippetNode(snippet: snippet)
-      snippet.snippetNode.addContainer new SnippetContainer
+      snippet.addContainer new SnippetContainer
         $domNode: $container
         name: containerName
-        parentNode: snippet.snippetNode
+        parentSnippet: snippet
 
 
   # alias to lists
