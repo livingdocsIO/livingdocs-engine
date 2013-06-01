@@ -1,17 +1,19 @@
-Livingdocs Engine
-=================
+# Livingdocs Engine
 
+## Development
 
-Development
------------
+Follow the style guidelines defined in [STYLE.md](STYLE.md).
 
-Organization:  
-All code is wrapped in one function. All coffee files share the same closure.  
+### Organization
 
-Optional prerequisites:  
+All code is wrapped in one function. All coffee files share the same closure.
+
+### Optional Prerequisites
+
 - [PhantomJS](http://phantomjs.org/)
 
-Setup:
+### Setup
+
 ```bash
 # install PhantomJS with homebrew
 brew install phantomjs
@@ -20,7 +22,8 @@ brew install phantomjs
 npm install
 ```
 
-Grunt tasks:  
+### Grunt Tasks
+
 ```bash
 # watch and update coffee files
 # (required for grunt server and running tests)
@@ -39,11 +42,10 @@ grunt karma:browsers
 grunt build
 ```
 
+## Documentation
 
-Documentation
--------------
+- [Docco](http://jashkenas.github.io/docco/)
 
-[Docco](http://jashkenas.github.io/docco/):
 ```bash
 # install Pygments (required by docco)
 sudo easy_install Pygments
