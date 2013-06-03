@@ -7,10 +7,7 @@
 # `doc()`: primary function interface similar to jquery
 # with snippet selectors and stuff...
 @doc = (search) ->
-  if search
-    document.find(search)
-  else
-    doc #chaining
+  document.find(search)
 
 
 # Helper method to create chainable proxies.
@@ -64,8 +61,10 @@ chainable = (fn, context) ->
 
   @document = document
 
-).call(doc)
+  # enable snippet finder plugins
+  @fn = SnippetArray::
 
+).call(doc)
 
 
 

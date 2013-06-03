@@ -109,12 +109,17 @@ document = do ->
 
 
   # find all instances of a certain SnippetTemplate
-  find: (identifier) ->
-    res = []
-    @snippetTree.each (snippet) ->
-      res.push(snippet) if snippet.identifier == identifier
+  # e.g. search "bootstrap.hero" or just "hero"
+  find: (search) ->
+    if typeof search == "string"
+      res = []
+      @snippetTree.each (snippet) ->
+        if snippet.identifier == search || snippet.template.name == search
+          res.push(snippet)
 
-    res
+      new SnippetArray(res)
+    else
+      new SnippetArray()
 
 
   # print documentation for a snippet template
