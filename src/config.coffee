@@ -2,6 +2,7 @@
 # -------------
 config = {
   wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?"
+  defaultContainerName: "default"
 }
 
 # constants for classes used in a document

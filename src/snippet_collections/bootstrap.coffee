@@ -17,7 +17,7 @@ snippetCollections.bootstrap = do ->
       html:
         """
         <div class="row-fluid">
-          <div class="span8 offset4" data-doc-container></div>
+          <div class="span8 offset2" data-doc-container></div>
         </div>
         """
 

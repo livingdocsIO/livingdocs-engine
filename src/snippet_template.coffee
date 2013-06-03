@@ -139,7 +139,7 @@ class SnippetTemplate
     # (what conventions you may ask...)
 
     if !containerName
-      containerName = "default"
+      containerName = config.defaultContainerName
       $(domNode).attr(docAttr.container, containerName)
 
     @containers ||= {}

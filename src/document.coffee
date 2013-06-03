@@ -32,6 +32,8 @@ document = do ->
     waitingCalls += 1
     return documentReady
 
+  defaultNamespace = undefined
+
   # Document object
   # ---------------
 
@@ -69,6 +71,13 @@ document = do ->
   addSnippetCollection: (snippetCollection, config) ->
     namespace = config?.namespace || "snippet"
 
+    # for convenience add a default namespace if there is just
+    # one namespace loaded
+    if @listSnippetNamespaces().length == 0
+      defaultNamespace = namespace
+    else
+      defaultNamespace = undefined
+
     if config.css
       loader.css(config.css, doBeforeDocumentReady())
 
@@ -81,6 +90,11 @@ document = do ->
         name: name
         html: template.html
         title: template.name
+
+
+  listSnippetNamespaces: () ->
+    for namespace of @snippets
+      namespace
 
 
   # list available snippetTemplates
@@ -141,6 +155,8 @@ document = do ->
 
 
   getTemplate: (identifier) ->
+    identifier = @addDefaultNamespace(identifier)
+
     { namespace, name } = SnippetTemplate.parseIdentifier(identifier)
     snippetTemplate = @snippets[namespace]?[name]
 
@@ -148,5 +164,14 @@ document = do ->
       error("could not find template #{ identifier }")
 
     snippetTemplate
+
+
+  # if just one namespace is loaded we can prepend the default namespace
+  # for convenience
+  addDefaultNamespace: (identifier) ->
+    if defaultNamespace && not /\./.test(identifier)
+      "#{ defaultNamespace }.#{ identifier }"
+    else
+      identifier
 
 

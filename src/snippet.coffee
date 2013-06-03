@@ -52,11 +52,19 @@ class Snippet
 
 
   append: (containerName, snippet) ->
+    if arguments.length == 1
+      snippet = containerName
+      containerName = config.defaultContainerName
+
     @containers[containerName].append(snippet)
     this
 
 
   prepend: (containerName, snippet) ->
+    if arguments.length == 1
+      snippet = containerName
+      containerName = config.defaultContainerName
+
     @containers[containerName].prepend(snippet)
     this
 
