@@ -50,12 +50,13 @@ focus = do ->
   # -----------------
 
   highlightSnippet: () ->
-    if @snippet
-      @snippet.$snippet.addClass(docClass.snippetHighlight)
+    if @snippet?.snippetHtml
+      @snippet.snippetHtml.$html.addClass(docClass.snippetHighlight)
 
 
   removeHighlight: (snippet) ->
-    snippet.$snippet.removeClass(docClass.snippetHighlight)
+    if snippet?.snippetHtml
+      snippet.snippetHtml.$html.removeClass(docClass.snippetHighlight)
 
 
   # Private

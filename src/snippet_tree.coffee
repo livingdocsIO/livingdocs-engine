@@ -27,7 +27,7 @@
 class SnippetTree
 
   constructor: ({ content } = {}) ->
-    @root = new SnippetContainer(snippetTree: this, root: true)
+    @root = new SnippetContainer(snippetTree: this, isRoot: true)
     @history = new History()
     @initializeEvents()
 
@@ -61,6 +61,21 @@ class SnippetTree
   # Traverse the whole snippet tree.
   each: (callback) ->
     @root.each(callback)
+
+
+  # eachWithParents: (snippet, parents) ->
+  #   parents ||= []
+
+  #   # traverse
+  #   parents = parents.push(snippet)
+  #   for name, snippetContainer of snippet.containers
+  #     snippet = snippetContainer.first
+
+  #     while (snippet)
+  #       @eachWithParents(snippet, parents)
+  #       snippet = snippet.next
+
+  #   parents.splice(-1)
 
 
   # returns a readable string representation of the whole tree
@@ -124,7 +139,44 @@ class SnippetTree
   # Serialization
   # -------------
 
+  printJson: ->
+    S.readableJson(@toJson())
+
+
   # returns a JSON representation of the whole tree
-  toJson: () ->
-    #todo
+  toJson: ->
+    json = {}
+    json["root"] = []
+
+    snippetToJson = (snippet, level, containerArray) ->
+      snippetJson = snippet.toJson()
+      snippetJson.level = level
+      containerArray.push snippetJson
+
+      snippetJson
+
+
+    walker = (snippet, level, jsonObj) ->
+      snippetJson = snippetToJson(snippet, level, jsonObj)
+
+      # traverse children
+      for name, snippetContainer of snippet.containers
+        containerArray = snippetJson.containers[snippetContainer.name] = []
+        walker(snippetContainer.first, level + 1, containerArray) if snippetContainer.first
+
+      # traverse siblings
+      walker(snippet.next, level, jsonObj) if snippet.next
+
+    walker(@root.first, 0, json["root"]) if @root.first
+    return json
+
+
+    # if container.isRoot
+
+    # for name, snippetContainer of @containers
+    #   snippet = snippetContainer.first
+    #   while (snippet)
+    #     snippet.descendants(callback)
+    #     callback(snippet)
+    #     snippet = snippet.next
 

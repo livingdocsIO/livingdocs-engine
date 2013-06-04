@@ -10,12 +10,14 @@ test =
   getTemplate: (name) ->
     template = testSnippets.snippets[name]
     new SnippetTemplate
-      name: template.name
+      name: name
+      namespace: testSnippets.config.namespace
+      title: template.name
       html: template.html
 
 
   getSnippet: (name) ->
-    @getTemplate(name).create()
+    @getTemplate(name).createSnippet()
 
 
   # monitor a jQuery.Callbacks object

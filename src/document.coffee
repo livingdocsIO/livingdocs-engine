@@ -119,7 +119,7 @@ document = do ->
   # *Public API*
   createSnippet: (identifier) ->
     template = @getTemplate(identifier)
-    template.create() if template
+    template.createSnippet() if template
 
 
   # find all instances of a certain SnippetTemplate

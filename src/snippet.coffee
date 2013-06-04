@@ -16,23 +16,34 @@
 class Snippet
 
 
-  constructor: ({ @template, @$snippet } = {}) ->
+  constructor: ({ @template } = {}) ->
     if !@template
-      error("cannot instantiate snippet without template reference")
+      error('cannot instantiate snippet without template reference')
 
-    @$snippet.data("snippet", this) if @$snippet
+    @initializeContainers()
+    @initializeEditables()
 
     @identifier = @template.identifier
     @next = undefined
     @previous = undefined
 
 
-  addContainer: (snippetContainer) ->
-    error("SnippetContainer must have a name") if !snippetContainer.name
-    @containers ||= {}
-    @containers[snippetContainer.name] = snippetContainer
+  initializeContainers: ->
+    for containerName of @template.containers
+      @containers ||= {}
+      @containers[containerName] = new SnippetContainer
+        name: containerName
+        parentSnippet: this
 
-    this
+
+  initializeEditables: ->
+    for editableName, defaultValue of @template.editables
+      @editables ||= {}
+      @editables[editableName] = defaultValue
+
+
+  hasContainers: ->
+    @containers?
 
 
   before: (snippet) ->
@@ -67,6 +78,39 @@ class Snippet
 
     @containers[containerName].prepend(snippet)
     this
+
+
+  set: (editable, value) ->
+    if arguments.length == 1
+      value = editable
+      editable = config.defaultFieldName
+
+    if @editables?.hasOwnProperty(editable)
+      if @editables[editable] != value
+        @editables[editable] = value
+        # todo: raise event
+    else
+      error("set error: #{ identifier } has no editable named #{ editable }")
+
+
+  get: (editable, value) ->
+    if arguments.length == 1
+      value = editable
+      editable = config.defaultFieldName
+
+    if @editables?.hasOwnProperty(editable)
+      @editables[editable]
+    else
+      error("get error: #{ identifier } has no editable named #{ editable }")
+
+
+  # creates a snippetHtml instance for this snippet
+  createHtml: () ->
+    @template.createHtml(this) unless @snippetHtml
+
+
+  hasEditables: ->
+    @editables?
 
 
   # move up (previous)
@@ -124,4 +168,21 @@ class Snippet
   childrenAndSelf: (callback) ->
     callback(this)
     @children(callback)
+
+
+  # Serialization
+  # -------------
+
+  toJson: () ->
+
+    json =
+      identifier: @identifier
+      fields: @editables
+
+    for name of @containers
+      json.containers ||= {}
+      json.containers[name] = []
+
+    json
+
 

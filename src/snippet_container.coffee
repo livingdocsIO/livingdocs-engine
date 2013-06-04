@@ -12,8 +12,8 @@
 class SnippetContainer
 
 
-  constructor: ({ @parentSnippet, @$domNode, @name, @snippetTree, root }) ->
-    @isRoot = root?
+  constructor: ({ @parentSnippet, @name, @snippetTree, isRoot }) ->
+    @isRoot = isRoot?
     @first = @last = undefined
 
 

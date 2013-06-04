@@ -6,7 +6,7 @@ describe "H1 Snippet", ->
       namespace: "test"
       html: """<h1 #{ docAttr.editable }="title"></h1>"""
 
-    @snippet = template.create()
+    @snippet = template.createSnippet()
 
 
   it "instantiates from template", ->

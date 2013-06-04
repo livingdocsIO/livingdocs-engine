@@ -17,6 +17,7 @@
 # defining snippet.
 class SnippetTemplate
 
+
   constructor: ({ html, @namespace, @name, identifier, title, version } = {}) ->
     if identifier
       { @namespace, @name } = SnippetTemplate.parseIdentifier(identifier)
@@ -26,11 +27,11 @@ class SnippetTemplate
 
     @version = version || 1
 
-    @$template = $( @pruneHtml(html) ).wrap("<div>")
+    @$template = $( @pruneHtml(html) ).wrap('<div>')
     @$wrap = @$template.parent()
     @title = title || S.humanize( @name )
 
-    @editables = {}
+    @editables = undefined
     @containers = undefined
 
     @parseEditables()
@@ -40,52 +41,27 @@ class SnippetTemplate
 
 
   # create a new snippet instance from this template
-  create: (content) ->
-    $snippet = @createHtml()
-    @content(content, $snippet)
-
-    snippet = new Snippet(template: this, $snippet: $snippet)
-    @initializeContainers(snippet)
-    snippet
+  createSnippet: () ->
+    new Snippet(template: this)
 
 
-  createHtml: (content) ->
-    $snippet = @$template.clone()
-    $snippet.addClass(docClass.snippet)
-    $snippet.attr(docAttr.template, @identifier) if @identifier
-    $snippet
+  createHtml: (snippet) ->
+    if not snippet?
+      snippet = @createSnippet()
+
+    $html = @$template.clone()
+    #fields
+    #containers
+
+    snippetHtml = new SnippetHtml
+      snippet: snippet
+      $html: $html
 
 
   # todo
   pruneHtml: (html) ->
     # e.g. remove ids
     html
-
-
-  # output the accepted content of the snippet
-  # that can be passed to create
-  # e.g: { title: "Itchy and Scratchy" }
-  printDoc: () ->
-    doc =
-      identifier: @identifier
-      editables: @editables
-      containers: @containers
-
-    S.readableJson(doc)
-
-
-  content: (content, $snippet) ->
-    for field, value of content
-      @setField(field, value, $snippet)
-
-
-  setField: (field, value, $snippet) ->
-    list = @lists[field]
-
-    if list != undefined
-      list.content(value)
-    else
-      $snippet.findIn("[#{ docAttr.editable }=#{ field }]").html(value)
 
 
   # todo!
@@ -96,56 +72,57 @@ class SnippetTemplate
     # check out: NodeIterator in rangy could work fine with some modifications
 
 
-  initializeContainers: (snippet) ->
-
-    for containerName, value of @containers
-      $container = snippet.$snippet.findIn("[#{ docAttr.container }=#{ containerName }]")
-
-      snippet.addContainer new SnippetContainer
-        $domNode: $container
-        name: containerName
-        parentSnippet: snippet
-
-
-  # alias to lists
-  list: (listName) ->
-    @lists[listName]
+  findEditables: ($html, callback) ->
+    $html.findIn("[#{ docAttr.editable }]").each (index, elem) ->
+      callback(elem)
 
 
   parseEditables: () ->
-    @$wrap.find("[#{ docAttr.editable }]")
-    .addClass(docClass.editable)
-    .each (index, elem) =>
+    @findEditables @$template, (elem) =>
       $elem = $(elem)
+      $elem.addClass(docClass.editable)
       editableName = $elem.attr(docAttr.editable)
-      if editableName
-        @editables[editableName] = "editable"
-      else
-        error("missing name in snippet template #{ @identifier}")
+      @addEditable(editableName, $elem)
 
 
-  parseContainers: () ->
-    @$wrap.find("[#{ docAttr.container }]")
-    .each (index, elem) =>
+  addEditable: (editableName, $elem) ->
+    if !editableName
+      editableName = config.defaultEditableName
+      $elem.attr(docAttr.editable, editableName)
+
+    @editables ||= {}
+    if !@editables.hasOwnProperty(editableName)
+      @editables[editableName] = undefined
+    else
+      error("editable name '#{ editableName }' already taken: #{ @identifier }")
+
+
+  findContainers: ($html, callback) ->
+    $html.findIn("[#{ docAttr.container }]").each (index, elem) ->
+      callback(elem)
+
+
+  parseContainers: ->
+    @findContainers @$template, (elem) =>
       $elem = $(elem)
       containerName = $elem.attr(docAttr.container)
-      @addContainer(containerName, elem)
+      @addContainer(containerName, $elem)
 
 
   # add a SnippetContainer to this template
   # unnamed containers will default to "default"
-  addContainer: (containerName, domNode) ->
+  addContainer: (containerName, $elem) ->
     # todo: make sure containerName follows conventions
     # (what conventions you may ask...)
 
     if !containerName
       containerName = config.defaultContainerName
-      $(domNode).attr(docAttr.container, containerName)
+      $elem.attr(docAttr.container, containerName)
 
     @containers ||= {}
 
     if !@containers.hasOwnProperty(containerName)
-      @containers[containerName] = "container"
+      @containers[containerName] = undefined
     else
       error("container name '#{ containerName }' already taken: #{ @identifier }")
 
@@ -160,11 +137,28 @@ class SnippetTemplate
     lists
 
 
+  # alias to lists
+  list: (listName) ->
+    @lists[listName]
+
+
+  # output the accepted content of the snippet
+  # that can be passed to create
+  # e.g: { title: "Itchy and Scratchy" }
+  printDoc: () ->
+    doc =
+      identifier: @identifier
+      editables: @editables
+      containers: @containers
+
+    S.readableJson(doc)
+
+
 # Static functions
 # ----------------
 
 SnippetTemplate.parseIdentifier = (identifier) ->
-  if identifier && (parts = identifier.split(".")).length == 2
+  if identifier && (parts = identifier.split('.')).length == 2
     { namespace: parts[0], name: parts[1] }
   else
     error("could not parse snippet template identifier: #{ identifier }")

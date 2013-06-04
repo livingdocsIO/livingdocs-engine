@@ -10,7 +10,7 @@ testSnippets =
       html: """<h1 #{ docAttr.editable }="title"></h1>"""
 
     row:
-      name: 'Title'
+      name: 'Row'
       html:
         """
         <div class="row-fluid">

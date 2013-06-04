@@ -1,8 +1,9 @@
 class Renderer
 
+
   constructor: ({ @snippetTree, rootNode }) ->
-    error("no snippet tree specified") if !@snippetTree
-    error("no root node specified") if !rootNode
+    error('no snippet tree specified') if !@snippetTree
+    error('no root node specified') if !rootNode
 
     @$root = $(rootNode)
     @setupSnippetTreeListeners()
@@ -12,96 +13,99 @@ class Renderer
   # ---------------------------
 
   setupSnippetTreeListeners: () ->
-    @snippetTree.snippetAdded.add( $.proxy(this, "snippetAdded") )
-    @snippetTree.snippetRemoved.add( $.proxy(this, "snippetRemoved") )
-    @snippetTree.snippetMoved.add( $.proxy(this, "snippetMoved") )
+    @snippetTree.snippetAdded.add( $.proxy(this, 'snippetAdded') )
+    @snippetTree.snippetRemoved.add( $.proxy(this, 'snippetRemoved') )
+    @snippetTree.snippetMoved.add( $.proxy(this, 'snippetMoved') )
 
 
   snippetAdded: (snippet) ->
-    @updateDomPosition(snippet)
+    @ensureSnippetHtml(snippet)
+    @updateDomPosition(snippet.snippetHtml)
 
 
   snippetRemoved: (snippet) ->
-    @detachFromDom(snippet) if snippet.attachedToDom
+    if snippet.snippetHtml?.attachedToDom
+      @detachFromDom(snippet.snippetHtml)
 
 
   snippetMoved: (snippet) ->
-    @updateDomPosition(snippet)
+    @ensureSnippetHtml(snippet)
+    @updateDomPosition(snippet.snippetHtml)
 
 
   # Rendering
   # ---------
 
+  ensureSnippetHtml: (snippet) ->
+    if !snippet.snippetHtml
+      snippet.createHtml()
+
+
   render: (overwriteContent) ->
-    @$root.html("") if overwriteContent
-    if @$root.html() == ""
+    @$root.html('') if overwriteContent
+    if @$root.html() == ''
       # render SnippetTree from scratch
       # consider: replace $domNode with a documentFragment and reswap after
       # everything is inserted (but I don't know if this is actually faster)
 
       @snippetTree.each (snippet) ->
-        @insertIntoDom(snippet)
+        @ensureSnippetHtml(snippet)
+        @insertIntoDom(snippet.snippetHtml)
 
 
   remove: () ->
     @snippetTree.each (snippet) ->
-      snippet.attachedToDom = false
+      snippet.snippetHtml?.attachedToDom = false
 
-    @$root.html("")
+    @$root.html('')
 
 
-  updateDomPosition: (snippet) ->
-    @detachFromDom(snippet) if snippet.attachedToDom
-    @insertIntoDom(snippet)
+  updateDomPosition: (snippetHtml) ->
+    @detachFromDom(snippetHtml) if snippetHtml.attachedToDom
+    @insertIntoDom(snippetHtml)
 
 
   # insert the snippet into the Dom according to its position
   # in the SnippetTree
-  insertIntoDom: (snippet) ->
+  insertIntoDom: (snippetHtml) ->
+    snippet = snippetHtml.snippet
     previous = snippet.previous
     next = snippet.next
     parentContainer = snippet.parentContainer
-    attachedToDom = snippet.attachedToDom
-    $snippet = snippet.$snippet
+    $snippet = snippetHtml.$html
 
-    if !attachedToDom
-      if previous && previous.attachedToDom
-        previous.$snippet.after($snippet)
-        @afterDomInsert(snippet)
-      else if next && next.attachedToDom
-        next.$snippet.before($snippet)
-        @afterDomInsert(snippet)
+    unless snippetHtml.attachedToDom
+
+      if previous?.snippetHtml?.attachedToDom
+        previous.snippetHtml.$html.after($snippet)
+        @afterDomInsert(snippetHtml)
+      else if next?.snippetHtml?.attachedToDom
+        next.snippetHtml.$html.before($snippet)
+        @afterDomInsert(snippetHtml)
       else if parentContainer
         if parentContainer.isRoot
           @$root.append($snippet)
         else
-          parentContainer.$domNode.append($snippet)
-        @afterDomInsert(snippet)
+          snippet.getParent().snippetHtml.append(
+            parentContainer.name,
+            snippetHtml
+          )
+        @afterDomInsert(snippetHtml)
       else
-        error("could not insert snippet into Dom")
+        error('could not insert snippet into Dom')
 
-    this #chaining
+    this
 
 
-  afterDomInsert: (snippet) ->
-    snippet.attachedToDom = true
+  afterDomInsert: (snippetHtml) ->
+    snippetHtml.attachedToDom = true
 
     # initialize editables
-    editableNodes = snippet.$snippet.findIn("[#{ docAttr.editable }]")
+    editableNodes = snippetHtml.$html.findIn("[#{ docAttr.editable }]")
     Editable.add(editableNodes)
 
 
-  detachFromDom: (snippet) ->
-    snippet.$snippet.detach()
-    snippet.attachedToDom = false
-    this #chaining
-
-
-  # removeFromDom: (snippet) ->
-  #   if snippet.attachedToDom
-  #     snippet.attachedToDom = false
-  #     snippet.$snippet.remove()
-
-  #   this #chaining
-
+  detachFromDom: (snippetHtml) ->
+    snippetHtml.detach()
+    this
 
