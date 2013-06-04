@@ -121,7 +121,7 @@ describe "container template", ->
 
   template = null
   beforeEach ->
-    template = test.getRowTemplate()
+    template = test.getTemplate('row')
 
 
   it "initializes SnippetContainers", ->

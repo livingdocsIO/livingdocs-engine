@@ -12,13 +12,13 @@ describe "SnippetTree ->", ->
   describe "append", ->
 
     it "sets snippetTree property of the appended snippet", ->
-      snippet = test.getH1Snippet()
+      snippet = test.getSnippet("title")
       @tree.append(snippet)
       expect(snippet.snippetTree).toEqual(@tree)
 
 
     it "appends a snippet to root", ->
-      snippet = test.getH1Snippet()
+      snippet = test.getSnippet("title")
       @tree.append(snippet)
       expect(@tree.root.first).toEqual(snippet)
       expect(@tree.root.last).toEqual(snippet)
@@ -29,10 +29,10 @@ describe "SnippetTree with two snippets ->", ->
   beforeEach ->
     @tree = new SnippetTree()
 
-    @snippetA = test.getH1Snippet()
+    @snippetA = test.getSnippet("title")
     @tree.append(@snippetA)
 
-    @snippetB = test.getH1Snippet()
+    @snippetB = test.getSnippet("title")
     @tree.append(@snippetB)
 
 
@@ -94,21 +94,21 @@ describe "SnippetTree with a row snippet ->", ->
   beforeEach ->
     @tree = new SnippetTree()
 
-    @rowSnippet = test.getRowSnippet()
+    @rowSnippet = test.getSnippet("row")
     @tree.append(@rowSnippet)
 
 
   describe "append", ->
 
     it "adds a snippet to the main column via the snippetContainer", ->
-      titleSnippet = test.getH1Snippet()
+      titleSnippet = test.getSnippet("title")
       mainContainer = @rowSnippet.containers["main"]
       mainContainer.append(titleSnippet)
       expect(mainContainer.first).toEqual(titleSnippet)
 
 
     it "adds a snippet to the main column via snippet", ->
-      titleSnippet = test.getH1Snippet()
+      titleSnippet = test.getSnippet("title")
       @rowSnippet.append("main", titleSnippet)
 
       mainContainer = @rowSnippet.containers["main"]
@@ -116,7 +116,7 @@ describe "SnippetTree with a row snippet ->", ->
 
 
     it "the appended snippet has a parent snippet", ->
-      titleSnippet = test.getH1Snippet()
+      titleSnippet = test.getSnippet("title")
       @rowSnippet.append("main", titleSnippet)
       expect( titleSnippet.getParent() ).toEqual(@rowSnippet)
 
@@ -133,11 +133,11 @@ describe "SnippetTree with a row snippet ->", ->
       it "visits the row snippet and its children", ->
         # add 2 snippets to main container
         for num in [0..2]
-          @rowSnippet.append("main", test.getH1Snippet())
+          @rowSnippet.append("main", test.getSnippet("title"))
 
         # add 3 snippets to sidebar container
         for num in [0..1]
-          @rowSnippet.append("sidebar", test.getH1Snippet())
+          @rowSnippet.append("sidebar", test.getSnippet("title"))
 
         visits = 0
         @tree.each ->

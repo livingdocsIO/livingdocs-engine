@@ -12,7 +12,7 @@ describe "SnippetTree (Events) ->", ->
 
 
   it "raises snippetAdded event", ->
-    snippet = test.getH1Snippet()
+    snippet = test.getSnippet("title")
 
     @expectSnippetRemoved 0, =>
       @expectSnippetMoved 0, =>
@@ -23,8 +23,8 @@ describe "SnippetTree (Events) ->", ->
   describe "with two snippets (Events) ->", ->
 
     beforeEach ->
-      @snippetA = test.getH1Snippet()
-      @snippetB = test.getH1Snippet()
+      @snippetA = test.getSnippet("title")
+      @snippetB = test.getSnippet("title")
       @tree.append(@snippetA).append(@snippetB)
 
 

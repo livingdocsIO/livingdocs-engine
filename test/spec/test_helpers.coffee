@@ -7,30 +7,15 @@ test =
     `expectedProperty in obj`
 
 
-  getH1Template: ->
+  getTemplate: (name) ->
+    template = testSnippets.snippets[name]
     new SnippetTemplate
-      name: "h1"
-      namespace: "test"
-      html: """<h1 #{ docAttr.editable }="title"></h1>"""
+      name: template.name
+      html: template.html
 
 
-  getH1Snippet: ->
-    @getH1Template().create()
-
-
-  getRowTemplate: ->
-    new SnippetTemplate
-      name: "row"
-      html:
-        """
-        <div class="row-fluid">
-          <div class="span8" #{ docAttr.container }="main"></div>
-          <div class="span4" #{ docAttr.container }="sidebar"></div>
-        </div>
-        """
-
-  getRowSnippet: ->
-    @getRowTemplate().create()
+  getSnippet: (name) ->
+    @getTemplate(name).create()
 
 
   # monitor a jQuery.Callbacks object
