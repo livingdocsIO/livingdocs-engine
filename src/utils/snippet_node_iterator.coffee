@@ -20,15 +20,24 @@ class SnippetNodeIterator
   next: () ->
     n = @current = @_next
     child = next = undefined
-    if (@current)
-      if n.nodeType == 1 && !n.hasAttribute(docAttr.container) && child = n.firstChild
+    if @current
+      child = n.firstChild
+      if child && n.nodeType == 1 && !n.hasAttribute(docAttr.container)
         @_next = child
       else
         next = null
-        while ((n != this.root) && !(next = n.nextSibling))
-          n = n.parentNode;
+        while (n != @root) && !(next = n.nextSibling)
+          n = n.parentNode
 
-        this._next = next;
+        @_next = next
+
+    @current
+
+
+  # only iterate over element nodes (Node.ELEMENT_NODE == 1)
+  nextElement: () ->
+    while @next()
+      break if @current.nodeType == 1
 
     @current
 
