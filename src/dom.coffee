@@ -11,7 +11,7 @@ dom = do ->
   parentSnippet: (node) ->
     node = node[0] if node.jquery
 
-    while(node)
+    while node
       if snippetRegex.test(node.className)
         snippet = @getSnippet(node)
         return snippet
@@ -21,12 +21,7 @@ dom = do ->
     return undefined
 
 
-  findInSnippet: () ->
-    #todo
-
-
   # Snippets store a reference of themselves in their Dom node
   # consider: store reference directly without jQuery
   getSnippet: (node) ->
     $(node).data("snippet")
-

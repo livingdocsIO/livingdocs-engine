@@ -34,9 +34,7 @@ class SnippetTemplate
     @editables = undefined
     @containers = undefined
 
-    @parseEditables()
-    @parseContainers()
-
+    @parseTemplate()
     @lists = @createLists()
 
 
@@ -64,67 +62,59 @@ class SnippetTemplate
     html
 
 
-  # todo!
-  findInSnippet: (startNode) ->
-    # todo custom finder to search for attributes inside the snippet nodes
-    # but not beyond. This means do not continue the search in snippet containers
+  # @param snippetNode: root DOM node of the snippet
+  parseTemplate: () ->
+    snippetNode = @$template[0]
+    { @editables, @containers } = @getNodeLinks(snippetNode)
 
-    # check out: NodeIterator in rangy could work fine with some modifications
+    for name, node of @editables
+      @formatEditable(name, node)
 
-
-  findEditables: ($html, callback) ->
-    $html.findIn("[#{ docAttr.editable }]").each (index, elem) ->
-      callback(elem)
-
-
-  parseEditables: () ->
-    @findEditables @$template, (elem) =>
-      $elem = $(elem)
-      $elem.addClass(docClass.editable)
-      editableName = $elem.attr(docAttr.editable)
-      @addEditable(editableName, $elem)
+    for name, node of @containers
+      @formatContainer(name, node)
 
 
-  addEditable: (editableName, $elem) ->
-    if !editableName
-      editableName = config.defaultEditableName
-      $elem.attr(docAttr.editable, editableName)
+  getNodeLinks: (snippetNode) ->
+    editables = containers = undefined
+    iterator = new SnippetNodeIterator(snippetNode)
 
-    @editables ||= {}
-    if !@editables.hasOwnProperty(editableName)
-      @editables[editableName] = undefined
-    else
-      error("editable name '#{ editableName }' already taken: #{ @identifier }")
+    while iterator.nextElement()
+      node = iterator.current
+
+      if name = node.getAttribute(docAttr.editable)
+        editables ||= {}
+        name ||= config.defaultEditableName
+        if editables.hasOwnProperty(name)
+          error("editable name '#{ name }' already taken: #{ @identifier }")
+
+        editables[name] = node
+
+      else if name = node.getAttribute(docAttr.container)
+        containers ||= {}
+        name ||= config.defaultContainerName
+        if containers.hasOwnProperty(name)
+          error("container name '#{ name }' already taken: #{ @identifier }")
+
+        containers[name] = node
+
+    { editables, containers }
 
 
-  findContainers: ($html, callback) ->
-    $html.findIn("[#{ docAttr.container }]").each (index, elem) ->
-      callback(elem)
+  formatEditable: (name, elem) ->
+    $elem = $(elem)
+    $elem.addClass(docClass.editable)
 
-
-  parseContainers: ->
-    @findContainers @$template, (elem) =>
-      $elem = $(elem)
-      containerName = $elem.attr(docAttr.container)
-      @addContainer(containerName, $elem)
+    if name == config.defaultEditableName
+      $elem.attr(docAttr.editable, name)
 
 
   # add a SnippetContainer to this template
   # unnamed containers will default to "default"
-  addContainer: (containerName, $elem) ->
-    # todo: make sure containerName follows conventions
-    # (what conventions you may ask...)
+  formatContainer: (name, elem) ->
+    $elem = $(elem)
 
-    if !containerName
-      containerName = config.defaultContainerName
-      $elem.attr(docAttr.container, containerName)
-
-    @containers ||= {}
-
-    if !@containers.hasOwnProperty(containerName)
-      @containers[containerName] = undefined
-    else
-      error("container name '#{ containerName }' already taken: #{ @identifier }")
+    if name == config.defaultContainerName
+      $elem.attr(docAttr.container, name)
 
 
   createLists: () ->

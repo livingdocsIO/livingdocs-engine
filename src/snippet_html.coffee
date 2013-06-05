@@ -34,7 +34,7 @@ class SnippetHtml
     $container.append(snippetHtml.$html)
 
 
-  detach: () ->
+  detach: ->
     @attachedToDom = false
     @$html.detach()
 
