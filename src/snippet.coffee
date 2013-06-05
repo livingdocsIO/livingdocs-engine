@@ -24,8 +24,10 @@ class Snippet
     @initializeEditables()
 
     @identifier = @template.identifier
-    @next = undefined
-    @previous = undefined
+
+    @next = undefined # set by SnippetContainer
+    @previous = undefined # set by SnippetContainer
+    @snippetTree = undefined # set by SnippetTree
 
 
   initializeContainers: ->
@@ -37,9 +39,9 @@ class Snippet
 
 
   initializeEditables: ->
-    for editableName, defaultValue of @template.editables
+    for editableName of @template.editables
       @editables ||= {}
-      @editables[editableName] = defaultValue
+      @editables[editableName] = undefined
 
 
   hasContainers: ->
@@ -83,25 +85,24 @@ class Snippet
   set: (editable, value) ->
     if arguments.length == 1
       value = editable
-      editable = config.defaultFieldName
+      editable = config.defaultEditableName
 
     if @editables?.hasOwnProperty(editable)
       if @editables[editable] != value
         @editables[editable] = value
-        # todo: raise event
+        @snippetTree.contentChanging(this) if @snippetTree
     else
-      error("set error: #{ identifier } has no editable named #{ editable }")
+      error("set error: #{ @identifier } has no editable named #{ editable }")
 
 
-  get: (editable, value) ->
-    if arguments.length == 1
-      value = editable
+  get: (editable) ->
+    if arguments.length == 0
       editable = config.defaultFieldName
 
     if @editables?.hasOwnProperty(editable)
       @editables[editable]
     else
-      error("get error: #{ identifier } has no editable named #{ editable }")
+      error("get error: #{ @identifier } has no editable named #{ editable }")
 
 
   # creates a snippetHtml instance for this snippet

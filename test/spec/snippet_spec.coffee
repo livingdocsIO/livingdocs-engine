@@ -1,20 +1,60 @@
-describe "H1 Snippet", ->
+describe 'Title Snippet', ->
 
   beforeEach ->
-    template = new SnippetTemplate
-      name: "h1"
-      namespace: "test"
-      html: """<h1 #{ docAttr.editable }="title"></h1>"""
-
-    @snippet = template.createSnippet()
+    @title = test.getSnippet('title')
 
 
-  it "instantiates from template", ->
-    expect(@snippet).toBeDefined()
+  it 'instantiates from template', ->
+    expect(@title).toBeDefined()
 
 
-  it "has an identifier", ->
-    expect(@snippet.identifier).toEqual("test.h1")
+  it 'has an identifier', ->
+    expect(@title.identifier).toEqual('test.title')
 
+
+  it 'has no containers', ->
+    expect(@title.containers).not.toBeDefined()
+
+
+  it 'has no next or previous', ->
+    expect(@title.next).not.toBeDefined()
+    expect(@title.previous).not.toBeDefined()
+
+
+  it 'has one editable named "title"', ->
+    expect( test.size(@title.editables) ).toEqual(1)
+    expect( @title.editables.hasOwnProperty('title') ).toEqual(true)
+
+
+  it 'title editable has no value at the beginning', ->
+    expect(@title.editables['title']).not.toBeDefined()
+
+
+  describe '#set()', ->
+
+    it 'sets editable content', ->
+      caption = 'Talk to the hand'
+      @title.set('title', caption)
+      expect(@title.get('title')).toEqual(caption)
+
+
+describe 'Row Snippet', ->
+
+  beforeEach ->
+    @row = test.getSnippet('row')
+
+
+  it 'has an identifier', ->
+    expect(@row.identifier).toEqual('test.row')
+
+
+  it 'has two containers named main and sidebar', ->
+    expect( test.size(@row.containers)).toEqual(2)
+    expect(@row.containers.hasOwnProperty('main')).toEqual(true)
+    expect(@row.containers.hasOwnProperty('sidebar')).toEqual(true)
+
+
+  it 'has no editables', ->
+    expect(@row.editables).not.toBeDefined()
 
 

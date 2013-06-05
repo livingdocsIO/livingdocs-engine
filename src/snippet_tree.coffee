@@ -136,6 +136,10 @@ class SnippetTree
       error('cannot remove snippet from another SnippetTree')
 
 
+  contentChanging: (snippet) ->
+    @snippetContentChanged.fire(snippet)
+
+
   # Serialization
   # -------------
 

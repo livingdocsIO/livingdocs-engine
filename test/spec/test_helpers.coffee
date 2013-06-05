@@ -20,6 +20,16 @@ test =
     @getTemplate(name).createSnippet()
 
 
+  # simple helper to get the length of an object
+  size: (obj) ->
+    size = 0
+    for key of obj
+      if obj.hasOwnProperty(key)
+        size += 1
+
+    size
+
+
   # monitor a jQuery.Callbacks object
   # @return function(expectedEvents, callback)
   #
