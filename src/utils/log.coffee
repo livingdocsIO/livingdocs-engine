@@ -1,6 +1,5 @@
 # Log Helper
 # ----------
-
 # Default logging helper
 # @params: pass `"trace"` as last parameter to output the call stack
 log = ->
@@ -8,7 +7,7 @@ log = ->
   args = Array.prototype.slice.call(arguments)
 
   if args.length
-    if args[args.length - 1] == "trace"
+    if args[args.length - 1] == 'trace'
       args.pop()
       console.trace() if window.console?.trace
 
@@ -29,7 +28,7 @@ error = ->
   args = Array.prototype.slice.call(arguments)
   args = args[0] if args.length == 1
 
-  if ( window.console && typeof window.console.error == "function")
+  if ( window.console && typeof window.console.error == 'function')
     console.error( args )
   else if ( window.console )
     console.log( args )

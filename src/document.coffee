@@ -40,12 +40,12 @@ document = do ->
   initialized: false
   snippets: {}
   uniqueId: 0
-  ready: $.Callbacks("memory once")
+  ready: $.Callbacks('memory once')
 
 
   # *Public API*
   loadDocument: ({ contentJson }={}) ->
-    error("document is already initialized") if @initialized
+    error('document is already initialized') if @initialized
     @initialized = true
 
     @snippetTree = if contentJson
@@ -69,7 +69,7 @@ document = do ->
 
   # *Public API*
   addSnippetCollection: (snippetCollection, config) ->
-    namespace = config?.namespace || "snippet"
+    namespace = config?.namespace || 'snippet'
 
     # for convenience add a default namespace if there is just
     # one namespace loaded
@@ -107,7 +107,7 @@ document = do ->
 
   # *Public API*
   add: (input) ->
-    if jQuery.type(input) == "string"
+    if jQuery.type(input) == 'string'
       snippet = @createSnippet(input)
     else
       snippet = input
@@ -125,7 +125,7 @@ document = do ->
   # find all instances of a certain SnippetTemplate
   # e.g. search "bootstrap.hero" or just "hero"
   find: (search) ->
-    if typeof search == "string"
+    if typeof search == 'string'
       res = []
       @snippetTree.each (snippet) ->
         if snippet.identifier == search || snippet.template.name == search
@@ -149,7 +149,7 @@ document = do ->
 
   # consider: use guids so transferring snippets between documents
   # can not cause id conflicts
-  nextId: (prefix = "doc") ->
+  nextId: (prefix = 'doc') ->
     @uniqueId += 1
     "#{ prefix }-#{ @uniqueId }"
 

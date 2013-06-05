@@ -26,7 +26,7 @@ localstore = do ->
 
   # HELPERS
   storePosition: (key, $node) ->
-    @set("#{ key }-position", { top: $node.css("top"), left: $node.css("left") })
+    @set("#{ key }-position", { top: $node.css('top'), left: $node.css('left') })
 
 
   restorePosition: (key, $node) ->

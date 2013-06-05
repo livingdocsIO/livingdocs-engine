@@ -19,7 +19,7 @@ page = do ->
     else
       $root = $(rootNode).addClass(".#{ docClass.section }")
 
-    error("no rootNode found") if !$root.length
+    error('no rootNode found') if !$root.length
     $root
 
 
@@ -28,11 +28,11 @@ page = do ->
     #   focus.focusChange(event)
 
     $document
-      .on "click.livingdocs", $.proxy(@pageClick, @)
+      .on 'click.livingdocs', $.proxy(@pageClick, @)
 
 
   removeListeners: () ->
-    $document.off(".livingdocs")
+    $document.off('.livingdocs')
 
 
   pageClick: (event) ->

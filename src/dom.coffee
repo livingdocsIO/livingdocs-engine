@@ -24,4 +24,4 @@ dom = do ->
   # Snippets store a reference of themselves in their Dom node
   # consider: store reference directly without jQuery
   getSnippet: (node) ->
-    $(node).data("snippet")
+    $(node).data('snippet')

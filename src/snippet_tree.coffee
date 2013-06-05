@@ -80,7 +80,7 @@ class SnippetTree
 
   # returns a readable string representation of the whole tree
   print: () ->
-    output = "SnippetTree\n-----------\n"
+    output = 'SnippetTree\n-----------\n'
 
     addLine = (text, indentation = 0) ->
       output += "#{ Array(indentation + 1).join(" ") }#{ text }\n"
@@ -133,7 +133,7 @@ class SnippetTree
       detachSnippetFunc()
       @snippetRemoved.fire(snippet)
     else
-      error("cannot remove snippet from another SnippetTree")
+      error('cannot remove snippet from another SnippetTree')
 
 
   # Serialization
@@ -146,7 +146,7 @@ class SnippetTree
   # returns a JSON representation of the whole tree
   toJson: ->
     json = {}
-    json["root"] = []
+    json['root'] = []
 
     snippetToJson = (snippet, level, containerArray) ->
       snippetJson = snippet.toJson()
@@ -167,7 +167,7 @@ class SnippetTree
       # traverse siblings
       walker(snippet.next, level, jsonObj) if snippet.next
 
-    walker(@root.first, 0, json["root"]) if @root.first
+    walker(@root.first, 0, json['root']) if @root.first
     return json
 
 

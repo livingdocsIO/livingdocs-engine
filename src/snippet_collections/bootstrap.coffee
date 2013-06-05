@@ -5,15 +5,15 @@
 
 snippetCollections.bootstrap = do ->
   config:
-    namespace: "bootstrap"
+    namespace: 'bootstrap'
     css: [
-      "/test/manual/bootstrap/css/bootstrap.css"
-      "/test/manual/css/bootstrap-adjust.css"
+      '/test/manual/bootstrap/css/bootstrap.css'
+      '/test/manual/css/bootstrap-adjust.css'
     ]
 
   snippets:
     column:
-      name: "Single Centered Column"
+      name: 'Single Centered Column'
       html:
         """
         <div class="row-fluid">
@@ -22,7 +22,7 @@ snippetCollections.bootstrap = do ->
         """
 
     mainSidebar:
-      name: "Main and Sidebar Columns"
+      name: 'Main and Sidebar Columns'
       html:
         """
         <div class="row-fluid">
@@ -32,7 +32,7 @@ snippetCollections.bootstrap = do ->
         """
 
     hero:
-      name: "Hero"
+      name: 'Hero'
       html:
         """
         <div class="hero-unit">
@@ -42,7 +42,7 @@ snippetCollections.bootstrap = do ->
         """
 
     header:
-      name: "Header"
+      name: 'Header'
       html:
         """
         <div class="page-header">
@@ -51,19 +51,19 @@ snippetCollections.bootstrap = do ->
         """
 
     title:
-      name: "Title"
+      name: 'Title'
       html: """<h1 data-doc-editable="title">Titel</h1>"""
 
     subtitle:
-      name: "Subtitle"
+      name: 'Subtitle'
       html: """<h2 data-doc-editable="title">Untertitel</h2>"""
 
     smallSubtitle:
-      name: "Paragraph Title"
+      name: 'Paragraph Title'
       html: """<h3 data-doc-editable="title">Lorem ipsum dolorem</h3>"""
 
     text:
-      name: "Text"
+      name: 'Text'
       html:
         """
         <p data-doc-editable="title">
@@ -72,7 +72,7 @@ snippetCollections.bootstrap = do ->
         """
 
     separator:
-      name: "Separator"
+      name: 'Separator'
       html:
         """
         <div>
@@ -81,7 +81,7 @@ snippetCollections.bootstrap = do ->
         """
 
     info:
-      name: "Info"
+      name: 'Info'
       html:
         """
         <div class="alert alert-info" data-doc-editable="text">
@@ -90,21 +90,21 @@ snippetCollections.bootstrap = do ->
         """
 
     button:
-      name: "Button"
+      name: 'Button'
       html:
         """
         <button class="btn" type="button" data-doc-editable="button">Button</button>
         """
 
     largeButton:
-      name: "Large Button"
+      name: 'Large Button'
       html:
         """
         <button class="btn btn-block" type="button" data-doc-editable="button">Large Button</button>
         """
 
     image:
-      name: "Image"
+      name: 'Image'
       html:
         """
         <div class="img-polaroid" data-doc-editable="image">

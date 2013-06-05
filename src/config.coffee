@@ -2,33 +2,33 @@
 # -------------
 config = {
   wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?"
-  defaultContainerName: "default"
-  defaultEditableName: "default"
+  defaultContainerName: 'default'
+  defaultEditableName: 'default'
 }
 
 # constants for classes used in a document
 docClass =
 
   # document classes
-  section: "doc-section"
+  section: 'doc-section'
 
   # snippet classes
-  snippet: "doc-snippet"
-  editable: "doc-editable"
+  snippet: 'doc-snippet'
+  editable: 'doc-editable'
 
   # highlight classes
-  snippetHighlight: "doc-snippet-highlight"
-  containerHighlight: "doc-container-highlight"
+  snippetHighlight: 'doc-snippet-highlight'
+  containerHighlight: 'doc-container-highlight'
 
 
 # constants for attributes used in a document
 docAttr =
 
   # snippet attributes
-  template: "doc-template"
-  editable: "doc-editable"
-  container: "doc-container"
-  list: "doc-list"
+  template: 'doc-template'
+  editable: 'doc-editable'
+  container: 'doc-container'
+  list: 'doc-list'
 
 
 # prepend attributes with data-
