@@ -19,6 +19,9 @@ class SnippetTemplate
 
 
   constructor: ({ html, @namespace, @name, identifier, title, version } = {}) ->
+    if not html
+      error('SnippetTemplate: param html missing')
+
     if identifier
       { @namespace, @name } = SnippetTemplate.parseIdentifier(identifier)
 
@@ -33,6 +36,7 @@ class SnippetTemplate
 
     @editables = undefined
     @containers = undefined
+    @defaults = {}
 
     @parseTemplate()
     @lists = @createLists()
@@ -74,6 +78,8 @@ class SnippetTemplate
       @formatContainer(name, node)
 
 
+  # Find and store all DOM nodes which are editables or containers
+  # in the html of a snippet or the html of a template.
   getNodeLinks: (snippetNode) ->
     editables = containers = undefined
     iterator = new SnippetNodeIterator(snippetNode)
@@ -104,17 +110,24 @@ class SnippetTemplate
     $elem = $(elem)
     $elem.addClass(docClass.editable)
 
+    defaultValue = elem.innerHTML
+    # not sure how to deal with default values in editables...
+    # elem.innerHTML = ''
+
+    if defaultValue
+      @defaults[name] = defaultValue
+
     if name == config.defaultEditableName
       $elem.attr(docAttr.editable, name)
 
 
-  # add a SnippetContainer to this template
-  # unnamed containers will default to "default"
   formatContainer: (name, elem) ->
-    $elem = $(elem)
+
+    # remove all content fron a container from the template
+    elem.innerHTML = ''
 
     if name == config.defaultContainerName
-      $elem.attr(docAttr.container, name)
+      $(elem).attr(docAttr.container, name)
 
 
   createLists: () ->

@@ -1,4 +1,4 @@
-describe 'Simple H1 Template', ->
+describe 'Title Template', ->
 
   template = undefined
   beforeEach ->
@@ -114,7 +114,7 @@ describe 'new SnippetTemplate()', ->
 
 
 # Snippet with snippet containers
-describe 'container template', ->
+describe 'Row Template', ->
 
   template = null
   beforeEach ->
@@ -127,6 +127,26 @@ describe 'container template', ->
     expect(snippet.containers.main instanceof SnippetContainer).toBe(true)
     expect(snippet.containers.sidebar instanceof SnippetContainer).toBe(true)
 
+
+describe 'Subtitle Template', ->
+
+  it 'has a default value', ->
+    subtitle = test.getTemplate('subtitle')
+    expect(subtitle.defaults['title']).toEqual('Who\'s your Caddy?')
+
+
+  it 'leaves the default value in the template', ->
+    subtitle = test.getTemplate('subtitle')
+    expect(subtitle.$template[0].innerHTML).toEqual('Who\'s your Caddy?')
+
+
+describe 'Stuffed Container', ->
+
+  it 'removes container content from $template', ->
+    stuffedContainer = test.getTemplate('stuffedContainer')
+    $container = stuffedContainer.$template.find('.container')
+    expect($container.length).toEqual(1)
+    expect($container.html()).toEqual('')
 
 
 

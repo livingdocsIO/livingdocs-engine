@@ -9,19 +9,19 @@
 # @return {String} outerHtml
 jQuery.fn.outerHtml = jQuery.fn.outerHtml || ->
   el = this[0]
+  if el
+    if (typeof el.outerHTML != 'undefined')
+      return el.outerHTML
 
-  if (typeof el.outerHTML != 'undefined')
-    return el.outerHTML
-
-  try
-    # Gecko-based browsers, Safari, Opera.
-    (new XMLSerializer()).serializeToString(el)
-  catch error
     try
-      # Internet Explorer.
-      el.xml
-    catch error2
-      # do nothing
+      # Gecko-based browsers, Safari, Opera.
+      (new XMLSerializer()).serializeToString(el)
+    catch error
+      try
+        # Internet Explorer.
+        el.xml
+      catch error2
+        # do nothing
 
 
 # Switch one class with another
