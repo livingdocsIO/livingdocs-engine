@@ -46,6 +46,8 @@
           row.append("main", doc.create("bootstrap.hero"));
           row.append("main", doc.create("bootstrap.text"));
           row.append("sidebar", doc.create("bootstrap.title"));
+          var single = doc.add("bootstrap.column");
+          single.append(doc.create("bootstrap.hero"));
         });
 
       });

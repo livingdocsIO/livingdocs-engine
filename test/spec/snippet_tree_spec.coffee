@@ -89,7 +89,38 @@ describe "SnippetTree with two snippets ->", ->
       expect(@snippetB.next).not.toBeDefined()
 
 
-describe "SnippetTree with a row snippet ->", ->
+describe "SnippetTree with a single-column row snippet ->", ->
+  beforeEach ->
+    @tree = new SnippetTree()
+
+    @container = test.getSnippet("container")
+    @tree.append(@container)
+
+  describe "append", ->
+
+    it "adds a snippet to the single column via the snippetContainer", ->
+      titleSnippet = test.getSnippet("title")
+      mainContainer = @container.containers["default"]
+      mainContainer.append(titleSnippet)
+      expect(mainContainer.first).toEqual(titleSnippet)
+
+
+    it "adds a snippet to the main column via snippet", ->
+      titleSnippet = test.getSnippet("title")
+      @container.append(titleSnippet)
+
+      mainContainer = @container.containers["default"]
+      expect(mainContainer.first).toEqual(titleSnippet)
+
+
+    it "the appended snippet has a parent snippet", ->
+      titleSnippet = test.getSnippet("title")
+      @container.append(titleSnippet)
+      expect( titleSnippet.getParent() ).toEqual(@container)
+
+
+
+describe "SnippetTree with a multi-column row snippet ->", ->
 
   beforeEach ->
     @tree = new SnippetTree()

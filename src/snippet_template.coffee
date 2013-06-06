@@ -87,17 +87,19 @@ class SnippetTemplate
     while iterator.nextElement()
       node = iterator.current
 
-      if name = node.getAttribute(docAttr.editable)
-        editables ||= {}
+      if node.hasAttribute(docAttr.editable)
+        name = node.getAttribute(docAttr.editable)
         name ||= config.defaultEditableName
+        editables ||= {}
         if editables.hasOwnProperty(name)
           error("editable name '#{ name }' already taken: #{ @identifier }")
 
         editables[name] = node
 
-      else if name = node.getAttribute(docAttr.container)
-        containers ||= {}
+      else if node.hasAttribute(docAttr.container)
+        name = node.getAttribute(docAttr.container)
         name ||= config.defaultContainerName
+        containers ||= {}
         if containers.hasOwnProperty(name)
           error("container name '#{ name }' already taken: #{ @identifier }")
 

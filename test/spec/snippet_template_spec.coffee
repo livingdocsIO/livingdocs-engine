@@ -140,6 +140,13 @@ describe 'Subtitle Template', ->
     expect(subtitle.$template[0].innerHTML).toEqual('Who\'s your Caddy?')
 
 
+describe 'Container', ->
+
+ it 'creates a default container', ->
+    container = test.getTemplate('container')
+    expect(container.containers.hasOwnProperty('default'))
+
+
 describe 'Stuffed Container', ->
 
   it 'removes container content from $template', ->
