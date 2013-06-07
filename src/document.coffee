@@ -57,7 +57,7 @@ document = do ->
     page.initializeListeners()
 
     # EditableJS initialization
-    editableController()
+    editableController.setup()
 
     # render document
     $root = page.getDocumentSection()

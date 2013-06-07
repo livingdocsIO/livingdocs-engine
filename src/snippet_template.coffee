@@ -91,19 +91,19 @@ class SnippetTemplate
         name = node.getAttribute(docAttr.editable)
         name ||= config.defaultEditableName
         editables ||= {}
-        if editables.hasOwnProperty(name)
+        if not editables.hasOwnProperty(name)
+          editables[name] = node
+        else
           error("editable name '#{ name }' already taken: #{ @identifier }")
-
-        editables[name] = node
 
       else if node.hasAttribute(docAttr.container)
         name = node.getAttribute(docAttr.container)
         name ||= config.defaultContainerName
         containers ||= {}
-        if containers.hasOwnProperty(name)
+        if not containers.hasOwnProperty(name)
+          containers[name] = node
+        else
           error("container name '#{ name }' already taken: #{ @identifier }")
-
-        containers[name] = node
 
     { editables, containers }
 

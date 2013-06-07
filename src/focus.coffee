@@ -24,14 +24,14 @@ focus = do ->
 
 
   # call after browser focus change
-  editableFocused: (editableNode) ->
+  editableFocused: (editableNode, snippet) ->
     if @editableNode != editableNode
-      snippet = dom.parentSnippet(editableNode)
+      snippet ||= dom.parentSnippet(editableNode)
       @setFocus(snippet, editableNode)
 
 
   # call after browser focus change
-  editableBlurred: (editableNode) ->
+  editableBlurred: (editableNode, snippet) ->
     if @editableNode == editableNode
       @setFocus(@snippet, undefined)
 
@@ -42,14 +42,14 @@ focus = do ->
       @setFocus(snippet, undefined)
 
 
-  blur: () ->
+  blur: ->
     @setFocus(undefined, undefined)
 
 
   # Highlight methods
   # -----------------
 
-  highlightSnippet: () ->
+  highlightSnippet: ->
     if @snippet?.snippetHtml
       @snippet.snippetHtml.$html.addClass(docClass.snippetHighlight)
 
@@ -63,13 +63,13 @@ focus = do ->
   # -------
 
   # @api private
-  blurEditable: () ->
+  blurEditable: ->
     if @editableNode
       @editableNode = undefined
 
 
   # @api private
-  blurSnippet: () ->
+  blurSnippet: ->
     if @snippet
       @removeHighlight(@snippet)
 

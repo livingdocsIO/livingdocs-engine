@@ -31,6 +31,10 @@ chainable = (fn, context) ->
 # add public API methods to the doc function
 ( ->
 
+
+  # Document Setup & Manipulation
+  # -----------------------------
+
   # Initialize the document
   @loadDocument = chainable(document, 'loadDocument')
 
@@ -47,9 +51,20 @@ chainable = (fn, context) ->
   # @return Snippet
   @create = $.proxy(document, 'createSnippet')
 
-  # Get help about a snippet
-  # @param identifier: (String) snippet identifier e.g. "bootstrap.title"
-  @help = $.proxy(document, 'help')
+
+  # Events
+  # ------
+
+  @ready = chainable(document.ready, 'add')
+
+  @snippetFocused = chainable(focus.snippetFocus, 'add')
+  @snippetBlurred = chainable(focus.snippetBlur, 'add')
+
+  @textSelection = chainable(editableController.selection, 'add')
+
+
+  # Help & Documentation
+  # --------------------
 
   # Print the content of the snippetTree in a readable string
   @printTree = $.proxy(document, 'printTree')
@@ -57,12 +72,22 @@ chainable = (fn, context) ->
   # Print a list of all available snippets
   @listSnippets = $.proxy(document, 'listSnippets')
 
-  @ready = chainable(document.ready, 'add')
+  # Get help about a snippet
+  # @param identifier: (String) snippet identifier e.g. "bootstrap.title"
+  @help = $.proxy(document, 'help')
 
-  @document = document
+
+  # For Plugins & Extensions
+  # ------------------------
 
   # enable snippet finder plugins
   @fn = SnippetArray::
+
+
+  # Debugging & Development
+  # -----------------------
+
+  @document = document
 
 ).call(doc)
 
