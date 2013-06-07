@@ -82,6 +82,13 @@ class SnippetContainer
       snippet = snippet.next
 
 
+  eachContainer: (callback) ->
+    callback(this)
+    @each (snippet) ->
+      for name, snippetContainer of snippet.containers
+        callback(snippetContainer)
+
+
   remove: (snippet) ->
     @_detachSnippet(snippet)
 

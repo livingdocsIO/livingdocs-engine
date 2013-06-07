@@ -10,12 +10,12 @@
 #
 # ### Example:
 #     - SnippetContainer (root)
-#       - snippet 'Hero'
-#       - snippet '2 Columns'
+#       - Snippet 'Hero'
+#       - Snippet '2 Columns'
 #         - SnippetContainer 'main'
-#           - snippet 'Title'
+#           - Snippet 'Title'
 #         - SnippetContainer 'sidebar'
-#           - snippet 'Info-Box''
+#           - Snippet 'Info-Box''
 #
 # ### Events:
 # The first set of SnippetTree Events are concerned with layout changes like
@@ -61,6 +61,10 @@ class SnippetTree
   # Traverse the whole snippet tree.
   each: (callback) ->
     @root.each(callback)
+
+
+  eachContainer: (callback) ->
+    @root.eachContainer(callback)
 
 
   # eachWithParents: (snippet, parents) ->
