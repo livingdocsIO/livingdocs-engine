@@ -67,6 +67,11 @@ class SnippetTree
     @root.eachContainer(callback)
 
 
+  # Traverse all containers and snippets
+  all: (callback) ->
+    @root.all(callback)
+
+
   # eachWithParents: (snippet, parents) ->
   #   parents ||= []
 
@@ -163,7 +168,6 @@ class SnippetTree
 
       snippetJson
 
-
     walker = (snippet, level, jsonObj) ->
       snippetJson = snippetToJson(snippet, level, jsonObj)
 
@@ -177,14 +181,3 @@ class SnippetTree
 
     walker(@root.first, 0, json['root']) if @root.first
     return json
-
-
-    # if container.isRoot
-
-    # for name, snippetContainer of @containers
-    #   snippet = snippetContainer.first
-    #   while (snippet)
-    #     snippet.descendants(callback)
-    #     callback(snippet)
-    #     snippet = snippet.next
-

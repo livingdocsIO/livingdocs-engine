@@ -15,6 +15,7 @@ docClass =
   # snippet classes
   snippet: 'doc-snippet'
   editable: 'doc-editable'
+  interface: 'doc-ui'
 
   # highlight classes
   snippetHighlight: 'doc-snippet-highlight'

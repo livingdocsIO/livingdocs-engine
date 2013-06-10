@@ -107,7 +107,7 @@ class Snippet
 
   # creates a snippetHtml instance for this snippet
   createHtml: () ->
-    @template.createHtml(this) unless @snippetHtml
+    @template.createHtml(this) unless @snippetHtml?
 
 
   hasEditables: ->
@@ -131,8 +131,20 @@ class Snippet
     @parentContainer.remove(this)
 
 
+  # @api private
+  destroy: ->
+    # remove user interface elements
+    @uiInjector.remove() if @uiInjector
+
+
   getParent: ->
      @parentContainer?.parentSnippet
+
+
+  ui: ->
+    if not @uiInjector
+      @snippetTree.renderer.createInterfaceInjector(this)
+    @uiInjector
 
 
   # Iterators
@@ -164,6 +176,21 @@ class Snippet
   descendantsAndSelf: (callback) ->
     callback(this)
     @descendants(callback)
+
+
+  # return all descendant containers (including those of this snippet)
+  descendantContainers: (callback) ->
+    @descendantsAndSelf (snippet) ->
+      for name, snippetContainer of snippet.containers
+        callback(snippetContainer)
+
+
+  # return all descendant containers and snippets
+  allDescendants: (callback) ->
+    @descendantsAndSelf (snippet) =>
+      callback(snippet) if snippet != this
+      for name, snippetContainer of snippet.containers
+        callback(snippetContainer)
 
 
   childrenAndSelf: (callback) ->

@@ -16,13 +16,13 @@ module.exports = (grunt) ->
     watch:
       livereload:
         files: [
-          '*.html',
+          '*.html'
           '.tmp/{,*/}*.js'
         ]
         tasks: ['livereload']
       src:
         files: [
-          'src/{,*/}*.coffee',
+          'src/{,*/}*.coffee'
           'test/spec/{,*/}*.coffee'
         ]
         tasks: ['coffee']
@@ -50,10 +50,10 @@ module.exports = (grunt) ->
           join: true
         files:
           '.tmp/livingdocs_engine.js': [
-            'src/utils/*.coffee',
-            'src/mixins/*.coffee',
-            'src/config.coffee',
-            'src/!(api|config).coffee',
+            'src/utils/*.coffee'
+            'src/mixins/*.coffee'
+            'src/config.coffee'
+            'src/!(api|config).coffee'
             'src/api.coffee'
           ]
       test:
@@ -61,12 +61,14 @@ module.exports = (grunt) ->
           join: true
         files:
           '.tmp/livingdocs_engine_test.js': [
-            'src/utils/*.coffee',
-            'src/mixins/*.coffee',
-            'src/config.coffee',
-            'src/!(api|config).coffee',
-            'src/api.coffee',
-            'test/spec/{,*/}*.coffee'
+            'src/utils/*.coffee'
+            'src/mixins/*.coffee'
+            'src/config.coffee'
+            'src/!(api|config).coffee'
+            'src/api.coffee'
+            'test/spec/utils/*.coffee'
+            'test/spec/mocks/*.coffee'
+            'test/spec/*.coffee'
           ]
       snippetCollections:
         files:
@@ -111,31 +113,31 @@ module.exports = (grunt) ->
   grunt.renameTask('regarde', 'watch')
 
   grunt.registerTask('dev', [
-    'clean:tmp',
-    'coffee',
+    'clean:tmp'
+    'coffee'
     'watch:src'
   ])
 
   grunt.registerTask('server', [
-    'clean:tmp',
-    'coffee',
-    'livereload-start',
-    'connect:livereload',
-    'open',
+    'clean:tmp'
+    'coffee'
+    'livereload-start'
+    'connect:livereload'
+    'open'
     'watch:livereload'
   ])
 
   grunt.registerTask('test', [
-    'clean:tmp',
-    'coffee',
+    'clean:tmp'
+    'coffee'
     'karma:unit'
   ])
 
   grunt.registerTask('build', [
-    'clean',
-    'coffee',
-    'karma:build',
-    'concat:dist',
+    'clean'
+    'coffee'
+    'karma:build'
+    'concat:dist'
     'uglify'
   ])
 

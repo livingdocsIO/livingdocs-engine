@@ -187,3 +187,17 @@ describe 'SnippetTree with a multi-column row snippet', ->
 
       expect(visits).toEqual(3)
 
+
+  describe 'all()', ->
+
+    it 'visits all snippets and containers', ->
+      visitedSnippets = 0
+      visitedContainers = 0
+      @tree.all (snippetOrContainer) ->
+        if snippetOrContainer instanceof Snippet
+          visitedSnippets += 1
+        else if snippetOrContainer instanceof SnippetContainer
+          visitedContainers += 1
+
+      expect(visitedSnippets).toEqual(1)
+      expect(visitedContainers).toEqual(3)

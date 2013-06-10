@@ -75,6 +75,7 @@ class SnippetContainer
     @snippetTree || @parentSnippet.snippetTree
 
 
+  # Traverse all snippets
   each: (callback) ->
     snippet = @first
     while (snippet)
@@ -89,8 +90,26 @@ class SnippetContainer
         callback(snippetContainer)
 
 
+  # Traverse all snippets and containers
+  all: (callback) ->
+    callback(this)
+    @each (snippet) ->
+      callback(snippet)
+      for name, snippetContainer of snippet.containers
+        callback(snippetContainer)
+
+
+
   remove: (snippet) ->
+    snippet.destroy()
     @_detachSnippet(snippet)
+
+
+  ui: ->
+    if not @uiInjector
+      snippetTree = @getSnippetTree()
+      snippetTree.renderer.createInterfaceInjector(this)
+    @uiInjector
 
 
   # Private

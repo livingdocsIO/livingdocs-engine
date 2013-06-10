@@ -6,6 +6,7 @@ class Renderer
     error('no root node specified') if !rootNode
 
     @$root = $(rootNode)
+    @snippetTree.renderer = this
     @setupSnippetTreeListeners()
 
 
@@ -83,18 +84,22 @@ class Renderer
         next.snippetHtml.$html.before($snippet)
         @afterDomInsert(snippetHtml)
       else if parentContainer
-        if parentContainer.isRoot
-          @$root.append($snippet)
-        else
-          snippet.getParent().snippetHtml.append(
-            parentContainer.name,
-            snippetHtml
-          )
+        @appendToContainer(parentContainer, $snippet)
         @afterDomInsert(snippetHtml)
       else
         error('could not insert snippet into Dom')
 
     this
+
+
+  appendToContainer: (container, $elem) ->
+    if container.isRoot
+      @$root.append($elem)
+    else
+      container.parentSnippet.snippetHtml.append(
+        container.name,
+        $elem
+      )
 
 
   afterDomInsert: (snippetHtml) ->
@@ -108,4 +113,29 @@ class Renderer
   detachFromDom: (snippetHtml) ->
     snippetHtml.detach()
     this
+
+
+  # UI Inserts
+  # ----------
+
+  createInterfaceInjector: (snippetOrContainer) ->
+    if snippetOrContainer instanceof Snippet
+      @createSnippetInterfaceInjector(snippetOrContainer)
+    else if snippetOrContainer instanceof SnippetContainer
+      @createSnippetContainerInterfaceInjector(snippetOrContainer)
+
+
+  createSnippetInterfaceInjector: (snippet) ->
+    if snippet.uiInjector == undefined
+      snippet.uiInjector = new InterfaceInjector
+        snippet: snippet
+        renderer: this
+
+
+  createSnippetContainerInterfaceInjector: (snippetContainer) ->
+    if snippetContainer.uiInjector == undefined
+      snippetContainer.uiInjector = new InterfaceInjector
+        snippetContainer: snippetContainer
+        renderer: this
+
 

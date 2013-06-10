@@ -29,9 +29,9 @@ class SnippetHtml
     @$html.findIn("[#{ docAttr.editable }=#{ editable }]").html()
 
 
-  append: (containerName, snippetHtml) ->
+  append: (containerName, $elem) ->
     $container = @$html.findIn("[#{ docAttr.container }=#{ containerName }]").first()
-    $container.append(snippetHtml.$html)
+    $container.append($elem)
 
 
   detach: ->
