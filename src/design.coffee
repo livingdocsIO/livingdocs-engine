@@ -25,12 +25,23 @@ class Design
       title: template.name
 
 
-  remove: (name) ->
-    delete @templates[name]
+  remove: (identifier) ->
+    @checkNamespace identifier, (name) =>
+      delete @templates[name]
 
 
-  get: (name) ->
-    @templates[name]
+  get: (identifier) ->
+    @checkNamespace identifier, (name) =>
+      @templates[name]
+
+
+  checkNamespace: (identifier, callback) ->
+    { namespace, name } = SnippetTemplate.parseIdentifier(identifier)
+
+    if not namespace || @namespace == namespace
+      callback(name)
+    else
+      error("design #{ @namespace }: cannot get template with different namespace #{ namespace } ")
 
 
   each: (callback) ->

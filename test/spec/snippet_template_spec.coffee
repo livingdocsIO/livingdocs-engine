@@ -84,21 +84,19 @@ describe 'SnippetTemplate.parseIdentifier()', ->
 
 
   it 'does not parse "bootstrap"', ->
-    identifier = SnippetTemplate.parseIdentifier('bootstrap')
+    identifier = SnippetTemplate.parseIdentifier('title')
     expect(identifier.namespace).toBeUndefined()
-    expect(identifier.name).toBeUndefined()
+    expect(identifier.name).toEqual('title')
 
 
   it 'does not parse emtpy string', ->
     identifier = SnippetTemplate.parseIdentifier('')
-    expect(identifier.namespace).toBeUndefined()
-    expect(identifier.name).toBeUndefined()
+    expect(identifier).toBeUndefined()
 
 
   it 'does not parse undefined', ->
     identifier = SnippetTemplate.parseIdentifier()
-    expect(identifier.namespace).toBeUndefined()
-    expect(identifier.name).toBeUndefined()
+    expect(identifier).toBeUndefined()
 
 
 # SnippetTemplate constructor

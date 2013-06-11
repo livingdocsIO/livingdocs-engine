@@ -150,23 +150,12 @@ document = do ->
 
 
   getTemplate: (identifier) ->
-    identifier = @addDefaultNamespace(identifier)
-
     { namespace, name } = SnippetTemplate.parseIdentifier(identifier)
+    namespace = defaultNamespace if defaultNamespace and not namespace
     snippetTemplate = @designs[namespace]?.get(name)
 
     if !snippetTemplate
       error("could not find template #{ identifier }")
 
     snippetTemplate
-
-
-  # if just one namespace is loaded we can prepend the default namespace
-  # for convenience
-  addDefaultNamespace: (identifier) ->
-    if defaultNamespace && not /\./.test(identifier)
-      "#{ defaultNamespace }.#{ identifier }"
-    else
-      identifier
-
 

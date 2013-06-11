@@ -32,3 +32,5 @@ error = ->
     console.error( args )
   else if ( window.console )
     console.log( args )
+
+  undefined

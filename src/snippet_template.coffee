@@ -163,7 +163,12 @@ class SnippetTemplate
 # ----------------
 
 SnippetTemplate.parseIdentifier = (identifier) ->
-  if identifier && (parts = identifier.split('.')).length == 2
+  return unless identifier # silently fail on undefined or empty strings
+
+  parts = identifier.split('.')
+  if parts.length == 1
+    { namespace: undefined, name: parts[0] }
+  else if parts.length == 2
     { namespace: parts[0], name: parts[1] }
   else
     error("could not parse snippet template identifier: #{ identifier }")
