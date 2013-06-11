@@ -38,7 +38,7 @@ document = do ->
   # ---------------
 
   initialized: false
-  snippets: {}
+  designs: {}
   uniqueId: 0
   ready: $.Callbacks('memory once')
 
@@ -69,40 +69,35 @@ document = do ->
 
   # *Public API*
   addSnippetCollection: (snippetCollection, config) ->
-    namespace = config?.namespace || 'snippet'
+    design = new Design(config)
+    design.add(snippetCollection)
+    @designs[design.namespace] = design
 
     # for convenience add a default namespace if there is just
     # one namespace loaded
-    if @listSnippetNamespaces().length == 0
-      defaultNamespace = namespace
+    defaultNamespace = if @listDesignNamespaces().length == 0
+      namespace
     else
-      defaultNamespace = undefined
+      undefined
 
-    if config.css
-      loader.css(config.css, doBeforeDocumentReady())
-
-    @snippets[namespace] ||= {}
-
-    for name, template of snippetCollection
-
-      @snippets[namespace][name] = new SnippetTemplate
-        namespace: namespace
-        name: name
-        html: template.html
-        title: template.name
+    # load design assets into page
+    if design.css
+      loader.css(design.css, doBeforeDocumentReady())
 
 
-  listSnippetNamespaces: () ->
-    for namespace of @snippets
+  listDesignNamespaces: () ->
+    for namespace of @designs
       namespace
 
 
   # list available snippetTemplates
-  listSnippets: ->
-    for namespace, value of @snippets
-      for name, snippet of value
-        snippet.identifier
+  listTemplates: ->
+    templates = []
+    for namespace, design of @designs
+      design.each (template) ->
+        templates.push(template.identifier)
 
+    templates
 
 
   # *Public API*
@@ -158,7 +153,7 @@ document = do ->
     identifier = @addDefaultNamespace(identifier)
 
     { namespace, name } = SnippetTemplate.parseIdentifier(identifier)
-    snippetTemplate = @snippets[namespace]?[name]
+    snippetTemplate = @designs[namespace]?.get(name)
 
     if !snippetTemplate
       error("could not find template #{ identifier }")
