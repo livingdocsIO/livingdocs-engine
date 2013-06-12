@@ -1,7 +1,7 @@
 class Design
 
   constructor: (config) ->
-    @namespace = config?.namespace || 'snippet'
+    @namespace = config?.namespace || 'livingdocs-templates'
     @css = config.css
     @js = config.js #todo
     @fonts = config.fonts #todo
