@@ -100,7 +100,7 @@ class SnippetTemplate
         name = node.getAttribute(docAttr.container)
         name ||= config.defaultContainerName
         containers ||= {}
-        if not containers.hasOwnProperty(name)
+        if name and not containers.hasOwnProperty(name)
           containers[name] = node
         else
           error("container name '#{ name }' already taken: #{ @identifier }")
