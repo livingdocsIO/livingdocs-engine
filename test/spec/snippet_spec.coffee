@@ -58,3 +58,13 @@ describe 'Row Snippet', ->
     expect(@row.editables).not.toBeDefined()
 
 
+describe 'Container Snippet', ->
+
+  beforeEach ->
+    @container = test.getSnippet('container')
+
+
+  it 'has named its unnamed container "default"', ->
+    expect(@container.containers['default']).toBeDefined()
+
+
