@@ -1,4 +1,6 @@
-test =
+test = do ->
+
+  cachedDesign = undefined
 
   # wrapper for `'prop' in object`
   # since this does not exist in coffeescript.
@@ -18,6 +20,14 @@ test =
 
   getSnippet: (name) ->
     @getTemplate(name).createSnippet()
+
+
+  getDesign: () ->
+    unless cachedDesign
+      cachedDesign = new Design(testSnippets.config)
+      cachedDesign.add(testSnippets.snippets)
+
+    cachedDesign
 
 
   # simple helper to get the length of an object

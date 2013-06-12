@@ -201,7 +201,7 @@ class Snippet
   # Serialization
   # -------------
 
-  toJson: () ->
+  toJson: ->
 
     json =
       identifier: @identifier
@@ -212,5 +212,22 @@ class Snippet
       json.containers[name] = []
 
     json
+
+
+Snippet.fromJson = (json, design) ->
+  template = design.get(json.identifier)
+
+  snippet = new Snippet({ template })
+  for editableName, value of json.fields
+    if snippet.editables.hasOwnProperty(editableName)
+      snippet.editables[editableName] = value
+    else
+      error("error while deserializing snippet: unknown editable #{ editableName }")
+
+  snippet
+
+
+
+
 
 

@@ -91,7 +91,7 @@ class SnippetTemplate
         name = node.getAttribute(docAttr.editable)
         name ||= config.defaultEditableName
         editables ||= {}
-        if not editables.hasOwnProperty(name)
+        if name and not editables.hasOwnProperty(name)
           editables[name] = node
         else
           error("editable name '#{ name }' already taken: #{ @identifier }")

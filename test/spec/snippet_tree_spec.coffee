@@ -92,9 +92,9 @@ describe 'SnippetTree with a single-column row snippet', ->
 
   beforeEach ->
     @tree = new SnippetTree()
-
     @container = test.getSnippet('container')
     @tree.append(@container)
+
 
   describe 'append()', ->
 
@@ -124,7 +124,6 @@ describe 'SnippetTree with a multi-column row snippet', ->
 
   beforeEach ->
     @tree = new SnippetTree()
-
     @rowSnippet = test.getSnippet('row')
     @tree.append(@rowSnippet)
 

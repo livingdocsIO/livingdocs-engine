@@ -1,9 +1,7 @@
 testSnippets =
 
-
   config:
     namespace: 'test'
-    css: []
 
 
   snippets:
