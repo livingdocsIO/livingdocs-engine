@@ -1,8 +1,8 @@
-ddescribe 'Design', ->
+describe 'Design', ->
 
   beforeEach ->
-    config = { namespace: 'test' }
-    @design = new Design(config)
+    options = { namespace: 'test' }
+    @design = new Design(options)
 
 
   it 'has a namespace', ->
