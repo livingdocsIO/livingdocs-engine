@@ -85,9 +85,14 @@ document = do ->
       loader.css(design.css, doBeforeDocumentReady())
 
 
-  listDesignNamespaces: () ->
+  listDesignNamespaces: ->
     for namespace of @designs
       namespace
+
+
+  firstDesign: ->
+    for namespace of @designs
+      return @designs[namespace]
 
 
   # list available snippetTemplates
@@ -120,15 +125,7 @@ document = do ->
   # find all instances of a certain SnippetTemplate
   # e.g. search "bootstrap.hero" or just "hero"
   find: (search) ->
-    if typeof search == 'string'
-      res = []
-      @snippetTree.each (snippet) ->
-        if snippet.identifier == search || snippet.template.name == search
-          res.push(snippet)
-
-      new SnippetArray(res)
-    else
-      new SnippetArray()
+    @snippetTree.find(search)
 
 
   # print documentation for a snippet template
@@ -147,6 +144,27 @@ document = do ->
   nextId: (prefix = 'doc') ->
     @uniqueId += 1
     "#{ prefix }-#{ @uniqueId }"
+
+
+  toJson: ->
+    json = @snippetTree.toJson()
+    json['meta'] =
+      title: undefined
+      author: undefined
+      created: undefined
+      published: undefined
+
+    json
+
+
+  restore: (json) ->
+    @snippetTree.fromJson(json, @firstDesign())
+    @renderer.render()
+
+
+  reset: ->
+    @renderer.clear()
+    @snippetTree.detach()
 
 
   getTemplate: (identifier) ->

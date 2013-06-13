@@ -21,6 +21,7 @@ files = [
   // vendor files
   'vendor/jquery-*.js',
   'vendor/yepnope/yepnope.1.5.3-min.js',
+  'vendor/store/store.js',
   'vendor/editableJS/editable.js',
 
   // source files

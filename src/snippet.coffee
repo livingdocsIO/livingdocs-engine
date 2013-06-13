@@ -31,6 +31,7 @@ class Snippet
 
 
   initializeContainers: ->
+    @containerCount = @template.containerCount
     for containerName of @template.containers
       @containers ||= {}
       @containers[containerName] = new SnippetContainer
@@ -39,6 +40,7 @@ class Snippet
 
 
   initializeEditables: ->
+    @editableCount = @template.editableCount
     for editableName of @template.editables
       @editables ||= {}
       @editables[editableName] = undefined
@@ -133,6 +135,8 @@ class Snippet
 
   # @api private
   destroy: ->
+    # todo: move into to renderer
+
     # remove user interface elements
     @uiInjector.remove() if @uiInjector
 
@@ -205,7 +209,9 @@ class Snippet
 
     json =
       identifier: @identifier
-      fields: @editables
+
+    if @hasEditables()
+      json.editables = @editables
 
     for name of @containers
       json.containers ||= {}
@@ -218,11 +224,15 @@ Snippet.fromJson = (json, design) ->
   template = design.get(json.identifier)
 
   snippet = new Snippet({ template })
-  for editableName, value of json.fields
+  for editableName, value of json.editables
     if snippet.editables.hasOwnProperty(editableName)
       snippet.editables[editableName] = value
     else
       error("error while deserializing snippet: unknown editable #{ editableName }")
+
+  for containerName, snippetArray of json.containers
+    for child in snippetArray
+      snippet.append( containerName, Snippet.fromJson(child, design) )
 
   snippet
 

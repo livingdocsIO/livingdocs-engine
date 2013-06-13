@@ -52,6 +52,25 @@ chainable = (fn, context) ->
   @create = $.proxy(document, 'createSnippet')
 
 
+  @stash = ->
+    localstore.set('stash', document.toJson())
+    document.reset()
+
+    doc
+
+
+  @stash.restore = ->
+    json = localstore.get('stash')
+
+    if json
+      document.reset()
+      document.restore(json)
+    else
+      error('stash is empty')
+
+    doc
+
+
   # Events
   # ------
 
@@ -88,6 +107,9 @@ chainable = (fn, context) ->
   # -----------------------
 
   @document = document
+
+  @readableJson = ->
+    S.readableJson(document.toJson())
 
 ).call(doc)
 

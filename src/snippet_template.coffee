@@ -35,7 +35,9 @@ class SnippetTemplate
     @title = title || S.humanize( @name )
 
     @editables = undefined
+    @editableCount = 0
     @containers = undefined
+    @containerCount = 0
     @defaults = {}
 
     @parseTemplate()
@@ -71,11 +73,19 @@ class SnippetTemplate
     snippetNode = @$template[0]
     { @editables, @containers } = @getNodeLinks(snippetNode)
 
+    count = 0
     for name, node of @editables
+      count += 1
       @formatEditable(name, node)
 
+    @editableCount = count
+
+    count = 0
     for name, node of @containers
+      count += 1
       @formatContainer(name, node)
+
+    @containerCount = count
 
 
   # Find and store all DOM nodes which are editables or containers

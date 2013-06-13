@@ -40,6 +40,13 @@ test = do ->
     size
 
 
+  # use this to test serialization and deserialization
+  # through localstorage
+  localstore: (obj) ->
+    localstore.set('test', obj)
+    localstore.get('test')
+
+
   # @return proxy function that always returns this
   chainable: (func) ->
     ->

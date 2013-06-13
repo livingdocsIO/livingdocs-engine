@@ -26,8 +26,16 @@
 # attached to the DOM).
 class SnippetTree
 
-  constructor: ({ content } = {}) ->
-    @root = new SnippetContainer(snippetTree: this, isRoot: true)
+  constructor: ({ content, design } = {}) ->
+    @root = new SnippetContainer(isRoot: true)
+
+    # initialize content before we set the snippet tree to the root
+    # otherwise all the events will be triggered while building the tree
+    if content? and design?
+      @fromJson(content, design)
+
+    @root.snippetTree = this
+
     @history = new History()
     @initializeEvents()
 
@@ -70,6 +78,29 @@ class SnippetTree
   # Traverse all containers and snippets
   all: (callback) ->
     @root.all(callback)
+
+
+  find: (search) ->
+    if typeof search == 'string'
+      res = []
+      @each (snippet) ->
+        if snippet.identifier == search || snippet.template.name == search
+          res.push(snippet)
+
+      new SnippetArray(res)
+    else
+      new SnippetArray()
+
+
+  detach: ->
+    @root.snippetTree = undefined
+    @each (snippet) ->
+      snippet.snippetTree = undefined
+
+    oldRoot = @root
+    @root = new SnippetContainer(isRoot: true)
+
+    oldRoot
 
 
   # eachWithParents: (snippet, parents) ->
@@ -126,8 +157,8 @@ class SnippetTree
         # remove from other snippet tree
         snippet.snippetContainer.detachSnippet(snippet)
 
-      snippet.descendantsAndSelf (sni) =>
-        sni?.snippetTree = this
+      snippet.descendantsAndSelf (descendant) =>
+        descendant.snippetTree = this
 
       attachSnippetFunc()
       @snippetAdded.fire(snippet)
@@ -136,8 +167,8 @@ class SnippetTree
   detachingSnippet: (snippet, detachSnippetFunc) ->
     if snippet.snippetTree == this
 
-      snippet.descendantsAndSelf (sni) ->
-        sni.snippetTree = undefined
+      snippet.descendantsAndSelf (descendants) ->
+        descendants.snippetTree = undefined
 
       detachSnippetFunc()
       @snippetRemoved.fire(snippet)
@@ -159,11 +190,10 @@ class SnippetTree
   # returns a JSON representation of the whole tree
   toJson: ->
     json = {}
-    json['root'] = []
+    json['content'] = []
 
     snippetToJson = (snippet, level, containerArray) ->
       snippetJson = snippet.toJson()
-      snippetJson.level = level
       containerArray.push snippetJson
 
       snippetJson
@@ -179,5 +209,17 @@ class SnippetTree
       # traverse siblings
       walker(snippet.next, level, jsonObj) if snippet.next
 
-    walker(@root.first, 0, json['root']) if @root.first
+    walker(@root.first, 0, json['content']) if @root.first
     return json
+
+
+  fromJson: (json, design) ->
+    @root.snippetTree = undefined
+    for snippetJson in json.content
+      snippet = Snippet.fromJson(snippetJson, design)
+      @root.append(snippet)
+
+    @root.snippetTree = this
+
+
+

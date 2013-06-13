@@ -12,7 +12,7 @@
 class SnippetContainer
 
 
-  constructor: ({ @parentSnippet, @name, @snippetTree, isRoot }) ->
+  constructor: ({ @parentSnippet, @name, isRoot }) ->
     @isRoot = isRoot?
     @first = @last = undefined
 
@@ -72,7 +72,7 @@ class SnippetContainer
 
 
   getSnippetTree: ->
-    @snippetTree || @parentSnippet.snippetTree
+    @snippetTree || @parentSnippet?.snippetTree
 
 
   # Traverse all snippets
@@ -97,7 +97,6 @@ class SnippetContainer
       callback(snippet)
       for name, snippetContainer of snippet.containers
         callback(snippetContainer)
-
 
 
   remove: (snippet) ->

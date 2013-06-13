@@ -15,6 +15,11 @@ testSnippets =
       html: """<h2 #{ docAttr.editable }="title">Who's your Caddy?</h2>"""
 
 
+    text:
+      name: 'Paragraph'
+      html: """<p #{ docAttr.editable }="text"></p>"""
+
+
     row:
       name: 'Row with two columns'
       html:

@@ -13,7 +13,7 @@ class Renderer
   # Snippet Tree Event Handling
   # ---------------------------
 
-  setupSnippetTreeListeners: () ->
+  setupSnippetTreeListeners: ->
     @snippetTree.snippetAdded.add( $.proxy(this, 'snippetAdded') )
     @snippetTree.snippetRemoved.add( $.proxy(this, 'snippetRemoved') )
     @snippetTree.snippetMoved.add( $.proxy(this, 'snippetMoved') )
@@ -49,16 +49,21 @@ class Renderer
       # consider: replace $domNode with a documentFragment and reswap after
       # everything is inserted (but I don't know if this is actually faster)
 
-      @snippetTree.each (snippet) ->
+      @snippetTree.each (snippet) =>
         @ensureSnippetHtml(snippet)
         @insertIntoDom(snippet.snippetHtml)
 
 
-  remove: () ->
+  clear: ->
     @snippetTree.each (snippet) ->
       snippet.snippetHtml?.attachedToDom = false
 
     @$root.html('')
+
+
+  redraw: ->
+    @clear()
+    @render()
 
 
   updateDomPosition: (snippetHtml) ->
