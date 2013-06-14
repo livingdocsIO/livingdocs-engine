@@ -32,3 +32,5 @@ localstore = do ->
   restorePosition: (key, $node) ->
     offset = @get("#{ key }-position")
     $node.css({ left:"#{ offset.left }", top:"#{ offset.top }" }) if offset
+
+
