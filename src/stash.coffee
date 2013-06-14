@@ -37,4 +37,7 @@ stash = do ->
 
 
   list: ->
-    @store.getIndex()
+    entries = for obj in @store.getIndex()
+      { key: obj.key, date: new Date(obj.date).toString() }
+
+    S.readableJson(entries)
