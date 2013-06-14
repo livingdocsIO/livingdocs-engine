@@ -39,15 +39,19 @@
       doc.addSnippetCollection(snippetCollections.bootstrap.snippets, snippetCollections.bootstrap.config);
 
       $(document).ready(function() {
-        doc.loadDocument();
+        var json = doc.stash.get();
+        doc.loadDocument({ json: json });
 
         doc.ready(function() {
-          var row = doc.add("bootstrap.mainSidebar");
-          row.append("main", doc.create("bootstrap.hero"));
-          row.append("main", doc.create("bootstrap.text"));
-          row.append("sidebar", doc.create("bootstrap.title"));
-          var single = doc.add("bootstrap.column");
-          single.append(doc.create("bootstrap.hero"));
+
+          if (!json) {
+            var row = doc.add("bootstrap.mainSidebar");
+            row.append("main", doc.create("bootstrap.hero"));
+            row.append("main", doc.create("bootstrap.text"));
+            row.append("sidebar", doc.create("bootstrap.title"));
+            var single = doc.add("bootstrap.column");
+            single.append(doc.create("bootstrap.hero"));
+          }
         });
 
       });

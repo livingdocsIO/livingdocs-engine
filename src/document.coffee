@@ -44,12 +44,13 @@ document = do ->
 
 
   # *Public API*
-  loadDocument: ({ contentJson }={}) ->
+  loadDocument: ({ json }={}) ->
     error('document is already initialized') if @initialized
     @initialized = true
 
-    @snippetTree = if contentJson
-      new SnippetTree(content: contentJson)
+    design = @firstDesign()
+    @snippetTree = if json && design
+      new SnippetTree(content: json, design: design)
     else
       new SnippetTree()
 
@@ -157,8 +158,9 @@ document = do ->
     json
 
 
-  restore: (json) ->
-    @snippetTree.fromJson(json, @firstDesign())
+  restore: (contentJson, resetFirst = true) ->
+    @reset() if resetFirst
+    @snippetTree.fromJson(contentJson, @firstDesign())
     @renderer.render()
 
 

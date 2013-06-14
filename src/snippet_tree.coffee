@@ -210,7 +210,8 @@ class SnippetTree
       walker(snippet.next, level, jsonObj) if snippet.next
 
     walker(@root.first, 0, json['content']) if @root.first
-    return json
+
+    json
 
 
   fromJson: (json, design) ->

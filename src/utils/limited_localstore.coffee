@@ -26,7 +26,7 @@ class LimitedLocalstore
       localstore.remove(removeRef.key)
 
     localstore.set(reference.key, obj)
-    localstore.set("#{ @key }-index", index)
+    localstore.set("#{ @key }--index", index)
 
 
   pop: ->
@@ -60,13 +60,13 @@ class LimitedLocalstore
 
 
   getIndex: ->
-    @index ||= localstore.get("#{ @key }-index") || []
+    @index ||= localstore.get("#{ @key }--index") || []
     @index
 
 
   setIndex: ->
     if @index
-      localstore.set("#{ @key }-index", @index)
+      localstore.set("#{ @key }--index", @index)
 
 
   nextKey: ->

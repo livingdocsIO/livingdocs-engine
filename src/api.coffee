@@ -51,34 +51,28 @@ chainable = (fn, context) ->
   # @return Snippet
   @create = $.proxy(document, 'createSnippet')
 
-
-  @stash = ->
-    localstore.set('stash', document.toJson())
-    document.reset()
-
-    doc
+  # Json that can be used for saving of the document
+  @toJson = $.proxy(document, 'toJson')
+  @restore = chainable(document, 'restore')
 
 
-  @stash.restore = ->
-    json = localstore.get('stash')
-
-    if json
-      document.reset()
-      document.restore(json)
-    else
-      error('stash is empty')
-
-    doc
+  # Stash
+  # -----
+  stash.init()
+  @stash = $.proxy(stash, 'stash')
+  @stash.snapshot = $.proxy(stash, 'snapshot')
+  @stash.delete = $.proxy(stash, 'delete')
+  @stash.restore = $.proxy(stash, 'restore')
+  @stash.get = $.proxy(stash, 'get')
+  @stash.list = $.proxy(stash, 'list')
 
 
   # Events
   # ------
 
   @ready = chainable(document.ready, 'add')
-
   @snippetFocused = chainable(focus.snippetFocus, 'add')
   @snippetBlurred = chainable(focus.snippetBlur, 'add')
-
   @textSelection = chainable(editableController.selection, 'add')
 
 

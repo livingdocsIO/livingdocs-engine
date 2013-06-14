@@ -211,7 +211,9 @@ class Snippet
       identifier: @identifier
 
     if @hasEditables()
-      json.editables = @editables
+      json.editables = {}
+      for name, value of @editables
+        json.editables[name] = value
 
     for name of @containers
       json.containers ||= {}
