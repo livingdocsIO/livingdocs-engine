@@ -1,6 +1,6 @@
 class SnippetHtml
 
-  constructor: ({ @snippet, @$html }) ->
+  constructor: ({ @snippet, @$html, @editables, @containers }) ->
     @template = @snippet.template
     @attachedToDom = false
     @snippet.snippetHtml = this
@@ -11,26 +11,42 @@ class SnippetHtml
       .addClass(docClass.snippet)
       .attr(docAttr.template, @template.identifier)
 
+    @content(@snippet.editables)
 
-  content: () ->
+
+  content: (content) ->
     for field, value of content
       @set(field, value)
+
+
+  getEditable: (name) ->
+    if name?
+      return @editables[name]
+    else
+      for name of @editables
+        return @editables[name]
 
 
   set: (editable, value) ->
     if arguments.length == 1
       value = editable
-      @$html.findIn("[#{ docAttr.editable }]").html(value)
+      editable = undefined
+
+    if elem = @getEditable(editable)
+      $(elem).html(value)
     else
-      @$html.findIn("[#{ docAttr.editable }=#{ editable }]").first().html(value)
+      error 'cannot set value without editable name'
 
 
   get: (editable) ->
-    @$html.findIn("[#{ docAttr.editable }=#{ editable }]").html()
+    if elem = @getEditable(editable)
+      $(elem).html()
+    else
+      error 'cannot get value without editable name'
 
 
   append: (containerName, $elem) ->
-    $container = @$html.findIn("[#{ docAttr.container }=#{ containerName }]").first()
+    $container = $(@containers[containerName])
     $container.append($elem)
 
 

@@ -32,6 +32,8 @@ editableController = do ->
       .blur (element) ->
         snippet = dom.parentSnippet(element)
         focus.editableBlurred(element, snippet)
+        editableName = element.getAttribute(docAttr.editable)
+        snippet.set(editableName, element.innerHTML)
 
 
       .selection (element, selection) =>

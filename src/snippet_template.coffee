@@ -54,12 +54,13 @@ class SnippetTemplate
       snippet = @createSnippet()
 
     $html = @$template.clone()
-    #fields
-    #containers
+    { editables, containers } = @getNodeLinks($html[0])
 
     snippetHtml = new SnippetHtml
       snippet: snippet
       $html: $html
+      editables: editables
+      containers: containers
 
 
   # todo
