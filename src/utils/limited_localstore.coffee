@@ -1,3 +1,10 @@
+# LimitedLocalstore is a wrapper around localstore that
+# saves only a limited number of entries and discards
+# the oldest ones after that.
+#
+# You should only ever create one instance by `key`.
+# The limit can change between sessions,
+# it will just discard all entries until the limit is met
 class LimitedLocalstore
 
   constructor: (@key, @limit) ->
@@ -13,8 +20,10 @@ class LimitedLocalstore
     index = @getIndex()
     index.push(reference)
 
-    if index.length > @limit
-      index.splice(0, index.length - @limit)
+    while index.length > @limit
+      removeRef = index[0]
+      index.splice(0, 1)
+      localstore.remove(removeRef.key)
 
     localstore.set(reference.key, obj)
     localstore.set("#{ @key }-index", index)

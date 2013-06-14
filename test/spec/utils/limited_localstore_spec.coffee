@@ -53,13 +53,13 @@ describe 'LimitedLocalstore', ->
     expect(@store.limit).toEqual(3)
 
 
-  it 'does not add items above its limie', ->
+  it 'does not add items above its limit', ->
     expect(@store.getIndex().length).toEqual(0)
 
     @store.push('first')
     @store.push('second')
     @store.push('third')
-    @store.push('fourth')
+    @store.push('fourth') # 'first' should be removed at this point
 
     expect(@store.getIndex().length).toEqual(3)
 
