@@ -32,21 +32,39 @@
  * Drag & Drop
  */
 
-@-webkit-keyframes wiggle {
+/*@-webkit-keyframes dragged {
   0% {-webkit-transform:rotate(2deg);}
   50% {-webkit-transform:rotate(-2deg);}
   100% {-webkit-transform:rotate(0deg);}
+}*/
+
+@-webkit-keyframes wiggle {
+  0%, 100% {-webkit-transform: translateX(0);}
+  10%, 30%, 50%, 70%, 90% {-webkit-transform: translateX(-10px);}
+  20%, 40%, 60%, 80% {-webkit-transform: translateX(10px);}
+}
+
+@-webkit-keyframes pulse {
+  0% { -webkit-transform: scale(1); }
+  20% { -webkit-transform: scale(1.1); }
+  100% { -webkit-transform: scale(1); }
+}
+
+@-webkit-keyframes pulse-dragged {
+  0% { -webkit-transform: scale(1); opacity: 1; }
+  20% { -webkit-transform: scale(1.02); }
+  100% { -webkit-transform: scale(1) opacity(0.5); opacity: 0.3; }
 }
 
 
 .doc-dragged-placeholder {
-  /*-webkit-animation: wiggle 0.5s;*/
   outline: medium dashed rgba(255, 196, 13, 0.5);
   opacity: 0.8;
 }
 
 .doc-dragged {
-  opacity: 0.2;
+  -webkit-animation: pulse-dragged 0.3s;
+  opacity: 0.3;
 }
 
 .doc-drag-placeholder-item {
