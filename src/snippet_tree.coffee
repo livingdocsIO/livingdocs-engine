@@ -147,7 +147,6 @@ class SnippetTree
   # These functions should only be called by snippetContainers
 
   attachingSnippet: (snippet, attachSnippetFunc) ->
-
     if snippet.snippetTree == this
       # move snippet
       attachSnippetFunc()
@@ -221,6 +220,8 @@ class SnippetTree
       @root.append(snippet)
 
     @root.snippetTree = this
+    @root.each (snippet) =>
+      snippet.snippetTree = this
 
 
 
