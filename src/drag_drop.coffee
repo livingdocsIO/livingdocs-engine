@@ -31,7 +31,7 @@ class DragDrop
         minDistance: 0
         direct: false
         preventDefault: true
-        createPreview: DragDrop.cloneOrigin
+        createPlaceholder: DragDrop.placeholder
       }, options)
 
     # per drag properties
@@ -83,7 +83,7 @@ class DragDrop
     else
       @drag.preview = $("<div class='upfront-drag-preview'>")
       $(window.document.body).append(@drag.preview)
-      @$dragged = @options.createPreview(@drag, @$origin)
+      @$dragged = @options.createPlaceholder(@drag, @$origin)
 
     if @drag.fixed
       @drag.$body = $(window.document.body)
@@ -204,6 +204,26 @@ DragDrop.cloneOrigin = (drag, $origin) ->
     draggedCopy.css({ "background-color": "#fff"})
 
   return draggedCopy
+
+
+DragDrop.placeholder = (drag, $origin) ->
+  snippetWidth = drag.width
+  numberOfDraggedElems = 1
+  drag.mouseToSnippet =
+    left: 2
+    top: -15
+
+  template =
+    """
+    <div class="doc-drag-placeholder-item">
+      <span class="doc-drag-counter">#{ numberOfDraggedElems }</span>
+      Selected Item
+    </div>
+    """
+
+  $placeholder = $(template)
+  $placeholder.css(width: snippetWidth) if snippetWidth
+  $placeholder.css(position: "absolute")
 
 
 #   # only shows a drop indicator over snippets, calls enterDropzone over dropzones
