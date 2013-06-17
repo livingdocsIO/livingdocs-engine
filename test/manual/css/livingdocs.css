@@ -27,3 +27,37 @@
   /* disable browser highlight of contenteditable */
   outline: none;
 }
+
+/**
+ * Drag & Drop
+ */
+
+@-webkit-keyframes wiggle {
+  0% {-webkit-transform:rotate(2deg);}
+  50% {-webkit-transform:rotate(-2deg);}
+  100% {-webkit-transform:rotate(0deg);}
+}
+
+
+.doc-dragged-placeholder {
+  /*-webkit-animation: wiggle 0.5s;*/
+  outline: medium dashed rgba(255, 196, 13, 0.5);
+  opacity: 0.8;
+}
+
+.doc-dragged {
+  opacity: 0.2;
+}
+
+/**
+ * Utils
+ */
+
+.doc-no-selection {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

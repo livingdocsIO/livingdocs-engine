@@ -21,6 +21,14 @@ docClass =
   snippetHighlight: 'doc-snippet-highlight'
   containerHighlight: 'doc-container-highlight'
 
+  # drag & drop
+  draggedPlaceholder: 'doc-dragged-placeholder'
+  dragged: 'doc-dragged'
+
+  # utility classes
+  preventSelection: 'doc-no-selection'
+  maximizedContainer: 'doc-js-maximized-container'
+
 
 # constants for attributes used in a document
 docAttr =

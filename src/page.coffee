@@ -26,16 +26,72 @@ page = do ->
   initializeListeners: () ->
     # $document.on 'focus.livingdocs', (event) ->
     #   focus.focusChange(event)
+    @snippetDrag = new DragDrop
+      longpressDelay: 400
+      longpressDistanceLimit: 10
+      preventDefault: false
 
     $document
-      .on 'click.livingdocs', $.proxy(@pageClick, @)
+      .on('click.livingdocs', $.proxy(@click, @))
+      .on('mousedown.livingdocs', $.proxy(@mousedown, @))
+      .on('mouseup.livingdocs', $.proxy(@mouseup, @))
 
 
   removeListeners: () ->
     $document.off('.livingdocs')
+    $document.off('.livingdocs-drag')
 
 
-  pageClick: (event) ->
+  mousedown: (event) ->
+    return if event.which != 1 # only respond to left mouse button
+    snippet = dom.parentSnippet(event.target)
+
+    if snippet
+      $document.on 'mousemove.livingdocs-drag', $.proxy(@snippetDragMove, @)
+      $snippet = snippet.snippetHtml.$html
+
+      $highlightedContainer = {}
+      @snippetDrag.mousedown $snippet, event,
+        onDrag: (target, drag) =>
+          if target.containerName
+            dom.maximizeContainerHeight(target.parent)
+            if target.node != $highlightedContainer[0]
+              $highlightedContainer.removeClass?(docClass.containerHighlight)
+              $highlightedContainer = $(target.node)
+              $highlightedContainer.addClass(docClass.containerHighlight)
+          if target.snippet
+            dom.maximizeContainerHeight(target.snippet)
+
+
+        onDrop: (drag) =>
+          if $highlightedContainer.removeClass
+            $highlightedContainer.removeClass(docClass.containerHighlight)
+
+          dom.restoreContainerHeight()
+
+          target = drag.target
+          if target
+            if target.containerName
+              target.parent.append(target.containerName, snippet)
+            if target.snippet
+              target.snippet.after(snippet)
+
+
+  snippetDragMove: (event) ->
+    # Code from jquery.ui.mouse.js#_mouseMove
+    # IE versions below 9 - mouseup check: mouseup happened when mouse was out of window
+    # if $.browser.msie && !(document.documentMode >= 9) && !event.button
+    #   return @mouseup(event)
+
+    @snippetDrag.move(event.pageX, event.pageY, event)
+
+
+  mouseup: (event) ->
+    @snippetDrag.drop()
+    $document.off('.livingdocs-drag')
+
+
+  click: (event) ->
     snippet = dom.parentSnippet(event.target)
 
     # todo: if a user clicked on a margin of a snippet it should
@@ -60,6 +116,7 @@ page = do ->
 
 
   blurFocusedElement: () ->
+    focus.setFocus(undefined)
     focusedElement = @getFocusedElement()
     $(focusedElement).blur() if focusedElement
 
