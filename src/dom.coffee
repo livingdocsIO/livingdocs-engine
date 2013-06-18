@@ -38,7 +38,7 @@ dom = do ->
 
       node = node.parentNode
 
-    return {}
+    {}
 
 
   dropTarget: (node) ->
@@ -50,15 +50,15 @@ dom = do ->
         if not sectionRegex.test(node.className)
           snippet = @parentSnippet(node)
         return { containerName: containerName, parent: snippet, node: node }
-
       else if snippetRegex.test(node.className)
         snippet = @getSnippet(node)
         return { snippet: snippet }
-
       else if sectionRegex.test(node.className)
         return { root: true }
 
       node = node.parentNode
+
+    {}
 
 
   # force all containers of a snippet to be as high as they can be
@@ -67,7 +67,6 @@ dom = do ->
     for name, elem of snippet.snippetHtml.containers
       $elem = $(elem)
       continue if $elem.hasClass(docClass.maximizedContainer)
-      log $elem.hasClass(docClass.maximizedContainer)
       $parent = $elem.parent()
       parentHeight = $parent.height()
       outer = $elem.outerHeight(true) - $elem.height()

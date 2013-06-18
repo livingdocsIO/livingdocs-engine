@@ -75,6 +75,16 @@ class SnippetContainer
     @snippetTree || @parentSnippet?.snippetTree
 
 
+  $html: ->
+    if @parentSnippet?
+      elem = @parentSnippet.snippetHtml?.containers[@name]
+      $(elem)
+    else if @snippetTree?
+      @snippetTree.renderer.$root
+    else
+      $()
+
+
   # Traverse all snippets
   each: (callback) ->
     snippet = @first

@@ -12,6 +12,12 @@ describe 'DOM method', ->
       expect( dom.parentContainer(undefined) ).toEqual({})
 
 
+  describe 'dropTarget()', ->
+
+    it 'returns empty object when called with undefined', ->
+      expect( dom.dropTarget(undefined) ).toEqual({})
+
+
   describe 'parentSnippet() on title snippet', ->
 
     beforeEach ->

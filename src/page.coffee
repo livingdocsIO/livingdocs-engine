@@ -55,12 +55,18 @@ page = do ->
         onDrag: (target, drag) =>
           if target.containerName
             dom.maximizeContainerHeight(target.parent)
-            if target.node != $highlightedContainer[0]
-              $highlightedContainer.removeClass?(docClass.containerHighlight)
-              $highlightedContainer = $(target.node)
-              $highlightedContainer.addClass(docClass.containerHighlight)
-          if target.snippet
+            $container = $(target.node)
+          else if target.snippet
             dom.maximizeContainerHeight(target.snippet)
+            $container = target.snippet.parentContainer.$html()
+            $container.addClass(docClass.containerHighlight)
+          else
+            $container = {}
+
+          if $container[0] != $highlightedContainer[0]
+            $highlightedContainer.removeClass?(docClass.containerHighlight)
+            $highlightedContainer = $container
+            $highlightedContainer.addClass?(docClass.containerHighlight)
 
 
         onDrop: (drag) =>
