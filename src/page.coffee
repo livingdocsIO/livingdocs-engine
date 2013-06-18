@@ -26,7 +26,7 @@ page = do ->
   initializeListeners: () ->
     # $document.on 'focus.livingdocs', (event) ->
     #   focus.focusChange(event)
-    @snippetDrag = new DragDrop
+    @snippetDragDrop = new DragDrop
       longpressDelay: 400
       longpressDistanceLimit: 10
       preventDefault: false
@@ -34,7 +34,6 @@ page = do ->
     $document
       .on('click.livingdocs', $.proxy(@click, @))
       .on('mousedown.livingdocs', $.proxy(@mousedown, @))
-      .on('mouseup.livingdocs', $.proxy(@mouseup, @))
 
 
   removeListeners: () ->
@@ -48,39 +47,13 @@ page = do ->
 
     if snippet
       $document.on 'mousemove.livingdocs-drag', $.proxy(@snippetDragMove, @)
+      $document.on 'mouseup.livingdocs-drag', $.proxy(@snippetDragEnd, @)
       $snippet = snippet.snippetHtml.$html
 
-      $highlightedContainer = {}
-      @snippetDrag.mousedown $snippet, event,
-        onDrag: (target, drag) =>
-          if target.containerName
-            dom.maximizeContainerHeight(target.parent)
-            $container = $(target.node)
-          else if target.snippet
-            dom.maximizeContainerHeight(target.snippet)
-            $container = target.snippet.parentContainer.$html()
-            $container.addClass(docClass.containerHighlight)
-          else
-            $container = {}
-
-          if $container[0] != $highlightedContainer[0]
-            $highlightedContainer.removeClass?(docClass.containerHighlight)
-            $highlightedContainer = $container
-            $highlightedContainer.addClass?(docClass.containerHighlight)
-
-
-        onDrop: (drag) =>
-          if $highlightedContainer.removeClass
-            $highlightedContainer.removeClass(docClass.containerHighlight)
-
-          dom.restoreContainerHeight()
-
-          target = drag.target
-          if target
-            if target.containerName
-              target.parent.append(target.containerName, snippet)
-            if target.snippet
-              target.snippet.after(snippet)
+      snippetDrag = new SnippetDrag({ snippet })
+      @snippetDragDrop.mousedown $snippet, event,
+        onDrag: snippetDrag.onDrag
+        onDrop: snippetDrag.onDrop
 
 
   snippetDragMove: (event) ->
@@ -89,11 +62,11 @@ page = do ->
     # if $.browser.msie && !(document.documentMode >= 9) && !event.button
     #   return @mouseup(event)
 
-    @snippetDrag.move(event.pageX, event.pageY, event)
+    @snippetDragDrop.move(event.pageX, event.pageY, event)
 
 
-  mouseup: (event) ->
-    @snippetDrag.drop()
+  snippetDragEnd: (event) ->
+    @snippetDragDrop.drop()
     $document.off('.livingdocs-drag')
 
 

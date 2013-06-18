@@ -41,24 +41,75 @@ dom = do ->
     {}
 
 
-  dropTarget: (node) ->
+  dropTarget: (node, { top, left }) ->
     node = @getElementNode(node)
 
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
       if node.hasAttribute(docAttr.container)
         containerName = node.getAttribute(docAttr.container)
         if not sectionRegex.test(node.className)
-          snippet = @parentSnippet(node)
-        return { containerName: containerName, parent: snippet, node: node }
+          insertSnippet = @getPositionInContainer($(node), { top, left })
+          if insertSnippet
+            return { snippet: insertSnippet.snippet, position: insertSnippet.position }
+          else
+            snippet = @parentSnippet(node)
+            return { containerName: containerName, parent: snippet, node: node }
+
       else if snippetRegex.test(node.className)
+        pos = @getPositionInSnippet($(node), { top, left })
         snippet = @getSnippet(node)
-        return { snippet: snippet }
+        return { snippet: snippet, position: pos.position }
+
       else if sectionRegex.test(node.className)
         return { root: true }
 
       node = node.parentNode
 
     {}
+
+
+  # figure out if we should insert before or after snippet
+  # based on the cursor position
+  getPositionInSnippet: ($elem, { top, left }) ->
+    elemTop = $elem.offset().top
+    elemHeight = $elem.outerHeight()
+    elemBottom = elemTop + elemHeight
+
+    if @distance(top, elemTop) < @distance(top, elemBottom)
+      { position: 'before'}
+    else
+      { position: 'after'}
+
+
+  # figure out if the user wanted to insert between snippets
+  # instead of appending to the container
+  # (this can be the case if the drop occurs on a margin)
+  getPositionInContainer: ($container, { top, left }) ->
+    $snippets = $container.find(".#{ docClass.snippet }")
+    closest = undefined
+    insertSnippet = undefined
+
+    $snippets.each (index, elem) =>
+      $elem = $(elem)
+      elemTop = $elem.offset().top
+      elemHeight = $elem.outerHeight()
+      elemBottom = elemTop + elemHeight
+
+      if not closest or @distance(top, elemTop) < closest
+        closest = @distance(top, elemTop)
+        insertSnippet = { $elem, position: 'before'}
+      if not closest or @distance(top, elemBottom) < closest
+        closest = @distance(top, elemBottom)
+        insertSnippet = { $elem, position: 'after'}
+
+      if insertSnippet
+        insertSnippet.snippet = @getSnippet(insertSnippet.$elem[0])
+
+    insertSnippet
+
+
+  distance: (a, b) ->
+    if a > b then a-b else b-a
 
 
   # force all containers of a snippet to be as high as they can be
@@ -89,6 +140,7 @@ dom = do ->
       node.parentNode
     else
       node
+
 
   # Snippets store a reference of themselves in their Dom node
   # consider: store reference directly without jQuery

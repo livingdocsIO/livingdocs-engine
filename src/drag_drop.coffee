@@ -148,14 +148,13 @@ class DragDrop
 
       # check if a drop is possible
       if elem
-        # dragTarget = dom.parentContainer(elem)
-        dragTarget = dom.dropTarget(elem)
+        dragTarget = dom.dropTarget(elem, { top: mouseTop, left: mouseLeft })
         @drag.target = dragTarget
       else
-        @drag.target = undefined
+        @drag.target = {}
 
       if typeof @options.onDrag == 'function'
-          @options.onDrag.call(this, @drag.target, @drag)
+          @options.onDrag.call(this, @drag.target, @drag, { left: mouseLeft, top: mouseTop })
 
 
   distance: (pointA, pointB) ->

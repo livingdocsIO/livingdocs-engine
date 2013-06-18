@@ -15,7 +15,7 @@ describe 'DOM method', ->
   describe 'dropTarget()', ->
 
     it 'returns empty object when called with undefined', ->
-      expect( dom.dropTarget(undefined) ).toEqual({})
+      expect( dom.dropTarget(undefined, {}) ).toEqual({})
 
 
   describe 'parentSnippet() on title snippet', ->
