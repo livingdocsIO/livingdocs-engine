@@ -107,6 +107,18 @@ module.exports = (grunt) ->
           'dist/livingdocs_engine.min.js': [
             'dist/livingdocs_engine.js'
           ]
+    copy:
+      dependencies:
+        files: [
+            src: 'test/manual/css/livingdocs.css'
+            dest: 'dist/css/livingdocs.css'
+          ,
+            expand: true
+            cwd: 'vendor/'
+            src: '**'
+            dest: 'dist/vendor/'
+        ]
+
 
   # livereload does not work with grunt-contrib-watch, so we use regarde instead
   # https://github.com/gruntjs/grunt-contrib-watch/issues/59
@@ -139,6 +151,7 @@ module.exports = (grunt) ->
     'karma:build'
     'concat:dist'
     'uglify'
+    'copy:dependencies'
   ])
 
   grunt.registerTask('default', ['server'])
