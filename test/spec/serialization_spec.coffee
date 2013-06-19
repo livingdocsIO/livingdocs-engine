@@ -47,6 +47,31 @@ describe 'Deserialization', ->
     @design = test.getDesign()
 
 
+  describe 'of an in-exstistant snippet', ->
+
+    it 'throws an error', ->
+      json = { identifier: 'unknown-snippet' }
+
+      deserialize = =>
+        snippet = Snippet.fromJson(json, @design)
+
+      expect(deserialize).toThrow()
+
+
+  describe 'of an invalid editable name', ->
+
+    it 'throws an error', ->
+      json =
+        identifier: 'test.title'
+        editables:
+          'title-misspelled': 'Baby Geniusses'
+
+      deserialize = =>
+        snippet = Snippet.fromJson(json, @design)
+
+      expect(deserialize).toThrow()
+
+
   describe 'of a single snippet', ->
 
     beforeEach ->
@@ -101,12 +126,28 @@ describe 'Deserialization', ->
       expect(tree.root.first).toBeDefined()
 
 
-    it 'igrnores null containers', ->
+    it 'ignores null containers', ->
       @rowJson.containers.sidebar = null
       deserialize = =>
         snippet = Snippet.fromJson(@rowJson, @design)
 
       expect(deserialize).not.toThrow()
+
+
+    it 'throws an error if container is not an array', ->
+      @rowJson.containers.sidebar = 'this makes no sense at all'
+      deserialize = =>
+        snippet = Snippet.fromJson(@rowJson, @design)
+
+      expect(deserialize).toThrow()
+
+
+    it 'throws an error if it encouters an unknown containerName', ->
+      @rowJson.containers.sidebarExtra = []
+      deserialize = =>
+        snippet = Snippet.fromJson(@rowJson, @design)
+
+      expect(deserialize).toThrow()
 
 
 describe 'Serialize and Deserialize', ->

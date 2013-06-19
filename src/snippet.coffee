@@ -225,6 +225,9 @@ class Snippet
 Snippet.fromJson = (json, design) ->
   template = design.get(json.identifier)
 
+  if not template?
+    error("error while deserializing snippet: unknown template identifier '#{ json.identifier }'")
+
   snippet = new Snippet({ template })
   for editableName, value of json.editables
     if snippet.editables.hasOwnProperty(editableName)
@@ -233,7 +236,14 @@ Snippet.fromJson = (json, design) ->
       error("error while deserializing snippet: unknown editable #{ editableName }")
 
   for containerName, snippetArray of json.containers
+    if not snippet.containers.hasOwnProperty(containerName)
+      error("error while deserializing snippet: unknown container #{ containerName }")
+
     if snippetArray
+
+      if not $.isArray(snippetArray)
+        error("error while deserializing snippet: container is not array #{ containerName }")
+
       for child in snippetArray
         snippet.append( containerName, Snippet.fromJson(child, design) )
 
