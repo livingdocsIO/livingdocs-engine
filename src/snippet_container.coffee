@@ -28,6 +28,9 @@ class SnippetContainer
 
 
   append: (snippet) ->
+    if @parentSnippet? and snippet == @parentSnippet
+      error('cannot append snippet to itself')
+
     if @last
       @insertAfter(@last, snippet)
     else
@@ -38,6 +41,8 @@ class SnippetContainer
 
 
   insertBefore: (snippet, insertedSnippet) ->
+    error('cannot insert snippet before itself') if snippet == insertedSnippet
+
     position =
       previous: snippet.previous
       next: snippet
@@ -50,6 +55,8 @@ class SnippetContainer
 
 
   insertAfter: (snippet, insertedSnippet) ->
+    error('cannot insert snippet after itself') if snippet == insertedSnippet
+
     position =
       previous: snippet
       next: snippet.next

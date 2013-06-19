@@ -67,6 +67,16 @@
   opacity: 0.3;
 }
 
+.doc-before-drop {
+  -webkit-transition: all 0.3s;
+  -webkit-transform: translateY(-25px);
+}
+
+.doc-after-drop {
+  -webkit-transition: all 0.3s;
+  -webkit-transform: translateY(25px);
+}
+
 .doc-drag-placeholder-item {
   position: absolute;
   background: #09D;
@@ -93,6 +103,16 @@
   text-align: center;
   line-height: 25px;
   font-weight: bold;
+}
+
+.doc-drag-preview {
+  position: absolute;
+  border: 1px dashed #09d;
+  border: 1px dashed #09d;
+  min-width: 20px;
+  height: 0;
+  /*border-radius: 3px;*/
+  opacity: 0.5;
 }
 
 /**

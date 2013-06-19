@@ -24,6 +24,8 @@ docClass =
   # drag & drop
   draggedPlaceholder: 'doc-dragged-placeholder'
   dragged: 'doc-dragged'
+  beforeDrop: 'doc-before-drop'
+  afterDrop: 'doc-after-drop'
 
   # utility classes
   preventSelection: 'doc-no-selection'

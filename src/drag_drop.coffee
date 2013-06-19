@@ -20,6 +20,7 @@
 # @option drag.width: e.g. 300, force width of dragged element
 # @option drag.onDrop: callback( dragObj, $origin ), will be called after the node is dropped
 # @option drag.onDrag: callback( tragTarget, dragObj ), will be called after the node is dropped
+# @option drag.onDragStart: callback( dragObj ), will be called after the drag started
 
 class DragDrop
 
@@ -61,34 +62,25 @@ class DragDrop
 
   # start the drag process
   start: ->
+    @drag.started = true
     page.blurFocusedElement()
 
     mouseLeft = @drag.startPoint.left
     mouseTop = @drag.startPoint.top
 
+    if typeof @options.onDragStart == 'function'
+        @options.onDragStart.call(this, @drag, { left: mouseLeft, top: mouseTop })
+
     # prevent text-selections while dragging
     $(window.document.body).addClass(docClass.preventSelection)
-
-    # calculate mouse position relative to snippet
-    if !@drag.mouseToSnippet
-      snippetOffset = @$origin.offset()
-      marginTop = parseFloat( @$origin.css("margin-top") )
-      marginLeft = parseFloat( @$origin.css("margin-left") )
-      @drag.mouseToSnippet =
-        left: (mouseLeft - snippetOffset.left + marginLeft)
-        top: (mouseTop - snippetOffset.top + marginTop)
 
     if @options.direct
       @$dragged = @$origin
     else
-      @drag.preview = $("<div class='upfront-drag-preview'>")
-      $(window.document.body).append(@drag.preview)
       @$dragged = @options.createPlaceholder(@drag, @$origin)
 
     if @drag.fixed
       @drag.$body = $(window.document.body)
-
-    @drag.started = true
 
     # positionDragged
     @move(mouseLeft, mouseTop)
@@ -100,8 +92,12 @@ class DragDrop
 
   move: (mouseLeft, mouseTop, event) ->
     if @drag.started
-      left = mouseLeft - @drag.mouseToSnippet.left
-      top = mouseTop - @drag.mouseToSnippet.top
+      if @drag.mouseToSnippet
+        left = mouseLeft - @drag.mouseToSnippet.left
+        top = mouseTop - @drag.mouseToSnippet.top
+      else
+        left = mouseLeft
+        top = mouseTop
 
       if @drag.fixed
         top = top - @drag.$body.scrollTop()
@@ -141,7 +137,6 @@ class DragDrop
       # get the element we're currently hovering
       if event.clientX && event.clientY
         @$dragged.hide()
-        @drag.preview.hide() if @drag.preview
         # todo: Safari 4 and Opera 10.10 need pageX/Y.
         elem = window.document.elementFromPoint(event.clientX, event.clientY)
         @$dragged.show()
@@ -154,7 +149,7 @@ class DragDrop
         @drag.target = {}
 
       if typeof @options.onDrag == 'function'
-          @options.onDrag.call(this, @drag.target, @drag, { left: mouseLeft, top: mouseTop })
+        @options.onDrag.call(this, @drag.target, @drag, { left: mouseLeft, top: mouseTop })
 
 
   distance: (pointA, pointB) ->
@@ -186,6 +181,16 @@ class DragDrop
 
 # Drag preview method -> these are set in the configuration and can be replaced
 DragDrop.cloneOrigin = (drag, $origin) ->
+
+  # calculate mouse position relative to snippet
+  if !drag.mouseToSnippet
+    snippetOffset = $origin.offset()
+    marginTop = parseFloat( $origin.css("margin-top") )
+    marginLeft = parseFloat( $origin.css("margin-left") )
+    drag.mouseToSnippet =
+      left: (mouseLeft - snippetOffset.left + marginLeft)
+      top: (mouseTop - snippetOffset.top + marginTop)
+
   # clone snippet
   snippetWidth = drag.width || $origin.width()
   draggedCopy = $origin.clone()
@@ -208,9 +213,10 @@ DragDrop.cloneOrigin = (drag, $origin) ->
 DragDrop.placeholder = (drag, $origin) ->
   snippetWidth = drag.width
   numberOfDraggedElems = 1
-  drag.mouseToSnippet =
-    left: 2
-    top: -15
+  if !drag.mouseToSnippet
+    drag.mouseToSnippet =
+      left: 2
+      top: -15
 
   template =
     """
