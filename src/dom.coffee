@@ -50,7 +50,8 @@ dom = do ->
         if not sectionRegex.test(node.className)
           insertSnippet = @getPositionInContainer($(node), { top, left })
           if insertSnippet
-            return { snippet: insertSnippet.snippet, position: insertSnippet.position }
+            coords = @getInsertPosition(insertSnippet.$elem[0], insertSnippet.position)
+            return { snippet: insertSnippet.snippet, position: insertSnippet.position, coords }
           else
             snippet = @parentSnippet(node)
             return { containerName: containerName, parent: snippet, node: node }
@@ -58,7 +59,8 @@ dom = do ->
       else if snippetRegex.test(node.className)
         pos = @getPositionInSnippet($(node), { top, left })
         snippet = @getSnippet(node)
-        return { snippet: snippet, position: pos.position }
+        coords = @getInsertPosition(node, pos.position)
+        return { snippet: snippet, position: pos.position, coords }
 
       else if sectionRegex.test(node.className)
         return { root: true }
@@ -66,6 +68,14 @@ dom = do ->
       node = node.parentNode
 
     {}
+
+
+  getInsertPosition: (elem, position) ->
+    rect = @getBoundingClientRect(elem)
+    if position == 'before'
+      { top: rect.top, left: rect.left, width: rect.width }
+    else
+      { top: rect.bottom, left: rect.left, width: rect.width }
 
 
   # figure out if we should insert before or after snippet
@@ -76,9 +86,9 @@ dom = do ->
     elemBottom = elemTop + elemHeight
 
     if @distance(top, elemTop) < @distance(top, elemBottom)
-      { position: 'before'}
+      { position: 'before' }
     else
-      { position: 'after'}
+      { position: 'after' }
 
 
   # figure out if the user wanted to insert between snippets
@@ -146,3 +156,25 @@ dom = do ->
   # consider: store reference directly without jQuery
   getSnippet: (node) ->
     $(node).data('snippet')
+
+
+  getBoundingClientRect: (node) ->
+    coords = node.getBoundingClientRect()
+
+    # code from mdn: https://developer.mozilla.org/en-US/docs/Web/API/window.scrollX
+    scrollX = if (window.pageXOffset != undefined) then window.pageXOffset else (document.documentElement || window.document.body.parentNode || window.document.body).scrollLeft
+    scrollY = if (window.pageYOffset != undefined) then window.pageYOffset else (document.documentElement || window.document.body.parentNode || window.document.body).scrollTop
+
+    # translate into absolute positions
+    coords =
+      top: coords.top + scrollY
+      bottom: coords.bottom + scrollY
+      left: coords.left + scrollX
+      right: coords.right + scrollX
+
+    coords.height = coords.bottom - coords.top
+    coords.width = coords.right - coords.left
+
+    coords
+
+

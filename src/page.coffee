@@ -52,6 +52,7 @@ page = do ->
 
       snippetDrag = new SnippetDrag({ snippet })
       @snippetDragDrop.mousedown $snippet, event,
+        onDragStart: snippetDrag.onStart
         onDrag: snippetDrag.onDrag
         onDrop: snippetDrag.onDrop
 
