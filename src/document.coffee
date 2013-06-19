@@ -67,7 +67,6 @@ document = do ->
 
     documentReady()
 
-
   # *Public API*
   addSnippetCollection: (snippetCollection, config) ->
     design = new Design(config)
@@ -84,6 +83,11 @@ document = do ->
     # load design assets into page
     if design.css
       loader.css(design.css, doBeforeDocumentReady())
+
+
+  # Public API
+  eachContainer: (callback) ->
+    @snippetTree.eachContainer(callback)
 
 
   listDesignNamespaces: ->

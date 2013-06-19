@@ -55,6 +55,9 @@ chainable = (fn, context) ->
   @toJson = $.proxy(document, 'toJson')
   @restore = chainable(document, 'restore')
 
+  # User Interface
+  # -----------------------------
+  @eachContainer = chainable(document, 'eachContainer')
 
   # Stash
   # -----
