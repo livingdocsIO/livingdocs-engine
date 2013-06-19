@@ -233,8 +233,9 @@ Snippet.fromJson = (json, design) ->
       error("error while deserializing snippet: unknown editable #{ editableName }")
 
   for containerName, snippetArray of json.containers
-    for child in snippetArray
-      snippet.append( containerName, Snippet.fromJson(child, design) )
+    if snippetArray
+      for child in snippetArray
+        snippet.append( containerName, Snippet.fromJson(child, design) )
 
   snippet
 

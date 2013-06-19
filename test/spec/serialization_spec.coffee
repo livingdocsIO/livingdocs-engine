@@ -101,6 +101,14 @@ describe 'Deserialization', ->
       expect(tree.root.first).toBeDefined()
 
 
+    it 'igrnores null containers', ->
+      @rowJson.containers.sidebar = null
+      deserialize = =>
+        snippet = Snippet.fromJson(@rowJson, @design)
+
+      expect(deserialize).not.toThrow()
+
+
 describe 'Serialize and Deserialize', ->
 
   beforeEach ->
