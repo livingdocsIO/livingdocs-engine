@@ -24,13 +24,5 @@ debug = ->
 
 
 # Log errors
-error = ->
-  args = Array.prototype.slice.call(arguments)
-  args = args[0] if args.length == 1
-
-  if ( window.console && typeof window.console.error == 'function')
-    console.error( args )
-  else if ( window.console )
-    console.log( args )
-
-  undefined
+error = (message) ->
+  throw new Error(message)
