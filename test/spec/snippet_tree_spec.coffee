@@ -200,3 +200,39 @@ describe 'SnippetTree with a multi-column row snippet', ->
 
       expect(visitedSnippets).toEqual(1)
       expect(visitedContainers).toEqual(3)
+
+describe 'SnippetTree with three levels', ->
+
+  beforeEach ->
+    @tree = new SnippetTree()
+    @row = test.getSnippet('row')
+    @rowInMain = test.getSnippet('row')
+    @title = test.getSnippet('title')
+    @text = test.getSnippet('text')
+
+    @tree.append(@row)
+    @row.append('main', @rowInMain)
+    @row.append('main', @title)
+    @rowInMain.append('sidebar', @text)
+
+    # Thats how the snippet tree looks now:
+    # -row
+    #   main:
+    #     -rowInMain
+    #       sidebar:
+    #         -text
+    #     -title
+
+  describe 'each()', ->
+
+    it 'visits all containers in the right order', ->
+      visitedSnippets = []
+      @tree.each (snippet) ->
+        visitedSnippets.push(snippet)
+
+      # snippets should be traversed in order of appearance
+      expect( visitedSnippets.length).toEqual(4)
+      expect( visitedSnippets[0] == @row).toBe(true)
+      expect( visitedSnippets[1] == @rowInMain).toBe(true)
+      expect( visitedSnippets[2] == @text).toBe(true)
+      expect( visitedSnippets[3] == @title).toBe(true)

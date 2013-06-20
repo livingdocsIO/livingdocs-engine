@@ -172,8 +172,8 @@ class Snippet
     for name, snippetContainer of @containers
       snippet = snippetContainer.first
       while (snippet)
-        snippet.descendants(callback)
         callback(snippet)
+        snippet.descendants(callback)
         snippet = snippet.next
 
 
