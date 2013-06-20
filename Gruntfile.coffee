@@ -118,6 +118,13 @@ module.exports = (grunt) ->
             src: '**'
             dest: 'dist/vendor/'
         ]
+      lukas:
+        files: [
+          expand: true,
+          cwd: 'dist/',
+          src: ['**'],
+          dest: '../livingdocs/vendor/assets/javascripts/livingdocs-engine/'
+        ]
 
 
   # livereload does not work with grunt-contrib-watch, so we use regarde instead
