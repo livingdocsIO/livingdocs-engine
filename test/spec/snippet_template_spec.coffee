@@ -16,7 +16,9 @@ describe 'Title Template', ->
 
 
   it 'has stored the html', ->
-    expect(template.$template.outerHtml()).toEqual("<h1 #{ docAttr.editable }=\"title\" class=\"#{ docClass.editable }\"></h1>")
+    expected =
+      "<h1 #{ docAttr.editable }='title' class='#{ docClass.editable }'></h1>"
+    expect( htmlCompare.compare(template.$template, expected) ).toBe(true)
 
 
   describe '#createSnippet()', ->

@@ -11,21 +11,27 @@ describe 'SnippetHtml', ->
   it 'sets title editable', ->
     @snippetHtml.set('title', 'Humble Bundle')
 
-    expect( @snippetHtml.$html.outerHtml() ).toEqual(
+    expected =
       """
-      <h1 #{ docAttr.editable }="title" class="#{ docClass.editable } #{ docClass.snippet }">Humble Bundle</h1>
+      <h1 #{ docAttr.editable }="title"
+        class="#{ docClass.editable } #{ docClass.snippet }">
+        Humble Bundle
+      </h1>
       """
-    )
+
+    expect( htmlCompare.compare(@snippetHtml.$html, expected) ).toBe(true)
 
 
   it 'sets title editable as default', ->
     @snippetHtml.set('Humble Bundle 2')
-
-    expect( @snippetHtml.$html.outerHtml() ).toEqual(
+    expected =
       """
-      <h1 #{ docAttr.editable }="title" class="#{ docClass.editable } #{ docClass.snippet }">Humble Bundle 2</h1>
+      <h1 #{ docAttr.editable }="title"
+        class="#{ docClass.editable } #{ docClass.snippet }">
+        Humble Bundle 2
+      </h1>
       """
-    )
+    expect( htmlCompare.compare(@snippetHtml.$html, expected) ).toBe(true)
 
 
   it 'gets the title', ->

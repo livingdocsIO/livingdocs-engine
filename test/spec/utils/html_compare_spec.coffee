@@ -9,6 +9,24 @@ describe 'HtmlCompare', ->
       expect( compare(a, b) ).toBe(true)
 
 
+    it 'works with jQuery objects', ->
+      a = $("<div></div>")
+      b = $("<div></div>")
+      expect( compare(a, b) ).toBe(true)
+
+
+    it 'works with strings objects', ->
+      a = "<div></div>"
+      b = "<div></div>"
+      expect( compare(a, b) ).toBe(true)
+
+
+    it 'spots differences with strings objects', ->
+      a = "<div>a</div>"
+      b = "<div>b</div>"
+      expect( compare(a, b) ).toBe(false)
+
+
     it 'spots the difference between a div and a span', ->
       a = $("<div></div>")[0]
       b = $("<span></span>")[0]
@@ -224,4 +242,4 @@ describe 'HtmlCompare', ->
         """
 
       b = "<div id='test'>Here it comes:<div data-doc='true'  class='tablet-full hero'><a href='link'>click here!</a></div></div>"
-      expect( compare($(a)[0], $(b)[0]) ).toBe(true)
+      expect( compare($(a), $(b)) ).toBe(true)

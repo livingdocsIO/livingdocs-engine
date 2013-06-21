@@ -5,14 +5,18 @@ htmlCompare = do ->
   normalizeWhitespace: true
 
 
-  compareTag: (a, b) ->
-    @getTag(a) == @getTag(b)
-
-
   compareElement: (a, b) ->
     if @compareTag(a, b)
       if @compareAttributes(a, b)
         true
+
+
+  compareTag: (a, b) ->
+    @getTag(a) == @getTag(b)
+
+
+  getTag: (node) ->
+    node.namespaceURI + ':' + node.localName
 
 
   compareAttributes: (a, b) ->
@@ -74,13 +78,16 @@ htmlCompare = do ->
     @empty.test(textNode.nodeValue) # consider: would .textContent be better?
 
 
-  getTag: (node) ->
-    node.namespaceURI + ':' + node.localName
-
-
   compare: (a, b) ->
-    iterate = @iterate(a)
-    # log iterate().
+
+    # prepare parameters
+    a = $(a) if typeof a == 'string'
+    b = $(b) if typeof b == 'string'
+
+    a = a[0] if a.jquery
+    b = b[0] if b.jquery
+
+    # start comparing
     nextInA = @iterateComparables(a)
     nextInB = @iterateComparables(b)
 
@@ -88,10 +95,8 @@ htmlCompare = do ->
     while equivalent
       equivalent = @compareNode( a = nextInA(), b = nextInB() )
 
-    if not a? and not b?
-      true
-    else
-      false
+    if not a? and not b? then true else false
+
 
   # true if element node or non-empty text node
   isComparable: (node) ->
@@ -123,5 +128,3 @@ htmlCompare = do ->
             n = n.parentNode
 
       current
-
-
