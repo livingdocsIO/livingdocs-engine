@@ -167,11 +167,17 @@ describe 'HtmlCompare', ->
       expect( compare(a, b) ).toBe(true)
 
 
-  describe 'empty text nodes', ->
+  describe 'non comparable nodes', ->
 
-    it 'ignores them between elements', ->
-      a = $("<div> <span></span></div>")[0]
-      b = $("<div><span></span></div>")[0]
+    it 'ignores empty text nodes', ->
+      a = $("<div><span></span></div>")[0]
+      b = $("<div> <span>\n</span>    </div>")[0]
+      expect( compare(a, b) ).toBe(true)
+
+
+    it 'ignores comment nodes', ->
+      a = $("<div><span></span></div>")[0]
+      b = $("<div><span><!-- comment --></span></div>")[0]
       expect( compare(a, b) ).toBe(true)
 
 
@@ -188,3 +194,34 @@ describe 'HtmlCompare', ->
       b = $("<div><a></a></div>")[0]
       expect( compare(a, b) ).toBe(false)
 
+
+  describe 'ordered nested elements', ->
+
+    it 'considers the same equivalent', ->
+      a = $("<div><span></span><strong></strong></div>")[0]
+      b = $("<div><span></span><strong></strong></div>")[0]
+      expect( compare(a, b) ).toBe(true)
+
+
+    it 'spots different element ordering', ->
+      a = $("<div><span></span><strong></strong></div>")[0]
+      b = $("<div><strong></strong><span></span></div>")[0]
+      expect( compare(a, b) ).toBe(false)
+
+
+  describe 'real world example', ->
+
+    it 'compares as equivalent', ->
+      a =
+        """
+        <div id='test'>
+          Here it comes:
+          <div class="hero tablet-full" data-doc="true">
+            <!-- why not add a comment? -->
+            <a href="link">click here!</a>
+          </div>
+        </div>
+        """
+
+      b = "<div id='test'>Here it comes:<div data-doc='true'  class='tablet-full hero'><a href='link'>click here!</a></div></div>"
+      expect( compare($(a)[0], $(b)[0]) ).toBe(true)
