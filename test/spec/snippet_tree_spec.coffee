@@ -201,6 +201,7 @@ describe 'SnippetTree with a multi-column row snippet', ->
       expect(visitedSnippets).toEqual(1)
       expect(visitedContainers).toEqual(3)
 
+
 describe 'SnippetTree with three levels', ->
 
   beforeEach ->
@@ -222,6 +223,7 @@ describe 'SnippetTree with three levels', ->
     #       sidebar:
     #         -text
     #     -title
+
 
   describe 'each()', ->
 
