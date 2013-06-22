@@ -22,15 +22,3 @@ localstore = do ->
 
   disbled: ->
     store.disabled
-
-
-  # HELPERS
-  storePosition: (key, $node) ->
-    @set("#{ key }-position", { top: $node.css('top'), left: $node.css('left') })
-
-
-  restorePosition: (key, $node) ->
-    offset = @get("#{ key }-position")
-    $node.css({ left:"#{ offset.left }", top:"#{ offset.top }" }) if offset
-
-
