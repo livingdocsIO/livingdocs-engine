@@ -48,6 +48,7 @@ module.exports = (grunt) ->
       engine:
         options:
           join: true
+          sourceMap: true
         files:
           '.tmp/livingdocs_engine.js': [
             'src/utils/*.coffee'
@@ -95,12 +96,6 @@ module.exports = (grunt) ->
         configFile: 'karma.conf.js'
         browsers: ['Chrome', 'Firefox', 'Safari', 'Opera']
         singleRun: true
-    concat:
-      dist:
-        files:
-          'dist/livingdocs_engine.js': [
-            '.tmp/livingdocs_engine.js'
-          ]
     uglify:
       dist:
         files:
@@ -108,6 +103,13 @@ module.exports = (grunt) ->
             'dist/livingdocs_engine.js'
           ]
     copy:
+      dist:
+        files: [
+          expand: true
+          cwd: '.tmp/'
+          src: 'livingdocs_engine.*'
+          dest: 'dist/'
+        ]
       dependencies:
         files: [
             src: 'test/manual/css/livingdocs.css'
@@ -156,7 +158,7 @@ module.exports = (grunt) ->
     'clean'
     'coffee'
     'karma:build'
-    'concat:dist'
+    'copy:dist'
     'uglify'
     'copy:dependencies'
   ])
