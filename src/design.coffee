@@ -41,7 +41,7 @@ class Design
     if not namespace || @namespace == namespace
       callback(name)
     else
-      error("design #{ @namespace }: cannot get template with different namespace #{ namespace } ")
+      log.error("design #{ @namespace }: cannot get template with different namespace #{ namespace } ")
 
 
   each: (callback) ->

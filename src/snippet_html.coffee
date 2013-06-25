@@ -35,14 +35,14 @@ class SnippetHtml
     if elem = @getEditable(editable)
       $(elem).html(value)
     else
-      error 'cannot set value without editable name'
+      log.error 'cannot set value without editable name'
 
 
   get: (editable) ->
     if elem = @getEditable(editable)
       $(elem).html()
     else
-      error 'cannot get value without editable name'
+      log.error 'cannot get value without editable name'
 
 
   append: (containerName, $elem) ->

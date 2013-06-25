@@ -1,28 +1,47 @@
+
 # Log Helper
 # ----------
 # Default logging helper
 # @params: pass `"trace"` as last parameter to output the call stack
-log = ->
-
-  args = Array.prototype.slice.call(arguments)
-
-  if args.length
-    if args[args.length - 1] == 'trace'
+log = (args...) ->
+  if window.console?
+    if args.length and args[args.length - 1] == 'trace'
       args.pop()
-      console.trace() if window.console?.trace
+      window.console.trace() if window.console.trace?
 
-  args = args[0] if args.length == 1
-
-  if (window.console)
-    console.log(args)
-
-# Log debug messages
-# Use this if you're ok with everybody deleting your debug lines
-# if you leave them in code accidentally
-debug = ->
-  log.apply(undefined, arguments)
+    window.console.log.apply(window.console, args)
+    undefined
 
 
-# Log errors
-error = (message) ->
-  throw new Error(message)
+do ->
+
+  # @param level: one of these strings:
+  # 'critical', 'error', 'warning', 'info', 'debug'
+  notify = (message, level = 'error') ->
+    if _rollbar
+      _rollbar.push new Error(message), ->
+        if (level == 'critical' or level == 'error') and window.console?.error?
+          window.console.error.call(window.console, message)
+        else
+          log.call(undefined, message)
+    else
+      if (level == 'critical' or level == 'error')
+        throw new Error(message)
+      else
+        log.call(undefined, message)
+
+    undefined
+
+
+  log.debug = (message) ->
+    notify(message, 'debug')
+
+
+  log.warn = (message) ->
+    notify(message, 'warning')
+
+
+  # Log error and throw exception
+  log.error = (message) ->
+    notify(message, 'error')
+

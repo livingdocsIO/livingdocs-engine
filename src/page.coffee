@@ -19,7 +19,7 @@ page = do ->
     else
       $root = $(rootNode).addClass(".#{ docClass.section }")
 
-    error('no rootNode found') if !$root.length
+    log.error('no rootNode found') if !$root.length
     $root
 
 

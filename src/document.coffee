@@ -45,7 +45,7 @@ document = do ->
 
   # *Public API*
   loadDocument: ({ json }={}) ->
-    error('document is already initialized') if @initialized
+    log.error('document is already initialized') if @initialized
     @initialized = true
 
     design = @firstDesign()
@@ -179,7 +179,7 @@ document = do ->
     snippetTemplate = @designs[namespace]?.get(name)
 
     if !snippetTemplate
-      error("could not find template #{ identifier }")
+      log.error("could not find template #{ identifier }")
 
     snippetTemplate
 

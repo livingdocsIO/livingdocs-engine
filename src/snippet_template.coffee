@@ -20,7 +20,7 @@ class SnippetTemplate
 
   constructor: ({ html, @namespace, @name, identifier, title, version } = {}) ->
     if not html
-      error('SnippetTemplate: param html missing')
+      log.error('SnippetTemplate: param html missing')
 
     if identifier
       { @namespace, @name } = SnippetTemplate.parseIdentifier(identifier)
@@ -105,7 +105,7 @@ class SnippetTemplate
         if name and not editables.hasOwnProperty(name)
           editables[name] = node
         else
-          error("editable name '#{ name }' already taken: #{ @identifier }")
+          log.error("editable name '#{ name }' already taken: #{ @identifier }")
 
       else if node.hasAttribute(docAttr.container)
         name = node.getAttribute(docAttr.container)
@@ -114,7 +114,7 @@ class SnippetTemplate
         if name and not containers.hasOwnProperty(name)
           containers[name] = node
         else
-          error("container name '#{ name }' already taken: #{ @identifier }")
+          log.error("container name '#{ name }' already taken: #{ @identifier }")
 
     { editables, containers }
 
@@ -182,7 +182,7 @@ SnippetTemplate.parseIdentifier = (identifier) ->
   else if parts.length == 2
     { namespace: parts[0], name: parts[1] }
   else
-    error("could not parse snippet template identifier: #{ identifier }")
+    log.error("could not parse snippet template identifier: #{ identifier }")
     { namespace: undefined , name: undefined }
 
 

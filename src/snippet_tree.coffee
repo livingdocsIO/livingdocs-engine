@@ -172,7 +172,7 @@ class SnippetTree
       detachSnippetFunc()
       @snippetRemoved.fire(snippet)
     else
-      error('cannot remove snippet from another SnippetTree')
+      log.error('cannot remove snippet from another SnippetTree')
 
 
   contentChanging: (snippet) ->

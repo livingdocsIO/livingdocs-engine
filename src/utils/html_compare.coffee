@@ -62,7 +62,7 @@ htmlCompare = do ->
         switch a.nodeType
           when 1 then @compareElement(a, b)
           when 3 then @compareText(a, b)
-          else error "HtmlCompare: nodeType #{ a.nodeType } not supported"
+          else log.error "HtmlCompare: nodeType #{ a.nodeType } not supported"
 
 
   compareText: (a, b) ->

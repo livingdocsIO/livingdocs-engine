@@ -18,7 +18,7 @@ class Snippet
 
   constructor: ({ @template } = {}) ->
     if !@template
-      error('cannot instantiate snippet without template reference')
+      log.error('cannot instantiate snippet without template reference')
 
     @initializeContainers()
     @initializeEditables()
@@ -94,7 +94,7 @@ class Snippet
         @editables[editable] = value
         @snippetTree.contentChanging(this) if @snippetTree
     else
-      error("set error: #{ @identifier } has no editable named #{ editable }")
+      log.error("set error: #{ @identifier } has no editable named #{ editable }")
 
 
   get: (editable) ->
@@ -104,7 +104,7 @@ class Snippet
     if @editables?.hasOwnProperty(editable)
       @editables[editable]
     else
-      error("get error: #{ @identifier } has no editable named #{ editable }")
+      log.error("get error: #{ @identifier } has no editable named #{ editable }")
 
 
   # creates a snippetHtml instance for this snippet
@@ -226,23 +226,23 @@ Snippet.fromJson = (json, design) ->
   template = design.get(json.identifier)
 
   if not template?
-    error("error while deserializing snippet: unknown template identifier '#{ json.identifier }'")
+    log.error("error while deserializing snippet: unknown template identifier '#{ json.identifier }'")
 
   snippet = new Snippet({ template })
   for editableName, value of json.editables
     if snippet.editables.hasOwnProperty(editableName)
       snippet.editables[editableName] = value
     else
-      error("error while deserializing snippet: unknown editable #{ editableName }")
+      log.error("error while deserializing snippet: unknown editable #{ editableName }")
 
   for containerName, snippetArray of json.containers
     if not snippet.containers.hasOwnProperty(containerName)
-      error("error while deserializing snippet: unknown container #{ containerName }")
+      log.error("error while deserializing snippet: unknown container #{ containerName }")
 
     if snippetArray
 
       if not $.isArray(snippetArray)
-        error("error while deserializing snippet: container is not array #{ containerName }")
+        log.error("error while deserializing snippet: container is not array #{ containerName }")
 
       for child in snippetArray
         snippet.append( containerName, Snippet.fromJson(child, design) )

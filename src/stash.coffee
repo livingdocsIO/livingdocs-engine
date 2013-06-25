@@ -33,7 +33,7 @@ stash = do ->
     if json
       document.restore(json)
     else
-      error('stash is empty')
+      log.error('stash is empty')
 
 
   list: ->

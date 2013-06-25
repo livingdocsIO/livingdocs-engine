@@ -2,8 +2,8 @@ class Renderer
 
 
   constructor: ({ @snippetTree, rootNode }) ->
-    error('no snippet tree specified') if !@snippetTree
-    error('no root node specified') if !rootNode
+    log.error('no snippet tree specified') if !@snippetTree
+    log.error('no root node specified') if !rootNode
 
     @$root = $(rootNode)
     @snippetTree.renderer = this
@@ -92,7 +92,7 @@ class Renderer
         @appendToContainer(parentContainer, $snippet)
         @afterDomInsert(snippetHtml)
       else
-        error('could not insert snippet into Dom')
+        log.error('could not insert snippet into Dom')
 
     this
 
