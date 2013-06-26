@@ -12,7 +12,9 @@ class SnippetDrag
 
   onStart: () ->
     @$insertPreview = $("<div class='doc-drag-preview'>")
-    $(window.document.body).append(@$insertPreview)
+    page.$body
+      .append(@$insertPreview)
+      .css('cursor', 'pointer')
 
 
   # remeve classes added while dragging from tracked elements
@@ -63,6 +65,7 @@ class SnippetDrag
 
   onDrop: (drag) ->
     # @removeCssClasses()
+    page.$body.css('cursor', '')
     @$insertPreview.remove()
     @$highlightedContainer.removeClass?(docClass.containerHighlight)
     dom.restoreContainerHeight()

@@ -3,13 +3,12 @@
 # Defines the API between the DOM and the document
 page = do ->
 
-  # Private
-  # -------
-
-  $document = $(window.document)
-
   # page object
   # -----------
+
+  $document: $(window.document)
+  $body: $(window.document.body)
+
 
   # @param rootNode (optional) DOM node that should contain the content
   # @return jQuery object: the root node of the document
@@ -24,21 +23,21 @@ page = do ->
 
 
   initializeListeners: () ->
-    # $document.on 'focus.livingdocs', (event) ->
+    # @$document.on 'focus.livingdocs', (event) ->
     #   focus.focusChange(event)
     @snippetDragDrop = new DragDrop
       longpressDelay: 400
       longpressDistanceLimit: 10
       preventDefault: false
 
-    $document
+    @$document
       .on('click.livingdocs', $.proxy(@click, @))
       .on('mousedown.livingdocs', $.proxy(@mousedown, @))
 
 
   removeListeners: () ->
-    $document.off('.livingdocs')
-    $document.off('.livingdocs-drag')
+    @$document.off('.livingdocs')
+    @$document.off('.livingdocs-drag')
 
 
   mousedown: (event) ->
@@ -46,8 +45,8 @@ page = do ->
     snippet = dom.parentSnippet(event.target)
 
     if snippet
-      $document.on 'mousemove.livingdocs-drag', $.proxy(@snippetDragMove, @)
-      $document.on 'mouseup.livingdocs-drag', $.proxy(@snippetDragEnd, @)
+      @$document.on 'mousemove.livingdocs-drag', $.proxy(@snippetDragMove, @)
+      @$document.on 'mouseup.livingdocs-drag', $.proxy(@snippetDragEnd, @)
       $snippet = snippet.snippetHtml.$html
 
       snippetDrag = new SnippetDrag({ snippet })
@@ -68,7 +67,7 @@ page = do ->
 
   snippetDragEnd: (event) ->
     @snippetDragDrop.drop()
-    $document.off('.livingdocs-drag')
+    @$document.off('.livingdocs-drag')
 
 
   click: (event) ->
@@ -100,4 +99,4 @@ page = do ->
     focusedElement = @getFocusedElement()
     $(focusedElement).blur() if focusedElement
 
-
+@page = page
