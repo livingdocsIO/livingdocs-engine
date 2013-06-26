@@ -18,7 +18,7 @@ do ->
   # @param level: one of these strings:
   # 'critical', 'error', 'warning', 'info', 'debug'
   notify = (message, level = 'error') ->
-    if _rollbar
+    if _rollbar?
       _rollbar.push new Error(message), ->
         if (level == 'critical' or level == 'error') and window.console?.error?
           window.console.error.call(window.console, message)
