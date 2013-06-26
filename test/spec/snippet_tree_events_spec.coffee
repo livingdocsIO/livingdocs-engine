@@ -1,6 +1,6 @@
 # SnippetTree Events
 # ------------------
-# Check that SnippetTree raises events properly
+# Check that SnippetTree fires events properly
 
 describe 'SnippetTree (Layout Events) ->', ->
 
@@ -12,7 +12,7 @@ describe 'SnippetTree (Layout Events) ->', ->
     @expectSnippetMoved = monitor(@tree.snippetMoved)
 
 
-  it 'raises snippetAdded event', ->
+  it 'fires snippetAdded event', ->
     snippet = test.getSnippet('title')
 
     @expectSnippetRemoved 0, =>
@@ -29,20 +29,20 @@ describe 'SnippetTree (Layout Events) ->', ->
       @tree.append(@snippetA).append(@snippetB)
 
 
-    it 'raises snippetRemoved event', ->
+    it 'fires snippetRemoved event', ->
       @expectSnippetAdded 0, =>
         @expectSnippetMoved 0, =>
           @expectSnippetRemoved 1, =>
             @snippetB.remove()
 
 
-    it 'raises snippetMoved event', ->
+    it 'fires snippetMoved event', ->
       @expectSnippetMoved 2, =>
         @snippetB.up()
         @snippetA.up()
 
 
-    it 'does not raise snippetMoved event if snippet did not move', ->
+    it 'does not fire snippetMoved event if snippet did not move', ->
       @expectSnippetMoved 0, =>
         @snippetA.up()
 
@@ -58,7 +58,7 @@ describe 'SnippetTree (Content Events)', ->
     @tree.append(@snippetA)
 
 
-  it 'raises snippetContentChanged event', ->
+  it 'fires snippetContentChanged event', ->
     @expectContentChanged 1, =>
       @snippetA.set('title', 'Talk to the hand')
 
