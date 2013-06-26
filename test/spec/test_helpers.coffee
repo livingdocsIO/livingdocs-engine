@@ -86,5 +86,5 @@ test = do ->
 
       before = timesFired
       callback()
-      expect(before + expectedEvents).toEqual(timesFired)
+      expect(expectedEvents).toEqual(timesFired - before)
 
