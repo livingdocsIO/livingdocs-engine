@@ -42,23 +42,19 @@ class Renderer
       snippet.createHtml()
 
 
-  render: (overwriteContent) ->
-    @$root.html('') if overwriteContent
-    if @$root.html() == ''
-      # render SnippetTree from scratch
-      # consider: replace $domNode with a documentFragment and reswap after
-      # everything is inserted (but I don't know if this is actually faster)
+  render: ->
+    @$root.empty()
 
-      @snippetTree.each (snippet) =>
-        @ensureSnippetHtml(snippet)
-        @insertIntoDom(snippet.snippetHtml)
+    @snippetTree.each (snippet) =>
+      @ensureSnippetHtml(snippet)
+      @insertIntoDom(snippet.snippetHtml)
 
 
   clear: ->
     @snippetTree.each (snippet) ->
       snippet.snippetHtml?.attachedToDom = false
 
-    @$root.html('')
+    @$root.empty()
 
 
   redraw: ->
