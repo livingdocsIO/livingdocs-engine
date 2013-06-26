@@ -125,7 +125,7 @@ module.exports = (grunt) ->
           expand: true,
           cwd: 'dist/',
           src: ['**'],
-          dest: '../livingdocs/vendor/assets/javascripts/livingdocs-engine/'
+          dest: '../livingdocs/vendor/assets/components/livingdocs-engine/'
         ]
 
 
