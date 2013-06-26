@@ -65,6 +65,8 @@ class SnippetTree
     @snippetHtmlChanged = $.Callbacks()
     @snippetSettingsChanged = $.Callbacks()
 
+    @changed = $.Callbacks()
+
 
   # Traverse the whole snippet tree.
   each: (callback) ->
@@ -150,7 +152,7 @@ class SnippetTree
     if snippet.snippetTree == this
       # move snippet
       attachSnippetFunc()
-      @snippetMoved.fire(snippet)
+      @fireEvent('snippetMoved', snippet)
     else
       if snippet.snippetTree?
         # remove from other snippet tree
@@ -160,7 +162,12 @@ class SnippetTree
         descendant.snippetTree = this
 
       attachSnippetFunc()
-      @snippetAdded.fire(snippet)
+      @fireEvent('snippetAdded', snippet)
+
+
+  fireEvent: (event, args...) ->
+    this[event].fire.apply(event, args)
+    @changed.fire()
 
 
   detachingSnippet: (snippet, detachSnippetFunc) ->
@@ -170,13 +177,13 @@ class SnippetTree
         descendants.snippetTree = undefined
 
       detachSnippetFunc()
-      @snippetRemoved.fire(snippet)
+      @fireEvent('snippetRemoved', snippet)
     else
       log.error('cannot remove snippet from another SnippetTree')
 
 
   contentChanging: (snippet) ->
-    @snippetContentChanged.fire(snippet)
+    @fireEvent('snippetContentChanged', snippet)
 
 
   # Serialization

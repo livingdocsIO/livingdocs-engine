@@ -4,24 +4,38 @@
 
 describe 'SnippetTree (Layout Events) ->', ->
 
+
   beforeEach ->
     @tree = new SnippetTree()
     monitor = test.createCallbackMonitor
     @expectSnippetAdded = monitor(@tree.snippetAdded)
     @expectSnippetRemoved = monitor(@tree.snippetRemoved)
     @expectSnippetMoved = monitor(@tree.snippetMoved)
+    @expectChanged = monitor(@tree.changed)
 
 
-  it 'fires snippetAdded event', ->
-    snippet = test.getSnippet('title')
+  describe 'appending a snippet', ->
 
-    @expectSnippetRemoved 0, =>
-      @expectSnippetMoved 0, =>
-        @expectSnippetAdded 1, =>
-          @tree.append(snippet)
+
+    beforeEach ->
+      @appendSnippet = =>
+        snippet = test.getSnippet('title')
+        @tree.append(snippet)
+
+
+    it 'fires snippetAdded event', ->
+      @expectSnippetRemoved 0, =>
+        @expectSnippetMoved 0, =>
+          @expectSnippetAdded 1, =>
+            @appendSnippet()
+
+
+    it 'fires changed event', ->
+      @expectChanged 1, => @appendSnippet()
 
 
   describe 'with two snippets (Events) ->', ->
+
 
     beforeEach ->
       @snippetA = test.getSnippet('title')
@@ -29,22 +43,53 @@ describe 'SnippetTree (Layout Events) ->', ->
       @tree.append(@snippetA).append(@snippetB)
 
 
-    it 'fires snippetRemoved event', ->
-      @expectSnippetAdded 0, =>
-        @expectSnippetMoved 0, =>
-          @expectSnippetRemoved 1, =>
-            @snippetB.remove()
+    describe 'removing a snippet', ->
+      beforeEach ->
+        @removeSnippet = =>
+          @snippetB.remove()
 
 
-    it 'fires snippetMoved event', ->
-      @expectSnippetMoved 2, =>
-        @snippetB.up()
-        @snippetA.up()
+      it 'fires snippetRemoved event', ->
+        @expectSnippetAdded 0, =>
+          @expectSnippetMoved 0, =>
+            @expectSnippetRemoved 1, =>
+              @removeSnippet()
 
 
-    it 'does not fire snippetMoved event if snippet did not move', ->
-      @expectSnippetMoved 0, =>
-        @snippetA.up()
+      it 'fires changed event', ->
+        @expectChanged 1, => @removeSnippet()
+
+
+    describe 'moving a snippet', ->
+
+
+      beforeEach ->
+        @moveSnippets = =>
+          @snippetB.up()
+          @snippetA.up()
+
+
+      it 'fires snippetMoved event', ->
+        @expectSnippetMoved 2, => @moveSnippets()
+
+
+      it 'fires changed event', ->
+        @expectChanged 2, => @moveSnippets()
+
+
+      describe "that can't be moved", ->
+
+
+        beforeEach ->
+          @unsuccessfullyMoveSnippet = => @snippetA.up()
+
+
+        it 'does not fire snippetMoved event', ->
+          @expectSnippetMoved 0, => @unsuccessfullyMoveSnippet()
+
+
+        it 'does not fire changed event', ->
+          @expectChanged 0, => @unsuccessfullyMoveSnippet()
 
 
 describe 'SnippetTree (Content Events)', ->
@@ -53,13 +98,23 @@ describe 'SnippetTree (Content Events)', ->
     @tree = new SnippetTree()
     monitor = test.createCallbackMonitor
     @expectContentChanged = monitor(@tree.snippetContentChanged)
+    @expectChanged = monitor(@tree.changed)
 
     @snippetA = test.getSnippet('title')
     @tree.append(@snippetA)
 
 
-  it 'fires snippetContentChanged event', ->
-    @expectContentChanged 1, =>
-      @snippetA.set('title', 'Talk to the hand')
+  describe 'changing a snippets content', ->
 
 
+    beforeEach ->
+      @changeSnippetContent = =>
+        @snippetA.set('title', 'Talk to the hand')
+
+
+    it 'fires snippetContentChanged event', ->
+      @expectContentChanged 1, => @changeSnippetContent()
+
+
+    it 'fires changed event', ->
+      @expectChanged 1, => @changeSnippetContent()
