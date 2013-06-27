@@ -39,14 +39,14 @@
     <script src="vendor/store/store.js"></script>
     <script src="vendor/editableJS/editable.js"></script>
 
-    <!-- snippet collections for manual testing -->
-    <script src=".tmp/snippet_collections.js"></script>
+    <!-- designs for manual testing -->
+    <script src=".tmp/designs.js"></script>
 
     <!-- livingdocs-engine. yeah! -->
     <script src=".tmp/livingdocs_engine.js"></script>
 
     <script>
-      doc.addSnippetCollection(snippetCollections.bootstrap.snippets, snippetCollections.bootstrap.config);
+      doc.addDesign(design.bootstrap.snippets, design.bootstrap.config);
 
       $(document).ready(function() {
         var json = doc.stash.get();

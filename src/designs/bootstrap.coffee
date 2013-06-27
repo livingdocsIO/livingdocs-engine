@@ -1,9 +1,9 @@
 # Twitter Bootstrap Snippet Collection
 # ------------------------------------
 
-@snippetCollections ||= {}
+@design ||= {}
 
-snippetCollections.bootstrap = do ->
+design.bootstrap = do ->
   config:
     namespace: 'bootstrap'
     css: [

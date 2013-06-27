@@ -71,10 +71,10 @@ module.exports = (grunt) ->
             'test/spec/mocks/*.coffee'
             'test/spec/*.coffee'
           ]
-      snippetCollections:
+      designs:
         files:
-          '.tmp/snippet_collections.js': [
-            'src/snippet_collections/*.coffee'
+          '.tmp/designs.js': [
+            'src/designs/*.coffee'
           ]
     docco:
       src:

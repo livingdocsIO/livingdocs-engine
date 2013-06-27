@@ -67,8 +67,8 @@ document = do ->
 
     documentReady()
 
-  # *Public API*
-  addSnippetCollection: (snippetCollection, config) ->
+
+  addDesign: (snippetCollection, config) ->
     design = new Design(config)
     design.add(snippetCollection)
     @designs[design.namespace] = design
@@ -85,7 +85,6 @@ document = do ->
       loader.css(design.css, doBeforeDocumentReady())
 
 
-  # Public API
   eachContainer: (callback) ->
     @snippetTree.eachContainer(callback)
 
