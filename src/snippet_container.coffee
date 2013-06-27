@@ -47,7 +47,6 @@ class SnippetContainer
       previous: snippet.previous
       next: snippet
 
-    snippet.previous = insertedSnippet
     @attachSnippet(insertedSnippet, position)
 
     if !insertedSnippet.previous?
@@ -61,7 +60,6 @@ class SnippetContainer
       previous: snippet
       next: snippet.next
 
-    snippet.next = insertedSnippet
     @attachSnippet(insertedSnippet, position)
 
     if !insertedSnippet.next?
@@ -166,10 +164,10 @@ class SnippetContainer
   # @api private
   link: (snippet, position) ->
     if snippet.parentContainer
-        @unlink(snippet)
+      @unlink(snippet)
 
-      position.parentContainer = this
-      @setSnippetPosition(snippet, position)
+    position.parentContainer = this
+    @setSnippetPosition(snippet, position)
 
 
   # @api private
@@ -190,6 +188,9 @@ class SnippetContainer
 
   # @api private
   setSnippetPosition: (snippet, { parentContainer, previous, next }) ->
+    previous.next = snippet if previous
+    next.previous = snippet if next
+
     snippet.parentContainer = parentContainer
     snippet.previous = previous
     snippet.next = next

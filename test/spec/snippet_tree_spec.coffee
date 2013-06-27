@@ -238,3 +238,26 @@ describe 'SnippetTree with three levels', ->
       expect( visitedSnippets[1] == @rowInMain).toBe(true)
       expect( visitedSnippets[2] == @text).toBe(true)
       expect( visitedSnippets[3] == @title).toBe(true)
+
+
+describe 'SnippetTree with three snippets', ->
+
+  beforeEach ->
+    @tree = new SnippetTree()
+    @snippets = []
+    for index in [0..2]
+      @snippets[index] = test.getSnippet('text')
+      @tree.append(@snippets[index])
+
+
+  # regression test for https://github.com/upfrontIO/livingdocs-engine/issues/13
+  it 'moving the last snippet one up does not currupt the snippet tree', ->
+    @snippets[2].up()
+    visitedSnippets = []
+    @tree.each (snippet) ->
+      visitedSnippets.push(snippet)
+
+    expect( visitedSnippets.length).toEqual(3)
+    expect( visitedSnippets[0] == @snippets[0]).toBe(true)
+    expect( visitedSnippets[1] == @snippets[2]).toBe(true)
+    expect( visitedSnippets[2] == @snippets[1]).toBe(true)
