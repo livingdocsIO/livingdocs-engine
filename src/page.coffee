@@ -3,11 +3,24 @@
 # Defines the API between the DOM and the document
 page = do ->
 
-  # page object
-  # -----------
 
-  $document: $(window.document)
-  $body: $(window.document.body)
+  initializeListeners: ->
+    @$document = $(window.document)
+    @$body = $(window.document.body)
+
+    @snippetDragDrop = new DragDrop
+      longpressDelay: 400
+      longpressDistanceLimit: 10
+      preventDefault: false
+
+    @$document
+      .on('click.livingdocs', $.proxy(@click, @))
+      .on('mousedown.livingdocs', $.proxy(@mousedown, @))
+
+
+  removeListeners: ->
+    @$document.off('.livingdocs')
+    @$document.off('.livingdocs-drag')
 
 
   # @param rootNode (optional) DOM node that should contain the content
@@ -20,24 +33,6 @@ page = do ->
 
     log.error('no rootNode found') if !$root.length
     $root
-
-
-  initializeListeners: () ->
-    # @$document.on 'focus.livingdocs', (event) ->
-    #   focus.focusChange(event)
-    @snippetDragDrop = new DragDrop
-      longpressDelay: 400
-      longpressDistanceLimit: 10
-      preventDefault: false
-
-    @$document
-      .on('click.livingdocs', $.proxy(@click, @))
-      .on('mousedown.livingdocs', $.proxy(@mousedown, @))
-
-
-  removeListeners: () ->
-    @$document.off('.livingdocs')
-    @$document.off('.livingdocs-drag')
 
 
   mousedown: (event) ->
@@ -90,11 +85,11 @@ page = do ->
       focus.blur()
 
 
-  getFocusedElement: () ->
+  getFocusedElement: ->
     window.document.activeElement
 
 
-  blurFocusedElement: () ->
+  blurFocusedElement: ->
     focus.setFocus(undefined)
     focusedElement = @getFocusedElement()
     $(focusedElement).blur() if focusedElement
