@@ -63,7 +63,9 @@ document = do ->
     # render document
     $root = page.getDocumentSection()
     @renderer = new Renderer(snippetTree: @snippetTree, rootNode: $root[0])
-    @renderer.render()
+
+    @ready.add =>
+      @renderer.render()
 
     documentReady()
 
