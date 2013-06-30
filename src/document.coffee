@@ -23,16 +23,20 @@ document = do ->
 
   waitingCalls = 1 # 1 -> loadDocument
 
+
   documentReady = =>
     waitingCalls -= 1
     if waitingCalls == 0
       document.ready.fire()
 
+
   doBeforeDocumentReady = () ->
     waitingCalls += 1
     return documentReady
 
+
   defaultNamespace = undefined
+
 
   # Document object
   # ---------------
@@ -41,10 +45,11 @@ document = do ->
   designs: {}
   uniqueId: 0
   ready: $.Callbacks('memory once')
+  changed: $.Callbacks()
 
 
   # *Public API*
-  loadDocument: ({ json }={}) ->
+  loadDocument: ({ json, rootNode }={}) ->
     log.error('document is already initialized') if @initialized
     @initialized = true
 
@@ -54,6 +59,9 @@ document = do ->
     else
       new SnippetTree()
 
+    @snippetTree.changed.add =>
+      @changed.fire()
+
     # Page initialization
     page.initializeListeners()
 
@@ -61,8 +69,8 @@ document = do ->
     editableController.setup()
 
     # render document
-    $root = page.getDocumentSection()
-    @renderer = new Renderer(snippetTree: @snippetTree, rootNode: $root[0])
+    rootNode ||= page.getDocumentSection()[0]
+    @renderer = new Renderer(snippetTree: @snippetTree, rootNode: rootNode)
 
     @ready.add =>
       @renderer.render()

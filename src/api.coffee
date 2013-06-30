@@ -77,6 +77,7 @@ chainable = (fn, context) ->
   @snippetFocused = chainable(focus.snippetFocus, 'add')
   @snippetBlurred = chainable(focus.snippetBlur, 'add')
   @textSelection = chainable(editableController.selection, 'add')
+  @changed = chainable(document.changed, 'add')
 
 
   # Help & Documentation

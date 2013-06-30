@@ -58,7 +58,6 @@ class SnippetTree
     @snippetAdded = $.Callbacks()
     @snippetRemoved = $.Callbacks()
     @snippetMoved = $.Callbacks()
-    # snippetContainerMoved: $.Callbacks()
 
     # content changes
     @snippetContentChanged = $.Callbacks()

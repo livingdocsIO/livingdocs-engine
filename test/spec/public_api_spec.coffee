@@ -8,15 +8,33 @@ describe 'Public API', ->
     expect( $.isFunction(window.doc) ).toBe(true)
 
 
-  it 'defines doc.loadDocument', ->
-    expect( window.doc.loadDocument ).toBeDefined()
+  describe 'loadDocument()', ->
+
+    it 'is defined', ->
+      expect( window.doc.loadDocument ).toBeDefined()
 
 
-  it 'defines doc.addSnippetCollection', ->
-    expect( window.doc.addSnippetCollection ).toBeDefined()
+    # currently loadDocument() can only be done once
+    # so this is not really unit testable
+    it 'loads an empty document', ->
+      node = $('<div>')[0]
+      doc.loadDocument(json: undefined, rootNode: node)
+      expect( doc.toJson().content ).toEqual([])
 
 
-  describe '(events)', ->
+  describe 'addDesign()', ->
+
+    it 'is defined', ->
+      expect( window.doc.addDesign ).toBeDefined()
+
+
+  describe 'toJson()', ->
+
+    it 'is defined', ->
+      expect( window.doc.toJson ).toBeDefined()
+
+
+  describe 'events', ->
 
     it 'define ready', ->
       expect( $.isFunction(window.doc.ready)).toBe(true)
@@ -32,3 +50,8 @@ describe 'Public API', ->
 
     it 'define textSelection', ->
       expect( $.isFunction(window.doc.textSelection)).toBe(true)
+
+
+    it 'define changed', ->
+      expect( $.isFunction(window.doc.changed)).toBe(true)
+
