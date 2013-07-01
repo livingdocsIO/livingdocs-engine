@@ -16,9 +16,11 @@ class SnippetDrag
       .append(@$insertPreview)
       .css('cursor', 'pointer')
 
+    #todo get all valid containers
+
 
   # remeve classes added while dragging from tracked elements
-  removeCssClasses: () ->
+  removeCssClasses: ->
     for $html in @classAdded
       $html
         .removeClass(docClass.afterDrop)
@@ -26,7 +28,19 @@ class SnippetDrag
     @classAdded = []
 
 
+  isValidTarget: (target) ->
+    if target.snippet && target.snippet != @snippet
+      return true
+    else if target.containerName
+      return true
+
+    false
+
+
   onDrag: (target, drag, cursor) ->
+    if not @isValidTarget(target)
+      $container = target = {}
+
     if target.containerName
       dom.maximizeContainerHeight(target.parent)
       $container = $(target.node)
@@ -35,7 +49,7 @@ class SnippetDrag
       $container = target.snippet.parentContainer.$html()
       $container.addClass(docClass.containerHighlight)
     else
-      $container = {}
+      $container = target = {}
 
     # highlighting
     if $container[0] != @$highlightedContainer[0]
@@ -70,7 +84,8 @@ class SnippetDrag
     @$highlightedContainer.removeClass?(docClass.containerHighlight)
     dom.restoreContainerHeight()
     target = drag.target
-    if target
+
+    if target and @isValidTarget(target)
       if target.snippet
         if target.position == 'before'
           target.snippet.before(@snippet)
