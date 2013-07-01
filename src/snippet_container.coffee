@@ -39,6 +39,7 @@ class SnippetContainer
 
 
   insertBefore: (snippet, insertedSnippet) ->
+    return if snippet.previous == insertedSnippet
     log.error('cannot insert snippet before itself') if snippet == insertedSnippet
 
     position =
@@ -50,6 +51,7 @@ class SnippetContainer
 
 
   insertAfter: (snippet, insertedSnippet) ->
+    return if snippet.next == insertedSnippet
     log.error('cannot insert snippet after itself') if snippet == insertedSnippet
 
     position =

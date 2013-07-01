@@ -88,6 +88,26 @@ describe 'SnippetTree with two snippets', ->
       expect(@snippetB.next).not.toBeDefined()
 
 
+  describe 'inserting the second snippet after the first', ->
+
+    it 'is ignored', ->
+      @snippetA.after(@snippetB)
+      expect(@snippetA.previous).not.toBeDefined()
+      expect(@snippetA.next).toEqual(@snippetB)
+      expect(@snippetB.previous).toEqual(@snippetA)
+      expect(@snippetB.next).not.toBeDefined()
+
+
+  describe 'inserting the first snippet before the second', ->
+
+    it 'is ignored', ->
+      @snippetB.before(@snippetA)
+      expect(@snippetA.previous).not.toBeDefined()
+      expect(@snippetA.next).toEqual(@snippetB)
+      expect(@snippetB.previous).toEqual(@snippetA)
+      expect(@snippetB.next).not.toBeDefined()
+
+
 describe 'SnippetTree with a single-column row snippet', ->
 
   beforeEach ->
