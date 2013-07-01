@@ -87,7 +87,7 @@ class DragDrop
 
     if !@direct
       @$dragged.appendTo(window.document.body).show()
-      @$origin.addClass(docClass.dragged)
+      @$origin?.addClass(docClass.dragged)
 
 
   move: (mouseLeft, mouseTop, event) ->
@@ -116,7 +116,7 @@ class DragDrop
         @reset() if @distance({ left: mouseLeft, top: mouseTop }, @drag.startPoint) > @options.longpressDistanceLimit
 
       # delayed initialization after mouse moved a minimal distance
-      if @options.minDistance && @distance({ left: mouseLeft, top: mouseTop }, @drag.startPoint) > @minDistance
+      if @options.minDistance && @distance({ left: mouseLeft, top: mouseTop }, @drag.startPoint) > @options.minDistance
         @start()
 
 
@@ -131,7 +131,7 @@ class DragDrop
 
 
   dropTarget: (mouseLeft, mouseTop, event) ->
-    if @$origin && @$dragged && event
+    if @$dragged && event
       elem = undefined
 
       # get the element we're currently hovering
@@ -210,7 +210,7 @@ DragDrop.cloneOrigin = (drag, $origin) ->
   return draggedCopy
 
 
-DragDrop.placeholder = (drag, $origin) ->
+DragDrop.placeholder = (drag) ->
   snippetWidth = drag.width
   numberOfDraggedElems = 1
   if !drag.mouseToSnippet

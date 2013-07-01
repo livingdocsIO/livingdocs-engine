@@ -46,10 +46,12 @@
     <script src=".tmp/livingdocs_engine.js"></script>
 
     <script>
-      doc.addDesign(design.bootstrap.snippets, design.bootstrap.config);
 
       $(document).ready(function() {
+
+        // setup document
         var json = doc.stash.get();
+        doc.addDesign(design.bootstrap.snippets, design.bootstrap.config);
         doc.loadDocument({ json: json });
 
         doc.ready(function() {
@@ -63,6 +65,18 @@
             single.append(doc.create("bootstrap.hero"));
           }
         });
+
+        // drag in new hero snippet
+        var $newSnippet = $("<div>drag me</div>").css('cursor', 'pointer')
+        var dragDrop = new doc.DragDrop({
+          minDistance: 10,
+          preventDefault: true
+        });
+        $newSnippet.on('mousedown', function(event) {
+          var newSnippet = doc.create('bootstrap.hero')
+          doc.startDrag(newSnippet, dragDrop)
+        });
+        $(document.body).append($newSnippet)
 
       });
     </script>

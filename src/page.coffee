@@ -40,29 +40,26 @@ page = do ->
     snippet = dom.parentSnippet(event.target)
 
     if snippet
-      @$document.on 'mousemove.livingdocs-drag', $.proxy(@snippetDragMove, @)
-      @$document.on 'mouseup.livingdocs-drag', $.proxy(@snippetDragEnd, @)
-      $snippet = snippet.snippetHtml.$html
-
-      snippetDrag = new SnippetDrag({ snippet })
-      @snippetDragDrop.mousedown $snippet, event,
-        onDragStart: snippetDrag.onStart
-        onDrag: snippetDrag.onDrag
-        onDrop: snippetDrag.onDrop
+      @startDrag(snippet, @snippetDragDrop)
 
 
-  snippetDragMove: (event) ->
-    # Code from jquery.ui.mouse.js#_mouseMove
-    # IE versions below 9 - mouseup check: mouseup happened when mouse was out of window
-    # if $.browser.msie && !(document.documentMode >= 9) && !event.button
-    #   return @mouseup(event)
+  startDrag: (snippet, dragDrop) ->
+    return unless snippet
 
-    @snippetDragDrop.move(event.pageX, event.pageY, event)
+    @$document.on 'mousemove.livingdocs-drag', (event) ->
+      dragDrop.move(event.pageX, event.pageY, event)
 
+    @$document.on 'mouseup.livingdocs-drag', =>
+      dragDrop.drop()
+      @$document.off('.livingdocs-drag')
 
-  snippetDragEnd: (event) ->
-    @snippetDragDrop.drop()
-    @$document.off('.livingdocs-drag')
+    $snippet = snippet.snippetHtml?.$html
+    snippetDrag = new SnippetDrag({ snippet })
+
+    dragDrop.mousedown $snippet, event,
+      onDragStart: snippetDrag.onStart
+      onDrag: snippetDrag.onDrag
+      onDrop: snippetDrag.onDrop
 
 
   click: (event) ->

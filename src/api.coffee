@@ -60,6 +60,9 @@ chainable = (fn, context) ->
   # User Interface
   # -----------------------------
   @eachContainer = chainable(document, 'eachContainer')
+  @DragDrop = DragDrop
+  @startDrag = $.proxy(page, 'startDrag')
+
 
   # Stash
   # -----
