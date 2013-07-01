@@ -35,14 +35,10 @@ document = do ->
     return documentReady
 
 
-  defaultNamespace = undefined
-
-
   # Document object
   # ---------------
 
   initialized: false
-  designs: {}
   uniqueId: 0
   ready: $.Callbacks('memory once')
   changed: $.Callbacks()
@@ -53,9 +49,8 @@ document = do ->
     log.error('document is already initialized') if @initialized
     @initialized = true
 
-    design = @firstDesign()
-    @snippetTree = if json && design
-      new SnippetTree(content: json, design: design)
+    @snippetTree = if json && @design
+      new SnippetTree(content: json, design: @design)
     else
       new SnippetTree()
 
@@ -79,42 +74,23 @@ document = do ->
 
 
   addDesign: (snippetCollection, config) ->
-    design = new Design(config)
-    design.add(snippetCollection)
-    @designs[design.namespace] = design
-
-    # for convenience add a default namespace if there is just
-    # one namespace loaded
-    defaultNamespace = if @listDesignNamespaces().length == 0
-      namespace
-    else
-      undefined
+    @design = new Design(config)
+    @design.add(snippetCollection)
 
     # load design assets into page
-    if design.css
-      loader.css(design.css, doBeforeDocumentReady())
+    if @design.css
+      loader.css(@design.css, doBeforeDocumentReady())
 
 
   eachContainer: (callback) ->
     @snippetTree.eachContainer(callback)
 
 
-  listDesignNamespaces: ->
-    for namespace of @designs
-      namespace
-
-
-  firstDesign: ->
-    for namespace of @designs
-      return @designs[namespace]
-
-
   # list available snippetTemplates
   listTemplates: ->
     templates = []
-    for namespace, design of @designs
-      design.each (template) ->
-        templates.push(template.identifier)
+    @design.each (template) ->
+      templates.push(template.identifier)
 
     templates
 
@@ -173,7 +149,7 @@ document = do ->
 
   restore: (contentJson, resetFirst = true) ->
     @reset() if resetFirst
-    @snippetTree.fromJson(contentJson, @firstDesign())
+    @snippetTree.fromJson(contentJson, @design)
     @renderer.render()
 
 
@@ -183,9 +159,7 @@ document = do ->
 
 
   getTemplate: (identifier) ->
-    { namespace, name } = SnippetTemplate.parseIdentifier(identifier)
-    namespace = defaultNamespace if defaultNamespace and not namespace
-    snippetTemplate = @designs[namespace]?.get(name)
+    snippetTemplate = @design?.get(identifier)
 
     if !snippetTemplate
       log.error("could not find template #{ identifier }")

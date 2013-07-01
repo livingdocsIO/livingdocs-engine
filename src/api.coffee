@@ -41,6 +41,8 @@ chainable = (fn, context) ->
   # Add SnippetTemplates to the documents
   @addDesign = chainable(document, 'addDesign')
 
+  @getDesign = -> document.design
+
   # Append a snippet to the document
   # @param input: (String) snippet identifier e.g. "bootstrap.title" or (Snippet)
   # @return Snippet
