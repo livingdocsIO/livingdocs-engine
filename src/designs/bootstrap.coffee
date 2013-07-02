@@ -104,10 +104,16 @@ design.bootstrap = do ->
         """
 
     image:
-      name: 'Image'
       html:
         """
-        <div class="img-polaroid" data-doc-editable="image">
-          Drag your image here...
-        </div>
+        <img src="https://s3-eu-west-1.amazonaws.com/watson-media/images/placeholderimg/bild_019.jpg" />
         """
+
+    # image:
+    #   name: 'Image'
+    #   html:
+    #     """
+    #     <div class="img-polaroid" data-doc-editable="image">
+    #       Drag your image here...
+    #     </div>
+    #     """

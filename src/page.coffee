@@ -16,6 +16,13 @@ page = do ->
     @$document
       .on('click.livingdocs', $.proxy(@click, @))
       .on('mousedown.livingdocs', $.proxy(@mousedown, @))
+      .on('dragstart', $.proxy(@browserDragStart, @))
+
+
+  # prevent the browser Drag&Drop from interfering
+  browserDragStart: (event) ->
+    event.preventDefault()
+    event.stopPropagation()
 
 
   removeListeners: ->
