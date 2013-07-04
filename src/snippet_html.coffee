@@ -11,6 +11,10 @@ class SnippetHtml
       .addClass(docClass.snippet)
       .attr(docAttr.template, @template.identifier)
 
+    @updateContent()
+
+
+  updateContent: ->
     @content(@snippet.editables)
 
 

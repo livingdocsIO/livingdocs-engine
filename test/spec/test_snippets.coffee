@@ -5,6 +5,17 @@ testSnippets =
 
 
   snippets:
+    hero:
+      name: 'Hero'
+      html:
+        """
+          <div>
+            <h1 #{ docAttr.editable }="title"></h1>
+            <p #{ docAttr.editable }="tagline"></p>
+          </div>
+        """
+
+
     title:
       name: 'Title'
       html: """<h1 #{ docAttr.editable }="title"></h1>"""
