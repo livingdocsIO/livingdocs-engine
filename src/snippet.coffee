@@ -16,13 +16,14 @@
 class Snippet
 
 
-  constructor: ({ @template } = {}) ->
+  constructor: ({ @template, id } = {}) ->
     if !@template
       log.error('cannot instantiate snippet without template reference')
 
     @initializeContainers()
     @initializeEditables()
 
+    @id = id || guid.next()
     @identifier = @template.identifier
 
     @next = undefined # set by SnippetContainer
@@ -208,6 +209,7 @@ class Snippet
   toJson: ->
 
     json =
+      id: @id
       identifier: @identifier
 
     if @hasEditables()
@@ -228,7 +230,7 @@ Snippet.fromJson = (json, design) ->
   if not template?
     log.error("error while deserializing snippet: unknown template identifier '#{ json.identifier }'")
 
-  snippet = new Snippet({ template })
+  snippet = new Snippet({ template, id: json.id })
   for editableName, value of json.editables
     if snippet.editables.hasOwnProperty(editableName)
       snippet.editables[editableName] = value
@@ -248,9 +250,3 @@ Snippet.fromJson = (json, design) ->
         snippet.append( containerName, Snippet.fromJson(child, design) )
 
   snippet
-
-
-
-
-
-

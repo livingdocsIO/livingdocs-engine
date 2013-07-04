@@ -12,6 +12,12 @@ describe 'Title Snippet', ->
     expect(@title.identifier).toEqual('test.title')
 
 
+  it 'has an id', ->
+    expect(@title.id).toBeDefined()
+    expect(typeof @title.id == 'string').toBeTruthy()
+    expect(@title.id.length).toBeGreaterThan(10)
+
+
   it 'has no containers', ->
     expect(@title.containers).not.toBeDefined()
 

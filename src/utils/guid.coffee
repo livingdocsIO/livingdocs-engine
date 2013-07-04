@@ -21,4 +21,3 @@ guid = do ->
       lastId = nextId
 
     "#{ user }-#{ nextId }#{ idCounter }"
-
