@@ -67,6 +67,7 @@ module.exports = (grunt) ->
             'src/config.coffee'
             'src/!(api|config).coffee'
             'src/api.coffee'
+            'test/spec/helpers/*.coffee'
             'test/spec/utils/*.coffee'
             'test/spec/mocks/*.coffee'
             'test/spec/*.coffee'
