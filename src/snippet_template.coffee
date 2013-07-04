@@ -92,31 +92,24 @@ class SnippetTemplate
   # Find and store all DOM nodes which are editables or containers
   # in the html of a snippet or the html of a template.
   getNodeLinks: (snippetNode) ->
-    editables = containers = undefined
     iterator = new SnippetNodeIterator(snippetNode)
+    list = new SnippetNodeList()
 
-    while iterator.nextElement()
-      node = iterator.current
+    while element = iterator.nextElement()
+      node = new SnippetNode(element)
+      list.add(node) if node.isDataNode
 
-      if node.hasAttribute(docAttr.editable)
-        name = node.getAttribute(docAttr.editable)
-        name ||= config.defaultEditableName
-        editables ||= {}
-        if name and not editables.hasOwnProperty(name)
-          editables[name] = node
-        else
-          log.error("editable name '#{ name }' already taken: #{ @identifier }")
+    # TODO: This code is here to make the SnippetNodeList work with the old
+    # expected return format which expects undefined if a hash has no entry.
+    extractNodes = (hash) ->
+      newHash = undefined
+      for key, node of hash
+        newHash ||= {}
+        newHash[key] = node.htmlNode
+      newHash
 
-      else if node.hasAttribute(docAttr.container)
-        name = node.getAttribute(docAttr.container)
-        name ||= config.defaultContainerName
-        containers ||= {}
-        if name and not containers.hasOwnProperty(name)
-          containers[name] = node
-        else
-          log.error("container name '#{ name }' already taken: #{ @identifier }")
-
-    { editables, containers }
+    editables: extractNodes(list.editable)
+    containers: extractNodes(list.container)
 
 
   formatEditable: (name, elem) ->
