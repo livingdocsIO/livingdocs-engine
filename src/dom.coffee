@@ -125,14 +125,15 @@ dom = do ->
   # force all containers of a snippet to be as high as they can be
   # sets css style height
   maximizeContainerHeight: (snippet) ->
-    for name, elem of snippet.snippetHtml.containers
-      $elem = $(elem)
-      continue if $elem.hasClass(docClass.maximizedContainer)
-      $parent = $elem.parent()
-      parentHeight = $parent.height()
-      outer = $elem.outerHeight(true) - $elem.height()
-      $elem.height(parentHeight - outer)
-      $elem.addClass(docClass.maximizedContainer)
+    if snippet.template.containerCount > 1
+      for name, elem of snippet.snippetHtml.containers
+        $elem = $(elem)
+        continue if $elem.hasClass(docClass.maximizedContainer)
+        $parent = $elem.parent()
+        parentHeight = $parent.height()
+        outer = $elem.outerHeight(true) - $elem.height()
+        $elem.height(parentHeight - outer)
+        $elem.addClass(docClass.maximizedContainer)
 
 
   # remove all css style height declarations added by
