@@ -51,9 +51,9 @@ module.exports = (grunt) ->
           sourceMap: true
         files:
           '.tmp/livingdocs_engine.js': [
+            'src/config.coffee'
             'src/utils/*.coffee'
             'src/mixins/*.coffee'
-            'src/config.coffee'
             'src/!(api|config).coffee'
             'src/api.coffee'
           ]
@@ -62,14 +62,14 @@ module.exports = (grunt) ->
           join: true
         files:
           '.tmp/livingdocs_engine_test.js': [
+            'src/config.coffee'
             'src/utils/*.coffee'
             'src/mixins/*.coffee'
-            'src/config.coffee'
             'src/!(api|config).coffee'
             'src/api.coffee'
             'test/spec/helpers/*.coffee'
-            'test/spec/utils/*.coffee'
             'test/spec/mocks/*.coffee'
+            'test/spec/utils/*.coffee'
             'test/spec/*.coffee'
           ]
       designs:

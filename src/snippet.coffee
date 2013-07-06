@@ -108,11 +108,6 @@ class Snippet
       log.error("get error: #{ @identifier } has no editable named #{ editable }")
 
 
-  # creates a snippetHtml instance for this snippet
-  createHtml: () ->
-    @template.createHtml(this) unless @snippetHtml?
-
-
   hasEditables: ->
     @editables?
 

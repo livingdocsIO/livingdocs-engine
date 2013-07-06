@@ -1,8 +1,8 @@
 describe 'SnippetHtml', ->
 
   beforeEach ->
-    @snippet = test.getSnippet('title')
-    @snippetHtml = @snippet.createHtml()
+    template = test.getTemplate('title')
+    @snippetHtml = template.createHtml()
 
 
   describe 'set content', ->
@@ -23,7 +23,7 @@ describe 'SnippetHtml', ->
 
 
     it 'updates its content from snippet', ->
-      @snippet.set('title', 'Humble Bundle')
+      @snippetHtml.snippet.set('title', 'Humble Bundle')
       @snippetHtml.updateContent()
       expect( htmlCompare.compare(@snippetHtml.$html, @expected) ).toBe(true)
 
@@ -46,10 +46,11 @@ describe 'SnippetHtml', ->
 describe 'SnippetHtml', ->
 
   beforeEach ->
-    @snippet = test.getSnippet('hero')
-    @snippet.set('title', 'Humble Bundle 2')
-    @snippet.set('tagline', 'Get it now!')
-    @snippetHtml = @snippet.createHtml()
+    snippet = test.getSnippet('hero')
+    snippet.set('title', 'Humble Bundle 2')
+    snippet.set('tagline', 'Get it now!')
+    template = test.getTemplate('hero')
+    @snippetHtml = template.createHtml(snippet)
     @expected =
         """
         <div class="#{ docClass.snippet }" #{ docAttr.template }="test.hero">

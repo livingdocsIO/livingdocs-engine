@@ -21,49 +21,47 @@ describe 'DOM method', ->
   describe 'parentSnippet() on title snippet', ->
 
     beforeEach ->
-      @snippet = test.getSnippet('title')
-      @snippet.createHtml()
-      @$html = @snippet.snippetHtml.$html
+      template = test.getTemplate('title')
+      @snippetHtml = template.createHtml()
+      @$html = @snippetHtml.$html
 
 
     it 'finds snippet from jQuery node', ->
-      expect( dom.parentSnippet(@$html) ).toEqual(@snippet)
+      expect( dom.parentSnippet(@$html) ).toEqual(@snippetHtml.snippet)
 
 
     it 'finds snippet from DOM node', ->
-      expect( dom.parentSnippet(@$html[0]) ).toEqual(@snippet)
+      expect( dom.parentSnippet(@$html[0]) ).toEqual(@snippetHtml.snippet)
 
 
   describe 'parentSnippet() on row snippet', ->
 
     beforeEach ->
-      @snippet = test.getSnippet('row')
-      @snippet.createHtml()
-      @$html = @snippet.snippetHtml.$html
+      template = test.getTemplate('row')
+      @snippetHtml = template.createHtml()
+      @$html = @snippetHtml.$html
 
 
     it 'finds row snippet from child node ', ->
       $node = @$html.find('.span8').first()
-      expect( dom.parentSnippet($node) ).toEqual(@snippet)
+      expect( dom.parentSnippet($node) ).toEqual(@snippetHtml.snippet)
 
 
   describe 'parentContainer()', ->
 
     beforeEach ->
-      @row = test.getSnippet('row')
-      @row.createHtml()
-      @title = test.getSnippet('title')
-      @title.createHtml()
-      @row.append('main', @title)
-      @row.snippetHtml.append('main', @title.snippetHtml.$html)
-      @$html = @row.snippetHtml.$html
+      @row = test.getTemplate('row').createHtml()
+      @title = test.getTemplate('title').createHtml()
+      @row.snippet.append('main', @title)
+      @row.append('main', @title.$html)
+      @$html = @row.$html
 
 
     it 'returns an object with all necessary info', ->
-      elem = @title.snippetHtml.$html[0]
-      containerElem = @row.snippetHtml.containers['main']
+      elem = @title.$html[0]
+      containerElem = @row.containers['main']
       containerInfo = dom.parentContainer(elem)
       expect(containerInfo.node).toEqual(containerElem)
       expect(containerInfo.containerName).toEqual('main')
-      expect(containerInfo.snippet).toEqual(@row)
+      expect(containerInfo.snippetHtml).toEqual(@row)
 

@@ -54,18 +54,20 @@ document = do ->
     else
       new SnippetTree()
 
+    # forward changed event
     @snippetTree.changed.add =>
       @changed.fire()
 
     # Page initialization
-    page.initializeListeners()
+    @page = new Page()
 
-    # EditableJS initialization
-    editableController.setup()
+    # load design assets into page
+    if @design.css
+      @page.loader.css(@design.css, doBeforeDocumentReady())
 
     # render document
-    rootNode ||= page.getDocumentSection()[0]
-    @renderer = new Renderer(snippetTree: @snippetTree, rootNode: rootNode)
+    rootNode ||= @page.getDocumentSection()[0]
+    @renderer = new Renderer(snippetTree: @snippetTree, rootNode: rootNode, page: @page)
 
     @ready.add =>
       @renderer.render()
@@ -76,10 +78,6 @@ document = do ->
   addDesign: (snippetCollection, config) ->
     @design = new Design(config)
     @design.add(snippetCollection)
-
-    # load design assets into page
-    if @design.css
-      loader.css(@design.css, doBeforeDocumentReady())
 
 
   eachContainer: (callback) ->

@@ -1,12 +1,16 @@
 # page
 # ----
 # Defines the API between the DOM and the document
-page = do ->
+class Page
 
 
-  initializeListeners: ->
+  constructor: ->
     @$document = $(window.document)
     @$body = $(window.document.body)
+
+    @loader = new Loader()
+    @focus = new Focus()
+    @editableController = new EditableController(this)
 
     @snippetDragDrop = new DragDrop
       longpressDelay: 400
@@ -44,14 +48,15 @@ page = do ->
 
   mousedown: (event) ->
     return if event.which != 1 # only respond to left mouse button
-    snippet = dom.parentSnippet(event.target)
+    snippetHtml = dom.parentSnippetHtml(event.target)
 
-    if snippet
-      @startDrag(snippet, @snippetDragDrop)
+    if snippetHtml
+      @startDrag(snippetHtml: snippetHtml, dragDrop: @snippetDragDrop)
 
 
-  startDrag: (snippet, dragDrop) ->
-    return unless snippet
+  startDrag: ({ snippet, snippetHtml, dragDrop }) ->
+    return unless snippet || snippetHtml
+    snippet = snippetHtml.snippet if snippetHtml
 
     @$document.on 'mousemove.livingdocs-drag', (event) ->
       dragDrop.move(event.pageX, event.pageY, event)
@@ -60,9 +65,9 @@ page = do ->
       dragDrop.drop()
       @$document.off('.livingdocs-drag')
 
-    $snippet = snippet.snippetHtml?.$html
-    snippetDrag = new SnippetDrag({ snippet })
+    snippetDrag = new SnippetDrag({ snippet: snippet, page: this })
 
+    $snippet = snippetHtml.$html if snippetHtml
     dragDrop.mousedown $snippet, event,
       onDragStart: snippetDrag.onStart
       onDrag: snippetDrag.onDrag
@@ -84,9 +89,9 @@ page = do ->
 
     # todo: check if the click was meant for a snippet container
     if snippet
-      focus.snippetFocused(snippet)
+      @focus.snippetFocused(snippet)
     else
-      focus.blur()
+      @focus.blur()
 
 
   getFocusedElement: ->
@@ -94,8 +99,7 @@ page = do ->
 
 
   blurFocusedElement: ->
-    focus.setFocus(undefined)
+    @focus.setFocus(undefined)
     focusedElement = @getFocusedElement()
     $(focusedElement).blur() if focusedElement
 
-@page = page

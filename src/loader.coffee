@@ -1,9 +1,11 @@
 # Script Loader
 # -------------
 # Loading of Javascript and CSS files using yepnope
-loader = do ->
+class Loader
 
-  loadedCssFiles = []
+  constructor: ->
+    @loadedCssFiles = []
+
 
   replaceCss: (cssUrl, callback) ->
     @removeCss()
@@ -18,7 +20,7 @@ loader = do ->
 
     # add `css!` prefix to urls so yepnope always treats them as css files
     cssUrl = for url in cssUrl
-      loadedCssFiles.push(url)
+      @loadedCssFiles.push(url)
       S.prefix('css!', url)
 
     # yepnope calls the callback for each file to load
@@ -36,9 +38,9 @@ loader = do ->
   # will be unloaded
   removeCss: (cssUrl) ->
     cssUrl = [cssUrl] if cssUrl? && !$.isArray(cssUrl)
-    cssUrl =  cssUrl || loadedCssFiles
+    cssUrl =  cssUrl || @loadedCssFiles
 
     for url in cssUrl
       $("link[rel=stylesheet][href~='#{ url }']").remove()
 
-    loadedCssFiles = []
+    @loadedCssFiles = []
