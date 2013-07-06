@@ -8,13 +8,13 @@ dom = do ->
 
   # Find the snippet this node is contained within.
   # Snippets are marked by a class at the moment.
-  parentSnippetHtml: (node) ->
+  parentSnippetElem: (node) ->
     node = @getElementNode(node)
 
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
       if snippetRegex.test(node.className)
-        snippetHtml = @getSnippetHtml(node)
-        return snippetHtml
+        snippetElem = @getSnippetElem(node)
+        return snippetElem
 
       node = node.parentNode
 
@@ -22,7 +22,7 @@ dom = do ->
 
 
   parentSnippet: (node) ->
-    @parentSnippetHtml(node)?.snippet
+    @parentSnippetElem(node)?.snippet
 
 
   parentContainer: (node) ->
@@ -32,12 +32,12 @@ dom = do ->
       if node.hasAttribute(docAttr.container)
         containerName = node.getAttribute(docAttr.container)
         if not sectionRegex.test(node.className)
-          snippetHtml = @parentSnippetHtml(node)
+          snippetElem = @parentSnippetElem(node)
 
         return {
           node: node
           containerName: containerName
-          snippetHtml: snippetHtml
+          snippetElem: snippetElem
         }
 
       node = node.parentNode
@@ -55,16 +55,16 @@ dom = do ->
           insertSnippet = @getPositionInContainer($(node), { top, left })
           if insertSnippet
             coords = @getInsertPosition(insertSnippet.$elem[0], insertSnippet.position)
-            return { snippetHtml: insertSnippet.snippetHtml, position: insertSnippet.position, coords }
+            return { snippetElem: insertSnippet.snippetElem, position: insertSnippet.position, coords }
           else
-            snippetHtml = @parentSnippetHtml(node)
-            return { containerName: containerName, parent: snippetHtml, node: node }
+            snippetElem = @parentSnippetElem(node)
+            return { containerName: containerName, parent: snippetElem, node: node }
 
       else if snippetRegex.test(node.className)
         pos = @getPositionInSnippet($(node), { top, left })
-        snippetHtml = @getSnippetHtml(node)
+        snippetElem = @getSnippetElem(node)
         coords = @getInsertPosition(node, pos.position)
-        return { snippetHtml: snippetHtml, position: pos.position, coords }
+        return { snippetElem: snippetElem, position: pos.position, coords }
 
       else if sectionRegex.test(node.className)
         return { root: true }
@@ -117,7 +117,7 @@ dom = do ->
         insertSnippet = { $elem, position: 'after'}
 
       if insertSnippet
-        insertSnippet.snippetHtml = @getSnippetHtml(insertSnippet.$elem[0])
+        insertSnippet.snippetElem = @getSnippetElem(insertSnippet.$elem[0])
 
     insertSnippet
 
@@ -128,9 +128,9 @@ dom = do ->
 
   # force all containers of a snippet to be as high as they can be
   # sets css style height
-  maximizeContainerHeight: (snippetHtml) ->
-    if snippetHtml.template.containerCount > 1
-      for name, elem of snippetHtml.containers
+  maximizeContainerHeight: (snippetElem) ->
+    if snippetElem.template.containerCount > 1
+      for name, elem of snippetElem.containers
         $elem = $(elem)
         continue if $elem.hasClass(docClass.maximizedContainer)
         $parent = $elem.parent()
@@ -159,7 +159,7 @@ dom = do ->
 
   # Snippets store a reference of themselves in their Dom node
   # consider: store reference directly without jQuery
-  getSnippetHtml: (node) ->
+  getSnippetElem: (node) ->
     $(node).data('snippet')
 
 

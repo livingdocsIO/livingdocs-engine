@@ -30,9 +30,9 @@ describe 'Title Template', ->
 
   describe '#createHtml()', ->
 
-    it 'returns a SnippetHtml instance', ->
-      snippetHtml = template.createHtml()
-      expect(snippetHtml instanceof SnippetHtml).toBe(true)
+    it 'returns a SnippetElem instance', ->
+      snippetElem = template.createHtml()
+      expect(snippetElem instanceof SnippetElem).toBe(true)
 
 
 

@@ -1,4 +1,4 @@
-class SnippetHtml
+class SnippetElem
 
   constructor: ({ @snippet, @$html, @editables, @containers }) ->
     @template = @snippet.template
@@ -60,12 +60,12 @@ class SnippetHtml
     parentContainer = @snippet.parentContainer
 
     if previous? and
-      (previousHtml = renderer.getSnippetHtml(previous)) and
+      (previousHtml = renderer.getSnippetElem(previous)) and
       previousHtml.attachedToDom
         previousHtml.$html.after(@$html)
         @attachedToDom = true
     else if next? and
-      (nextHtml = renderer.getSnippetHtml(next)) and
+      (nextHtml = renderer.getSnippetElem(next)) and
       nextHtml.attachedToDom
         nextHtml.$html.before(@$html)
         @attachedToDom = true
@@ -80,8 +80,8 @@ class SnippetHtml
     if container.isRoot
       renderer.$root.append(@$html)
     else
-      snippetHtml = renderer.getSnippetHtml(container.parentSnippet)
-      snippetHtml.append(container.name, @$html)
+      snippetElem = renderer.getSnippetElem(container.parentSnippet)
+      snippetElem.append(container.name, @$html)
 
 
   detach: ->

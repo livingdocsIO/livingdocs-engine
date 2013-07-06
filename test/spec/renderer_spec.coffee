@@ -20,38 +20,38 @@ describe 'renderer', ->
       expect( $(@fragment).find(".#{ docClass.snippet }").length).toEqual(2)
 
 
-    describe 'getSnippetHtml()', ->
+    describe 'getSnippetElem()', ->
 
-      it 'gets snippetHtml for title', ->
-        expect(@renderer.getSnippetHtml(@title)).toBeDefined()
+      it 'gets snippetElem for title', ->
+        expect(@renderer.getSnippetElem(@title)).toBeDefined()
 
 
       it 'returns undefined when called without any parameter', ->
-        expect(@renderer.getSnippetHtml()).toBeUndefined()
+        expect(@renderer.getSnippetElem()).toBeUndefined()
 
 
       it 'returns undefined for a new snippet', ->
         anotherTitle = test.getSnippet('title')
-        expect(@renderer.getSnippetHtml(anotherTitle)).toBeUndefined()
+        expect(@renderer.getSnippetElem(anotherTitle)).toBeUndefined()
 
 
-    describe 'ensureSnippetHtml()', ->
+    describe 'ensureSnippetElem()', ->
 
-      it 'returns the same instance as getSnippetHtml()', ->
-        snippetHtml = @renderer.getSnippetHtml(@title)
-        expect(@renderer.ensureSnippetHtml(@title)).toBe(snippetHtml)
+      it 'returns the same instance as getSnippetElem()', ->
+        snippetElem = @renderer.getSnippetElem(@title)
+        expect(@renderer.ensureSnippetElem(@title)).toBe(snippetElem)
 
 
       it 'returns undefined when called without any parameter', ->
-        expect(@renderer.ensureSnippetHtml()).toBeUndefined()
+        expect(@renderer.ensureSnippetElem()).toBeUndefined()
 
 
-      it 'creates snippetHtml for a new snippet', ->
+      it 'creates snippetElem for a new snippet', ->
         anotherTitle = test.getSnippet('title')
-        expect(@renderer.getSnippetHtml(anotherTitle)).toBeUndefined()
-        anotherTitleElem = @renderer.ensureSnippetHtml(anotherTitle)
+        expect(@renderer.getSnippetElem(anotherTitle)).toBeUndefined()
+        anotherTitleElem = @renderer.ensureSnippetElem(anotherTitle)
         expect(anotherTitleElem).toBeDefined()
-        expect(@renderer.getSnippetHtml(anotherTitle)).toBe(anotherTitleElem)
+        expect(@renderer.getSnippetElem(anotherTitle)).toBe(anotherTitleElem)
 
 
     # it 'inserts ui element after each container', ->

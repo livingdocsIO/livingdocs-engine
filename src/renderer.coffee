@@ -28,59 +28,59 @@ class Renderer
 
 
   snippetAdded: (snippet) ->
-    snippetHtml = @ensureSnippetHtml(snippet)
-    @updateDomPosition(snippetHtml)
+    snippetElem = @ensureSnippetElem(snippet)
+    @updateDomPosition(snippetElem)
 
 
   snippetRemoved: (snippet) ->
-    if snippetHtml = @getSnippetHtml(snippet)
-      if snippetHtml.attachedToDom
-        @detachFromDom(snippetHtml)
+    if snippetElem = @getSnippetElem(snippet)
+      if snippetElem.attachedToDom
+        @detachFromDom(snippetElem)
         delete @snippets[snippet.id]
 
 
   snippetMoved: (snippet) ->
-    snippetHtml = @ensureSnippetHtml(snippet)
-    @updateDomPosition(snippetHtml)
+    snippetElem = @ensureSnippetElem(snippet)
+    @updateDomPosition(snippetElem)
 
 
   snippetContentChanged: (snippet) ->
-    snippetHtml = @ensureSnippetHtml(snippet)
-    @insertIntoDom(snippetHtml) if not snippetHtml.attachedToDom
-    snippetHtml.updateContent()
+    snippetElem = @ensureSnippetElem(snippet)
+    @insertIntoDom(snippetElem) if not snippetElem.attachedToDom
+    snippetElem.updateContent()
 
 
   # Rendering
   # ---------
 
-  getSnippetHtml: (snippet) ->
+  getSnippetElem: (snippet) ->
     @snippets[snippet.id] if snippet
 
 
-  ensureSnippetHtml: (snippet) ->
+  ensureSnippetElem: (snippet) ->
     return unless snippet
-    @snippets[snippet.id] || @createSnippetHtml(snippet)
+    @snippets[snippet.id] || @createSnippetElem(snippet)
 
 
-  # creates a snippetHtml instance for this snippet
+  # creates a snippetElem instance for this snippet
   # @api: private
-  createSnippetHtml: (snippet) ->
-    snippetHtml = snippet.template.createHtml(snippet)
-    @snippets[snippet.id] = snippetHtml
+  createSnippetElem: (snippet) ->
+    snippetElem = snippet.template.createHtml(snippet)
+    @snippets[snippet.id] = snippetElem
 
 
   render: ->
     @$root.empty()
 
     @snippetTree.each (snippet) =>
-      snippetHtml = @ensureSnippetHtml(snippet)
-      @insertIntoDom(snippetHtml)
+      snippetElem = @ensureSnippetElem(snippet)
+      @insertIntoDom(snippetElem)
 
 
   clear: ->
     @snippetTree.each (snippet) ->
-      snippetHtml = @getSnippetHtml(snippet)
-      snippetHtml?.attachedToDom = false
+      snippetElem = @getSnippetElem(snippet)
+      snippetElem?.attachedToDom = false
 
     @$root.empty()
 
@@ -90,31 +90,31 @@ class Renderer
     @render()
 
 
-  updateDomPosition: (snippetHtml) ->
-    @detachFromDom(snippetHtml) if snippetHtml.attachedToDom
-    @insertIntoDom(snippetHtml)
+  updateDomPosition: (snippetElem) ->
+    @detachFromDom(snippetElem) if snippetElem.attachedToDom
+    @insertIntoDom(snippetElem)
 
 
   # insert the snippet into the Dom according to its position
   # in the SnippetTree
-  insertIntoDom: (snippetHtml) ->
-    snippetHtml.attach(this)
-    log.error('could not insert snippet into Dom') if not snippetHtml.attachedToDom
-    @afterDomInsert(snippetHtml)
+  insertIntoDom: (snippetElem) ->
+    snippetElem.attach(this)
+    log.error('could not insert snippet into Dom') if not snippetElem.attachedToDom
+    @afterDomInsert(snippetElem)
 
     this
 
 
-  afterDomInsert: (snippetHtml) ->
+  afterDomInsert: (snippetElem) ->
     # initialize editables
-    editableNodes = for name, node of snippetHtml.editables
+    editableNodes = for name, node of snippetElem.editables
       node
 
     @page.editableController.add(editableNodes)
 
 
-  detachFromDom: (snippetHtml) ->
-    snippetHtml.detach()
+  detachFromDom: (snippetElem) ->
+    snippetElem.detach()
     this
 
 
@@ -122,13 +122,13 @@ class Renderer
   # -----------------
 
   highlightSnippet: (snippet) ->
-    if snippetHtml = @getSnippetHtml(snippet)
-      snippetHtml.$html.addClass(docClass.snippetHighlight)
+    if snippetElem = @getSnippetElem(snippet)
+      snippetElem.$html.addClass(docClass.snippetHighlight)
 
 
   removeSnippetHighlight: (snippet) ->
-    if snippetHtml = @getSnippetHtml(snippet)
-      snippetHtml.$html.removeClass(docClass.snippetHighlight)
+    if snippetElem = @getSnippetElem(snippet)
+      snippetElem.$html.removeClass(docClass.snippetHighlight)
 
 
   # UI Inserts

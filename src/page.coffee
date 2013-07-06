@@ -48,15 +48,15 @@ class Page
 
   mousedown: (event) ->
     return if event.which != 1 # only respond to left mouse button
-    snippetHtml = dom.parentSnippetHtml(event.target)
+    snippetElem = dom.parentSnippetElem(event.target)
 
-    if snippetHtml
-      @startDrag(snippetHtml: snippetHtml, dragDrop: @snippetDragDrop)
+    if snippetElem
+      @startDrag(snippetElem: snippetElem, dragDrop: @snippetDragDrop)
 
 
-  startDrag: ({ snippet, snippetHtml, dragDrop }) ->
-    return unless snippet || snippetHtml
-    snippet = snippetHtml.snippet if snippetHtml
+  startDrag: ({ snippet, snippetElem, dragDrop }) ->
+    return unless snippet || snippetElem
+    snippet = snippetElem.snippet if snippetElem
 
     @$document.on 'mousemove.livingdocs-drag', (event) ->
       dragDrop.move(event.pageX, event.pageY, event)
@@ -67,7 +67,7 @@ class Page
 
     snippetDrag = new SnippetDrag({ snippet: snippet, page: this })
 
-    $snippet = snippetHtml.$html if snippetHtml
+    $snippet = snippetElem.$html if snippetElem
     dragDrop.mousedown $snippet, event,
       onDragStart: snippetDrag.onStart
       onDrag: snippetDrag.onDrag

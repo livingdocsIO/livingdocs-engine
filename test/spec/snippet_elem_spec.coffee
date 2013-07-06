@@ -1,8 +1,7 @@
-describe 'SnippetHtml', ->
+describe 'SnippetElem title', ->
 
   beforeEach ->
-    template = test.getTemplate('title')
-    @snippetHtml = template.createHtml()
+    @snippetElem = test.getTemplate('title').createHtml()
 
 
   describe 'set content', ->
@@ -18,39 +17,39 @@ describe 'SnippetHtml', ->
 
 
     it 'sets title', ->
-      @snippetHtml.set('title', 'Humble Bundle')
-      expect( htmlCompare.compare(@snippetHtml.$html, @expected) ).toBe(true)
+      @snippetElem.set('title', 'Humble Bundle')
+      expect( htmlCompare.compare(@snippetElem.$html, @expected) ).toBe(true)
 
 
     it 'updates its content from snippet', ->
-      @snippetHtml.snippet.set('title', 'Humble Bundle')
-      @snippetHtml.updateContent()
-      expect( htmlCompare.compare(@snippetHtml.$html, @expected) ).toBe(true)
+      @snippetElem.snippet.set('title', 'Humble Bundle')
+      @snippetElem.updateContent()
+      expect( htmlCompare.compare(@snippetElem.$html, @expected) ).toBe(true)
 
 
     it 'sets title without editable name parameter', ->
-      @snippetHtml.set('Humble Bundle')
-      expect( htmlCompare.compare(@snippetHtml.$html, @expected) ).toBe(true)
+      @snippetElem.set('Humble Bundle')
+      expect( htmlCompare.compare(@snippetElem.$html, @expected) ).toBe(true)
 
 
   it 'gets the title', ->
-    @snippetHtml.set('Games Galore')
-    expect( @snippetHtml.get('title') ).toEqual('Games Galore')
+    @snippetElem.set('Games Galore')
+    expect( @snippetElem.get('title') ).toEqual('Games Galore')
 
 
   it 'gets the title without params', ->
-    @snippetHtml.set('Double Fine')
-    expect( @snippetHtml.get() ).toEqual('Double Fine')
+    @snippetElem.set('Double Fine')
+    expect( @snippetElem.get() ).toEqual('Double Fine')
 
 
-describe 'SnippetHtml', ->
+describe 'SnippetElem hero', ->
 
   beforeEach ->
     snippet = test.getSnippet('hero')
     snippet.set('title', 'Humble Bundle 2')
     snippet.set('tagline', 'Get it now!')
     template = test.getTemplate('hero')
-    @snippetHtml = template.createHtml(snippet)
+    @snippetElem = template.createHtml(snippet)
     @expected =
         """
         <div class="#{ docClass.snippet }" #{ docAttr.template }="test.hero">
@@ -60,5 +59,5 @@ describe 'SnippetHtml', ->
         """
 
   it 'renders snippet content on creation', ->
-    expect( htmlCompare.compare(@snippetHtml.$html, @expected) ).toBe(true)
+    expect( htmlCompare.compare(@snippetElem.$html, @expected) ).toBe(true)
 
