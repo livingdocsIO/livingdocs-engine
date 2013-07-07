@@ -2,7 +2,7 @@ class SnippetNodeList
 
 
   constructor: (@all={}) ->
-
+    @count = {}
 
   add: (node) ->
     @assertNodeNameNotUsed(node.name)
@@ -11,6 +11,10 @@ class SnippetNodeList
 
     this[node.type] ||= {}
     this[node.type][node.name] = node.htmlNode
+
+    @count[node.type] = if @count[node.type] then @count[node.type] + 1 else 1
+
+
 
 
   # @private

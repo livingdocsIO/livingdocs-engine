@@ -59,6 +59,7 @@ class Template
       $html: $html
       editables: list.editable
       containers: list.container
+      images: list.image
 
 
   # todo
@@ -70,21 +71,17 @@ class Template
   # @param snippetNode: root DOM node of the snippet
   parseTemplate: () ->
     snippetNode = @$template[0]
-    list = @getNodeLinks(snippetNode)
-    @editables = list.editable
-    @containers = list.container
+    @directives = @getNodeLinks(snippetNode)
+    @editables = @directives.editable
+    @containers = @directives.container
+    @editableCount = @directives.count.editable
+    @containerCount = @directives.count.container
 
-    count = 0
     for name, node of @editables
-      count += 1
       @formatEditable(name, node)
-    @editableCount = count
 
-    count = 0
     for name, node of @containers
-      count += 1
       @formatContainer(name, node)
-    @containerCount = count
 
 
   # Find and store all DOM nodes which are editables or containers

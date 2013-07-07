@@ -1,6 +1,6 @@
 class SnippetElem
 
-  constructor: ({ @snippet, @$html, @editables, @containers }) ->
+  constructor: ({ @snippet, @$html, @editables, @containers, @images }) ->
     @template = @snippet.template
     @attachedToDom = false
 
@@ -14,12 +14,15 @@ class SnippetElem
 
 
   updateContent: ->
-    @content(@snippet.editables)
+    @content(@snippet.editables, @snippet.images)
 
 
-  content: (content) ->
+  content: (content, images) ->
     for field, value of content
       @set(field, value)
+
+    for field, value of images
+      @setImage(field, value)
 
 
   getEditable: (name) ->
@@ -28,6 +31,11 @@ class SnippetElem
     else
       for name of @editables
         return @editables[name]
+
+
+  setImage: (name, value) ->
+    elem = @images[name]
+    $(elem).attr('src', value)
 
 
   set: (editable, value) ->

@@ -106,7 +106,7 @@ design.bootstrap = do ->
     image:
       html:
         """
-        <img src="https://s3-eu-west-1.amazonaws.com/watson-media/images/placeholderimg/bild_019.jpg" />
+        <img doc-image src="https://s3-eu-west-1.amazonaws.com/watson-media/images/placeholderimg/bild_019.jpg" />
         """
 
     # image:

@@ -61,3 +61,21 @@ describe 'SnippetElem hero', ->
   it 'renders snippet content on creation', ->
     expect( htmlCompare.compare(@snippetElem.$html, @expected) ).toBe(true)
 
+
+describe 'SnippetElem image', ->
+
+  beforeEach ->
+    snippet = test.getSnippet('image')
+    snippet.set('image', 'http://www.lolcats.com/images/1.jpg')
+    @snippetElem = snippet.template.createHtml(snippet)
+    @expected =
+        """
+        <img src="http://www.lolcats.com/images/1.jpg"
+          #{ docAttr.image }="image"
+          class="#{ docClass.snippet }"
+          #{ docAttr.template }="test.image">
+        """
+
+  it 'renders the image src', ->
+    expect( htmlCompare.compare(@snippetElem.$html, @expected) ).toBe(true)
+
