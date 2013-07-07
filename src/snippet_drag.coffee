@@ -1,8 +1,9 @@
 class SnippetDrag
 
 
-  constructor: ({ snippet }) ->
+  constructor: ({ snippet, page }) ->
     @snippet = snippet
+    @page = page
     @$highlightedContainer = {}
     @onStart = $.proxy(@onStart, @)
     @onDrag = $.proxy(@onDrag, @)
@@ -12,9 +13,11 @@ class SnippetDrag
 
   onStart: () ->
     @$insertPreview = $("<div class='doc-drag-preview'>")
-    page.$body
+    @page.$body
       .append(@$insertPreview)
       .css('cursor', 'pointer')
+
+    @page.blurFocusedElement()
 
     #todo get all valid containers
 
@@ -29,7 +32,7 @@ class SnippetDrag
 
 
   isValidTarget: (target) ->
-    if target.snippet && target.snippet != @snippet
+    if target.snippetElem && target.snippetElem.snippet != @snippet
       return true
     else if target.containerName
       return true
@@ -44,9 +47,9 @@ class SnippetDrag
     if target.containerName
       dom.maximizeContainerHeight(target.parent)
       $container = $(target.node)
-    else if target.snippet
-      dom.maximizeContainerHeight(target.snippet)
-      $container = target.snippet.parentContainer.$html()
+    else if target.snippetElem
+      dom.maximizeContainerHeight(target.snippetElem)
+      $container = target.snippetElem.get$container()
       $container.addClass(docClass.containerHighlight)
     else
       $container = target = {}
@@ -56,16 +59,6 @@ class SnippetDrag
       @$highlightedContainer.removeClass?(docClass.containerHighlight)
       @$highlightedContainer = $container
       @$highlightedContainer.addClass?(docClass.containerHighlight)
-
-    # # show drop target
-    # @removeCssClasses()
-    # if target.snippet
-    #   $html = target.snippet.snippetHtml.$html
-    #   @classAdded.push($html)
-    #   if target.position == 'before'
-    #     $html.addClass(docClass.afterDrop)
-    #   else
-    #     $html.addClass(docClass.beforeDrop)
 
     # show drop target
     if target.coords
@@ -79,20 +72,20 @@ class SnippetDrag
 
   onDrop: (drag) ->
     # @removeCssClasses()
-    page.$body.css('cursor', '')
+    @page.$body.css('cursor', '')
     @$insertPreview.remove()
     @$highlightedContainer.removeClass?(docClass.containerHighlight)
     dom.restoreContainerHeight()
     target = drag.target
 
     if target and @isValidTarget(target)
-      if target.snippet
+      if snippetElem = target.snippetElem
         if target.position == 'before'
-          target.snippet.before(@snippet)
+          snippetElem.snippet.before(@snippet)
         else
-          target.snippet.after(@snippet)
+          snippetElem.snippet.after(@snippet)
       else if target.containerName
-        target.parent.append(target.containerName, @snippet)
+        target.parent.snippet.append(target.containerName, @snippet)
     else
       #consider: maybe add a 'drop failed' effect
 

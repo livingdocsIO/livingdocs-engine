@@ -1,44 +1,40 @@
 # EditableJS Controller
 # ---------------------
 # Integrate EditableJS into Livingdocs
-editableController = do ->
-
-  # Private Closure
-  # ---------------
-
-  initialized = false
+class EditableController
 
 
-  # Return Object
-  # -------------
+  constructor: (@page) ->
 
-  selection: $.Callbacks()
-
-  setup: ->
-    return if initialized
-    intialized = true
-
-    # configure editable
+    # configure editableJS
     Editable.init
       log: false
 
+    @selection = $.Callbacks()
 
     Editable
-      .focus (element) ->
-        snippet = dom.parentSnippet(element)
-        focus.editableFocused(element, snippet)
+      .focus($.proxy(@focus, @))
+      .blur($.proxy(@blur, @))
+      .selection($.proxy(@selectionChanged, @))
 
 
-      .blur (element) ->
-        snippet = dom.parentSnippet(element)
-        focus.editableBlurred(element, snippet)
-        editableName = element.getAttribute(docAttr.editable)
-        snippet.set(editableName, element.innerHTML)
+  add: (nodes) ->
+    Editable.add(nodes)
 
 
-      .selection (element, selection) =>
-        snippet = dom.parentSnippet(element)
-        @selection.fire(snippet, element, selection)
+  focus: (element) ->
+    snippet = dom.parentSnippet(element)
+    @page.focus.editableFocused(element, snippet)
 
 
+  blur: (element) ->
+    snippet = dom.parentSnippet(element)
+    @page.focus.editableBlurred(element, snippet)
+    editableName = element.getAttribute(docAttr.editable)
+    snippet.set(editableName, element.innerHTML)
+
+
+  selectionChanged: (element, selection) ->
+    snippet = dom.parentSnippet(element)
+    @selection.fire(snippet, element, selection)
 

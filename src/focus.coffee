@@ -1,13 +1,14 @@
 # Document Focus
 # --------------
 # Manage the snippet or editable that is currently focused
-focus = do ->
+class Focus
 
-  editableNode: undefined
-  snippet: undefined
+  constructor: ->
+    @editableNode = undefined
+    @snippet = undefined
 
-  snippetFocus: $.Callbacks()
-  snippetBlur: $.Callbacks()
+    @snippetFocus = $.Callbacks()
+    @snippetBlur = $.Callbacks()
 
 
   setFocus: (snippet, editableNode) ->
@@ -19,7 +20,6 @@ focus = do ->
       @blurSnippet()
 
       @snippet = snippet
-      @highlightSnippet()
       @snippetFocus.fire(@snippet)
 
 
@@ -46,19 +46,6 @@ focus = do ->
     @setFocus(undefined, undefined)
 
 
-  # Highlight methods
-  # -----------------
-
-  highlightSnippet: ->
-    if @snippet?.snippetHtml
-      @snippet.snippetHtml.$html.addClass(docClass.snippetHighlight)
-
-
-  removeHighlight: (snippet) ->
-    if snippet?.snippetHtml
-      snippet.snippetHtml.$html.removeClass(docClass.snippetHighlight)
-
-
   # Private
   # -------
 
@@ -71,8 +58,6 @@ focus = do ->
   # @api private
   blurSnippet: ->
     if @snippet
-      @removeHighlight(@snippet)
-
       previous = @snippet
       @snippet = undefined
       @snippetBlur.fire(previous)

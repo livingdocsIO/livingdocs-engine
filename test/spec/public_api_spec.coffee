@@ -8,6 +8,12 @@ describe 'Public API', ->
     expect( $.isFunction(window.doc) ).toBe(true)
 
 
+  describe 'addDesign()', ->
+
+    it 'is defined', ->
+      expect( window.doc.addDesign ).toBeDefined()
+
+
   describe 'loadDocument()', ->
 
     it 'is defined', ->
@@ -18,14 +24,11 @@ describe 'Public API', ->
     # so this is not really unit testable
     it 'loads an empty document', ->
       node = $('<div>')[0]
+      doc.addDesign(testSnippets.snippets, testSnippets.config)
       doc.loadDocument(json: undefined, rootNode: node)
       expect( doc.toJson().content ).toEqual([])
 
 
-  describe 'addDesign()', ->
-
-    it 'is defined', ->
-      expect( window.doc.addDesign ).toBeDefined()
 
 
   describe 'toJson()', ->
@@ -34,24 +37,23 @@ describe 'Public API', ->
       expect( window.doc.toJson ).toBeDefined()
 
 
-  describe 'events', ->
-
-    it 'define ready', ->
-      expect( $.isFunction(window.doc.ready)).toBe(true)
+  it 'define ready', ->
+    expect( $.isFunction(window.doc.ready)).toBe(true)
 
 
-    it 'define snippetFocused', ->
-      expect( $.isFunction(window.doc.snippetFocused)).toBe(true)
+  it 'define changed', ->
+    expect( $.isFunction(window.doc.changed)).toBe(true)
 
 
-    it 'define snippetBlurred', ->
-      expect( $.isFunction(window.doc.snippetBlurred)).toBe(true)
+  # it 'define snippetFocused', ->
+  #   expect( $.isFunction(window.doc.snippetFocused)).toBe(true)
 
 
-    it 'define textSelection', ->
-      expect( $.isFunction(window.doc.textSelection)).toBe(true)
+  # it 'define snippetBlurred', ->
+  #   expect( $.isFunction(window.doc.snippetBlurred)).toBe(true)
 
 
-    it 'define changed', ->
-      expect( $.isFunction(window.doc.changed)).toBe(true)
+  # it 'define textSelection', ->
+  #   expect( $.isFunction(window.doc.textSelection)).toBe(true)
+
 

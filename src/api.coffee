@@ -28,20 +28,18 @@ chainable = (fn, context) ->
   proxy
 
 
-# add public API methods to the doc function
-( ->
-
-
-  # Document Setup & Manipulation
-  # -----------------------------
+setupApi = ->
 
   # Initialize the document
   @loadDocument = chainable(document, 'loadDocument')
+  @ready = chainable(document.ready, 'add')
 
-  # Add SnippetTemplates to the documents
+  # Add Templates to the documents
   @addDesign = chainable(document, 'addDesign')
-
   @getDesign = -> document.design
+
+  # Print a list of all available snippets
+  @listTemplates = $.proxy(document, 'listTemplates')
 
   # Append a snippet to the document
   # @param input: (String) snippet identifier e.g. "bootstrap.title" or (Snippet)
@@ -55,13 +53,21 @@ chainable = (fn, context) ->
 
   # Json that can be used for saving of the document
   @toJson = $.proxy(document, 'toJson')
-  @restore = chainable(document, 'restore')
+  @readableJson = ->
+    S.readableJson(document.toJson())
 
-  # User Interface
-  # -----------------------------
+  # Print the content of the snippetTree in a readable string
+  @printTree = $.proxy(document, 'printTree')
+
   @eachContainer = chainable(document, 'eachContainer')
+  @document = document
+
+  @changed = chainable(document.changed, 'add')
   @DragDrop = DragDrop
-  @startDrag = $.proxy(page, 'startDrag')
+
+  # Get help about a snippet
+  # @param identifier: (String) snippet identifier e.g. "bootstrap.title"
+  @help = $.proxy(document, 'help')
 
 
   # Stash
@@ -75,30 +81,6 @@ chainable = (fn, context) ->
   @stash.list = $.proxy(stash, 'list')
 
 
-  # Events
-  # ------
-
-  @ready = chainable(document.ready, 'add')
-  @snippetFocused = chainable(focus.snippetFocus, 'add')
-  @snippetBlurred = chainable(focus.snippetBlur, 'add')
-  @textSelection = chainable(editableController.selection, 'add')
-  @changed = chainable(document.changed, 'add')
-
-
-  # Help & Documentation
-  # --------------------
-
-  # Print the content of the snippetTree in a readable string
-  @printTree = $.proxy(document, 'printTree')
-
-  # Print a list of all available snippets
-  @listTemplates = $.proxy(document, 'listTemplates')
-
-  # Get help about a snippet
-  # @param identifier: (String) snippet identifier e.g. "bootstrap.title"
-  @help = $.proxy(document, 'help')
-
-
   # For Plugins & Extensions
   # ------------------------
 
@@ -106,15 +88,25 @@ chainable = (fn, context) ->
   @fn = SnippetArray::
 
 
-  # Debugging & Development
-  # -----------------------
+# API methods that are only available after the page has initialized
+pageReady = ->
+  page = document.page
 
-  @document = document
+  @restore = chainable(document, 'restore')
 
-  @readableJson = ->
-    S.readableJson(document.toJson())
+  # Events
+  # ------
+  @snippetFocused = chainable(page.focus.snippetFocus, 'add')
+  @snippetBlurred = chainable(page.focus.snippetBlur, 'add')
+  @textSelection = chainable(page.editableController.selection, 'add')
+  @startDrag = $.proxy(page, 'startDrag')
 
-).call(doc)
+
+
+# execute API setup
+setupApi.call(doc)
+doc.ready ->
+  pageReady.call(doc)
 
 
 
