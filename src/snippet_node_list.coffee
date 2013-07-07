@@ -10,7 +10,7 @@ class SnippetNodeList
     @all[node.name] = node
 
     this[node.type] ||= {}
-    this[node.type][node.name] = node
+    this[node.type][node.name] = node.htmlNode
 
 
   # @private

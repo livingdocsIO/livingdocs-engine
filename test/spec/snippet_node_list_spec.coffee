@@ -15,7 +15,7 @@ describe 'SnippetNodeList', ->
 
 
     it 'makes the snippet available by its type', ->
-      expect(@list.bar['foo']).toBe(@node)
+      expect(@list.bar['foo']).toBe(@node.htmlNode)
 
 
     describe 'adding a snippet with a name that is used by another snippet', ->

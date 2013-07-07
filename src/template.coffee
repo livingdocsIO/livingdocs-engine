@@ -52,13 +52,13 @@ class Template
   createHtml: (snippet) ->
     snippet ||= @createSnippet()
     $html = @$template.clone()
-    { editables, containers } = @getNodeLinks($html[0])
+    list = @getNodeLinks($html[0])
 
     snippetElem = new SnippetElem
       snippet: snippet
       $html: $html
-      editables: editables
-      containers: containers
+      editables: list.editable
+      containers: list.container
 
 
   # todo
@@ -70,7 +70,9 @@ class Template
   # @param snippetNode: root DOM node of the snippet
   parseTemplate: () ->
     snippetNode = @$template[0]
-    { @editables, @containers } = @getNodeLinks(snippetNode)
+    list = @getNodeLinks(snippetNode)
+    @editables = list.editable
+    @containers = list.container
 
     count = 0
     for name, node of @editables
@@ -95,17 +97,7 @@ class Template
       node = new SnippetNode(element)
       list.add(node) if node.isDataNode
 
-    # TODO: This code is here to make the SnippetNodeList work with the old
-    # expected return format which expects undefined if a hash has no entry.
-    extractNodes = (hash) ->
-      newHash = undefined
-      for key, node of hash
-        newHash ||= {}
-        newHash[key] = node.htmlNode
-      newHash
-
-    editables: extractNodes(list.editable)
-    containers: extractNodes(list.container)
+    list
 
 
   formatEditable: (name, elem) ->
