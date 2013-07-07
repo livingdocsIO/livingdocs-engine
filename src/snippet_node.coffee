@@ -1,15 +1,28 @@
 class SnippetNode
 
+  attributePrefix = /^(x-|data-)/
 
   constructor: (@htmlNode) ->
-    @extractData()
+    @parseAttributes()
 
 
-  # @private
-  extractData: ->
-    for type, attribute of docAttr
-      if @htmlNode.hasAttribute(attribute)
-        @type = type
+  parseAttributes: () ->
+    for attr in @htmlNode.attributes
+      attributeName = attr.name
+      normalizedName = attributeName.replace(attributePrefix, '')
+      if type = templateAttrLookup[normalizedName]
         @isDataNode = true
-        @name = @htmlNode.getAttribute(attribute) || 'default'
-        break
+        @type = type
+        @name = attr.value || templateAttr.defaultValues[@type]
+
+        if attributeName != docAttr[@type]
+          @normalizeAttribute(attributeName)
+        else if not attr.value
+          @normalizeAttribute()
+
+        return
+
+
+  normalizeAttribute: (attr) ->
+    @htmlNode.removeAttribute(attr) if attr
+    @htmlNode.setAttribute(docAttr[@type], @name)

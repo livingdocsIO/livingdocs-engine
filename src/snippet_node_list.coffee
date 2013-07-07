@@ -16,8 +16,9 @@ class SnippetNodeList
   # @private
   assertNodeNameNotUsed: (name) ->
     if @all[name]
-      log.error \
+      log.error(
         """
-        A node with the name "#{name}" already was already added.
-        Each node in a snippet requires a unique identifier, regardless of type.
+        A node with the name "#{name}" was already added.
+        Each node in a snippet requires a unique name, regardless of type.
         """
+      )

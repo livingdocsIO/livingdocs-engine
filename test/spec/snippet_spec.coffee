@@ -70,7 +70,7 @@ describe 'Container Snippet', ->
     @container = test.getSnippet('container')
 
 
-  it 'has named its unnamed container "default"', ->
-    expect(@container.containers['default']).toBeDefined()
+  it 'has named its unnamed container to the default', ->
+    expect(@container.containers[templateAttr.defaultValues.container]).toBeDefined()
 
 

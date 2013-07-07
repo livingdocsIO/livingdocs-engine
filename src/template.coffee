@@ -50,9 +50,7 @@ class Template
 
 
   createHtml: (snippet) ->
-    if not snippet?
-      snippet = @createSnippet()
-
+    snippet ||= @createSnippet()
     $html = @$template.clone()
     { editables, containers } = @getNodeLinks($html[0])
 
@@ -78,14 +76,12 @@ class Template
     for name, node of @editables
       count += 1
       @formatEditable(name, node)
-
     @editableCount = count
 
     count = 0
     for name, node of @containers
       count += 1
       @formatContainer(name, node)
-
     @containerCount = count
 
 
@@ -123,17 +119,10 @@ class Template
     if defaultValue
       @defaults[name] = defaultValue
 
-    if name == config.defaultEditableName
-      $elem.attr(docAttr.editable, name)
-
 
   formatContainer: (name, elem) ->
-
     # remove all content fron a container from the template
     elem.innerHTML = ''
-
-    if name == config.defaultContainerName
-      $(elem).attr(docAttr.container, name)
 
 
   createLists: () ->

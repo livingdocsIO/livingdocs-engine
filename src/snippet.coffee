@@ -70,7 +70,7 @@ class Snippet
   append: (containerName, snippet) ->
     if arguments.length == 1
       snippet = containerName
-      containerName = config.defaultContainerName
+      containerName = templateAttr.defaultValues.container
 
     @containers[containerName].append(snippet)
     this
@@ -79,7 +79,7 @@ class Snippet
   prepend: (containerName, snippet) ->
     if arguments.length == 1
       snippet = containerName
-      containerName = config.defaultContainerName
+      containerName = templateAttr.defaultValues.container
 
     @containers[containerName].prepend(snippet)
     this
@@ -88,7 +88,7 @@ class Snippet
   set: (editable, value) ->
     if arguments.length == 1
       value = editable
-      editable = config.defaultEditableName
+      editable = templateAttr.defaultValues.editable
 
     if @editables?.hasOwnProperty(editable)
       if @editables[editable] != value
@@ -100,7 +100,7 @@ class Snippet
 
   get: (editable) ->
     if arguments.length == 0
-      editable = config.defaultFieldName
+      editable = templateAttr.defaultValues.editable
 
     if @editables?.hasOwnProperty(editable)
       @editables[editable]

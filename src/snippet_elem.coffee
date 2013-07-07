@@ -92,13 +92,3 @@ class SnippetElem
   get$container: ->
     $(dom.parentContainer(@$html[0]).node)
 
-
-  # old code from Template with list handling
-  # setField: (field, value, $snippet) ->
-  #   list = @lists[field]
-
-  #   if list != undefined
-  #     list.content(value)
-  #   else
-  #     $snippet.findIn("[#{ docAttr.editable }=#{ field }]").html(value)
-

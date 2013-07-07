@@ -2,8 +2,7 @@
 # -------------
 config = {
   wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?"
-  defaultContainerName: 'default'
-  defaultEditableName: 'default'
+  attributePrefix: 'data'
 }
 
 # constants for classes used in a document
@@ -32,16 +31,29 @@ docClass =
   maximizedContainer: 'doc-js-maximized-container'
 
 
-# constants for attributes used in a document
-docAttr =
-
-  # snippet attributes
-  template: 'doc-template'
+# constants for attributes used in a template
+templateAttr =
   editable: 'doc-editable'
   container: 'doc-container'
-  list: 'doc-list'
+  image: 'doc-image'
+  defaultValues:
+    editable: 'default'
+    container: 'default'
+    image: 'image'
 
+templateAttrLookup = {}
+for n, v of templateAttr
+  templateAttrLookup[v] = n
 
-# prepend attributes with data-
-for key, value of docAttr
-  docAttr[key] = "data-#{ value }"
+# constants for attributes used in a document
+docAttr =
+  # snippet attributes
+  template: 'doc-template'
+
+for name, value of templateAttr
+  docAttr[name] = value
+
+# prepend attributes with prefix
+if config.attributePrefix
+  for key, value of docAttr
+    docAttr[key] = "#{ config.attributePrefix }-#{ value }"
