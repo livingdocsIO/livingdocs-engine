@@ -1,5 +1,5 @@
-# SnippetTemplate
-# ---------------
+# Template
+# --------
 # Parses snippet templates and creates snippet html.
 #
 # __Methods:__
@@ -12,18 +12,18 @@
 # leave a marker instead.
 # (a comment or a script tag like ember does for example)
 #
-# Consider: Replace lists with inline SnippetTemplates. Inline
-# SnippetTemplates are repeatable and can only be used inside their
+# Consider: Replace lists with inline Templates. Inline
+# Templates are repeatable and can only be used inside their
 # defining snippet.
-class SnippetTemplate
+class Template
 
 
   constructor: ({ html, @namespace, @name, identifier, title, version } = {}) ->
     if not html
-      log.error('SnippetTemplate: param html missing')
+      log.error('Template: param html missing')
 
     if identifier
-      { @namespace, @name } = SnippetTemplate.parseIdentifier(identifier)
+      { @namespace, @name } = Template.parseIdentifier(identifier)
 
     @identifier = if @namespace && @name
       "#{ @namespace }.#{ @name }"
@@ -56,7 +56,7 @@ class SnippetTemplate
     $html = @$template.clone()
     { editables, containers } = @getNodeLinks($html[0])
 
-    snippetHtml = new SnippetHtml
+    snippetElem = new SnippetElem
       snippet: snippet
       $html: $html
       editables: editables
@@ -173,7 +173,7 @@ class SnippetTemplate
 # Static functions
 # ----------------
 
-SnippetTemplate.parseIdentifier = (identifier) ->
+Template.parseIdentifier = (identifier) ->
   return unless identifier # silently fail on undefined or empty strings
 
   parts = identifier.split('.')

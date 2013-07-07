@@ -11,7 +11,7 @@ test = do ->
 
   getTemplate: (name) ->
     template = testSnippets.snippets[name]
-    new SnippetTemplate
+    new Template
       name: name
       namespace: testSnippets.config.namespace
       title: template.name

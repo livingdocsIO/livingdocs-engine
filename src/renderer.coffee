@@ -1,17 +1,24 @@
 class Renderer
 
 
-  constructor: ({ @snippetTree, rootNode }) ->
+  constructor: ({ @snippetTree, rootNode, @page }) ->
     log.error('no snippet tree specified') if !@snippetTree
     log.error('no root node specified') if !rootNode
 
     @$root = $(rootNode)
-    @snippetTree.renderer = this
+    @setupPageListeners()
     @setupSnippetTreeListeners()
+    @snippets = {}
 
+    # focus
 
   # Snippet Tree Event Handling
   # ---------------------------
+
+  setupPageListeners: ->
+    @page.focus.snippetFocus.add( $.proxy(this, 'highlightSnippet') )
+    @page.focus.snippetBlur.add( $.proxy(this, 'removeSnippetHighlight') )
+
 
   setupSnippetTreeListeners: ->
     @snippetTree.snippetAdded.add( $.proxy(this, 'snippetAdded') )
@@ -21,45 +28,59 @@ class Renderer
 
 
   snippetAdded: (snippet) ->
-    @ensureSnippetHtml(snippet)
-    @updateDomPosition(snippet.snippetHtml)
+    snippetElem = @ensureSnippetElem(snippet)
+    @updateDomPosition(snippetElem)
 
 
   snippetRemoved: (snippet) ->
-    if snippet.snippetHtml?.attachedToDom
-      @detachFromDom(snippet.snippetHtml)
+    if snippetElem = @getSnippetElem(snippet)
+      if snippetElem.attachedToDom
+        @detachFromDom(snippetElem)
+        delete @snippets[snippet.id]
 
 
   snippetMoved: (snippet) ->
-    @ensureSnippetHtml(snippet)
-    @updateDomPosition(snippet.snippetHtml)
+    snippetElem = @ensureSnippetElem(snippet)
+    @updateDomPosition(snippetElem)
 
 
   snippetContentChanged: (snippet) ->
-    @ensureSnippetHtml(snippet)
-    @insertIntoDom(snippet.snippetHtml) if not snippet.snippetHtml.attachedToDom
-    snippet.snippetHtml.updateContent()
+    snippetElem = @ensureSnippetElem(snippet)
+    @insertIntoDom(snippetElem) if not snippetElem.attachedToDom
+    snippetElem.updateContent()
 
 
   # Rendering
   # ---------
 
-  ensureSnippetHtml: (snippet) ->
-    if !snippet.snippetHtml
-      snippet.createHtml()
+  getSnippetElem: (snippet) ->
+    @snippets[snippet.id] if snippet
+
+
+  ensureSnippetElem: (snippet) ->
+    return unless snippet
+    @snippets[snippet.id] || @createSnippetElem(snippet)
+
+
+  # creates a snippetElem instance for this snippet
+  # @api: private
+  createSnippetElem: (snippet) ->
+    snippetElem = snippet.template.createHtml(snippet)
+    @snippets[snippet.id] = snippetElem
 
 
   render: ->
     @$root.empty()
 
     @snippetTree.each (snippet) =>
-      @ensureSnippetHtml(snippet)
-      @insertIntoDom(snippet.snippetHtml)
+      snippetElem = @ensureSnippetElem(snippet)
+      @insertIntoDom(snippetElem)
 
 
   clear: ->
     @snippetTree.each (snippet) ->
-      snippet.snippetHtml?.attachedToDom = false
+      snippetElem = @getSnippetElem(snippet)
+      snippetElem?.attachedToDom = false
 
     @$root.empty()
 
@@ -69,58 +90,45 @@ class Renderer
     @render()
 
 
-  updateDomPosition: (snippetHtml) ->
-    @detachFromDom(snippetHtml) if snippetHtml.attachedToDom
-    @insertIntoDom(snippetHtml)
+  updateDomPosition: (snippetElem) ->
+    @detachFromDom(snippetElem) if snippetElem.attachedToDom
+    @insertIntoDom(snippetElem)
 
 
   # insert the snippet into the Dom according to its position
   # in the SnippetTree
-  insertIntoDom: (snippetHtml) ->
-    snippet = snippetHtml.snippet
-    previous = snippet.previous
-    next = snippet.next
-    parentContainer = snippet.parentContainer
-    $snippet = snippetHtml.$html
-
-    unless snippetHtml.attachedToDom
-
-      if previous?.snippetHtml?.attachedToDom
-        previous.snippetHtml.$html.after($snippet)
-        @afterDomInsert(snippetHtml)
-      else if next?.snippetHtml?.attachedToDom
-        next.snippetHtml.$html.before($snippet)
-        @afterDomInsert(snippetHtml)
-      else if parentContainer
-        @appendToContainer(parentContainer, $snippet)
-        @afterDomInsert(snippetHtml)
-      else
-        log.error('could not insert snippet into Dom')
+  insertIntoDom: (snippetElem) ->
+    snippetElem.attach(this)
+    log.error('could not insert snippet into Dom') if not snippetElem.attachedToDom
+    @afterDomInsert(snippetElem)
 
     this
 
 
-  appendToContainer: (container, $elem) ->
-    if container.isRoot
-      @$root.append($elem)
-    else
-      container.parentSnippet.snippetHtml.append(
-        container.name,
-        $elem
-      )
-
-
-  afterDomInsert: (snippetHtml) ->
-    snippetHtml.attachedToDom = true
-
+  afterDomInsert: (snippetElem) ->
     # initialize editables
-    editableNodes = snippetHtml.$html.findIn("[#{ docAttr.editable }]")
-    Editable.add(editableNodes)
+    editableNodes = for name, node of snippetElem.editables
+      node
+
+    @page.editableController.add(editableNodes)
 
 
-  detachFromDom: (snippetHtml) ->
-    snippetHtml.detach()
+  detachFromDom: (snippetElem) ->
+    snippetElem.detach()
     this
+
+
+  # Highlight methods
+  # -----------------
+
+  highlightSnippet: (snippet) ->
+    if snippetElem = @getSnippetElem(snippet)
+      snippetElem.$html.addClass(docClass.snippetHighlight)
+
+
+  removeSnippetHighlight: (snippet) ->
+    if snippetElem = @getSnippetElem(snippet)
+      snippetElem.$html.removeClass(docClass.snippetHighlight)
 
 
   # UI Inserts
