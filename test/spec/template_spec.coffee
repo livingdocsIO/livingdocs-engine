@@ -2,7 +2,7 @@ describe 'Title Template', ->
 
   template = undefined
   beforeEach ->
-    template = new SnippetTemplate
+    template = new Template
       name: 'h1'
       html: """<h1 #{ docAttr.editable }="title"></h1>"""
 
@@ -40,7 +40,7 @@ describe 'Dropdown Template', ->
 
   template = null
   beforeEach ->
-    template = new SnippetTemplate
+    template = new Template
       name: 'dropdown'
       html:
         """
@@ -77,35 +77,35 @@ describe 'Dropdown Template', ->
     expect(snippet instanceof Snippet).toBe(true)
 
 
-describe 'SnippetTemplate.parseIdentifier()', ->
+describe 'Template.parseIdentifier()', ->
 
   it 'parses "bootstrap.title"', ->
-    identifier = SnippetTemplate.parseIdentifier('bootstrap.title')
+    identifier = Template.parseIdentifier('bootstrap.title')
     expect(identifier.namespace).toEqual('bootstrap')
     expect(identifier.name).toEqual('title')
 
 
   it 'does not parse "bootstrap"', ->
-    identifier = SnippetTemplate.parseIdentifier('title')
+    identifier = Template.parseIdentifier('title')
     expect(identifier.namespace).toBeUndefined()
     expect(identifier.name).toEqual('title')
 
 
   it 'does not parse emtpy string', ->
-    identifier = SnippetTemplate.parseIdentifier('')
+    identifier = Template.parseIdentifier('')
     expect(identifier).toBeUndefined()
 
 
   it 'does not parse undefined', ->
-    identifier = SnippetTemplate.parseIdentifier()
+    identifier = Template.parseIdentifier()
     expect(identifier).toBeUndefined()
 
 
-# SnippetTemplate constructor
-describe 'new SnippetTemplate()', ->
+# Template constructor
+describe 'new Template()', ->
 
   it 'accepts idenfitier param', ->
-    template = new SnippetTemplate
+    template = new Template
       identifier: 'bootstrap.title'
       html: """<h1 #{ docAttr.editable }="title"></h1>"""
 

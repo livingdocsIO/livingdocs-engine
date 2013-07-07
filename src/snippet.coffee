@@ -1,7 +1,7 @@
 # Snippet
 # -------
 # Snippets are more or less the equivalent to nodes in the DOM tree.
-# Each snippet has a SnippetTemplate which allows to generate HTML
+# Each snippet has a Template which allows to generate HTML
 # from a snippet or generate a snippet instance from HTML.
 #
 # Represents a node in a SnippetTree.

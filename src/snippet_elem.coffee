@@ -93,7 +93,7 @@ class SnippetElem
     $(dom.parentContainer(@$html[0]).node)
 
 
-  # old code from SnippetTemplate with list handling
+  # old code from Template with list handling
   # setField: (field, value, $snippet) ->
   #   list = @lists[field]
 

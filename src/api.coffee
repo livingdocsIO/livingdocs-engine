@@ -34,7 +34,7 @@ setupApi = ->
   @loadDocument = chainable(document, 'loadDocument')
   @ready = chainable(document.ready, 'add')
 
-  # Add SnippetTemplates to the documents
+  # Add Templates to the documents
   @addDesign = chainable(document, 'addDesign')
   @getDesign = -> document.design
 

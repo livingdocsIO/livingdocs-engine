@@ -4,7 +4,7 @@
 # Initialze everyting.
 #
 # ### Design:
-# Manage available SnippetTemplates
+# Manage available Templates
 #
 # ### Assets:
 # Load and manage CSS and Javascript dependencies
@@ -84,7 +84,7 @@ document = do ->
     @snippetTree.eachContainer(callback)
 
 
-  # list available snippetTemplates
+  # list available Templates
   listTemplates: ->
     templates = []
     @design.each (template) ->
@@ -110,7 +110,7 @@ document = do ->
     template.createSnippet() if template
 
 
-  # find all instances of a certain SnippetTemplate
+  # find all instances of a certain Template
   # e.g. search "bootstrap.hero" or just "hero"
   find: (search) ->
     @snippetTree.find(search)
@@ -158,10 +158,10 @@ document = do ->
 
 
   getTemplate: (identifier) ->
-    snippetTemplate = @design?.get(identifier)
+    template = @design?.get(identifier)
 
-    if !snippetTemplate
+    if !template
       log.error("could not find template #{ identifier }")
 
-    snippetTemplate
+    template
 

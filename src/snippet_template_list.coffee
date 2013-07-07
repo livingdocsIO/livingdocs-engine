@@ -1,6 +1,6 @@
 # SnippetTemplateList
 # -------------------
-# Represents a repeatable SnippetTemplate inside another SnippetTemplate
+# Represents a repeatable Template inside another Template
 #
 # Consider: Instead of defining a list inside a template we could
 # just define another template. If we can mark the position of the first
@@ -14,7 +14,7 @@ class SnippetTemplateList
     @$list = $list
     $item = @$list.children().first().detach()
 
-    @_item = new SnippetTemplate(
+    @_item = new Template(
       name: "#{ @name }-item",
       html: $item
     )
