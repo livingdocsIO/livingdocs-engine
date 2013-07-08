@@ -120,7 +120,7 @@ describe 'SnippetTree with a single-column row snippet', ->
 
     it 'adds a snippet to the single column via the snippetContainer', ->
       titleSnippet = test.getSnippet('title')
-      mainContainer = @container.containers['default']
+      mainContainer = @container.containers[templateAttr.defaultValues.container]
       mainContainer.append(titleSnippet)
       expect(mainContainer.first).toEqual(titleSnippet)
 
@@ -129,7 +129,7 @@ describe 'SnippetTree with a single-column row snippet', ->
       titleSnippet = test.getSnippet('title')
       @container.append(titleSnippet)
 
-      mainContainer = @container.containers['default']
+      mainContainer = @container.containers[templateAttr.defaultValues.container]
       expect(mainContainer.first).toEqual(titleSnippet)
 
 

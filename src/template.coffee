@@ -50,17 +50,16 @@ class Template
 
 
   createHtml: (snippet) ->
-    if not snippet?
-      snippet = @createSnippet()
-
+    snippet ||= @createSnippet()
     $html = @$template.clone()
-    { editables, containers } = @getNodeLinks($html[0])
+    list = @getNodeLinks($html[0])
 
     snippetElem = new SnippetElem
       snippet: snippet
       $html: $html
-      editables: editables
-      containers: containers
+      editables: list.editable
+      containers: list.container
+      images: list.image
 
 
   # todo
@@ -72,51 +71,30 @@ class Template
   # @param snippetNode: root DOM node of the snippet
   parseTemplate: () ->
     snippetNode = @$template[0]
-    { @editables, @containers } = @getNodeLinks(snippetNode)
+    @directives = @getNodeLinks(snippetNode)
+    @editables = @directives.editable
+    @containers = @directives.container
+    @editableCount = @directives.count.editable
+    @containerCount = @directives.count.container
 
-    count = 0
     for name, node of @editables
-      count += 1
       @formatEditable(name, node)
 
-    @editableCount = count
-
-    count = 0
     for name, node of @containers
-      count += 1
       @formatContainer(name, node)
-
-    @containerCount = count
 
 
   # Find and store all DOM nodes which are editables or containers
   # in the html of a snippet or the html of a template.
   getNodeLinks: (snippetNode) ->
-    editables = containers = undefined
     iterator = new SnippetNodeIterator(snippetNode)
+    list = new SnippetNodeList()
 
-    while iterator.nextElement()
-      node = iterator.current
+    while element = iterator.nextElement()
+      node = new SnippetNode(element)
+      list.add(node) if node.isDataNode
 
-      if node.hasAttribute(docAttr.editable)
-        name = node.getAttribute(docAttr.editable)
-        name ||= config.defaultEditableName
-        editables ||= {}
-        if name and not editables.hasOwnProperty(name)
-          editables[name] = node
-        else
-          log.error("editable name '#{ name }' already taken: #{ @identifier }")
-
-      else if node.hasAttribute(docAttr.container)
-        name = node.getAttribute(docAttr.container)
-        name ||= config.defaultContainerName
-        containers ||= {}
-        if name and not containers.hasOwnProperty(name)
-          containers[name] = node
-        else
-          log.error("container name '#{ name }' already taken: #{ @identifier }")
-
-    { editables, containers }
+    list
 
 
   formatEditable: (name, elem) ->
@@ -130,17 +108,10 @@ class Template
     if defaultValue
       @defaults[name] = defaultValue
 
-    if name == config.defaultEditableName
-      $elem.attr(docAttr.editable, name)
-
 
   formatContainer: (name, elem) ->
-
     # remove all content fron a container from the template
     elem.innerHTML = ''
-
-    if name == config.defaultContainerName
-      $(elem).attr(docAttr.container, name)
 
 
   createLists: () ->
