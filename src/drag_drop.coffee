@@ -63,7 +63,6 @@ class DragDrop
   # start the drag process
   start: ->
     @drag.started = true
-    page.blurFocusedElement()
 
     mouseLeft = @drag.startPoint.left
     mouseTop = @drag.startPoint.top

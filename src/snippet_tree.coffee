@@ -26,6 +26,7 @@
 # attached to the DOM).
 class SnippetTree
 
+
   constructor: ({ content, design } = {}) ->
     @root = new SnippetContainer(isRoot: true)
 

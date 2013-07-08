@@ -155,16 +155,22 @@ describe 'Serialize and Deserialize', ->
   beforeEach ->
     @design = test.getDesign()
     @before = new SnippetTree()
-    row = test.getSnippet('row')
-    title = test.getSnippet('title')
-    title.set('title', 'What we have here is a failure to communicate')
-    row.append('sidebar', title)
-    @before.append(row)
+    @row = test.getSnippet('row')
+    @title = test.getSnippet('title')
+    @title.set('title', 'What we have here is a failure to communicate')
+    @row.append('sidebar', @title)
+    @before.append(@row)
+    @json = test.localstore(@before.toJson())
+    @after = new SnippetTree(content: @json, design: @design)
+    @afterTitle = @after.find('title').first
 
 
   it 'deserializes the whole tree', ->
-    json = test.localstore(@before.toJson())
-    after = new SnippetTree(content: json, design: @design)
-    title = after.find('title').first
-    expect(title.get('title')).toEqual('What we have here is a failure to communicate')
+    expect(@afterTitle.get('title')).toEqual('What we have here is a failure to communicate')
+
+
+  it 'preserves snippet ids', ->
+    expect(@afterTitle.id.length).toBeGreaterThan(10)
+    expect(@title.id).toEqual(@afterTitle.id)
+
 

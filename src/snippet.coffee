@@ -1,7 +1,7 @@
 # Snippet
 # -------
 # Snippets are more or less the equivalent to nodes in the DOM tree.
-# Each snippet has a SnippetTemplate which allows to generate HTML
+# Each snippet has a Template which allows to generate HTML
 # from a snippet or generate a snippet instance from HTML.
 #
 # Represents a node in a SnippetTree.
@@ -16,13 +16,14 @@
 class Snippet
 
 
-  constructor: ({ @template } = {}) ->
+  constructor: ({ @template, id } = {}) ->
     if !@template
       log.error('cannot instantiate snippet without template reference')
 
     @initializeContainers()
     @initializeEditables()
 
+    @id = id || guid.next()
     @identifier = @template.identifier
 
     @next = undefined # set by SnippetContainer
@@ -105,11 +106,6 @@ class Snippet
       @editables[editable]
     else
       log.error("get error: #{ @identifier } has no editable named #{ editable }")
-
-
-  # creates a snippetHtml instance for this snippet
-  createHtml: () ->
-    @template.createHtml(this) unless @snippetHtml?
 
 
   hasEditables: ->
@@ -208,6 +204,7 @@ class Snippet
   toJson: ->
 
     json =
+      id: @id
       identifier: @identifier
 
     if @hasEditables()
@@ -228,7 +225,7 @@ Snippet.fromJson = (json, design) ->
   if not template?
     log.error("error while deserializing snippet: unknown template identifier '#{ json.identifier }'")
 
-  snippet = new Snippet({ template })
+  snippet = new Snippet({ template, id: json.id })
   for editableName, value of json.editables
     if snippet.editables.hasOwnProperty(editableName)
       snippet.editables[editableName] = value
@@ -248,9 +245,3 @@ Snippet.fromJson = (json, design) ->
         snippet.append( containerName, Snippet.fromJson(child, design) )
 
   snippet
-
-
-
-
-
-

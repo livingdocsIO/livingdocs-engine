@@ -20,8 +20,8 @@ describe 'Design', ->
       @design.add('title', templateConfig)
 
 
-    it 'stores the template as SnippetTemplate', ->
-      expect(@design.templates['title'] instanceof SnippetTemplate).toEqual(true)
+    it 'stores the template as Template', ->
+      expect(@design.templates['title'] instanceof Template).toEqual(true)
 
 
     describe 'get()', ->

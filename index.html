@@ -64,20 +64,20 @@
             var single = doc.add("bootstrap.column");
             single.append(doc.create("bootstrap.hero"));
           }
-        });
 
-        // drag in new hero snippet
-        var $newSnippet = $("<div>drag me</div>").css('cursor', 'move')
-        var dragDrop = new doc.DragDrop({
-          minDistance: 10,
-          preventDefault: true
-        });
-        $newSnippet.on('mousedown', function(event) {
-          var newSnippet = doc.create('bootstrap.image')
-          doc.startDrag(newSnippet, dragDrop)
-        });
-        $(document.body).append($newSnippet)
+          // drag in new hero snippet
+          var $newSnippet = $("<div>drag me</div>").css('cursor', 'move')
+          var dragDrop = new doc.DragDrop({
+            minDistance: 10,
+            preventDefault: true
+          });
+          $newSnippet.on('mousedown', function(event) {
+            var newSnippet = doc.create('bootstrap.image')
+            doc.startDrag({ snippet: newSnippet, dragDrop: dragDrop })
+          });
+          $(document.body).append($newSnippet)
 
+        });
       });
     </script>
 

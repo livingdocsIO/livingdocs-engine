@@ -18,7 +18,7 @@ class Design
       for name, template of collection
         @add(name, template)
 
-    @templates[name] = new SnippetTemplate
+    @templates[name] = new Template
       namespace: @namespace
       name: name
       html: template.html
@@ -36,7 +36,7 @@ class Design
 
 
   checkNamespace: (identifier, callback) ->
-    { namespace, name } = SnippetTemplate.parseIdentifier(identifier)
+    { namespace, name } = Template.parseIdentifier(identifier)
 
     if not namespace || @namespace == namespace
       callback(name)

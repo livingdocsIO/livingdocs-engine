@@ -1,13 +1,12 @@
-class SnippetHtml
+class SnippetElem
 
   constructor: ({ @snippet, @$html, @editables, @containers }) ->
     @template = @snippet.template
     @attachedToDom = false
-    @snippet.snippetHtml = this
 
     # add attributes and references to the html
     @$html
-      .data('snippet', @snippet)
+      .data('snippet', this)
       .addClass(docClass.snippet)
       .attr(docAttr.template, @template.identifier)
 
@@ -54,12 +53,47 @@ class SnippetHtml
     $container.append($elem)
 
 
+  attach: (renderer) ->
+    return if @attachedToDom
+    previous = @snippet.previous
+    next = @snippet.next
+    parentContainer = @snippet.parentContainer
+
+    if previous? and
+      (previousHtml = renderer.getSnippetElem(previous)) and
+      previousHtml.attachedToDom
+        previousHtml.$html.after(@$html)
+        @attachedToDom = true
+    else if next? and
+      (nextHtml = renderer.getSnippetElem(next)) and
+      nextHtml.attachedToDom
+        nextHtml.$html.before(@$html)
+        @attachedToDom = true
+    else if parentContainer
+      @appendToContainer(parentContainer, renderer)
+      @attachedToDom = true
+
+    this
+
+
+  appendToContainer: (container, renderer) ->
+    if container.isRoot
+      renderer.$root.append(@$html)
+    else
+      snippetElem = renderer.getSnippetElem(container.parentSnippet)
+      snippetElem.append(container.name, @$html)
+
+
   detach: ->
     @attachedToDom = false
     @$html.detach()
 
 
-  # old code from SnippetTemplate with list handling
+  get$container: ->
+    $(dom.parentContainer(@$html[0]).node)
+
+
+  # old code from Template with list handling
   # setField: (field, value, $snippet) ->
   #   list = @lists[field]
 
