@@ -22,6 +22,10 @@ describe 'Title Snippet', ->
     expect(@title.containers).not.toBeDefined()
 
 
+  it 'has no images', ->
+    expect(@title.images).not.toBeDefined()
+
+
   it 'has no next or previous', ->
     expect(@title.next).not.toBeDefined()
     expect(@title.previous).not.toBeDefined()
@@ -70,7 +74,16 @@ describe 'Container Snippet', ->
     @container = test.getSnippet('container')
 
 
-  it 'has named its unnamed container "default"', ->
-    expect(@container.containers['default']).toBeDefined()
+  it 'has named its unnamed container to the default', ->
+    expect(@container.containers[templateAttr.defaultValues.container]).toBeDefined()
 
+
+describe 'Image snippet', ->
+
+  beforeEach ->
+    @image = test.getSnippet('image')
+
+
+  it 'has one image', ->
+    expect(@image.images.hasOwnProperty('image')).toBeTruthy()
 

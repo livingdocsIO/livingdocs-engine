@@ -22,6 +22,7 @@ class Snippet
 
     @initializeContainers()
     @initializeEditables()
+    @initializeImages()
 
     @id = id || guid.next()
     @identifier = @template.identifier
@@ -32,8 +33,8 @@ class Snippet
 
 
   initializeContainers: ->
-    @containerCount = @template.containerCount
-    for containerName of @template.containers
+    @containerCount = @template.directives.count.container
+    for containerName of @template.directives.container
       @containers ||= {}
       @containers[containerName] = new SnippetContainer
         name: containerName
@@ -41,10 +42,21 @@ class Snippet
 
 
   initializeEditables: ->
-    @editableCount = @template.editableCount
-    for editableName of @template.editables
+    @editableCount = @template.directives.count.editable
+    for editableName of @template.directives.editable
       @editables ||= {}
       @editables[editableName] = undefined
+
+
+  initializeImages: ->
+    @imageCount = @template.directives.count.image
+    for imageName of @template.directives.image
+      @images ||= {}
+      @images[imageName] = undefined
+
+
+  hasImages: ->
+    @imageCount > 0
 
 
   hasContainers: ->
@@ -70,7 +82,7 @@ class Snippet
   append: (containerName, snippet) ->
     if arguments.length == 1
       snippet = containerName
-      containerName = config.defaultContainerName
+      containerName = templateAttr.defaultValues.container
 
     @containers[containerName].append(snippet)
     this
@@ -79,33 +91,32 @@ class Snippet
   prepend: (containerName, snippet) ->
     if arguments.length == 1
       snippet = containerName
-      containerName = config.defaultContainerName
+      containerName = templateAttr.defaultValues.container
 
     @containers[containerName].prepend(snippet)
     this
 
 
-  set: (editable, value) ->
-    if arguments.length == 1
-      value = editable
-      editable = config.defaultEditableName
-
-    if @editables?.hasOwnProperty(editable)
-      if @editables[editable] != value
-        @editables[editable] = value
+  set: (name, value) ->
+    if @editables?.hasOwnProperty(name)
+      if @editables[name] != value
+        @editables[name] = value
+        @snippetTree.contentChanging(this) if @snippetTree
+    else if @images?.hasOwnProperty(name)
+      if @images[name] != value
+        @images[name] = value
         @snippetTree.contentChanging(this) if @snippetTree
     else
-      log.error("set error: #{ @identifier } has no editable named #{ editable }")
+      log.error("set error: #{ @identifier } has no content named #{ name }")
 
 
-  get: (editable) ->
-    if arguments.length == 0
-      editable = config.defaultFieldName
-
-    if @editables?.hasOwnProperty(editable)
-      @editables[editable]
+  get: (name) ->
+    if @editables?.hasOwnProperty(name)
+      @editables[name]
+    else if @images?.hasOwnProperty(name)
+      @images[name]
     else
-      log.error("get error: #{ @identifier } has no editable named #{ editable }")
+      log.error("get error: #{ @identifier } has no name named #{ name }")
 
 
   hasEditables: ->
@@ -212,6 +223,11 @@ class Snippet
       for name, value of @editables
         json.editables[name] = value
 
+    for name of @images
+      json.images ||= {}
+      for name, value of @images
+        json.images[name] = value
+
     for name of @containers
       json.containers ||= {}
       json.containers[name] = []
@@ -231,6 +247,12 @@ Snippet.fromJson = (json, design) ->
       snippet.editables[editableName] = value
     else
       log.error("error while deserializing snippet: unknown editable #{ editableName }")
+
+  for imageName, value of json.images
+    if snippet.images.hasOwnProperty(imageName)
+      snippet.images[imageName] = value
+    else
+      log.error("error while deserializing snippet: unknown image #{ imageName }")
 
   for containerName, snippetArray of json.containers
     if not snippet.containers.hasOwnProperty(containerName)

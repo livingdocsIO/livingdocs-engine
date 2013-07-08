@@ -101,11 +101,12 @@ describe 'SnippetTree (Content Events)', ->
     @expectChanged = monitor(@tree.changed)
 
     @snippetA = test.getSnippet('title')
+    @imageSnippet = test.getSnippet('image')
     @tree.append(@snippetA)
+    @tree.append(@imageSnippet)
 
 
-  describe 'changing a snippets content', ->
-
+  describe 'changing the title content', ->
 
     beforeEach ->
       @changeSnippetContent = =>
@@ -118,3 +119,16 @@ describe 'SnippetTree (Content Events)', ->
 
     it 'fires changed event', ->
       @expectChanged 1, => @changeSnippetContent()
+
+
+  describe 'changing the image src', ->
+
+    beforeEach ->
+      @changeSnippetContent = =>
+        @imageSnippet.set('image', 'http://www.lolcats.com/images/1.jpg')
+
+
+    it 'fires snippetContentChanged event', ->
+      @expectContentChanged 1, => @changeSnippetContent()
+
+

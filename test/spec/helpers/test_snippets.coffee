@@ -31,6 +31,11 @@ testSnippets =
       html: """<p #{ docAttr.editable }="text"></p>"""
 
 
+    image:
+      name: 'Image'
+      html: """<img #{ docAttr.image }="image" src=""/>"""
+
+
     row:
       name: 'Row with two columns'
       html:
