@@ -25,6 +25,11 @@
         c.toUpperCase()
 
 
+  # convert 'camelCase' to 'camel-case'
+  snakeCase: (str) ->
+    $.trim(str).replace(/([A-Z])/g, '-$1').replace(/[-_\s]+/g, '-').toLowerCase()
+
+
   # prepend a prefix to a string if it is not already present
   prefix: (prefix, string) ->
     if string.indexOf(prefix) == 0
@@ -42,9 +47,6 @@
   # camelize: (str) ->
   #   $.trim(str).replace(/[-_\s]+(.)?/g, (match, c) ->
   #     c.toUpperCase()
-
-  # dasherize: (str) ->
-  #   $.trim(str).replace(/([A-Z])/g, '-$1').replace(/[-_\s]+/g, '-').toLowerCase()
 
   # classify: (str) ->
   #   $.titleize(String(str).replace(/[\W_]/g, ' ')).replace(/\s/g, '')

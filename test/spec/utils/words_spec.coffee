@@ -30,3 +30,8 @@ describe "words util", ->
     it "does not add a prefix twice", ->
       expect(words.prefix("ms-", "ms-word")).toEqual("ms-word")
 
+
+  describe "snakeCase", ->
+
+    it "converts to snakeCase", ->
+      expect(words.snakeCase("snakeCase")).toEqual("snake-case")
