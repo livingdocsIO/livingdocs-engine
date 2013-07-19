@@ -54,7 +54,7 @@ setupApi = ->
   # Json that can be used for saving of the document
   @toJson = $.proxy(document, 'toJson')
   @readableJson = ->
-    S.readableJson(document.toJson())
+    words.readableJson(document.toJson())
 
   # Print the content of the snippetTree in a readable string
   @printTree = $.proxy(document, 'printTree')
@@ -68,6 +68,9 @@ setupApi = ->
   # Get help about a snippet
   # @param identifier: (String) snippet identifier e.g. "bootstrap.title"
   @help = $.proxy(document, 'help')
+
+  # Expose words string util
+  @words = words
 
 
   # Stash

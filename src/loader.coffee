@@ -21,7 +21,7 @@ class Loader
     # add `css!` prefix to urls so yepnope always treats them as css files
     cssUrl = for url in cssUrl
       @loadedCssFiles.push(url)
-      S.prefix('css!', url)
+      words.prefix('css!', url)
 
     # yepnope calls the callback for each file to load
     # but we want to execute the callback only once all files are loaded

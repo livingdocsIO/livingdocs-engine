@@ -32,7 +32,7 @@ class Template
 
     @$template = $( @pruneHtml(html) ).wrap('<div>')
     @$wrap = @$template.parent()
-    @title = title || S.humanize( @name )
+    @title = title || words.humanize( @name )
 
     @editables = undefined
     @editableCount = 0
@@ -138,7 +138,7 @@ class Template
       editables: @editables
       containers: @containers
 
-    S.readableJson(doc)
+    words.readableJson(doc)
 
 
 # Static functions

@@ -40,4 +40,4 @@ stash = do ->
     entries = for obj in @store.getIndex()
       { key: obj.key, date: new Date(obj.date).toString() }
 
-    S.readableJson(entries)
+    words.readableJson(entries)

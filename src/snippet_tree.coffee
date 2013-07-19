@@ -190,7 +190,7 @@ class SnippetTree
   # -------------
 
   printJson: ->
-    S.readableJson(@toJson())
+    words.readableJson(@toJson())
 
 
   # returns a JSON representation of the whole tree
