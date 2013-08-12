@@ -132,6 +132,11 @@ module.exports = (grunt) ->
           src: ['**'],
           dest: '../livingdocs/vendor/assets/components/livingdocs-engine/'
         ]
+    concurrent:
+      dev: [
+        'watch:src'
+        'server'
+      ]
 
 
   # livereload does not work with grunt-contrib-watch, so we use regarde instead
@@ -141,12 +146,10 @@ module.exports = (grunt) ->
   grunt.registerTask('dev', [
     'clean:tmp'
     'coffee'
-    'watch:src'
+    'concurrent:dev'
   ])
 
   grunt.registerTask('server', [
-    'clean:tmp'
-    'coffee'
     'livereload-start'
     'connect:livereload'
     'open'

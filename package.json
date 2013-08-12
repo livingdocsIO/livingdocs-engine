@@ -16,7 +16,8 @@
     "matchdep": "~0.1.1",
     "grunt-karma": "~0.3.0",
     "grunt-contrib-coffee": "~0.7.0",
-    "grunt-docco": "~0.2.0"
+    "grunt-docco": "~0.2.0",
+    "grunt-concurrent": "~0.3.0"
   },
   "engines": {
     "node": ">=0.8.0"

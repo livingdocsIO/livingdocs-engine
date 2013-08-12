@@ -26,11 +26,9 @@ npm install
 
 ```bash
 # watch and update coffee files
-# (required for grunt server and running tests)
+# livereload on localhost:9000
+# (required for running tests)
 grunt dev
-
-# hands-on browser testing with livereload
-grunt server
 
 # run tests with PhantomJS
 grunt test
