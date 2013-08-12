@@ -12,7 +12,9 @@ module.exports = (grunt) ->
 
   grunt.initConfig
     livereload:
-      port: 35729 # Default livereload listening port.
+      # Default livereload listening port: 35729
+      # The port is different so it plays well togehter with other projects
+      port: 35739
     watch:
       livereload:
         files: [
@@ -29,13 +31,14 @@ module.exports = (grunt) ->
     connect:
       livereload:
         options:
-          port: 9000
+          port: 9010
           # Change this to '0.0.0.0' to access the server from outside.
+          hostname: 'localhost'
           middleware: (connect, options) ->
             [lrSnippet, folderMount(connect, options.base)]
       test:
         options:
-          port: 9001
+          port: 9011
           middleware: (connect, options) ->
             [folderMount(connect, options.base)]
     open:
