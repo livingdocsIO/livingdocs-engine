@@ -78,7 +78,7 @@ class Renderer
 
 
   clear: ->
-    @snippetTree.each (snippet) ->
+    @snippetTree.each (snippet) =>
       snippetElem = @getSnippetElem(snippet)
       snippetElem?.attachedToDom = false
 
