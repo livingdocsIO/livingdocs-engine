@@ -20,9 +20,6 @@ setupApi = ->
   @addDesign = chainable(document, 'addDesign')
   @getDesign = -> document.design
 
-  # Print a list of all available snippets
-  @listTemplates = $.proxy(document, 'listTemplates')
-
   # Append a snippet to the document
   # @param input: (String) snippet identifier e.g. "bootstrap.title" or (Snippet)
   # @return Snippet

@@ -84,15 +84,6 @@ document = do ->
     @snippetTree.eachContainer(callback)
 
 
-  # list available Templates
-  listTemplates: ->
-    templates = []
-    @design.each (template) ->
-      templates.push(template.identifier)
-
-    templates
-
-
   # *Public API*
   add: (input) ->
     if jQuery.type(input) == 'string'

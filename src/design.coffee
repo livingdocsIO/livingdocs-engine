@@ -47,3 +47,12 @@ class Design
   each: (callback) ->
     for name, template of @template
       callback(template)
+
+
+  # list available Templates
+  listTemplates: ->
+    templates = []
+    @each (template) ->
+      templates.push(template.identifier)
+
+    templates
