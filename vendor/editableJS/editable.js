@@ -3841,8 +3841,22 @@ var behavior = (function() {
       cursor.update();
     },
 
-    insert: function(element, direction) {
+    insert: function(element, direction, cursor) {
       log('Default insert ' + direction + ' behavior');
+      var parent = element.parentNode;
+      var newElement = element.cloneNode(false);
+      if(newElement.id) newElement.removeAttribute('id');
+
+      switch(direction) {
+      case 'before':
+        parent.insertBefore(newElement, element);
+        break;
+      case 'after':
+        parent.insertBefore(newElement, element.nextSibling);
+        break;
+      }
+
+      newElement.focus();
     },
 
     split: function(element, before, after, cursor) {
@@ -3986,9 +4000,10 @@ var config = {
      * @event insert
      * @param {HTMLElement} element The element triggering the event.
      * @param {String} direction The insert direction: "before" or "after".
+     * @param {Cursor} cursor The actual cursor object.
      */
-    insert: function(element, direction) {
-      behavior.insert(element, direction);
+    insert: function(element, direction, cursor) {
+      behavior.insert(element, direction, cursor);
     },
 
 
@@ -4261,9 +4276,9 @@ var dispatcher = (function() {
       var cursor = selectionWatcher.getCursor();
 
       if (cursor.isAtTheEnd()) {
-        notifier('insert', this, 'after');
+        notifier('insert', this, 'after', cursor);
       } else if(cursor.isAtTheBeginning()) {
-        notifier('insert', this, 'before');
+        notifier('insert', this, 'before', cursor);
       } else {
         notifier('split', this, cursor.before(), cursor.after(), cursor);
       }
@@ -4678,7 +4693,10 @@ var parser = (function() {
         var actualStart = text.length - string.trimLeft(text).length;
         return offset <= actualStart;
       } else {
-        return container.childNodes[offset] === container.firstChild;
+        if(container.childNodes.length === 0)
+          return true;
+        else
+          return container.childNodes[offset] === container.firstChild;
       }
     },
 
@@ -4690,7 +4708,10 @@ var parser = (function() {
 
         // return offset === container.length;
       } else {
-        return container.childNodes[offset] === container.lastChild;
+        if(container.childNodes.length === 0)
+          return true;
+        else
+          return container.childNodes[offset] === container.lastChild;
       }
     }
   };
