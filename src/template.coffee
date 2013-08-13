@@ -135,8 +135,8 @@ class Template
   printDoc: () ->
     doc =
       identifier: @identifier
-      editables: @editables
-      containers: @containers
+      editables: Object.keys @editables if @editables
+      containers: Object.keys @containers if @containers
 
     words.readableJson(doc)
 

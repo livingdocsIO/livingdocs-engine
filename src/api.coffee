@@ -43,10 +43,6 @@ setupApi = ->
   @changed = chainable(document.changed, 'add')
   @DragDrop = DragDrop
 
-  # Get help about a snippet
-  # @param identifier: (String) snippet identifier e.g. "bootstrap.title"
-  @help = $.proxy(document, 'help')
-
   # Expose words string util
   @words = words
 

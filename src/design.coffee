@@ -45,14 +45,20 @@ class Design
 
 
   each: (callback) ->
-    for name, template of @template
+    for name, template of @templates
       callback(template)
 
 
   # list available Templates
-  listTemplates: ->
+  list: ->
     templates = []
     @each (template) ->
       templates.push(template.identifier)
 
     templates
+
+
+  # print documentation for a template
+  info: (identifier) ->
+    template = @get(identifier)
+    template.printDoc()

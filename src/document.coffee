@@ -107,12 +107,6 @@ document = do ->
     @snippetTree.find(search)
 
 
-  # print documentation for a snippet template
-  help: (identifier) ->
-    template = @getTemplate(identifier)
-    template.printDoc()
-
-
   # print the SnippetTree
   printTree: () ->
     @snippetTree.print()
