@@ -17,6 +17,24 @@ class SnippetElem
     @content(@snippet.editables, @snippet.images)
 
 
+  next: ->
+    @$html.next().data('snippet')
+
+
+  prev: ->
+    @$html.prev().data('snippet')
+
+
+  focus: ->
+    first = @firstEditableElem()
+    $(first).focus()
+
+
+  firstEditableElem: ->
+    for name, elem of @editables
+      return elem
+
+
   content: (content, images) ->
     for field, value of content
       @set(field, value)

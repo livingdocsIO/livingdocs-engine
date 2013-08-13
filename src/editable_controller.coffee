@@ -15,6 +15,8 @@ class EditableController
     Editable
       .focus($.proxy(@focus, @))
       .blur($.proxy(@blur, @))
+      .insert($.proxy(@insert, @))
+      .split($.proxy(@split, @))
       .selection($.proxy(@selectionChanged, @))
 
 
@@ -32,6 +34,23 @@ class EditableController
     @page.focus.editableBlurred(element, snippet)
     editableName = element.getAttribute(docAttr.editable)
     snippet.set(editableName, element.innerHTML)
+
+
+  insert: (element, direction, cursor) ->
+    snippetElem = dom.parentSnippetElem(element)
+    template = snippetElem.template
+    if template.editableCount == 1
+      copy = template.createSnippet()
+      snippetElem.snippet.after(copy)
+      if copiedElem = snippetElem.next()
+        copiedElem.focus()
+
+    false # disable editableJS default behaviour
+
+
+  split: (element, before, after, cursor) ->
+    log('engine: split')
+    false # disable editableJS default behaviour
 
 
   selectionChanged: (element, selection) ->
