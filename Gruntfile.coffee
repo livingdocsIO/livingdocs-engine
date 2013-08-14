@@ -133,7 +133,7 @@ module.exports = (grunt) ->
           expand: true,
           cwd: 'dist/',
           src: ['**'],
-          dest: '../livingdocs/vendor/assets/components/livingdocs-engine/'
+          dest: '../watson-ui/app/vendor/livingdocs-engine/'
         ]
     concurrent:
       dev: [
