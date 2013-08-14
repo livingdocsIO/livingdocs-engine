@@ -75,7 +75,7 @@ class Page
 
 
   click: (event) ->
-    snippet = dom.parentSnippet(event.target)
+    snippetElem = dom.parentSnippetElem(event.target)
 
     # todo: if a user clicked on a margin of a snippet it should
     # still get selected. (if a snippet is found by parentSnippet
@@ -88,8 +88,8 @@ class Page
     # on a margin of a snippet
 
     # todo: check if the click was meant for a snippet container
-    if snippet
-      @focus.snippetFocused(snippet)
+    if snippetElem
+      @focus.snippetFocused(snippetElem)
     else
       @focus.blur()
 

@@ -25,12 +25,12 @@ class EditableController
 
 
   focus: (element) ->
-    snippet = dom.parentSnippet(element)
+    snippet = dom.parentSnippetElem(element)
     @page.focus.editableFocused(element, snippet)
 
 
   blur: (element) ->
-    snippet = dom.parentSnippet(element)
+    snippet = dom.parentSnippetElem(element)
     @page.focus.editableBlurred(element, snippet)
     editableName = element.getAttribute(docAttr.editable)
     snippet.set(editableName, element.innerHTML)
@@ -54,6 +54,6 @@ class EditableController
 
 
   selectionChanged: (element, selection) ->
-    snippet = dom.parentSnippet(element)
-    @selection.fire(snippet, element, selection)
+    snippetElem = dom.parentSnippetElem(element)
+    @selection.fire(snippetElem, element, selection)
 

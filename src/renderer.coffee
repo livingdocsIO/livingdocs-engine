@@ -121,14 +121,12 @@ class Renderer
   # Highlight methods
   # -----------------
 
-  highlightSnippet: (snippet) ->
-    if snippetElem = @getSnippetElem(snippet)
-      snippetElem.$html.addClass(docClass.snippetHighlight)
+  highlightSnippet: (snippetElem) ->
+    snippetElem.$html.addClass(docClass.snippetHighlight)
 
 
-  removeSnippetHighlight: (snippet) ->
-    if snippetElem = @getSnippetElem(snippet)
-      snippetElem.$html.removeClass(docClass.snippetHighlight)
+  removeSnippetHighlight: (snippetElem) ->
+    snippetElem.$html.removeClass(docClass.snippetHighlight)
 
 
   # UI Inserts
