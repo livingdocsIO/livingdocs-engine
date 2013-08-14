@@ -35,6 +35,10 @@ class SnippetElem
       return elem
 
 
+  getBoundingClientRect: ->
+    dom.getBoundingClientRect(@$html[0])
+
+
   content: (content, images) ->
     for field, value of content
       @set(field, value)
