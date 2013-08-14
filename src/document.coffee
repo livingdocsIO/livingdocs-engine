@@ -112,14 +112,6 @@ document = do ->
     @snippetTree.print()
 
 
-  # consider: use guids so transferring snippets between documents
-  # can not cause id conflicts
-  nextId: (prefix = 'doc') ->
-
-    @uniqueId += 1
-    "#{ prefix }-#{ @uniqueId }"
-
-
   toJson: ->
     json = @snippetTree.toJson()
     json['meta'] =
