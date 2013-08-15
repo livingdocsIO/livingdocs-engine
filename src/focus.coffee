@@ -13,14 +13,14 @@ class Focus
 
   setFocus: (snippetElem, editableNode) ->
     if editableNode != @editableNode
-      @blurEditable()
+      @resetEditable()
       @editableNode = editableNode
 
     if snippetElem != @snippetElem
-      @blurSnippet()
-
-      @snippetElem = snippetElem
-      @snippetFocus.fire(@snippetElem)
+      @resetSnippetElem()
+      if snippetElem
+        @snippetElem = snippetElem
+        @snippetFocus.fire(@snippetElem)
 
 
   # call after browser focus change
@@ -50,13 +50,13 @@ class Focus
   # -------
 
   # @api private
-  blurEditable: ->
+  resetEditable: ->
     if @editableNode
       @editableNode = undefined
 
 
   # @api private
-  blurSnippet: ->
+  resetSnippetElem: ->
     if @snippetElem
       previous = @snippetElem
       @snippetElem = undefined
