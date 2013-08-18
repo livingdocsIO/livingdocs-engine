@@ -22,13 +22,13 @@ setupApi = ->
 
   # Append a snippet to the document
   # @param input: (String) snippet identifier e.g. "bootstrap.title" or (Snippet)
-  # @return Snippet
+  # @return SnippetModel
   @add = $.proxy(document, 'add')
 
   # Create a new snippet instance (not inserted into the document)
   # @param identifier: (String) snippet identifier e.g. "bootstrap.title"
-  # @return Snippet
-  @create = $.proxy(document, 'createSnippet')
+  # @return SnippetModel
+  @create = $.proxy(document, 'createModel')
 
   # Json that can be used for saving of the document
   @toJson = $.proxy(document, 'toJson')

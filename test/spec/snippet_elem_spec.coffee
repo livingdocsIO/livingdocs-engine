@@ -1,7 +1,7 @@
 describe 'SnippetElem title', ->
 
   beforeEach ->
-    @snippetElem = test.getTemplate('title').createHtml()
+    @snippetElem = test.getTemplate('title').createView()
 
 
   describe 'set content', ->
@@ -49,7 +49,7 @@ describe 'SnippetElem hero', ->
     snippet.set('title', 'Humble Bundle 2')
     snippet.set('tagline', 'Get it now!')
     template = test.getTemplate('hero')
-    @snippetElem = template.createHtml(snippet)
+    @snippetElem = template.createView(snippet)
     @expected =
         """
         <div class="#{ docClass.snippet }" #{ docAttr.template }="test.hero">
@@ -67,7 +67,7 @@ describe 'SnippetElem image', ->
   beforeEach ->
     snippet = test.getSnippet('image')
     snippet.set('image', 'http://www.lolcats.com/images/1.jpg')
-    @snippetElem = snippet.template.createHtml(snippet)
+    @snippetElem = snippet.template.createView(snippet)
     @expected =
         """
         <img src="http://www.lolcats.com/images/1.jpg"

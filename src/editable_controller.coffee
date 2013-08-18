@@ -25,22 +25,22 @@ class EditableController
 
 
   focus: (element) ->
-    snippet = dom.parentSnippetElem(element)
-    @page.focus.editableFocused(element, snippet)
+    snippetElem = dom.parentSnippetElem(element)
+    @page.focus.editableFocused(element, snippetElem)
 
 
   blur: (element) ->
-    snippet = dom.parentSnippetElem(element)
-    @page.focus.editableBlurred(element, snippet)
+    snippetElem = dom.parentSnippetElem(element)
+    @page.focus.editableBlurred(element, snippetElem)
     editableName = element.getAttribute(docAttr.editable)
-    snippet.set(editableName, element.innerHTML)
+    snippetElem.model.set(editableName, element.innerHTML)
 
 
   insert: (element, direction, cursor) ->
     snippetElem = dom.parentSnippetElem(element)
     template = snippetElem.template
     if template.editableCount == 1
-      copy = template.createSnippet()
+      copy = template.createModel()
       snippetElem.model.after(copy)
       if copiedElem = snippetElem.next()
         copiedElem.focus()

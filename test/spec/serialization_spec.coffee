@@ -53,7 +53,7 @@ describe 'Deserialization', ->
       json = { identifier: 'unknown-snippet' }
 
       deserialize = =>
-        snippet = Snippet.fromJson(json, @design)
+        snippet = SnippetModel.fromJson(json, @design)
 
       expect(deserialize).toThrow()
 
@@ -67,7 +67,7 @@ describe 'Deserialization', ->
           'title-misspelled': 'Baby Geniusses'
 
       deserialize = =>
-        snippet = Snippet.fromJson(json, @design)
+        snippet = SnippetModel.fromJson(json, @design)
 
       expect(deserialize).toThrow()
 
@@ -82,8 +82,8 @@ describe 'Deserialization', ->
 
 
     it 'returns a snippet instance', ->
-      snippet = Snippet.fromJson(@json, @design)
-      expect(snippet instanceof Snippet).toEqual(true)
+      snippet = SnippetModel.fromJson(@json, @design)
+      expect(snippet instanceof SnippetModel).toEqual(true)
       expect(snippet.get('title')).toEqual('Baby Geniuses')
 
 
@@ -108,7 +108,7 @@ describe 'Deserialization', ->
 
 
     it 'returns a snippet instance', ->
-      row = Snippet.fromJson(@rowJson, @design)
+      row = SnippetModel.fromJson(@rowJson, @design)
       firstChild = row.containers['main'].first
       secondChild = firstChild.next
       expect(firstChild.get('title')).toEqual('Do you feel lucky?')
@@ -129,7 +129,7 @@ describe 'Deserialization', ->
     it 'ignores null containers', ->
       @rowJson.containers.sidebar = null
       deserialize = =>
-        snippet = Snippet.fromJson(@rowJson, @design)
+        snippet = SnippetModel.fromJson(@rowJson, @design)
 
       expect(deserialize).not.toThrow()
 
@@ -137,7 +137,7 @@ describe 'Deserialization', ->
     it 'throws an error if container is not an array', ->
       @rowJson.containers.sidebar = 'this makes no sense at all'
       deserialize = =>
-        snippet = Snippet.fromJson(@rowJson, @design)
+        snippet = SnippetModel.fromJson(@rowJson, @design)
 
       expect(deserialize).toThrow()
 
@@ -145,7 +145,7 @@ describe 'Deserialization', ->
     it 'throws an error if it encouters an unknown containerName', ->
       @rowJson.containers.sidebarExtra = []
       deserialize = =>
-        snippet = Snippet.fromJson(@rowJson, @design)
+        snippet = SnippetModel.fromJson(@rowJson, @design)
 
       expect(deserialize).toThrow()
 

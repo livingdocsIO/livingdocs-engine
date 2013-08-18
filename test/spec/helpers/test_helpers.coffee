@@ -19,7 +19,7 @@ test = do ->
 
 
   getSnippet: (name) ->
-    @getTemplate(name).createSnippet()
+    @getTemplate(name).createModel()
 
 
   getDesign: () ->

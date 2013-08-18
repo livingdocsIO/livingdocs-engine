@@ -21,7 +21,7 @@ describe 'DOM method', ->
   describe 'parentSnippet() on title snippet', ->
 
     beforeEach ->
-      @snippetElem = test.getTemplate('title').createHtml()
+      @snippetElem = test.getTemplate('title').createView()
       @$html = @snippetElem.$html
 
 
@@ -36,7 +36,7 @@ describe 'DOM method', ->
   describe 'parentSnippet() on row snippet', ->
 
     beforeEach ->
-      @snippetElem = test.getTemplate('row').createHtml()
+      @snippetElem = test.getTemplate('row').createView()
       @$html = @snippetElem.$html
 
 
@@ -48,8 +48,8 @@ describe 'DOM method', ->
   describe 'parentContainer()', ->
 
     beforeEach ->
-      @row = test.getTemplate('row').createHtml()
-      @title = test.getTemplate('title').createHtml()
+      @row = test.getTemplate('row').createView()
+      @title = test.getTemplate('title').createView()
       @row.model.append('main', @title)
       @row.append('main', @title.$html)
       @$html = @row.$html

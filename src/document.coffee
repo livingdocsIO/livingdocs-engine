@@ -87,7 +87,7 @@ document = do ->
   # *Public API*
   add: (input) ->
     if jQuery.type(input) == 'string'
-      snippet = @createSnippet(input)
+      snippet = @createModel(input)
     else
       snippet = input
 
@@ -96,9 +96,9 @@ document = do ->
 
 
   # *Public API*
-  createSnippet: (identifier) ->
+  createModel: (identifier) ->
     template = @getTemplate(identifier)
-    template.createSnippet() if template
+    template.createModel() if template
 
 
   # find all instances of a certain Template

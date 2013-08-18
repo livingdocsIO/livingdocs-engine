@@ -44,18 +44,18 @@ class Template
     @lists = @createLists()
 
 
-  # create a new snippet instance from this template
-  createSnippet: () ->
-    new Snippet(template: this)
+  # create a new SnippetModel instance from this template
+  createModel: () ->
+    new SnippetModel(template: this)
 
 
-  createHtml: (snippet) ->
-    snippet ||= @createSnippet()
+  createView: (snippetModel) ->
+    snippetModel ||= @createModel()
     $html = @$template.clone()
     list = @getNodeLinks($html[0])
 
     snippetElem = new SnippetElem
-      model: snippet
+      model: snippetModel
       $html: $html
       editables: list.editable
       containers: list.container

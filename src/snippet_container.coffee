@@ -8,7 +8,7 @@
 # 
 # @prop first: first snippet in the container
 # @prop last: last snippet in the container
-# @prop parentSnippet: parent Snippet
+# @prop parentSnippet: parent SnippetModel
 class SnippetContainer
 
 

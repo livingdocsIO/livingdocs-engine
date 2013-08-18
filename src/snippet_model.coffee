@@ -1,19 +1,18 @@
-# Snippet
-# -------
-# Snippets are more or less the equivalent to nodes in the DOM tree.
-# Each snippet has a Template which allows to generate HTML
-# from a snippet or generate a snippet instance from HTML.
+# SnippetModel
+# ------------
+# Each SnippetModel has a template which allows to generate a snippetView
+# from a snippetModel
 #
 # Represents a node in a SnippetTree.
-# Every snippet can have a parent (SnippetContainer),
+# Every SnippetModel can have a parent (SnippetContainer),
 # siblings (other snippets) and multiple containers (SnippetContainers).
 #
-# The containers are the parents of the child Snippets.
+# The containers are the parents of the child SnippetModels.
 # E.g. a grid row would have as many containers as it has
 # columns
 #
 # # @prop parentContainer: parent SnippetContainer
-class Snippet
+class SnippetModel
 
 
   constructor: ({ @template, id } = {}) ->
@@ -63,37 +62,37 @@ class Snippet
     @containers?
 
 
-  before: (snippet) ->
-    if snippet
-      @parentContainer.insertBefore(this, snippet)
+  before: (snippetModel) ->
+    if snippetModel
+      @parentContainer.insertBefore(this, snippetModel)
       this
     else
       @previous
 
 
-  after: (snippet) ->
-    if snippet
-      @parentContainer.insertAfter(this, snippet)
+  after: (snippetModel) ->
+    if snippetModel
+      @parentContainer.insertAfter(this, snippetModel)
       this
     else
       @next
 
 
-  append: (containerName, snippet) ->
+  append: (containerName, snippetModel) ->
     if arguments.length == 1
-      snippet = containerName
+      snippetModel = containerName
       containerName = templateAttr.defaultValues.container
 
-    @containers[containerName].append(snippet)
+    @containers[containerName].append(snippetModel)
     this
 
 
-  prepend: (containerName, snippet) ->
+  prepend: (containerName, snippetModel) ->
     if arguments.length == 1
-      snippet = containerName
+      snippetModel = containerName
       containerName = templateAttr.defaultValues.container
 
-    @containers[containerName].prepend(snippet)
+    @containers[containerName].prepend(snippetModel)
     this
 
 
@@ -162,26 +161,26 @@ class Snippet
   # ---------
 
   parents: (callback) ->
-    snippet = this
-    while (snippet = snippet.getParent())
-      callback(snippet)
+    snippetModel = this
+    while (snippetModel = snippetModel.getParent())
+      callback(snippetModel)
 
 
   children: (callback) ->
     for name, snippetContainer of @containers
-      snippet = snippetContainer.first
-      while (snippet)
-        callback(snippet)
-        snippet = snippet.next
+      snippetModel = snippetContainer.first
+      while (snippetModel)
+        callback(snippetModel)
+        snippetModel = snippetModel.next
 
 
   descendants: (callback) ->
     for name, snippetContainer of @containers
-      snippet = snippetContainer.first
-      while (snippet)
-        callback(snippet)
-        snippet.descendants(callback)
-        snippet = snippet.next
+      snippetModel = snippetContainer.first
+      while (snippetModel)
+        callback(snippetModel)
+        snippetModel.descendants(callback)
+        snippetModel = snippetModel.next
 
 
   descendantsAndSelf: (callback) ->
@@ -189,18 +188,18 @@ class Snippet
     @descendants(callback)
 
 
-  # return all descendant containers (including those of this snippet)
+  # return all descendant containers (including those of this snippetModel)
   descendantContainers: (callback) ->
-    @descendantsAndSelf (snippet) ->
-      for name, snippetContainer of snippet.containers
+    @descendantsAndSelf (snippetModel) ->
+      for name, snippetContainer of snippetModel.containers
         callback(snippetContainer)
 
 
   # return all descendant containers and snippets
   allDescendants: (callback) ->
-    @descendantsAndSelf (snippet) =>
-      callback(snippet) if snippet != this
-      for name, snippetContainer of snippet.containers
+    @descendantsAndSelf (snippetModel) =>
+      callback(snippetModel) if snippetModel != this
+      for name, snippetContainer of snippetModel.containers
         callback(snippetContainer)
 
 
@@ -235,27 +234,27 @@ class Snippet
     json
 
 
-Snippet.fromJson = (json, design) ->
+SnippetModel.fromJson = (json, design) ->
   template = design.get(json.identifier)
 
   if not template?
     log.error("error while deserializing snippet: unknown template identifier '#{ json.identifier }'")
 
-  snippet = new Snippet({ template, id: json.id })
+  model = new SnippetModel({ template, id: json.id })
   for editableName, value of json.editables
-    if snippet.editables.hasOwnProperty(editableName)
-      snippet.editables[editableName] = value
+    if model.editables.hasOwnProperty(editableName)
+      model.editables[editableName] = value
     else
       log.error("error while deserializing snippet: unknown editable #{ editableName }")
 
   for imageName, value of json.images
-    if snippet.images.hasOwnProperty(imageName)
-      snippet.images[imageName] = value
+    if model.images.hasOwnProperty(imageName)
+      model.images[imageName] = value
     else
       log.error("error while deserializing snippet: unknown image #{ imageName }")
 
   for containerName, snippetArray of json.containers
-    if not snippet.containers.hasOwnProperty(containerName)
+    if not model.containers.hasOwnProperty(containerName)
       log.error("error while deserializing snippet: unknown container #{ containerName }")
 
     if snippetArray
@@ -264,6 +263,6 @@ Snippet.fromJson = (json, design) ->
         log.error("error while deserializing snippet: container is not array #{ containerName }")
 
       for child in snippetArray
-        snippet.append( containerName, Snippet.fromJson(child, design) )
+        model.append( containerName, SnippetModel.fromJson(child, design) )
 
-  snippet
+  model

@@ -21,17 +21,17 @@ describe 'Title Template', ->
     expect( htmlCompare.compare(template.$template, expected) ).toBe(true)
 
 
-  describe '#createSnippet()', ->
+  describe '#createModel()', ->
 
-    it 'returns a snippet', ->
-      snippet = template.createSnippet()
-      expect(snippet instanceof Snippet).toBe(true)
+    it 'returns a SnippetModel', ->
+      model = template.createModel()
+      expect(model instanceof SnippetModel).toBe(true)
 
 
-  describe '#createHtml()', ->
+  describe '#createView()', ->
 
     it 'returns a SnippetElem instance', ->
-      snippetElem = template.createHtml()
+      snippetElem = template.createView()
       expect(snippetElem instanceof SnippetElem).toBe(true)
 
 
@@ -73,8 +73,8 @@ describe 'Dropdown Template', ->
 
 
   it 'returns a snippet', ->
-    snippet = template.createSnippet()
-    expect(snippet instanceof Snippet).toBe(true)
+    snippet = template.createModel()
+    expect(snippet instanceof SnippetModel).toBe(true)
 
 
 describe 'Template.parseIdentifier()', ->
@@ -122,7 +122,7 @@ describe 'Row Template', ->
 
 
   it 'initializes SnippetContainers', ->
-    snippet = template.createSnippet()
+    snippet = template.createModel()
     expect(snippet).toBeDefined()
     expect(snippet.containers.main instanceof SnippetContainer).toBe(true)
     expect(snippet.containers.sidebar instanceof SnippetContainer).toBe(true)

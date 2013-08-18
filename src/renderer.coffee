@@ -27,60 +27,60 @@ class Renderer
     @snippetTree.snippetContentChanged.add( $.proxy(this, 'snippetContentChanged') )
 
 
-  snippetAdded: (snippet) ->
-    snippetElem = @ensureSnippetElem(snippet)
-    @updateDomPosition(snippetElem)
+  snippetAdded: (model) ->
+    view = @ensureSnippetElem(model)
+    @updateDomPosition(view)
 
 
-  snippetRemoved: (snippet) ->
-    if snippetElem = @getSnippetElem(snippet)
-      if snippetElem.attachedToDom
-        @detachFromDom(snippetElem)
-        delete @snippets[snippet.id]
+  snippetRemoved: (model) ->
+    if view = @getSnippetElem(model)
+      if view.attachedToDom
+        @detachFromDom(view)
+        delete @snippets[model.id]
 
 
-  snippetMoved: (snippet) ->
-    snippetElem = @ensureSnippetElem(snippet)
-    @updateDomPosition(snippetElem)
+  snippetMoved: (model) ->
+    view = @ensureSnippetElem(model)
+    @updateDomPosition(view)
 
 
-  snippetContentChanged: (snippet) ->
-    snippetElem = @ensureSnippetElem(snippet)
-    @insertIntoDom(snippetElem) if not snippetElem.attachedToDom
-    snippetElem.updateContent()
+  snippetContentChanged: (model) ->
+    view = @ensureSnippetElem(model)
+    @insertIntoDom(view) if not view.attachedToDom
+    view.updateContent()
 
 
   # Rendering
   # ---------
 
-  getSnippetElem: (snippet) ->
-    @snippets[snippet.id] if snippet
+  getSnippetElem: (model) ->
+    @snippets[model.id] if model
 
 
-  ensureSnippetElem: (snippet) ->
-    return unless snippet
-    @snippets[snippet.id] || @createSnippetElem(snippet)
+  ensureSnippetElem: (model) ->
+    return unless model
+    @snippets[model.id] || @createSnippetElem(model)
 
 
   # creates a snippetElem instance for this snippet
   # @api: private
-  createSnippetElem: (snippet) ->
-    snippetElem = snippet.template.createHtml(snippet)
-    @snippets[snippet.id] = snippetElem
+  createSnippetElem: (model) ->
+    view = model.template.createView(model)
+    @snippets[model.id] = view
 
 
   render: ->
     @$root.empty()
 
-    @snippetTree.each (snippet) =>
-      snippetElem = @ensureSnippetElem(snippet)
-      @insertIntoDom(snippetElem)
+    @snippetTree.each (model) =>
+      view = @ensureSnippetElem(model)
+      @insertIntoDom(view)
 
 
   clear: ->
-    @snippetTree.each (snippet) =>
-      snippetElem = @getSnippetElem(snippet)
-      snippetElem?.attachedToDom = false
+    @snippetTree.each (model) =>
+      view = @getSnippetElem(model)
+      view?.attachedToDom = false
 
     @$root.empty()
 
@@ -133,16 +133,16 @@ class Renderer
   # ----------
 
   createInterfaceInjector: (snippetOrContainer) ->
-    if snippetOrContainer instanceof Snippet
+    if snippetOrContainer instanceof SnippetModel
       @createSnippetInterfaceInjector(snippetOrContainer)
     else if snippetOrContainer instanceof SnippetContainer
       @createSnippetContainerInterfaceInjector(snippetOrContainer)
 
 
-  createSnippetInterfaceInjector: (snippet) ->
-    if snippet.uiInjector == undefined
-      snippet.uiInjector = new InterfaceInjector
-        snippet: snippet
+  createSnippetInterfaceInjector: (model) ->
+    if model.uiInjector == undefined
+      model.uiInjector = new InterfaceInjector
+        snippet: model
         renderer: this
 
 

@@ -213,7 +213,7 @@ describe 'SnippetTree with a multi-column row snippet', ->
       visitedSnippets = 0
       visitedContainers = 0
       @tree.all (snippetOrContainer) ->
-        if snippetOrContainer instanceof Snippet
+        if snippetOrContainer instanceof SnippetModel
           visitedSnippets += 1
         else if snippetOrContainer instanceof SnippetContainer
           visitedContainers += 1

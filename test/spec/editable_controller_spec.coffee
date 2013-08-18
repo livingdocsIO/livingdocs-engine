@@ -7,7 +7,7 @@ describe 'editableController', ->
   describe 'selection event', ->
 
     beforeEach ->
-      @title = test.getTemplate('title').createHtml()
+      @title = test.getTemplate('title').createView()
       @elem = @title.$html[0]
 
 
