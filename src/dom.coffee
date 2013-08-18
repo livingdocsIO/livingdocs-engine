@@ -45,6 +45,12 @@ dom = do ->
     {}
 
 
+  getImageName: (node) ->
+    if node.hasAttribute(docAttr.image)
+      imageName = node.getAttribute(docAttr.image)
+      return imageName
+
+
   dropTarget: (node, { top, left }) ->
     node = @getElementNode(node)
 

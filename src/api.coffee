@@ -78,6 +78,7 @@ pageReady = ->
   @textSelection = chainable(page.editableController.selection, 'add')
   @startDrag = $.proxy(page, 'startDrag')
 
+  @imageClick = chainable(page.imageClick, 'add')
 
 
 # execute API setup

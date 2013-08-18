@@ -10,6 +10,7 @@ class Page
 
     @loader = new Loader()
     @focus = new Focus()
+    @imageClick = $.Callbacks()
     @editableController = new EditableController(this)
 
     @snippetDragDrop = new DragDrop
@@ -90,6 +91,9 @@ class Page
     # todo: check if the click was meant for a snippet container
     if snippetElem
       @focus.snippetFocused(snippetElem)
+
+      if imageName = dom.getImageName(event.target)
+        @imageClick.fire(snippetElem, imageName)
     else
       @focus.blur()
 
