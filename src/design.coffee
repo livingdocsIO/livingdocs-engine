@@ -6,6 +6,7 @@ class Design
     @js = config.js #todo
     @fonts = config.fonts #todo
     @templates = {}
+    @groups = {}
 
 
   # either pass an object with many templates as single parameter
@@ -23,6 +24,17 @@ class Design
       name: name
       html: template.html
       title: template.name
+
+
+  addGroups: (collection) ->
+    for key, group of collection
+      snippets = {}
+      for index, snippet of group.snippets
+        snippets[snippet] = @templates[snippet]
+
+      @groups[key] = new Object
+        name: group.name
+        snippets: snippets
 
 
   remove: (identifier) ->

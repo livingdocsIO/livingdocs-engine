@@ -75,9 +75,10 @@ document = do ->
     documentReady()
 
 
-  addDesign: (snippetCollection, config) ->
+  addDesign: (snippetCollection, config, groups) ->
     @design = new Design(config)
     @design.add(snippetCollection)
+    @design.addGroups(groups)
 
 
   eachContainer: (callback) ->

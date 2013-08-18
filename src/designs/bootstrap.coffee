@@ -1,119 +1,66 @@
-# Twitter Bootstrap Snippet Collection
-# ------------------------------------
-
 @design ||= {}
 
 design.bootstrap = do ->
   config:
-    namespace: 'bootstrap'
-    css: [
-      '/test/manual/bootstrap/css/bootstrap.css'
-      '/test/manual/css/bootstrap-adjust.css'
-    ]
+    namespace: "bootstrap"
+    version: 1
+    css: ["/test/manual/bootstrap/css/bootstrap.css", "/test/manual/css/bootstrap-adjust.css"]
 
   snippets:
     column:
-      name: 'Single Centered Column'
-      html:
-        """
-        <div class="row-fluid">
-          <div class="span8 offset2" data-doc-container></div>
-        </div>
-        """
+      name: "Single Centered Column"
+      html: "<div class=\"row-fluid\"><div class=\"span8 offset2\" doc-container=\"\"></div></div>"
 
-    mainSidebar:
-      name: 'Main and Sidebar Columns'
-      html:
-        """
-        <div class="row-fluid">
-          <div class="span8" data-doc-container="main"></div>
-          <div class="span4" data-doc-container="sidebar"></div>
-        </div>
-        """
-
-    hero:
-      name: 'Hero'
-      html:
-        """
-        <div class="hero-unit">
-          <h1 data-doc-editable="title">Titel</h1>
-          <p data-doc-editable="tagline">Tagline</p>
-        </div>
-        """
-
-    header:
-      name: 'Header'
-      html:
-        """
-        <div class="page-header">
-          <h1 data-doc-editable="title">Header</h1>
-        </div>
-        """
-
-    title:
-      name: 'Title'
-      html: """<h1 data-doc-editable="title">Titel</h1>"""
-
-    subtitle:
-      name: 'Subtitle'
-      html: """<h2 data-doc-editable="title">Untertitel</h2>"""
-
-    smallSubtitle:
-      name: 'Paragraph Title'
-      html: """<h3 data-doc-editable="title">Lorem ipsum dolorem</h3>"""
-
-    text:
-      name: 'Text'
-      html:
-        """
-        <p data-doc-editable="title">
-          Lorem ipsum dolorem. Lorem ipsum dolorem. Lorem ipsum dolorem
-        </p>
-        """
-
-    separator:
-      name: 'Separator'
-      html:
-        """
-        <div>
-          <hr>
-        </div>
-        """
-
-    info:
-      name: 'Info'
-      html:
-        """
-        <div class="alert alert-info" data-doc-editable="text">
-          Lorem Ipsum dolorem
-        </div>
-        """
+    mainAndSidebar:
+      name: "Main and Sidebar Columns"
+      html: "<div class=\"row-fluid\"><div class=\"span8\" doc-container=\"main\"></div><div class=\"span4\" doc-container=\"sidebar\"></div></div>"
 
     button:
-      name: 'Button'
-      html:
-        """
-        <button class="btn" type="button" data-doc-editable="button">Button</button>
-        """
+      name: "Button"
+      html: "<button class=\"btn\" type=\"button\" doc-editable=\"button\">Button</button>"
 
-    largeButton:
-      name: 'Large Button'
-      html:
-        """
-        <button class="btn btn-block" type="button" data-doc-editable="button">Large Button</button>
-        """
+    hero:
+      name: "Hero"
+      html: "<div class=\"hero-unit\"><h1 doc-editable=\"title\">Titel</h1><p doc-editable=\"tagline\">Tagline</p></div>"
 
     image:
-      html:
-        """
-        <img doc-image src="https://s3-eu-west-1.amazonaws.com/watson-media/images/placeholderimg/bild_019.jpg" />
-        """
+      name: "Image"
+      html: "<div class=\"img-polaroid\" doc-editable=\"image\">Drag your image here...</div>"
 
-    # image:
-    #   name: 'Image'
-    #   html:
-    #     """
-    #     <div class="img-polaroid" data-doc-editable="image">
-    #       Drag your image here...
-    #     </div>
-    #     """
+    info:
+      name: "Info"
+      html: "<div class=\"alert alert-info\" doc-editable=\"info\">Lorem Ipsum dolorem</div>"
+
+    largeButton:
+      name: "Large Button"
+      html: "<div><hr></div>"
+
+    seperator:
+      name: "Seperator"
+      html: "<div><hr></div>"
+
+    smallSubtitle:
+      name: "Paragraph Title"
+      html: "<h3 doc-editable=\"title\">Lorem ipsum dolorem</h3>"
+
+    subtitle:
+      name: "Subtitle"
+      html: "<h2 doc-editable=\"title\">Subtitle</h2>"
+
+    text:
+      name: "Text"
+      html: "<p doc-editable=\"text\">Lorem ipsum dolorem. Lorem ipsum dolorem. Lorem ipsum dolorem</p>"
+
+    title:
+      name: "Title"
+      html: "<h1 doc-editable=\"title\">Titel</h1>"
+
+  groups:
+    layout:
+      name: "Layout"
+      snippets: ["column", "mainAndSidebar"]
+
+    others:
+      name: "others"
+      snippets: ["button", "hero", "image", "info", "largeButton", "seperator", "smallSubtitle", "subtitle", "text", "title"]
+

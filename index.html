@@ -51,13 +51,13 @@
 
         // setup document
         var json = doc.stash.get();
-        doc.addDesign(design.bootstrap.snippets, design.bootstrap.config);
+        doc.addDesign(design.bootstrap.snippets, design.bootstrap.config, design.bootstrap.groups);
         doc.loadDocument({ json: json });
 
         doc.ready(function() {
 
           if (!json) {
-            var row = doc.add("bootstrap.mainSidebar");
+            var row = doc.add("bootstrap.mainAndSidebar");
             row.append("main", doc.create("bootstrap.hero"));
             row.append("main", doc.create("bootstrap.text"));
             row.append("sidebar", doc.create("bootstrap.title"));
