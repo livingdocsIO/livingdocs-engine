@@ -26,7 +26,7 @@ class Focus
   # call after browser focus change
   editableFocused: (editableNode, snippetView) ->
     if @editableNode != editableNode
-      snippetView ||= dom.parentSnippetView(editableNode)
+      snippetView ||= dom.findSnippetView(editableNode)
       @setFocus(snippetView, editableNode)
 
 

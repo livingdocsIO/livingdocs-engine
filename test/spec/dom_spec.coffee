@@ -1,15 +1,15 @@
 describe 'DOM method', ->
 
-  describe 'parentSnippet()', ->
+  describe 'findSnippetView()', ->
 
     it 'returns undefined when called with undefined', ->
-      expect( dom.parentSnippet(undefined) ).toEqual(undefined)
+      expect( dom.findSnippetView(undefined) ).toEqual(undefined)
 
 
-  describe 'parentContainer()', ->
+  describe 'findContainer()', ->
 
     it 'returns empty object when called with undefined', ->
-      expect( dom.parentContainer(undefined) ).toEqual({})
+      expect( dom.findContainer(undefined) ).toEqual({})
 
 
   describe 'dropTarget()', ->
@@ -18,34 +18,34 @@ describe 'DOM method', ->
       expect( dom.dropTarget(undefined, {}) ).toEqual({})
 
 
-  describe 'parentSnippet() on title snippet', ->
+  describe 'findSnippetView() on title snippet', ->
 
     beforeEach ->
-      @snippetView = test.getTemplate('title').createView()
-      @$html = @snippetView.$html
+      @view = test.getTemplate('title').createView()
+      @$html = @view.$html
 
 
     it 'finds snippet from jQuery node', ->
-      expect( dom.parentSnippetView(@$html) ).toEqual(@snippetView)
+      expect( dom.findSnippetView(@$html) ).toEqual(@view)
 
 
     it 'finds snippet from DOM node', ->
-      expect( dom.parentSnippetView(@$html[0]) ).toEqual(@snippetView)
+      expect( dom.findSnippetView(@$html[0]) ).toEqual(@view)
 
 
-  describe 'parentSnippet() on row snippet', ->
+  describe 'findSnippetView() on row snippet', ->
 
     beforeEach ->
-      @snippetView = test.getTemplate('row').createView()
-      @$html = @snippetView.$html
+      @view = test.getTemplate('row').createView()
+      @$html = @view.$html
 
 
     it 'finds row snippet from child node ', ->
       $node = @$html.find('.span8').first()
-      expect( dom.parentSnippetView($node) ).toEqual(@snippetView)
+      expect( dom.findSnippetView($node) ).toEqual(@view)
 
 
-  describe 'parentContainer()', ->
+  describe 'findContainer()', ->
 
     beforeEach ->
       @row = test.getTemplate('row').createView()
@@ -58,7 +58,7 @@ describe 'DOM method', ->
     it 'returns an object with all necessary info', ->
       elem = @title.$html[0]
       containerElem = @row.containers['main']
-      containerInfo = dom.parentContainer(elem)
+      containerInfo = dom.findContainer(elem)
       expect(containerInfo.node).toEqual(containerElem)
       expect(containerInfo.containerName).toEqual('main')
       expect(containerInfo.snippetView).toEqual(@row)

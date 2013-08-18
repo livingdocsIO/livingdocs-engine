@@ -120,5 +120,5 @@ class SnippetView
 
 
   get$container: ->
-    $(dom.parentContainer(@$html[0]).node)
+    $(dom.findContainer(@$html[0]).node)
 

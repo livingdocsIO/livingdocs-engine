@@ -49,7 +49,7 @@ class Page
 
   mousedown: (event) ->
     return if event.which != 1 # only respond to left mouse button
-    snippetView = dom.parentSnippetView(event.target)
+    snippetView = dom.findSnippetView(event.target)
 
     if snippetView
       @startDrag(snippetView: snippetView, dragDrop: @snippetDragDrop)
@@ -76,7 +76,7 @@ class Page
 
 
   click: (event) ->
-    snippetView = dom.parentSnippetView(event.target)
+    snippetView = dom.findSnippetView(event.target)
 
     # todo: if a user clicked on a margin of a snippet it should
     # still get selected. (if a snippet is found by parentSnippet

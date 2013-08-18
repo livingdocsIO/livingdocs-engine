@@ -8,31 +8,28 @@ dom = do ->
 
   # Find the snippet this node is contained within.
   # Snippets are marked by a class at the moment.
-  parentSnippetView: (node) ->
+  findSnippetView: (node) ->
     node = @getElementNode(node)
 
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
       if snippetRegex.test(node.className)
-        snippetView = @getSnippetView(node)
-        return snippetView
+        view = @getSnippetView(node)
+        return view
 
       node = node.parentNode
 
     return undefined
 
 
-  parentSnippet: (node) ->
-    @parentSnippetView(node)?.model
-
-
-  parentContainer: (node) ->
+  # Find the container this node is contained within.
+  findContainer: (node) ->
     node = @getElementNode(node)
 
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
       if node.hasAttribute(docAttr.container)
         containerName = node.getAttribute(docAttr.container)
         if not sectionRegex.test(node.className)
-          view = @parentSnippetView(node)
+          view = @findSnippetView(node)
 
         return {
           node: node
@@ -63,7 +60,7 @@ dom = do ->
             coords = @getInsertPosition(insertSnippet.$elem[0], insertSnippet.position)
             return { snippetView: insertSnippet.snippetView, position: insertSnippet.position, coords }
           else
-            view = @parentSnippetView(node)
+            view = @findSnippetView(node)
             return { containerName: containerName, parent: view, node: node }
 
       else if snippetRegex.test(node.className)

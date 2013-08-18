@@ -25,19 +25,19 @@ class EditableController
 
 
   focus: (element) ->
-    snippetView = dom.parentSnippetView(element)
+    snippetView = dom.findSnippetView(element)
     @page.focus.editableFocused(element, snippetView)
 
 
   blur: (element) ->
-    snippetView = dom.parentSnippetView(element)
+    snippetView = dom.findSnippetView(element)
     @page.focus.editableBlurred(element, snippetView)
     editableName = element.getAttribute(docAttr.editable)
     snippetView.model.set(editableName, element.innerHTML)
 
 
   insert: (element, direction, cursor) ->
-    snippetView = dom.parentSnippetView(element)
+    snippetView = dom.findSnippetView(element)
     template = snippetView.template
     if template.editableCount == 1
       copy = template.createModel()
@@ -54,6 +54,6 @@ class EditableController
 
 
   selectionChanged: (element, selection) ->
-    snippetView = dom.parentSnippetView(element)
+    snippetView = dom.findSnippetView(element)
     @selection.fire(snippetView, element, selection)
 
