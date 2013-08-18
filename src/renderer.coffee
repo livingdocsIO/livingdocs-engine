@@ -28,24 +28,24 @@ class Renderer
 
 
   snippetAdded: (model) ->
-    view = @ensureSnippetElem(model)
+    view = @ensureSnippetView(model)
     @updateDomPosition(view)
 
 
   snippetRemoved: (model) ->
-    if view = @getSnippetElem(model)
+    if view = @getSnippetView(model)
       if view.attachedToDom
         @detachFromDom(view)
         delete @snippets[model.id]
 
 
   snippetMoved: (model) ->
-    view = @ensureSnippetElem(model)
+    view = @ensureSnippetView(model)
     @updateDomPosition(view)
 
 
   snippetContentChanged: (model) ->
-    view = @ensureSnippetElem(model)
+    view = @ensureSnippetView(model)
     @insertIntoDom(view) if not view.attachedToDom
     view.updateContent()
 
@@ -53,18 +53,18 @@ class Renderer
   # Rendering
   # ---------
 
-  getSnippetElem: (model) ->
+  getSnippetView: (model) ->
     @snippets[model.id] if model
 
 
-  ensureSnippetElem: (model) ->
+  ensureSnippetView: (model) ->
     return unless model
-    @snippets[model.id] || @createSnippetElem(model)
+    @snippets[model.id] || @createSnippetView(model)
 
 
-  # creates a snippetElem instance for this snippet
+  # creates a snippetView instance for this snippet
   # @api: private
-  createSnippetElem: (model) ->
+  createSnippetView: (model) ->
     view = model.template.createView(model)
     @snippets[model.id] = view
 
@@ -73,13 +73,13 @@ class Renderer
     @$root.empty()
 
     @snippetTree.each (model) =>
-      view = @ensureSnippetElem(model)
+      view = @ensureSnippetView(model)
       @insertIntoDom(view)
 
 
   clear: ->
     @snippetTree.each (model) =>
-      view = @getSnippetElem(model)
+      view = @getSnippetView(model)
       view?.attachedToDom = false
 
     @$root.empty()
@@ -90,43 +90,43 @@ class Renderer
     @render()
 
 
-  updateDomPosition: (snippetElem) ->
-    @detachFromDom(snippetElem) if snippetElem.attachedToDom
-    @insertIntoDom(snippetElem)
+  updateDomPosition: (snippetView) ->
+    @detachFromDom(snippetView) if snippetView.attachedToDom
+    @insertIntoDom(snippetView)
 
 
   # insert the snippet into the Dom according to its position
   # in the SnippetTree
-  insertIntoDom: (snippetElem) ->
-    snippetElem.attach(this)
-    log.error('could not insert snippet into Dom') if not snippetElem.attachedToDom
-    @afterDomInsert(snippetElem)
+  insertIntoDom: (snippetView) ->
+    snippetView.attach(this)
+    log.error('could not insert snippet into Dom') if not snippetView.attachedToDom
+    @afterDomInsert(snippetView)
 
     this
 
 
-  afterDomInsert: (snippetElem) ->
+  afterDomInsert: (snippetView) ->
     # initialize editables
-    editableNodes = for name, node of snippetElem.editables
+    editableNodes = for name, node of snippetView.editables
       node
 
     @page.editableController.add(editableNodes)
 
 
-  detachFromDom: (snippetElem) ->
-    snippetElem.detach()
+  detachFromDom: (snippetView) ->
+    snippetView.detach()
     this
 
 
   # Highlight methods
   # -----------------
 
-  highlightSnippet: (snippetElem) ->
-    snippetElem.$html.addClass(docClass.snippetHighlight)
+  highlightSnippet: (snippetView) ->
+    snippetView.$html.addClass(docClass.snippetHighlight)
 
 
-  removeSnippetHighlight: (snippetElem) ->
-    snippetElem.$html.removeClass(docClass.snippetHighlight)
+  removeSnippetHighlight: (snippetView) ->
+    snippetView.$html.removeClass(docClass.snippetHighlight)
 
 
   # UI Inserts

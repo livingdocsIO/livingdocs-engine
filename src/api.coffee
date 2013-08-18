@@ -79,12 +79,12 @@ pageReady = ->
   # ------
 
   # Raised when a snippet is focused
-  # callback: (snippetElem) ->
+  # callback: (snippetView) ->
   @snippetFocused = chainable(page.focus.snippetFocus, 'add')
 
   # Raised when a snippet is blurred
   # (always raised before the next focus event)
-  # callback: (snippetElem) ->
+  # callback: (snippetView) ->
   @snippetBlurred = chainable(page.focus.snippetBlur, 'add')
 
   # Raised when a snippet is being dragged
@@ -92,7 +92,7 @@ pageReady = ->
 
   # Raised when a user clicks on an editable image
   # example callback method:
-  # (snippetElem, imageName) -> snippetElem.model.set(imageName, imageSrc)
+  # (snippetView, imageName) -> snippetView.model.set(imageName, imageSrc)
   @imageClick = chainable(page.imageClick, 'add')
 
 
@@ -100,8 +100,8 @@ pageReady = ->
   # -----------
 
   # Raised when editable text is selected
-  # callback: (snippetElem, element, selection) ->
-  # @callbackParam snippetElem - snippetElem instance
+  # callback: (snippetView, element, selection) ->
+  # @callbackParam snippetView - snippetView instance
   # @callbackParam element - DOM node with contenteditable
   # @callbackParam selection - selection object from editableJS
   @textSelection = chainable(page.editableController.selection, 'add')

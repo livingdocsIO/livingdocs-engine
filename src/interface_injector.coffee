@@ -2,18 +2,18 @@ class InterfaceInjector
 
   constructor: ({ @snippet, @snippetContainer, @renderer }) ->
 
-    if @snippet && not @snippet.snippetElem?.attachedToDom
+    if @snippet && not @snippet.snippetView?.attachedToDom
       log.error('snippet is not attached to the DOM')
 
     if @snippetContainer
-      if not @snippetContainer.isRoot && not @snippetContainer.parentSnippet?.snippetElem?.attachedToDom
+      if not @snippetContainer.isRoot && not @snippetContainer.parentSnippet?.snippetView?.attachedToDom
         log.error('snippetContainer is not attached to the DOM')
 
 
   before: ($elem) ->
     if @snippet
       @beforeInjecting($elem)
-      @snippet.snippetElem.$html.before($elem)
+      @snippet.snippetView.$html.before($elem)
     else
       log.error('cannot use before on a snippetContainer')
 
@@ -21,7 +21,7 @@ class InterfaceInjector
   after: ($elem) ->
     if @snippet
       @beforeInjecting($elem)
-      @snippet.snippetElem.$html.after($elem)
+      @snippet.snippetView.$html.after($elem)
     else
       log.error('cannot use after on a snippetContainer')
 

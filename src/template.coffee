@@ -54,7 +54,7 @@ class Template
     $html = @$template.clone()
     list = @getNodeLinks($html[0])
 
-    snippetElem = new SnippetElem
+    snippetView = new SnippetView
       model: snippetModel
       $html: $html
       editables: list.editable

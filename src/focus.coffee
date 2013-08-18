@@ -5,41 +5,41 @@ class Focus
 
   constructor: ->
     @editableNode = undefined
-    @snippetElem = undefined
+    @snippetView = undefined
 
     @snippetFocus = $.Callbacks()
     @snippetBlur = $.Callbacks()
 
 
-  setFocus: (snippetElem, editableNode) ->
+  setFocus: (snippetView, editableNode) ->
     if editableNode != @editableNode
       @resetEditable()
       @editableNode = editableNode
 
-    if snippetElem != @snippetElem
-      @resetSnippetElem()
-      if snippetElem
-        @snippetElem = snippetElem
-        @snippetFocus.fire(@snippetElem)
+    if snippetView != @snippetView
+      @resetSnippetView()
+      if snippetView
+        @snippetView = snippetView
+        @snippetFocus.fire(@snippetView)
 
 
   # call after browser focus change
-  editableFocused: (editableNode, snippetElem) ->
+  editableFocused: (editableNode, snippetView) ->
     if @editableNode != editableNode
-      snippetElem ||= dom.parentSnippetElem(editableNode)
-      @setFocus(snippetElem, editableNode)
+      snippetView ||= dom.parentSnippetView(editableNode)
+      @setFocus(snippetView, editableNode)
 
 
   # call after browser focus change
   editableBlurred: (editableNode) ->
     if @editableNode == editableNode
-      @setFocus(@snippetElem, undefined)
+      @setFocus(@snippetView, undefined)
 
 
   # call after click
-  snippetFocused: (snippetElem) ->
-    if @snippetElem != snippetElem
-      @setFocus(snippetElem, undefined)
+  snippetFocused: (snippetView) ->
+    if @snippetView != snippetView
+      @setFocus(snippetView, undefined)
 
 
   blur: ->
@@ -56,10 +56,10 @@ class Focus
 
 
   # @api private
-  resetSnippetElem: ->
-    if @snippetElem
-      previous = @snippetElem
-      @snippetElem = undefined
+  resetSnippetView: ->
+    if @snippetView
+      previous = @snippetView
+      @snippetView = undefined
       @snippetBlur.fire(previous)
 
 

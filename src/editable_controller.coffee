@@ -25,24 +25,24 @@ class EditableController
 
 
   focus: (element) ->
-    snippetElem = dom.parentSnippetElem(element)
-    @page.focus.editableFocused(element, snippetElem)
+    snippetView = dom.parentSnippetView(element)
+    @page.focus.editableFocused(element, snippetView)
 
 
   blur: (element) ->
-    snippetElem = dom.parentSnippetElem(element)
-    @page.focus.editableBlurred(element, snippetElem)
+    snippetView = dom.parentSnippetView(element)
+    @page.focus.editableBlurred(element, snippetView)
     editableName = element.getAttribute(docAttr.editable)
-    snippetElem.model.set(editableName, element.innerHTML)
+    snippetView.model.set(editableName, element.innerHTML)
 
 
   insert: (element, direction, cursor) ->
-    snippetElem = dom.parentSnippetElem(element)
-    template = snippetElem.template
+    snippetView = dom.parentSnippetView(element)
+    template = snippetView.template
     if template.editableCount == 1
       copy = template.createModel()
-      snippetElem.model.after(copy)
-      if copiedElem = snippetElem.next()
+      snippetView.model.after(copy)
+      if copiedElem = snippetView.next()
         copiedElem.focus()
 
     false # disable editableJS default behaviour
@@ -54,6 +54,6 @@ class EditableController
 
 
   selectionChanged: (element, selection) ->
-    snippetElem = dom.parentSnippetElem(element)
-    @selection.fire(snippetElem, element, selection)
+    snippetView = dom.parentSnippetView(element)
+    @selection.fire(snippetView, element, selection)
 

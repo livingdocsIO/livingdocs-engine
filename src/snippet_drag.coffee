@@ -32,7 +32,7 @@ class SnippetDrag
 
 
   isValidTarget: (target) ->
-    if target.snippetElem && target.snippetElem.model != @snippet
+    if target.snippetView && target.snippetView.model != @snippet
       return true
     else if target.containerName
       return true
@@ -47,9 +47,9 @@ class SnippetDrag
     if target.containerName
       dom.maximizeContainerHeight(target.parent)
       $container = $(target.node)
-    else if target.snippetElem
-      dom.maximizeContainerHeight(target.snippetElem)
-      $container = target.snippetElem.get$container()
+    else if target.snippetView
+      dom.maximizeContainerHeight(target.snippetView)
+      $container = target.snippetView.get$container()
       $container.addClass(docClass.containerHighlight)
     else
       $container = target = {}
@@ -79,11 +79,11 @@ class SnippetDrag
     target = drag.target
 
     if target and @isValidTarget(target)
-      if snippetElem = target.snippetElem
+      if snippetView = target.snippetView
         if target.position == 'before'
-          snippetElem.model.before(@snippet)
+          snippetView.model.before(@snippet)
         else
-          snippetElem.model.after(@snippet)
+          snippetView.model.after(@snippet)
       else if target.containerName
         target.parent.model.append(target.containerName, @snippet)
     else

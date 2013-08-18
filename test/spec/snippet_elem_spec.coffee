@@ -1,7 +1,7 @@
-describe 'SnippetElem title', ->
+describe 'SnippetView title', ->
 
   beforeEach ->
-    @snippetElem = test.getTemplate('title').createView()
+    @snippetView = test.getTemplate('title').createView()
 
 
   describe 'set content', ->
@@ -17,39 +17,39 @@ describe 'SnippetElem title', ->
 
 
     it 'sets title', ->
-      @snippetElem.set('title', 'Humble Bundle')
-      expect( htmlCompare.compare(@snippetElem.$html, @expected) ).toBe(true)
+      @snippetView.set('title', 'Humble Bundle')
+      expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
 
 
     it 'updates its content from snippet', ->
-      @snippetElem.model.set('title', 'Humble Bundle')
-      @snippetElem.updateContent()
-      expect( htmlCompare.compare(@snippetElem.$html, @expected) ).toBe(true)
+      @snippetView.model.set('title', 'Humble Bundle')
+      @snippetView.updateContent()
+      expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
 
 
     it 'sets title without editable name parameter', ->
-      @snippetElem.set('Humble Bundle')
-      expect( htmlCompare.compare(@snippetElem.$html, @expected) ).toBe(true)
+      @snippetView.set('Humble Bundle')
+      expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
 
 
   it 'gets the title', ->
-    @snippetElem.set('Games Galore')
-    expect( @snippetElem.get('title') ).toEqual('Games Galore')
+    @snippetView.set('Games Galore')
+    expect( @snippetView.get('title') ).toEqual('Games Galore')
 
 
   it 'gets the title without params', ->
-    @snippetElem.set('Double Fine')
-    expect( @snippetElem.get() ).toEqual('Double Fine')
+    @snippetView.set('Double Fine')
+    expect( @snippetView.get() ).toEqual('Double Fine')
 
 
-describe 'SnippetElem hero', ->
+describe 'SnippetView hero', ->
 
   beforeEach ->
     snippet = test.getSnippet('hero')
     snippet.set('title', 'Humble Bundle 2')
     snippet.set('tagline', 'Get it now!')
     template = test.getTemplate('hero')
-    @snippetElem = template.createView(snippet)
+    @snippetView = template.createView(snippet)
     @expected =
         """
         <div class="#{ docClass.snippet }" #{ docAttr.template }="test.hero">
@@ -59,15 +59,15 @@ describe 'SnippetElem hero', ->
         """
 
   it 'renders snippet content on creation', ->
-    expect( htmlCompare.compare(@snippetElem.$html, @expected) ).toBe(true)
+    expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
 
 
-describe 'SnippetElem image', ->
+describe 'SnippetView image', ->
 
   beforeEach ->
     snippet = test.getSnippet('image')
     snippet.set('image', 'http://www.lolcats.com/images/1.jpg')
-    @snippetElem = snippet.template.createView(snippet)
+    @snippetView = snippet.template.createView(snippet)
     @expected =
         """
         <img src="http://www.lolcats.com/images/1.jpg"
@@ -77,5 +77,5 @@ describe 'SnippetElem image', ->
         """
 
   it 'renders the image src', ->
-    expect( htmlCompare.compare(@snippetElem.$html, @expected) ).toBe(true)
+    expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
 

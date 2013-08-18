@@ -30,9 +30,9 @@ describe 'Title Template', ->
 
   describe '#createView()', ->
 
-    it 'returns a SnippetElem instance', ->
-      snippetElem = template.createView()
-      expect(snippetElem instanceof SnippetElem).toBe(true)
+    it 'returns a SnippetView instance', ->
+      snippetView = template.createView()
+      expect(snippetView instanceof SnippetView).toBe(true)
 
 
 

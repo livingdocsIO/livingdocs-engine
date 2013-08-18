@@ -21,28 +21,28 @@ describe 'DOM method', ->
   describe 'parentSnippet() on title snippet', ->
 
     beforeEach ->
-      @snippetElem = test.getTemplate('title').createView()
-      @$html = @snippetElem.$html
+      @snippetView = test.getTemplate('title').createView()
+      @$html = @snippetView.$html
 
 
     it 'finds snippet from jQuery node', ->
-      expect( dom.parentSnippetElem(@$html) ).toEqual(@snippetElem)
+      expect( dom.parentSnippetView(@$html) ).toEqual(@snippetView)
 
 
     it 'finds snippet from DOM node', ->
-      expect( dom.parentSnippetElem(@$html[0]) ).toEqual(@snippetElem)
+      expect( dom.parentSnippetView(@$html[0]) ).toEqual(@snippetView)
 
 
   describe 'parentSnippet() on row snippet', ->
 
     beforeEach ->
-      @snippetElem = test.getTemplate('row').createView()
-      @$html = @snippetElem.$html
+      @snippetView = test.getTemplate('row').createView()
+      @$html = @snippetView.$html
 
 
     it 'finds row snippet from child node ', ->
       $node = @$html.find('.span8').first()
-      expect( dom.parentSnippetElem($node) ).toEqual(@snippetElem)
+      expect( dom.parentSnippetView($node) ).toEqual(@snippetView)
 
 
   describe 'parentContainer()', ->
@@ -61,5 +61,5 @@ describe 'DOM method', ->
       containerInfo = dom.parentContainer(elem)
       expect(containerInfo.node).toEqual(containerElem)
       expect(containerInfo.containerName).toEqual('main')
-      expect(containerInfo.snippetElem).toEqual(@row)
+      expect(containerInfo.snippetView).toEqual(@row)
 

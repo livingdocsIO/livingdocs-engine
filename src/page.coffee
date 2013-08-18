@@ -49,15 +49,15 @@ class Page
 
   mousedown: (event) ->
     return if event.which != 1 # only respond to left mouse button
-    snippetElem = dom.parentSnippetElem(event.target)
+    snippetView = dom.parentSnippetView(event.target)
 
-    if snippetElem
-      @startDrag(snippetElem: snippetElem, dragDrop: @snippetDragDrop)
+    if snippetView
+      @startDrag(snippetView: snippetView, dragDrop: @snippetDragDrop)
 
 
-  startDrag: ({ snippet, snippetElem, dragDrop }) ->
-    return unless snippet || snippetElem
-    snippet = snippetElem.model if snippetElem
+  startDrag: ({ snippet, snippetView, dragDrop }) ->
+    return unless snippet || snippetView
+    snippet = snippetView.model if snippetView
 
     @$document.on 'mousemove.livingdocs-drag', (event) ->
       dragDrop.move(event.pageX, event.pageY, event)
@@ -68,7 +68,7 @@ class Page
 
     snippetDrag = new SnippetDrag({ snippet: snippet, page: this })
 
-    $snippet = snippetElem.$html if snippetElem
+    $snippet = snippetView.$html if snippetView
     dragDrop.mousedown $snippet, event,
       onDragStart: snippetDrag.onStart
       onDrag: snippetDrag.onDrag
@@ -76,7 +76,7 @@ class Page
 
 
   click: (event) ->
-    snippetElem = dom.parentSnippetElem(event.target)
+    snippetView = dom.parentSnippetView(event.target)
 
     # todo: if a user clicked on a margin of a snippet it should
     # still get selected. (if a snippet is found by parentSnippet
@@ -89,11 +89,11 @@ class Page
     # on a margin of a snippet
 
     # todo: check if the click was meant for a snippet container
-    if snippetElem
-      @focus.snippetFocused(snippetElem)
+    if snippetView
+      @focus.snippetFocused(snippetView)
 
       if imageName = dom.getImageName(event.target)
-        @imageClick.fire(snippetElem, imageName)
+        @imageClick.fire(snippetView, imageName)
     else
       @focus.blur()
 
