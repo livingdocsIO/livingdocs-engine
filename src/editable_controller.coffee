@@ -41,7 +41,7 @@ class EditableController
     template = snippetElem.template
     if template.editableCount == 1
       copy = template.createSnippet()
-      snippetElem.snippet.after(copy)
+      snippetElem.model.after(copy)
       if copiedElem = snippetElem.next()
         copiedElem.focus()
 

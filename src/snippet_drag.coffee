@@ -32,7 +32,7 @@ class SnippetDrag
 
 
   isValidTarget: (target) ->
-    if target.snippetElem && target.snippetElem.snippet != @snippet
+    if target.snippetElem && target.snippetElem.model != @snippet
       return true
     else if target.containerName
       return true
@@ -81,11 +81,11 @@ class SnippetDrag
     if target and @isValidTarget(target)
       if snippetElem = target.snippetElem
         if target.position == 'before'
-          snippetElem.snippet.before(@snippet)
+          snippetElem.model.before(@snippet)
         else
-          snippetElem.snippet.after(@snippet)
+          snippetElem.model.after(@snippet)
       else if target.containerName
-        target.parent.snippet.append(target.containerName, @snippet)
+        target.parent.model.append(target.containerName, @snippet)
     else
       #consider: maybe add a 'drop failed' effect
 

@@ -55,7 +55,7 @@ class Template
     list = @getNodeLinks($html[0])
 
     snippetElem = new SnippetElem
-      snippet: snippet
+      model: snippet
       $html: $html
       editables: list.editable
       containers: list.container

@@ -22,7 +22,7 @@ describe 'SnippetElem title', ->
 
 
     it 'updates its content from snippet', ->
-      @snippetElem.snippet.set('title', 'Humble Bundle')
+      @snippetElem.model.set('title', 'Humble Bundle')
       @snippetElem.updateContent()
       expect( htmlCompare.compare(@snippetElem.$html, @expected) ).toBe(true)
 

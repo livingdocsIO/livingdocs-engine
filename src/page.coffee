@@ -57,7 +57,7 @@ class Page
 
   startDrag: ({ snippet, snippetElem, dragDrop }) ->
     return unless snippet || snippetElem
-    snippet = snippetElem.snippet if snippetElem
+    snippet = snippetElem.model if snippetElem
 
     @$document.on 'mousemove.livingdocs-drag', (event) ->
       dragDrop.move(event.pageX, event.pageY, event)

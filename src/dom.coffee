@@ -22,7 +22,7 @@ dom = do ->
 
 
   parentSnippet: (node) ->
-    @parentSnippetElem(node)?.snippet
+    @parentSnippetElem(node)?.model
 
 
   parentContainer: (node) ->

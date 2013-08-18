@@ -92,7 +92,7 @@ pageReady = ->
 
   # Raised when a user clicks on an editable image
   # example callback method:
-  # (snippetElem, imageName) -> snippetElem.set(imageName, imageSrc)
+  # (snippetElem, imageName) -> snippetElem.model.set(imageName, imageSrc)
   @imageClick = chainable(page.imageClick, 'add')
 
 

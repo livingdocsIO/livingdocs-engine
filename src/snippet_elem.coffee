@@ -1,7 +1,7 @@
 class SnippetElem
 
-  constructor: ({ @snippet, @$html, @editables, @containers, @images }) ->
-    @template = @snippet.template
+  constructor: ({ @model, @$html, @editables, @containers, @images }) ->
+    @template = @model.template
     @attachedToDom = false
 
     # add attributes and references to the html
@@ -14,7 +14,7 @@ class SnippetElem
 
 
   updateContent: ->
-    @content(@snippet.editables, @snippet.images)
+    @content(@model.editables, @model.images)
 
 
   next: ->
@@ -85,9 +85,9 @@ class SnippetElem
 
   attach: (renderer) ->
     return if @attachedToDom
-    previous = @snippet.previous
-    next = @snippet.next
-    parentContainer = @snippet.parentContainer
+    previous = @model.previous
+    next = @model.next
+    parentContainer = @model.parentContainer
 
     if previous? and
       (previousHtml = renderer.getSnippetElem(previous)) and

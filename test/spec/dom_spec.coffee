@@ -50,7 +50,7 @@ describe 'DOM method', ->
     beforeEach ->
       @row = test.getTemplate('row').createHtml()
       @title = test.getTemplate('title').createHtml()
-      @row.snippet.append('main', @title)
+      @row.model.append('main', @title)
       @row.append('main', @title.$html)
       @$html = @row.$html
 

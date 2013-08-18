@@ -19,4 +19,4 @@ describe 'editableController', ->
         expect.element
 
       Editable.selection.fire(@elem, undefined)
-      expect(foundSnippet.snippet).toEqual(@title.snippet)
+      expect(foundSnippet.model).toEqual(@title.model)
