@@ -43,12 +43,9 @@ setupApi = ->
   @changed = chainable(document.changed, 'add')
   @DragDrop = DragDrop
 
-  # Expose words string util
-  @words = words
-
-
   # Stash
   # -----
+
   stash.init()
   @stash = $.proxy(stash, 'stash')
   @stash.snapshot = $.proxy(stash, 'snapshot')
@@ -58,10 +55,17 @@ setupApi = ->
   @stash.list = $.proxy(stash, 'list')
 
 
+  # Utils
+  # -----
+
+  # Expose string util 'words'
+  @words = words
+
+
   # For Plugins & Extensions
   # ------------------------
 
-  # enable snippet finder plugins
+  # enable snippet finder plugins (jquery like)
   @fn = SnippetArray::
 
 
@@ -73,12 +77,34 @@ pageReady = ->
 
   # Events
   # ------
+
+  # Raised when a snippet is focused
+  # callback: (snippetElem) ->
   @snippetFocused = chainable(page.focus.snippetFocus, 'add')
+
+  # Raised when a snippet is blurred
+  # (always raised before the next focus event)
+  # callback: (snippetElem) ->
   @snippetBlurred = chainable(page.focus.snippetBlur, 'add')
-  @textSelection = chainable(page.editableController.selection, 'add')
+
+  # Raised when a snippet is being dragged
   @startDrag = $.proxy(page, 'startDrag')
 
+  # Raised when a user clicks on an editable image
+  # example callback method:
+  # (snippetElem, imageName) -> snippetElem.set(imageName, imageSrc)
   @imageClick = chainable(page.imageClick, 'add')
+
+
+  # Text Events
+  # -----------
+
+  # Raised when editable text is selected
+  # callback: (snippetElem, element, selection) ->
+  # @callbackParam snippetElem - snippetElem instance
+  # @callbackParam element - DOM node with contenteditable
+  # @callbackParam selection - selection object from editableJS
+  @textSelection = chainable(page.editableController.selection, 'add')
 
 
 # execute API setup
