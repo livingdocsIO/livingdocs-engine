@@ -3,7 +3,7 @@ class Design
   constructor: (design) ->
     templates = design.templates || design.snippets
     config = design.config
-    groups = design.groups
+    groups = design.config.groups || design.groups
 
     @namespace = config?.namespace || 'livingdocs-templates'
     @css = config.css
