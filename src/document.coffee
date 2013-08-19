@@ -53,7 +53,6 @@ document = do ->
 
       # Convert a dom element into a camelCase snippetName
       domElementToSnippetName = (element) =>
-        #return (element.tagName)? $.camelCase(element.tagName.toLowerCase()) : null
         if element.tagName
           $.camelCase(element.tagName.toLowerCase())
         else
@@ -65,7 +64,6 @@ document = do ->
         if containers.length == 1 && containers.indexOf('default') != -1 && !$(data).children('default').length
           children = $(data).children()
           for child in children
-            # how to execute something without returning a value?
             parseSnippets(parent, 'default', child)
 
         elements = $(containers.join(','), data)
@@ -84,7 +82,6 @@ document = do ->
 
       setEditables = (snippet, data) =>
         if snippet.hasEditables()
-          #key of object?
           for key of snippet.editables
             snippet.set(key, null)
             child = $(key + ':first', data).get()[0]
@@ -94,8 +91,7 @@ document = do ->
               snippet.set(key, child.innerHTML)
 
 
-      #Add all snippets in the dom to the document.
-      #Process all containers and editables if available in the snippet.
+      #add all rootSnippets, process their containers and set values
       domElements.each (index, element) =>
         row = doc.add(domElementToSnippetName(element))
         parseContainers(row, element)
