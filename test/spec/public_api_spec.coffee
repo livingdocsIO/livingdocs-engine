@@ -8,24 +8,17 @@ describe 'Public API', ->
     expect( $.isFunction(window.doc) ).toBe(true)
 
 
-  describe 'addDesign()', ->
+  describe 'init()', ->
 
     it 'is defined', ->
-      expect( window.doc.addDesign ).toBeDefined()
+      expect( window.doc.init ).toBeDefined()
 
 
-  describe 'loadDocument()', ->
-
-    it 'is defined', ->
-      expect( window.doc.loadDocument ).toBeDefined()
-
-
-    # currently loadDocument() can only be done once
+    # currently doc.init() can only be done once
     # so this is not really unit testable
     it 'loads an empty document', ->
       node = $('<div>')[0]
-      doc.addDesign(testSnippets.snippets, testSnippets.config)
-      doc.loadDocument(json: undefined, rootNode: node)
+      doc.init(design: testSnippets, json: undefined, rootNode: node)
       expect( doc.toJson().content ).toEqual([])
 
 

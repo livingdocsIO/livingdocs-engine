@@ -23,10 +23,7 @@ test = do ->
 
 
   getDesign: () ->
-    unless cachedDesign
-      cachedDesign = new Design(testSnippets.config)
-      cachedDesign.add(testSnippets.snippets)
-
+    cachedDesign = new Design(testSnippets) unless cachedDesign
     cachedDesign
 
 

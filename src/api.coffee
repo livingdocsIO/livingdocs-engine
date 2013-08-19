@@ -13,11 +13,10 @@ chainable = chainableProxy(doc)
 setupApi = ->
 
   # Initialize the document
-  @loadDocument = chainable(document, 'loadDocument')
+  @init = chainable(document, 'init')
   @ready = chainable(document.ready, 'add')
 
   # Add Templates to the documents
-  @addDesign = chainable(document, 'addDesign')
   @getDesign = -> document.design
 
   # Append a snippet to the document

@@ -21,7 +21,7 @@ document = do ->
   # Private Closure
   # ---------------
 
-  waitingCalls = 1 # 1 -> loadDocument
+  waitingCalls = 1 # 1 -> init
 
 
   documentReady = =>
@@ -45,9 +45,11 @@ document = do ->
 
 
   # *Public API*
-  loadDocument: ({ json, rootNode }={}) ->
+  init: ({ design, json, rootNode }={}) ->
     log.error('document is already initialized') if @initialized
     @initialized = true
+
+    @loadDesign(design)
 
     @snippetTree = if json && @design
       new SnippetTree(content: json, design: @design)
@@ -75,10 +77,8 @@ document = do ->
     documentReady()
 
 
-  addDesign: (snippetCollection, config, groups) ->
-    @design = new Design(config)
-    @design.add(snippetCollection)
-    @design.addGroups(groups)
+  loadDesign: (design) ->
+    @design = new Design(design)
 
 
   eachContainer: (callback) ->

@@ -51,8 +51,7 @@
 
         // setup document
         var json = doc.stash.get();
-        doc.addDesign(design.bootstrap.snippets, design.bootstrap.config, design.bootstrap.groups);
-        doc.loadDocument({ json: json });
+        doc.init({ design: design.bootstrap, json: json });
 
         doc.ready(function() {
 

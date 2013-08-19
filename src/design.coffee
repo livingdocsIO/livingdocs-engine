@@ -1,6 +1,10 @@
 class Design
 
-  constructor: (config) ->
+  constructor: (design) ->
+    templates = design.templates || design.snippets
+    config = design.config
+    groups = design.groups
+
     @namespace = config?.namespace || 'livingdocs-templates'
     @css = config.css
     @js = config.js #todo
@@ -8,17 +12,15 @@ class Design
     @templates = {}
     @groups = {}
 
+    for name, template of templates
+      @add(name, template)
 
-  # either pass an object with many templates as single parameter
-  # or the name and template in two parameters
-  # e.g add({ [collection] })
+    @addGroups(groups)
+
+
+  # pass the name and template in two parameters
   # e.g add('title', '[template]')
   add: (name, template) ->
-    if arguments.length == 1
-      collection = name
-      for name, template of collection
-        @add(name, template)
-
     @templates[name] = new Template
       namespace: @namespace
       name: name

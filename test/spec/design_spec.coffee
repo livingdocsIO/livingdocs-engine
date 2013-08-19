@@ -1,16 +1,19 @@
 describe 'Design', ->
 
   beforeEach ->
-    options = { namespace: 'test' }
-    @design = new Design(options)
-
+    @design = new Design
+      templates: {}
+      config: { namespace: 'test' }
 
   it 'has a namespace', ->
     expect(@design.namespace).toEqual('test')
 
 
   it 'adds a default namespace', ->
-    expect( (new Design({})).namespace ).toEqual('livingdocs-templates')
+    design =
+      snippets: {}
+      config: {}
+    expect( (new Design(design)).namespace ).toEqual('livingdocs-templates')
 
 
   describe 'with a template', ->
