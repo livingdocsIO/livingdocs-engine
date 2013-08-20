@@ -5,7 +5,7 @@ class SnippetNodeList
     @count = {}
 
   add: (node) ->
-    @assertNodeNameNotUsed(node.name)
+    @assertNodeNameNotUsed(node)
 
     @all[node.name] = node
 
@@ -15,14 +15,12 @@ class SnippetNodeList
     @count[node.type] = if @count[node.type] then @count[node.type] + 1 else 1
 
 
-
-
-  # @private
-  assertNodeNameNotUsed: (name) ->
-    if @all[name]
+  # @api private
+  assertNodeNameNotUsed: (node) ->
+    if @all[node.name]
       log.error(
         """
-        A node with the name "#{name}" was already added.
-        Each node in a snippet requires a unique name, regardless of type.
+        #{node.type} Template parsing error: #{ docAttr[node.type] }="#{ node.name }".
+        "#{ node.name }" is a duplicate name.
         """
       )
