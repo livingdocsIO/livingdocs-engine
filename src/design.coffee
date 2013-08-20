@@ -12,9 +12,7 @@ class Design
     @templates = {}
     @groups = {}
 
-    for name, template of templates
-      @add(name, template)
-
+    @addTemplates(templates)
     @addGroups(groups)
 
 
@@ -26,6 +24,11 @@ class Design
       name: name
       html: template.html
       title: template.name
+
+
+  addTemplates: (templates) ->
+    for name, template of templates
+      @add(name, template)
 
 
   addGroups: (collection) ->
