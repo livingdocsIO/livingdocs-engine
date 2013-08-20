@@ -6,7 +6,7 @@ describe 'SnippetNodeList', ->
 
     beforeEach ->
       @list = new SnippetNodeList()
-      @node = name: 'foo', type: 'bar'
+      @node = name: 'foo', type: 'editable'
       @list.add(@node)
 
 
@@ -15,12 +15,19 @@ describe 'SnippetNodeList', ->
 
 
     it 'makes the snippet available by its type', ->
-      expect(@list.bar['foo']).toBe(@node.htmlNode)
+      expect(@list.editable['foo']).toBe(@node.htmlNode)
 
 
     describe 'adding a snippet with a name that is used by another snippet', ->
 
 
       it 'throws an error', ->
-        node = name: @node.name, type: 'baz'
+        node = name: @node.name, type: 'image'
         expect( => @list.add(node) ).toThrow()
+
+      it 'throws a nice error', ->
+        try
+          node = name: @node.name, type: 'image'
+          @list.add(node)
+        catch error
+          expect(error.message).toContain('data-doc-image')

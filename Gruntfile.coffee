@@ -99,10 +99,10 @@ module.exports = (grunt) ->
         browsers: ['PhantomJS']
       browsers:
         configFile: 'karma.conf.js'
-        browsers: ['Chrome', 'Firefox', 'Safari', 'Opera']
+        browsers: ['Chrome', 'Firefox', 'Safari']
       build:
         configFile: 'karma.conf.js'
-        browsers: ['Chrome', 'Firefox', 'Safari', 'Opera']
+        browsers: ['Chrome', 'Firefox', 'Safari']
         singleRun: true
     uglify:
       dist:
