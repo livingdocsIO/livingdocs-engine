@@ -57,6 +57,8 @@ module.exports = (grunt) ->
             'src/config.coffee'
             'src/utils/*.coffee'
             'src/mixins/*.coffee'
+            'src/snippet_tree/*.coffee'
+            'src/template/*.coffee'
             'src/!(api|config).coffee'
             'src/api.coffee'
           ]
@@ -68,6 +70,8 @@ module.exports = (grunt) ->
             'src/config.coffee'
             'src/utils/*.coffee'
             'src/mixins/*.coffee'
+            'src/snippet_tree/*.coffee'
+            'src/template/*.coffee'
             'src/!(api|config).coffee'
             'src/api.coffee'
             'test/spec/helpers/*.coffee'
