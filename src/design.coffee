@@ -18,28 +18,30 @@ class Design
 
   # pass the name and template in two parameters
   # e.g add('title', '[template]')
-  add: (name, template) ->
-    @templates[name] = new Template
+  add: (template) ->
+    templateObject  = new Template
       namespace: @namespace
-      name: name
+      name: template.id
       html: template.html
       title: template.name
 
+    @templates[template.id] = templateObject
+
 
   addTemplates: (templates) ->
-    for name, template of templates
-      @add(name, template)
+    for template in templates
+      @add(template)
 
 
   addGroups: (collection) ->
     for key, group of collection
-      snippets = {}
-      for index, snippet of group.snippets
-        snippets[snippet] = @templates[snippet]
+      templates = {}
+      for index, template of group.templates
+        templates[template] = @templates[template]
 
       @groups[key] = new Object
         name: group.name
-        snippets: snippets
+        templates: templates
 
 
   remove: (identifier) ->

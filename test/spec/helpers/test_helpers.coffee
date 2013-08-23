@@ -10,10 +10,14 @@ test = do ->
 
 
   getTemplate: (name) ->
-    template = testSnippets.snippets[name]
+    templates = {}
+    for templ in testTemplates.templates
+      templates[templ.id] = templ
+    
+    template = templates[name]
     new Template
       name: name
-      namespace: testSnippets.config.namespace
+      namespace: testTemplates.config.namespace
       title: template.name
       html: template.html
 
@@ -23,7 +27,7 @@ test = do ->
 
 
   getDesign: () ->
-    cachedDesign = new Design(testSnippets) unless cachedDesign
+    cachedDesign = new Design(testTemplates) unless cachedDesign
     cachedDesign
 
 

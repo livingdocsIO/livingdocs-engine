@@ -79,11 +79,6 @@ module.exports = (grunt) ->
             'test/spec/utils/*.coffee'
             'test/spec/*.coffee'
           ]
-      designs:
-        files:
-          '.tmp/designs.js': [
-            'src/designs/*.coffee'
-          ]
     docco:
       src:
         src: ['src/**/*.coffee']

@@ -1,11 +1,10 @@
-testSnippets =
-
+testTemplates =
+  
   config:
     namespace: 'test'
 
-
-  snippets:
-    hero:
+  templates: [
+      id:   'hero'
       name: 'Hero'
       html:
         """
@@ -14,29 +13,24 @@ testSnippets =
             <p #{ docAttr.editable }="tagline"></p>
           </div>
         """
-
-
-    title:
+    ,
+      id: 'title'
       name: 'Title'
       html: """<h1 #{ docAttr.editable }="title"></h1>"""
-
-
-    subtitle:
+    ,
+      id: 'subtitle'
       name: 'Subtitle with a default value'
       html: """<h2 #{ docAttr.editable }="title">Who's your Caddy?</h2>"""
-
-
-    text:
+    ,
+      id: 'text'
       name: 'Paragraph'
       html: """<p #{ docAttr.editable }="text"></p>"""
-
-
-    image:
+    ,
+      id: 'image'
       name: 'Image'
       html: """<img #{ docAttr.image }="image" src=""/>"""
-
-
-    row:
+    ,
+      id: 'row'
       name: 'Row with two columns'
       html:
         """
@@ -45,9 +39,8 @@ testSnippets =
           <div class="span4" #{ docAttr.container }="sidebar"></div>
         </div>
         """
-
-
-    container:
+    ,
+      id: 'container'
       name: 'Container with no container name'
       html:
         """
@@ -55,9 +48,8 @@ testSnippets =
           <div #{ docAttr.container }></div>
         </div>
         """
-
-
-    stuffedContainer:
+    ,
+      id: 'stuffedContainer'
       name: 'Container with some stuff in it'
       html:
         """
@@ -70,4 +62,4 @@ testSnippets =
           </div>
         </div>
         """
-
+    ]
