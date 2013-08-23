@@ -32,26 +32,32 @@ class SnippetModel
 
 
   initializeContainers: ->
-    @containerCount = @template.directives.count.container
-    for containerName of @template.directives.container
+    @containerCount = @template.directives.count('container')
+    return unless @containerCount
+
+    for directive in @template.directives.container
       @containers ||= {}
-      @containers[containerName] = new SnippetContainer
-        name: containerName
+      @containers[directive.name] = new SnippetContainer
+        name: directive.name
         parentSnippet: this
 
 
   initializeEditables: ->
-    @editableCount = @template.directives.count.editable
-    for editableName of @template.directives.editable
+    @editableCount = @template.directives.count('editable')
+    return unless @editableCount
+
+    for directive in @template.directives.editable
       @editables ||= {}
-      @editables[editableName] = undefined
+      @editables[directive.name] = undefined
 
 
   initializeImages: ->
-    @imageCount = @template.directives.count.image
-    for imageName of @template.directives.image
+    @imageCount = @template.directives.count('image')
+    return unless @imageCount
+
+    for directive in @template.directives.image
       @images ||= {}
-      @images[imageName] = undefined
+      @images[directive.name] = undefined
 
 
   hasImages: ->

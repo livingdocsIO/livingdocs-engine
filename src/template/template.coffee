@@ -51,15 +51,16 @@ class Template
 
   createView: (snippetModel) ->
     snippetModel ||= @createModel()
-    $html = @$template.clone()
-    list = @getNodeLinks($html[0])
+    $elem = @$template.clone()
+    directives = @getDirectives($elem[0])
 
     snippetView = new SnippetView
       model: snippetModel
-      $html: $html
-      editables: list.editable
-      containers: list.container
-      images: list.image
+      $html: $elem
+      directives: directives
+      editables: directives.editable
+      containers: directives.container
+      images: directives.image
 
 
   # todo
@@ -71,30 +72,32 @@ class Template
   # @param snippetNode: root DOM node of the snippet
   parseTemplate: () ->
     snippetNode = @$template[0]
-    @directives = @getNodeLinks(snippetNode)
+    @directives = @getDirectives(snippetNode)
     @editables = @directives.editable
     @containers = @directives.container
-    @editableCount = @directives.count.editable
-    @containerCount = @directives.count.container
+    @editableCount = @directives.count('editable')
+    @containerCount = @directives.count('container')
 
-    for name, node of @editables
-      @formatEditable(name, node)
+    if @editables
+      for directive in @editables
+        @formatEditable(directive.name, directive.elem)
 
-    for name, node of @containers
-      @formatContainer(name, node)
+    if @containers
+      for directive in @containers
+        @formatContainer(directive.name, directive.elem)
 
 
   # Find and store all DOM nodes which are editables or containers
   # in the html of a snippet or the html of a template.
-  getNodeLinks: (snippetNode) ->
+  getDirectives: (snippetNode) ->
     iterator = new SnippetNodeIterator(snippetNode)
-    list = new SnippetNodeList()
+    directives = new SnippetNodeList()
 
     while element = iterator.nextElement()
       node = new SnippetNode(element)
-      list.add(node) if node.isDataNode
+      directives.add(node) if node.isDataNode
 
-    list
+    directives
 
 
   formatEditable: (name, elem) ->

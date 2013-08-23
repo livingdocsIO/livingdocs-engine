@@ -15,7 +15,7 @@ describe 'SnippetNodeList', ->
 
 
     it 'makes the snippet available by its type', ->
-      expect(@list.editable['foo']).toBe(@node.htmlNode)
+      expect(@list.editable['foo']).toBe(@node.elem)
 
 
     describe 'adding a snippet with a name that is used by another snippet', ->

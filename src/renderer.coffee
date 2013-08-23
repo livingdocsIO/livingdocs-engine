@@ -107,8 +107,9 @@ class Renderer
 
   afterDomInsert: (snippetView) ->
     # initialize editables
-    editableNodes = for name, node of snippetView.editables
-      node
+    if snippetView.editables
+      editableNodes = for directive in snippetView.editables
+        directive.elem
 
     @page.editableController.add(editableNodes)
 

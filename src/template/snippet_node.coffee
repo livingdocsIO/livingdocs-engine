@@ -2,12 +2,12 @@ class SnippetNode
 
   attributePrefix = /^(x-|data-)/
 
-  constructor: (@htmlNode) ->
+  constructor: (@elem) ->
     @parseAttributes()
 
 
   parseAttributes: () ->
-    for attr in @htmlNode.attributes
+    for attr in @elem.attributes
       attributeName = attr.name
       normalizedName = attributeName.replace(attributePrefix, '')
       if type = templateAttrLookup[normalizedName]
@@ -23,6 +23,8 @@ class SnippetNode
         return
 
 
+  # force attribute style as specified in config
+  # e.g. attribute 'doc-container' becomes 'data-doc-container'
   normalizeAttribute: (attr) ->
-    @htmlNode.removeAttribute(attr) if attr
-    @htmlNode.setAttribute(docAttr[@type], @name)
+    @elem.removeAttribute(attr) if attr
+    @elem.setAttribute(docAttr[@type], @name)

@@ -1,6 +1,6 @@
 class SnippetView
 
-  constructor: ({ @model, @$html, @editables, @containers, @images }) ->
+  constructor: ({ @model, @$html, @directives, @editables, @containers, @images }) ->
     @template = @model.template
     @attachedToDom = false
 
@@ -31,16 +31,16 @@ class SnippetView
 
 
   firstEditableElem: ->
-    for name, elem of @editables
-      return elem
+    for directive in @editables
+      return directive.elem
 
 
   getBoundingClientRect: ->
     dom.getBoundingClientRect(@$html[0])
 
 
-  content: (content, images) ->
-    for field, value of content
+  content: (editables, images) ->
+    for field, value of editables
       @set(field, value)
 
     for field, value of images
@@ -49,14 +49,13 @@ class SnippetView
 
   getEditable: (name) ->
     if name?
-      return @editables[name]
-    else
-      for name of @editables
-        return @editables[name]
+      return @directives.get(name).elem
+    else if @editables.length
+      return @editables[0].elem
 
 
   setImage: (name, value) ->
-    elem = @images[name]
+    elem = @directives.get(name).elem
     $(elem).attr('src', value)
 
 
@@ -79,7 +78,7 @@ class SnippetView
 
 
   append: (containerName, $elem) ->
-    $container = $(@containers[containerName])
+    $container = $(@directives.get(containerName)?.elem)
     $container.append($elem)
 
 
