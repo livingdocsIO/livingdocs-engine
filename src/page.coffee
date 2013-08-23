@@ -93,7 +93,7 @@ class Page
       @focus.snippetFocused(snippetView)
 
       if imageName = dom.getImageName(event.target)
-        @imageClick.fire(snippetView, imageName)
+        @imageClick.fire(snippetView, imageName, event)
     else
       @focus.blur()
 
