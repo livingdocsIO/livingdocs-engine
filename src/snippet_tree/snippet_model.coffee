@@ -118,6 +118,19 @@ class SnippetModel
       log.error("get error: #{ @identifier } has no name named #{ name }")
 
 
+  copy: ->
+    log.warn("SnippetModel#copy() is not implemented yet.")
+
+    # serializing/deserializing should work but needs to get some tests first
+    # json = @toJson()
+    # json.id = guid.next()
+    # SnippetModel.fromJson(json)
+
+
+  copyWithoutContent: ->
+    @template.createModel()
+
+
   hasEditables: ->
     @editables?
 

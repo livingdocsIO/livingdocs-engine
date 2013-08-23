@@ -25,7 +25,8 @@ class SnippetView
     @$html.prev().data('snippet')
 
 
-  focus: ->
+  # @param cursor: undefined, 'start', 'end'
+  focus: (cursor) ->
     first = @firstEditableElem()
     $(first).focus()
 

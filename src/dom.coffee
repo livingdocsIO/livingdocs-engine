@@ -48,6 +48,13 @@ dom = do ->
       return imageName
 
 
+  getEditableName: (node) ->
+    if node.hasAttribute(docAttr.editable)
+      imageName = node.getAttribute(docAttr.editable)
+      return editableName
+
+
+
   dropTarget: (node, { top, left }) ->
     node = @getElementNode(node)
 
