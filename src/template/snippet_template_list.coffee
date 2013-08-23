@@ -15,7 +15,7 @@ class SnippetTemplateList
     $item = @$list.children().first().detach()
 
     @_item = new Template(
-      name: "#{ @name }-item",
+      id: "#{ @id }-item",
       html: $item
     )
 

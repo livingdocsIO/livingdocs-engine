@@ -21,9 +21,9 @@ class Design
   add: (template) ->
     @templates[template.id] = new Template
       namespace: @namespace
-      name: template.id
+      id: template.id
+      title: template.title
       html: template.html
-      title: template.name
 
 
   addTemplates: (templates) ->
@@ -38,31 +38,31 @@ class Design
         templates[template] = @templates[template]
 
       @groups[key] = new Object
-        name: group.name
+        title: group.title
         templates: templates
 
 
   remove: (identifier) ->
-    @checkNamespace identifier, (name) =>
-      delete @templates[name]
+    @checkNamespace identifier, (id) =>
+      delete @templates[id]
 
 
   get: (identifier) ->
-    @checkNamespace identifier, (name) =>
-      @templates[name]
+    @checkNamespace identifier, (id) =>
+      @templates[id]
 
 
   checkNamespace: (identifier, callback) ->
-    { namespace, name } = Template.parseIdentifier(identifier)
+    { namespace, id } = Template.parseIdentifier(identifier)
 
     if not namespace || @namespace == namespace
-      callback(name)
+      callback(id)
     else
       log.error("design #{ @namespace }: cannot get template with different namespace #{ namespace } ")
 
 
   each: (callback) ->
-    for name, template of @templates
+    for id, template of @templates
       callback(template)
 
 

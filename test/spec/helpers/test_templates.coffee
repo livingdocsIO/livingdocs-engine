@@ -5,7 +5,7 @@ testTemplates =
 
   templates: [
       id:   'hero'
-      name: 'Hero'
+      title: 'Hero'
       html:
         """
           <div>
@@ -15,23 +15,23 @@ testTemplates =
         """
     ,
       id: 'title'
-      name: 'Title'
+      title: 'Title'
       html: """<h1 #{ docAttr.editable }="title"></h1>"""
     ,
       id: 'subtitle'
-      name: 'Subtitle with a default value'
+      title: 'Subtitle with a default value'
       html: """<h2 #{ docAttr.editable }="title">Who's your Caddy?</h2>"""
     ,
       id: 'text'
-      name: 'Paragraph'
+      title: 'Paragraph'
       html: """<p #{ docAttr.editable }="text"></p>"""
     ,
       id: 'image'
-      name: 'Image'
+      title: 'Image'
       html: """<img #{ docAttr.image }="image" src=""/>"""
     ,
       id: 'row'
-      name: 'Row with two columns'
+      title: 'Row with two columns'
       html:
         """
         <div class="row-fluid">
@@ -41,7 +41,7 @@ testTemplates =
         """
     ,
       id: 'container'
-      name: 'Container with no container name'
+      title: 'Container with no container name'
       html:
         """
         <div class="container">
@@ -50,7 +50,7 @@ testTemplates =
         """
     ,
       id: 'stuffedContainer'
-      name: 'Container with some stuff in it'
+      title: 'Container with some stuff in it'
       html:
         """
         <div class="stuffed">

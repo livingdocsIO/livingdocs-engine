@@ -9,21 +9,21 @@ test = do ->
     `expectedProperty in obj`
 
 
-  getTemplate: (name) ->
+  getTemplate: (id) ->
     templates = {}
     for templ in testTemplates.templates
       templates[templ.id] = templ
     
-    template = templates[name]
+    template = templates[id]
     new Template
-      name: name
+      id: id
       namespace: testTemplates.config.namespace
       title: template.name
       html: template.html
 
 
-  getSnippet: (name) ->
-    @getTemplate(name).createModel()
+  getSnippet: (id) ->
+    @getTemplate(id).createModel()
 
 
   getDesign: () ->

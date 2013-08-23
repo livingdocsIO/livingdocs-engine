@@ -86,7 +86,7 @@ class SnippetTree
     if typeof search == 'string'
       res = []
       @each (snippet) ->
-        if snippet.identifier == search || snippet.template.name == search
+        if snippet.identifier == search || snippet.template.id == search
           res.push(snippet)
 
       new SnippetArray(res)

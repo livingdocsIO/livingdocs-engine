@@ -11,7 +11,7 @@ describe 'Design', ->
 
   it 'adds a default namespace', ->
     design =
-      snippets: {}
+      templates: {}
       config: {}
     expect( (new Design(design)).namespace ).toEqual('livingdocs-templates')
 
@@ -19,8 +19,8 @@ describe 'Design', ->
   describe 'with a template', ->
 
     beforeEach ->
-      templateConfig = testTemplates.templates[1]
-      @design.add(templateConfig)
+      for i, template of testTemplates.templates
+        @design.add(template)
 
 
     it 'stores the template as Template', ->
