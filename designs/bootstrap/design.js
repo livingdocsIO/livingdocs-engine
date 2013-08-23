@@ -1,62 +1,62 @@
 (function() { this.design || (this.design = {}); design.bootstrap = (function() { return {
   "templates": [
     {
-      "name": "Single Centered Column",
+      "title": "Single Centered Column",
       "id": "column",
       "html": "<div class=\"row-fluid\"><div class=\"span8 offset2\" doc-container=\"\"></div></div>"
     },
     {
-      "name": "Main and Sidebar Columns",
+      "title": "Main and Sidebar Columns",
       "id": "mainAndSidebar",
       "html": "<div class=\"row-fluid\"><div class=\"span8\" doc-container=\"main\"></div><div class=\"span4\" doc-container=\"sidebar\"></div></div>"
     },
     {
-      "name": "Button",
+      "title": "Button",
       "id": "button",
       "html": "<button class=\"btn\" type=\"button\" doc-editable=\"button\">Button</button>"
     },
     {
-      "name": "Hero",
+      "title": "Hero",
       "id": "hero",
       "html": "<div class=\"hero-unit\"><h1 doc-editable=\"title\">Titel</h1><p doc-editable=\"tagline\">Tagline</p></div>"
     },
     {
-      "name": "Image",
+      "title": "Image",
       "id": "image",
       "html": "<div class=\"img-polaroid\" doc-editable=\"image\">Drag your image here...</div>"
     },
     {
-      "name": "Info",
+      "title": "Info",
       "id": "info",
       "html": "<div class=\"alert alert-info\" doc-editable=\"info\">Lorem Ipsum dolorem</div>"
     },
     {
-      "name": "Large Button",
+      "title": "Large Button",
       "id": "largeButton",
       "html": "<div><hr></div>"
     },
     {
-      "name": "Seperator",
+      "title": "Seperator",
       "id": "seperator",
       "html": "<div><hr></div>"
     },
     {
-      "name": "Paragraph Title",
+      "title": "Paragraph Title",
       "id": "smallSubtitle",
       "html": "<h3 doc-editable=\"title\">Lorem ipsum dolorem</h3>"
     },
     {
-      "name": "Subtitle",
+      "title": "Subtitle",
       "id": "subtitle",
       "html": "<h2 doc-editable=\"title\">Subtitle</h2>"
     },
     {
-      "name": "Text",
+      "title": "Text",
       "id": "text",
       "html": "<p doc-editable=\"text\">Lorem ipsum dolorem. Lorem ipsum dolorem. Lorem ipsum dolorem</p>"
     },
     {
-      "name": "Title",
+      "title": "Title",
       "id": "title",
       "html": "<h1 doc-editable=\"title\">Titel</h1>"
     }
@@ -69,14 +69,14 @@
     ],
     "groups": {
       "layout": {
-        "name": "Layout",
+        "title": "Layout",
         "templates": [
           "column",
           "mainAndSidebar"
         ]
       },
       "others": {
-        "name": "others",
+        "title": "others",
         "templates": [
           "button",
           "hero",
