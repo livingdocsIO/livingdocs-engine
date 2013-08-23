@@ -33,13 +33,13 @@ class Design
 
   addGroups: (collection) ->
     for key, group of collection
-      snippets = {}
-      for index, snippet of group.snippets
-        snippets[snippet] = @templates[snippet]
+      templates = {}
+      for index, template of group.templates
+        templates[template] = @templates[template]
 
       @groups[key] = new Object
         name: group.name
-        snippets: snippets
+        templates: templates
 
 
   remove: (identifier) ->
