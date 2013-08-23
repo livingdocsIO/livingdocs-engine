@@ -16,16 +16,14 @@ class Design
     @addGroups(groups)
 
 
-  # pass the name and template in two parameters
-  # e.g add('title', '[template]')
+  # pass the template as object
+  # e.g add({id: "title", name:"Title", html: "<h1 doc-editable>Title</h1>"})
   add: (template) ->
-    templateObject  = new Template
+    @templates[template.id] = new Template
       namespace: @namespace
       name: template.id
       html: template.html
       title: template.name
-
-    @templates[template.id] = templateObject
 
 
   addTemplates: (templates) ->
@@ -35,13 +33,13 @@ class Design
 
   addGroups: (collection) ->
     for key, group of collection
-      templates = {}
-      for index, template of group.templates
-        templates[template] = @templates[template]
+      snippets = {}
+      for index, snippet of group.snippets
+        snippets[snippet] = @templates[snippet]
 
       @groups[key] = new Object
         name: group.name
-        templates: templates
+        snippets: snippets
 
 
   remove: (identifier) ->
