@@ -19,8 +19,8 @@ describe 'Design', ->
   describe 'with a template', ->
 
     beforeEach ->
-      templateConfig = testSnippets.snippets['title']
-      @design.add('title', templateConfig)
+      templateConfig = testTemplates.templates[1]
+      @design.add(templateConfig)
 
 
     it 'stores the template as Template', ->

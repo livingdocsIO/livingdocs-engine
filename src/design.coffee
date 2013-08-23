@@ -16,19 +16,19 @@ class Design
     @addGroups(groups)
 
 
-  # pass the name and template in two parameters
-  # e.g add('title', '[template]')
-  add: (name, template) ->
-    @templates[name] = new Template
+  # pass the template as object
+  # e.g add({id: "title", name:"Title", html: "<h1 doc-editable>Title</h1>"})
+  add: (template) ->
+    @templates[template.id] = new Template
       namespace: @namespace
-      name: name
+      name: template.id
       html: template.html
       title: template.name
 
 
   addTemplates: (templates) ->
-    for name, template of templates
-      @add(name, template)
+    for template in templates
+      @add(template)
 
 
   addGroups: (collection) ->
