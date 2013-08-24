@@ -2,7 +2,7 @@ describe 'Design', ->
 
   beforeEach ->
     @design = new Design
-      templates: {}
+      templates: []
       config: { namespace: 'test' }
 
   it 'has a namespace', ->
@@ -24,18 +24,18 @@ describe 'Design', ->
 
 
     it 'stores the template as Template', ->
-      expect(@design.templates['title'] instanceof Template).toEqual(true)
+      expect(@design.templates[1] instanceof Template).toEqual(true)
 
 
     describe 'get()', ->
 
       it 'gets the template by identifier', ->
-        template = @design.templates['title']
+        template = @design.templates[1]
         expect(@design.get('test.title')).toEqual(template)
 
 
       it 'gets the template by name', ->
-        template = @design.templates['title']
+        template = @design.templates[1]
         expect(@design.get('title')).toEqual(template)
 
 

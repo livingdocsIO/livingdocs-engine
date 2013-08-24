@@ -9,7 +9,8 @@ class Design
     @css = config.css
     @js = config.js #todo
     @fonts = config.fonts #todo
-    @templates = {}
+    @templates = []
+    @templatesCount = 0
     @groups = {}
 
     @addTemplates(templates)
@@ -19,11 +20,15 @@ class Design
   # pass the template as object
   # e.g add({id: "title", name:"Title", html: "<h1 doc-editable>Title</h1>"})
   add: (template) ->
-    @templates[template.id] = new Template
-      namespace: @namespace
-      id: template.id
-      title: template.title
-      html: template.html
+    @templatesCount = @templatesCount + 1
+    object = new Template
+        namespace: @namespace
+        id: template.id
+        title: template.title
+        html: template.html
+        weight: @templatesCount
+
+    @templates.push(object)
 
 
   addTemplates: (templates) ->
@@ -34,8 +39,8 @@ class Design
   addGroups: (collection) ->
     for key, group of collection
       templates = {}
-      for index, template of group.templates
-        templates[template] = @templates[template]
+      for template in group.templates
+        templates[template] = @get(template)
 
       @groups[key] = new Object
         title: group.title
@@ -44,12 +49,27 @@ class Design
 
   remove: (identifier) ->
     @checkNamespace identifier, (id) =>
-      delete @templates[id]
+      @templates.splice(@getIndex(id), 1)
 
 
   get: (identifier) ->
     @checkNamespace identifier, (id) =>
-      @templates[id]
+      template = undefined
+      @each (t, index) ->
+        if t.id == id
+          template = t
+
+      template
+
+
+  getIndex: (identifier) ->
+    @checkNamespace identifier, (id) =>
+      index = undefined
+      @each (t, i) ->
+        if t.id == id
+          index = i
+
+      index
 
 
   checkNamespace: (identifier, callback) ->
@@ -62,8 +82,8 @@ class Design
 
 
   each: (callback) ->
-    for id, template of @templates
-      callback(template)
+    for template, index in @templates
+      callback(template, index)
 
 
   # list available Templates

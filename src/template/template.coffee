@@ -18,7 +18,7 @@
 class Template
 
 
-  constructor: ({ html, @namespace, @id, identifier, title, version } = {}) ->
+  constructor: ({ html, @namespace, @id, identifier, title, weight, version } = {}) ->
     if not html
       log.error('Template: param html missing')
 
@@ -33,6 +33,7 @@ class Template
     @$template = $( @pruneHtml(html) ).wrap('<div>')
     @$wrap = @$template.parent()
     @title = title || words.humanize( @id )
+    @weight = weight
 
     @editables = undefined
     @editableCount = 0

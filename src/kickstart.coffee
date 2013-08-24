@@ -7,10 +7,7 @@ kickstart = do ->
 
       # Convert a dom element into a camelCase snippetName
       domElementToSnippetName = (element) =>
-        if element.tagName
-          $.camelCase(element.tagName.toLowerCase())
-        else
-          null
+        if element.tagName then $.camelCase(element.tagName.toLowerCase()) else null
 
 
       parseContainers = (parent, data) =>
