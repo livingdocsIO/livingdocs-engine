@@ -5,6 +5,17 @@ class EditableController
 
   constructor: (@page) ->
 
+
+    @lastMouseEvent = null
+    controller = @
+
+    window.document.body.onmousedown = (event)->
+      controller.lastMouseEvent = event
+
+    window.document.body.onmouseup = (event) ->
+      controller.lastMouseEvent = event
+
+
     # configure editableJS
     Editable.init
       log: false
@@ -79,5 +90,4 @@ class EditableController
 
   selectionChanged: (element, selection) ->
     snippetView = dom.findSnippetView(element)
-    @selection.fire(snippetView, element, selection)
-
+    @selection.fire(snippetView, element, selection, @lastMouseEvent)
