@@ -25,6 +25,7 @@ class Design
         namespace: @namespace
         id: template.id
         title: template.title
+        styles: template.styles
         html: template.html
         weight: @templatesCount
 
