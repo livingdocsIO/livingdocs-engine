@@ -10,7 +10,6 @@ class Design
     @js = config.js #todo
     @fonts = config.fonts #todo
     @templates = []
-    @templatesCount = 0
     @groups = {}
 
     @addTemplates(templates)
@@ -20,14 +19,13 @@ class Design
   # pass the template as object
   # e.g add({id: "title", name:"Title", html: "<h1 doc-editable>Title</h1>"})
   add: (template) ->
-    @templatesCount = @templatesCount + 1
     object = new Template
         namespace: @namespace
         id: template.id
         title: template.title
         styles: template.styles
         html: template.html
-        weight: @templatesCount
+        weight: @templates.length + 1
 
     @templates.push(object)
 
