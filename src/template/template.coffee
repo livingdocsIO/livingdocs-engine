@@ -33,7 +33,7 @@ class Template
     @$template = $( @pruneHtml(html) ).wrap('<div>')
     @$wrap = @$template.parent()
     @title = title || words.humanize( @id )
-    @styles = styles || {}
+    @styles = styles || []
     @weight = weight
 
     @editables = undefined
