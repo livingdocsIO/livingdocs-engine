@@ -24,19 +24,21 @@ describe 'Design', ->
 
 
     it 'stores the template as Template', ->
-      expect(@design.templates[1] instanceof Template).toEqual(true)
+      expect(@design.templates[0] instanceof Template).toBe(true)
 
 
     describe 'get()', ->
 
       it 'gets the template by identifier', ->
-        template = @design.templates[1]
-        expect(@design.get('test.title')).toEqual(template)
+        title = @design.get('test.title')
+        expect(title instanceof Template).toBe(true)
+        expect(title.identifier).toEqual('test.title')
 
 
       it 'gets the template by name', ->
-        template = @design.templates[1]
-        expect(@design.get('title')).toEqual(template)
+        title = @design.get('title')
+        expect(title instanceof Template).toBe(true)
+        expect(title.identifier).toEqual('test.title')
 
 
       it 'returns undefined for a non-existing template', ->
