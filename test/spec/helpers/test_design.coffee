@@ -2,6 +2,27 @@ testDesign =
 
   config:
     namespace: 'test'
+    groups:
+      layout:
+        title: 'Layout'
+        templates: [
+          'row'
+          'container'
+          'stuffedContainer'
+        ]
+      header:
+        title: 'Header'
+        templates: [
+          'hero'
+          'title'
+        ]
+      other:
+        title: 'Other'
+        templates: [
+          'subtitle'
+          'text'
+          'image'
+        ]
 
   templates: [
       id:   'hero'
