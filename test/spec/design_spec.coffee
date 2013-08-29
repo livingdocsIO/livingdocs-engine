@@ -48,3 +48,21 @@ describe 'Design', ->
       it 'removes the template', ->
         @design.remove('title')
         expect( @design.get('title') ).not.toBeDefined()
+
+
+    describe 'group configuration', ->
+
+      beforeEach ->
+        @design = new Design(testDesign)
+
+
+      it 'is available in design', ->
+        groups = Object.keys @design.groups
+        expect(groups).toContain('layout')
+        expect(groups).toContain('header')
+        expect(groups).toContain('other')
+
+
+      it 'design contains templates', ->
+        container = @design.get('container')
+        expect(@design.groups['layout'].templates['container']).toBe(container)
