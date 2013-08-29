@@ -1,5 +1,5 @@
-testTemplates =
-  
+testDesign =
+
   config:
     namespace: 'test'
 

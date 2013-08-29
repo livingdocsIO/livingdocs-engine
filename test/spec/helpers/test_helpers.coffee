@@ -11,13 +11,13 @@ test = do ->
 
   getTemplate: (id) ->
     templates = {}
-    for templ in testTemplates.templates
+    for templ in testDesign.templates
       templates[templ.id] = templ
-    
+
     template = templates[id]
     new Template
       id: id
-      namespace: testTemplates.config.namespace
+      namespace: testDesign.config.namespace
       title: template.name
       html: template.html
 
@@ -27,7 +27,7 @@ test = do ->
 
 
   getDesign: () ->
-    cachedDesign = new Design(testTemplates) unless cachedDesign
+    cachedDesign = new Design(testDesign) unless cachedDesign
     cachedDesign
 
 

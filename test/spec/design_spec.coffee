@@ -19,7 +19,7 @@ describe 'Design', ->
   describe 'with a template', ->
 
     beforeEach ->
-      for i, template of testTemplates.templates
+      for i, template of testDesign.templates
         @design.add(template)
 
 
