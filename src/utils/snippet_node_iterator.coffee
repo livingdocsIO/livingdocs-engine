@@ -2,7 +2,7 @@
 # ---------------------
 # Code is ported from rangy NodeIterator and adapted for snippets so it
 # does not traverse into containers.
-# Use to traverse all element nodes of a snippet but not any appended
+# Use to traverse all element nodes of a snippet but not any appended
 # snippets.
 class SnippetNodeIterator
 

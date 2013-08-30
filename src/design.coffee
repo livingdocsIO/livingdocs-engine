@@ -85,7 +85,7 @@ class Design
       callback(template, index)
 
 
-  # list available Templates
+  # list available Templates
   list: ->
     templates = []
     @each (template) ->

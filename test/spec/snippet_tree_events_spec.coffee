@@ -1,5 +1,5 @@
 # SnippetTree Events
-# ------------------
+# ------------------
 # Check that SnippetTree fires events properly
 
 describe 'SnippetTree (Layout Events) ->', ->

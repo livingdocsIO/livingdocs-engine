@@ -1,6 +1,6 @@
 # Script Loader
 # -------------
-# Loading of Javascript and CSS files using yepnope
+# Loading of Javascript and CSS files using yepnope
 class Loader
 
   constructor: ->
