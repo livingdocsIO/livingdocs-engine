@@ -16,8 +16,7 @@ class SnippetModel
 
 
   constructor: ({ @template, id } = {}) ->
-    if !@template
-      log.error('cannot instantiate snippet without template reference')
+    assert @template, 'cannot instantiate snippet without template reference'
 
     @initializeContainers()
     @initializeEditables()
@@ -250,31 +249,27 @@ class SnippetModel
 SnippetModel.fromJson = (json, design) ->
   template = design.get(json.identifier)
 
-  if not template?
-    log.error("error while deserializing snippet: unknown template identifier '#{ json.identifier }'")
+  assert template,
+    "error while deserializing snippet: unknown template identifier '#{ json.identifier }'"
 
   model = new SnippetModel({ template, id: json.id })
   for editableName, value of json.editables
-    if model.editables.hasOwnProperty(editableName)
-      model.editables[editableName] = value
-    else
-      log.error("error while deserializing snippet: unknown editable #{ editableName }")
+    assert model.editables.hasOwnProperty(editableName),
+      "error while deserializing snippet: unknown editable #{ editableName }"
+    model.editables[editableName] = value
 
   for imageName, value of json.images
-    if model.images.hasOwnProperty(imageName)
-      model.images[imageName] = value
-    else
-      log.error("error while deserializing snippet: unknown image #{ imageName }")
+    assert model.images.hasOwnProperty(imageName),
+      "error while deserializing snippet: unknown image #{ imageName }"
+    model.images[imageName] = value
 
   for containerName, snippetArray of json.containers
-    if not model.containers.hasOwnProperty(containerName)
-      log.error("error while deserializing snippet: unknown container #{ containerName }")
+    assert model.containers.hasOwnProperty(containerName),
+      "error while deserializing snippet: unknown container #{ containerName }"
 
     if snippetArray
-
-      if not $.isArray(snippetArray)
-        log.error("error while deserializing snippet: container is not array #{ containerName }")
-
+      assert $.isArray(snippetArray),
+        "error while deserializing snippet: container is not array #{ containerName }"
       for child in snippetArray
         model.append( containerName, SnippetModel.fromJson(child, design) )
 

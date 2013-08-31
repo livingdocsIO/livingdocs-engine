@@ -19,8 +19,7 @@ class Template
 
 
   constructor: ({ html, @namespace, @id, identifier, title, styles, weight, version } = {}) ->
-    if not html
-      log.error('Template: param html missing')
+    assert html, 'Template: param html missing'
 
     if identifier
       { @namespace, @id } = Template.parseIdentifier(identifier)

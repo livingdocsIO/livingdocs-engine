@@ -66,17 +66,15 @@ class SnippetView
       value = editable
       editable = undefined
 
-    if elem = @getEditable(editable)
-      $(elem).html(value)
-    else
-      log.error 'cannot set value without editable name'
+    elem = @getEditable(editable)
+    assert elem, 'cannot set value without editable name'
+    $(elem).html(value)
 
 
   get: (editable) ->
-    if elem = @getEditable(editable)
-      $(elem).html()
-    else
-      log.error 'cannot get value without editable name'
+    elem = @getEditable(editable)
+    assert elem, 'cannot get value without editable name'
+    $(elem).html()
 
 
   append: (containerName, $elem) ->

@@ -2,8 +2,8 @@ class Renderer
 
 
   constructor: ({ @snippetTree, rootNode, @page }) ->
-    log.error('no snippet tree specified') if !@snippetTree
-    log.error('no root node specified') if !rootNode
+    assert @snippetTree, 'no snippet tree specified'
+    assert rootNode, 'no root node specified'
 
     @$root = $(rootNode)
     @setupPageListeners()
@@ -99,7 +99,7 @@ class Renderer
   # in the SnippetTree
   insertIntoDom: (snippetView) ->
     snippetView.attach(this)
-    log.error('could not insert snippet into Dom') if not snippetView.attachedToDom
+    assert snippetView.attachedToDom, 'could not insert snippet into Dom'
     @afterDomInsert(snippetView)
 
     this

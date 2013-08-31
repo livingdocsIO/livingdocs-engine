@@ -46,7 +46,7 @@ document = do ->
 
   # *Public API*
   init: ({ design, json, rootNode }={}) ->
-    log.error('document is already initialized') if @initialized
+    assert not @initialized, 'document is already initialized'
     @initialized = true
 
     @loadDesign(design)
@@ -138,8 +138,7 @@ document = do ->
   getTemplate: (identifier) ->
     template = @design?.get(identifier)
 
-    if !template
-      log.error("could not find template #{ identifier }")
+    assert template, "could not find template #{ identifier }"
 
     template
 
