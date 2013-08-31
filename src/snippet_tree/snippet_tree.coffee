@@ -171,15 +171,14 @@ class SnippetTree
 
 
   detachingSnippet: (snippet, detachSnippetFunc) ->
-    if snippet.snippetTree == this
+    assert snippet.snippetTree is this,
+      'cannot remove snippet from another SnippetTree'
 
-      snippet.descendantsAndSelf (descendants) ->
-        descendants.snippetTree = undefined
+    snippet.descendantsAndSelf (descendants) ->
+      descendants.snippetTree = undefined
 
-      detachSnippetFunc()
-      @fireEvent('snippetRemoved', snippet)
-    else
-      log.error('cannot remove snippet from another SnippetTree')
+    detachSnippetFunc()
+    @fireEvent('snippetRemoved', snippet)
 
 
   contentChanging: (snippet) ->

@@ -26,11 +26,10 @@ kickstart = do ->
 
   parseSnippets: (parentContainer, region, data) ->
     snippetName = @nodeToSnippetName(data)
-    if doc.document.design.get(snippetName)
-      snippet = doc.create(snippetName)
-      parentContainer.append(region, snippet)
-    else
-      log.error('The Template named "' + snippetName + '" does not exist.')
+    assert doc.document.design.get(snippetName),
+      "The Template named '#{snippetName}' does not exist."
+    snippet = doc.create(snippetName)
+    parentContainer.append(region, snippet)
     @setChildren(snippet, data)
 
 
