@@ -3827,11 +3827,11 @@ var behavior = (function() {
       log(cursor);
       log('Default newline behavior');
 
-      var atTheEnd = cursor.isAtTheEnd();
+      var atEnd = cursor.isAtEnd();
       var br = document.createElement('br');
       cursor.insertBefore(br);
 
-      if(atTheEnd) {
+      if(atEnd) {
         log('at the end');
 
         var noWidthSpace = document.createTextNode('\u200B');
@@ -3880,23 +3880,22 @@ var behavior = (function() {
 
       switch(direction) {
       case 'before':
-        container = element.previousElementSibling;
+        container = block.previous(element);
         merger = element;
         break;
       case 'after':
         container = element;
-        merger = element.nextElementSibling;
+        merger = block.next(element);
         break;
       }
 
-      if(!(container && container.getAttribute('contenteditable') &&
-          merger && merger.getAttribute('contenteditable')))
+      if(!(container && merger))
         return;
 
       if(container.childNodes.length > 0)
-        cursor.moveAtTheEnd(container.lastChild);
+        cursor.moveAfter(container.lastChild);
       else
-        cursor.moveAtTheBeginning(container);
+        cursor.moveBefore(container);
       cursor.update();
 
       fragment = document.createDocumentFragment();
@@ -3913,8 +3912,27 @@ var behavior = (function() {
       log('Default empty behavior');
     },
 
-    'switch': function(element, direction) {
+    'switch': function(element, direction, cursor) {
       log('Default switch behavior');
+
+      var next, previous;
+
+      switch(direction) {
+      case 'before':
+        previous = block.previous(element);
+        if(previous) {
+          cursor.moveAfter(previous);
+          cursor.update();
+        }
+        break;
+      case 'after':
+        next = block.next(element);
+        if(next) {
+          cursor.moveBefore(next);
+          cursor.update();
+        }
+        break;
+      }
     },
 
     move: function(element, selection, direction) {
@@ -3923,6 +3941,22 @@ var behavior = (function() {
 
     clipboard: function(element, selection, action) {
       log('Default clipboard behavior');
+    }
+  };
+})();
+
+var block = (function() {
+  return {
+    next: function(element) {
+      var next = element.nextElementSibling;
+      if(next && next.getAttribute('contenteditable')) return next;
+      return null;
+    },
+
+    previous: function(element) {
+      var previous = element.previousElementSibling;
+      if(previous && previous.getAttribute('contenteditable')) return previous;
+      return null;
     }
   };
 })();
@@ -4074,16 +4108,16 @@ var config = {
 
     /**
      * The switch event is triggered when the user switches to another block.
-     * This happens when TAB is pressed (move one block after) or SHIFT+TAB
-     * is pressed (move one block before).
+     * This happens when an ARROW key is pressed near the boundaries of a block.
      * The default behavior is to... TODO
      *
      * @event switch
      * @param {HTMLElement} element The element triggering the event.
      * @param {String} direction The switch direction: "before" or "after".
+     * @param {Cursor} cursor The actual cursor object.*
      */
-    'switch': function(element, direction) {
-      behavior.switch(element, direction);
+    'switch': function(element, direction, cursor) {
+      behavior.switch(element, direction, cursor);
     },
 
     /**
@@ -4129,7 +4163,7 @@ var content = (function() {
         node = element.childNodes[i];
         if(!node) continue;
 
-        if(node.nodeType === 1) {
+        if(node.nodeType === 1 && node.nodeName !== 'BR') {
           sibling = node;
           while((sibling = sibling.nextSibling) !== null) {
             if(!parser.isSameNode(sibling, node))
@@ -4176,7 +4210,7 @@ var content = (function() {
 
       for (i = 0, len = element.childNodes.length; i < len; i++) {
         node = element.childNodes[i];
-        if(node && !node.textContent) {
+        if(node && node.nodeName !== 'BR' && !node.textContent) {
           node.parentNode.removeChild(node);
         }
       }
@@ -4206,14 +4240,14 @@ var Cursor = (function() {
 
   Cursor.prototype = (function() {
     return {
-      isAtTheEnd: function() {
+      isAtEnd: function() {
         return parser.isEndOfHost(
           this.host,
           this.range.endContainer,
           this.range.endOffset);
       },
 
-      isAtTheBeginning: function() {
+      isAtBeginning: function() {
         return parser.isBeginningOfHost(
           this.host,
           this.range.startContainer,
@@ -4290,14 +4324,26 @@ var Cursor = (function() {
         this.range.detach();
       },
 
-      moveAtTheBeginning: function(element) {
+      moveBefore: function(element) {
         this.range.setStart(element, 0);
         this.range.setEnd(element, 0);
       },
 
-      moveAtTheEnd: function(element) {
-        this.range.setStartAfter(element);
-        this.range.setEndAfter(element);
+      moveAfter: function(element) {
+        this.range.selectNodeContents(element);
+        this.range.collapse(false);
+      },
+
+      equals: function(cursor) {
+        if(!cursor) return false;
+
+        if(!cursor.host) return false;
+        if(!cursor.host.isEqualNode(this.host)) return false;
+
+        if(!cursor.range) return false;
+        if(!cursor.range.equals(this.range)) return false;
+
+        return true;
       }
     };
   })();
@@ -4352,18 +4398,41 @@ var dispatcher = (function() {
    * @param {Function} notifier: The callback to be triggered when the event is caught.
    */
   var setupKeyboardEvents = function($document, notifier) {
+    var dispatchSwitchEvent = function(event, element, direction) {
+      var cursor;
+
+      if(event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
+        return;
+
+      cursor = selectionWatcher.getSelection();
+      if(cursor instanceof Selection) return;
+
+      setTimeout(function() {
+        var newCursor = selectionWatcher.getCursor();
+        if(newCursor.equals(cursor)) {
+          event.preventDefault();
+          event.stopPropagation();
+          notifier('switch', element, direction, newCursor);
+        }
+      }, 1);
+    }
+
     $document.on('keydown.editable', '.-js-editable', function(event) {
       keyboard.dispatchKeyEvent(event, this);
     });
 
     keyboard.on('left', function(event) {
       log('Left key pressed');
+      dispatchSwitchEvent(event, this, 'before');
     }).on('up', function(event) {
       log('Up key pressed');
+      dispatchSwitchEvent(event, this, 'before');
     }).on('right', function(event) {
       log('Right key pressed');
+      dispatchSwitchEvent(event, this, 'after');
     }).on('down', function(event) {
       log('Down key pressed');
+      dispatchSwitchEvent(event, this, 'after');
     }).on('tab', function(event) {
       log('Tab key pressed');
     }).on('shiftTab', function(event) {
@@ -4374,7 +4443,7 @@ var dispatcher = (function() {
       log('Backspace key pressed');
 
       var cursor = selectionWatcher.getCursor();
-      if(cursor.isAtTheBeginning()) {
+      if(cursor.isAtBeginning()) {
         event.preventDefault();
         event.stopPropagation();
         notifier('merge', this, 'before', cursor);
@@ -4383,7 +4452,7 @@ var dispatcher = (function() {
       log('Delete key pressed');
 
       var cursor = selectionWatcher.getCursor();
-      if(cursor.isAtTheEnd()) {
+      if(cursor.isAtEnd()) {
         event.preventDefault();
         event.stopPropagation();
         notifier('merge', this, 'after', cursor);
@@ -4395,9 +4464,9 @@ var dispatcher = (function() {
       event.stopPropagation();
       var cursor = selectionWatcher.getCursor();
 
-      if (cursor.isAtTheBeginning()) {
+      if (cursor.isAtBeginning()) {
         notifier('insert', this, 'before', cursor);
-      } else if(cursor.isAtTheEnd()) {
+      } else if(cursor.isAtEnd()) {
         notifier('insert', this, 'after', cursor);
       } else {
         notifier('split', this, cursor.before(), cursor.after(), cursor);
