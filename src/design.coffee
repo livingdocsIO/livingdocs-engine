@@ -30,7 +30,7 @@ class Design
   add: (templateDefinition, styles) ->
     @templateDefinitions[templateDefinition.id] = undefined
     templateOnlyStyles = @createDesignStyles(templateDefinition.styles)
-    templateStyles = $.extend(templateOnlyStyles, styles)
+    templateStyles = $.extend({}, styles, templateOnlyStyles)
 
     template = new Template
       namespace: @namespace
