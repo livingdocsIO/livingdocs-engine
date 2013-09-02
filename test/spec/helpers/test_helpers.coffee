@@ -1,5 +1,7 @@
 test = do ->
 
+  log.debugDisabled = true
+  log.warningsDisabled = true
   cachedDesign = undefined
 
   # wrapper for `'prop' in object`
