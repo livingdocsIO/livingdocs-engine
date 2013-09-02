@@ -88,15 +88,29 @@ describe 'Image snippet', ->
     expect(@image.images.hasOwnProperty('image')).toBeTruthy()
 
 
-describe 'Hero snippet', ->
+describe 'Hero SnippetModel#style', ->
 
   beforeEach ->
     @hero = test.getSnippet('hero')
 
 
-  it 'sets hero style "Extra Space"', ->
+  it 'gets style "Extra Space', ->
+    expect(@hero.style('Extra Space')).toBe(undefined)
+
+
+  it 'sets style "Extra Space"', ->
     @hero.style('Extra Space', 'extra-space')
     expect(@hero.styles['Extra Space']).toEqual('extra-space')
+
+
+  it 'sets style "Color"', ->
+    @hero.style('Color', 'color--blue')
+    expect(@hero.styles['Color']).toEqual('color--blue')
+
+
+  it 'gets previously set style "Extra Space', ->
+    @hero.style('Extra Space', 'extra-space')
+    expect(@hero.style('Extra Space')).toEqual('extra-space')
 
 
   it 'does not set style "Extra Space" with unknown class', ->

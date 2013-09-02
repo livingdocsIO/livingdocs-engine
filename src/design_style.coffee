@@ -46,15 +46,15 @@ class DesignStyle
 
 
   containsOption: (value) ->
-    for caption, included of @options
-      return true if value is included
+    for option in @options
+      return true if value is option.value
 
     false
 
 
   otherOptions: (value) ->
     others = []
-    for caption, other of @options
-      others.push other if other isnt value
+    for option in @options
+      others.push option if option.value isnt value
 
     others
