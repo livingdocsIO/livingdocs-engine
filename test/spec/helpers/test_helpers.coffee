@@ -10,16 +10,7 @@ test = do ->
 
 
   getTemplate: (id) ->
-    templates = {}
-    for templ in testDesign.templates
-      templates[templ.id] = templ
-
-    template = templates[id]
-    new Template
-      id: id
-      namespace: testDesign.config.namespace
-      title: template.name
-      html: template.html
+    @getDesign().get(id)
 
 
   getSnippet: (id) ->
@@ -27,8 +18,7 @@ test = do ->
 
 
   getDesign: () ->
-    cachedDesign = new Design(testDesign) unless cachedDesign
-    cachedDesign
+    cachedDesign ||= new Design(testDesign)
 
 
   # simple helper to get the length of an object
