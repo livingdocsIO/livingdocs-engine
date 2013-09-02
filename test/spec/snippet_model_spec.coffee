@@ -87,3 +87,25 @@ describe 'Image snippet', ->
   it 'has one image', ->
     expect(@image.images.hasOwnProperty('image')).toBeTruthy()
 
+
+describe 'Hero snippet', ->
+
+  beforeEach ->
+    @hero = test.getSnippet('hero')
+
+
+  it 'sets hero style "Extra Space"', ->
+    @hero.style('Extra Space', 'extra-space')
+    expect(@hero.styles['Extra Space']).toEqual('extra-space')
+
+
+  it 'does not set style "Extra Space" with unknown class', ->
+    @hero.style('Extra Space', 'are-you-kidding-me')
+    expect(@hero.styles['Extra Space']).toBe(undefined)
+
+
+  it 'does not set unspecified style "Conundrum"', ->
+    @hero.style('Conundrum', 'wtf')
+    expect(@hero.styles['Conundrum']).toBe(undefined)
+
+

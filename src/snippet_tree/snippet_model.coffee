@@ -22,6 +22,7 @@ class SnippetModel
     @initializeContainers()
     @initializeEditables()
     @initializeImages()
+    @styles = {}
 
     @id = id || guid.next()
     @identifier = @template.identifier
@@ -116,6 +117,27 @@ class SnippetModel
       @images[name]
     else
       log.error("get error: #{ @identifier } has no name named #{ name }")
+
+
+  style: (name, value) ->
+    if arguments.length == 1
+      @styles[name]
+    else
+      @setStyle(name, value)
+
+
+  setStyle: (name, value) ->
+    style = @template.styles[name]
+    if not style
+      log.warn "Unknown style '#{ name }' in SnippetModel #{ @identifier }"
+    else if not style.validateValue(value)
+      log.warn "Invalid value '#{ value }' for style '#{ name }' in SnippetModel #{ @identifier }"
+    else
+      if @styles[name] != value
+        @styles[name] = value
+        if @snippetTree
+          @snippetTree.htmlChanging(this, 'style', { name, value})
+
 
 
   copy: ->
