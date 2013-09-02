@@ -17,10 +17,8 @@ class SnippetNodeList
 
   # @api private
   assertNodeNameNotUsed: (node) ->
-    if @all[node.name]
-      log.error(
-        """
-        #{node.type} Template parsing error: #{ docAttr[node.type] }="#{ node.name }".
-        "#{ node.name }" is a duplicate name.
-        """
-      )
+    assert not @all[node.name],
+      """
+      #{node.type} Template parsing error: #{ docAttr[node.type] }="#{ node.name }".
+      "#{ node.name }" is a duplicate name.
+      """

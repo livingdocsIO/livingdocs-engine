@@ -1,6 +1,6 @@
 # Document Focus
 # --------------
-# Manage the snippet or editable that is currently focused
+# Manage the snippet or editable that is currently focused
 class Focus
 
   constructor: ->
@@ -47,7 +47,7 @@ class Focus
 
 
   # Private
-  # -------
+  # -------
 
   # @api private
   resetEditable: ->

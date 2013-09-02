@@ -60,7 +60,7 @@ class SnippetDrag
       @$highlightedContainer = $container
       @$highlightedContainer.addClass?(docClass.containerHighlight)
 
-    # show drop target
+    # show drop target
     if target.coords
       coords = target.coords
       @$insertPreview

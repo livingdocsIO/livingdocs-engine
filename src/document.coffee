@@ -1,7 +1,7 @@
 # Document
 # --------
 # Manage the document and its dependencies.
-# Initialze everyting.
+# Initialze everyting.
 #
 # ### Design:
 # Manage available Templates
@@ -14,7 +14,7 @@
 # Initialize the SnippetTree.
 #
 # ### Page:
-# Initialize event listeners.
+# Initialize event listeners.
 # Link the SnippetTree with the DomTree.
 document = do ->
 
@@ -46,7 +46,7 @@ document = do ->
 
   # *Public API*
   init: ({ design, json, rootNode }={}) ->
-    log.error('document is already initialized') if @initialized
+    assert not @initialized, 'document is already initialized'
     @initialized = true
 
     @loadDesign(design)
@@ -103,7 +103,7 @@ document = do ->
 
 
   # find all instances of a certain Template
-  # e.g. search "bootstrap.hero" or just "hero"
+  # e.g. search "bootstrap.hero" or just "hero"
   find: (search) ->
     @snippetTree.find(search)
 
@@ -138,8 +138,7 @@ document = do ->
   getTemplate: (identifier) ->
     template = @design?.get(identifier)
 
-    if !template
-      log.error("could not find template #{ identifier }")
+    assert template, "could not find template #{ identifier }"
 
     template
 

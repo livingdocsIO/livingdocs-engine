@@ -13,14 +13,13 @@
 # (a comment or a script tag like ember does for example)
 #
 # Consider: Replace lists with inline Templates. Inline
-# Templates are repeatable and can only be used inside their
+# Templates are repeatable and can only be used inside their
 # defining snippet.
 class Template
 
 
   constructor: ({ html, @namespace, @id, identifier, title, styles, weight, version } = {}) ->
-    if not html
-      log.error('Template: param html missing')
+    assert html, 'Template: param html missing'
 
     if identifier
       { @namespace, @id } = Template.parseIdentifier(identifier)

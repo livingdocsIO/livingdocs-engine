@@ -99,13 +99,36 @@ describe 'SnippetView image', ->
     snippet.set('image', 'http://www.lolcats.com/images/1.jpg')
     @snippetView = snippet.template.createView(snippet)
     @expected =
-        """
-        <img src="http://www.lolcats.com/images/1.jpg"
-          #{ docAttr.image }="image"
-          class="#{ docClass.snippet }"
-          #{ docAttr.template }="test.image">
-        """
+      """
+      <img src="http://www.lolcats.com/images/1.jpg"
+        #{ docAttr.image }="image"
+        class="#{ docClass.snippet }"
+        #{ docAttr.template }="test.image">
+      """
+
 
   it 'renders the image src', ->
     expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
+
+
+describe 'SnippetView background image', ->
+
+  beforeEach ->
+    @coverSnippet = test.getSnippet('cover')
+
+
+  it 'renders the background image', ->
+    @coverSnippet.set('image', 'http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg')
+    snippetView = @coverSnippet.template.createView(@coverSnippet)
+    expected =
+      """
+      <div class="#{ docClass.snippet }" #{ docAttr.template }="test.cover">
+        <h4 #{ docAttr.editable }="title" class="#{ docClass.editable }">Titel</h4>
+        <div #{ docAttr.image }="image" style="background-image:url(http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg);">
+          <h3 #{ docAttr.editable }="uppertitle" class="#{ docClass.editable }">Oberzeile</h3>
+          <h2 #{ docAttr.editable }="maintitle" class="#{ docClass.editable }">Titel</h2>
+        </div>
+      </div>
+      """
+    expect( htmlCompare.compare(snippetView.$html, expected) ).toBe(true)
 

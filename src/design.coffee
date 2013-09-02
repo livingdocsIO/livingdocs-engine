@@ -117,10 +117,10 @@ class Design
   checkNamespace: (identifier, callback) ->
     { namespace, id } = Template.parseIdentifier(identifier)
 
-    if not namespace || @namespace == namespace
-      callback(id)
-    else
-      log.error("design #{ @namespace }: cannot get template with different namespace #{ namespace } ")
+    assert not namespace or @namespace is namespace,
+      "design #{ @namespace }: cannot get template with different namespace #{ namespace } "
+
+    callback(id)
 
 
   each: (callback) ->
@@ -128,7 +128,7 @@ class Design
       callback(template, index)
 
 
-  # list available Templates
+  # list available Templates
   list: ->
     templates = []
     @each (template) ->
