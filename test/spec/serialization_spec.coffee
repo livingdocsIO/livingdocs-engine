@@ -1,16 +1,35 @@
 describe 'Snippet Serialization', ->
 
-  it 'saves one empty snippet', ->
-    json = test.getSnippet('title').toJson()
-    expect(json.identifier).toEqual('test.title')
+  describe 'empty snippet', ->
+
+    it 'gets saved', ->
+      json = test.getSnippet('title').toJson()
+      expect(json.identifier).toEqual('test.title')
 
 
-  it 'saves the value of title snippet', ->
-    value = 'This is it!'
-    title = test.getSnippet('title')
-    title.set('title', value)
-    json = title.toJson()
-    expect(json.editables['title']).toEqual(value)
+  describe 'title snippet', ->
+
+    it 'saves the titles value', ->
+      expectedValue = 'This is it!'
+      title = test.getSnippet('title')
+      title.set('title', expectedValue)
+      json = title.toJson()
+      expect(json.editables['title']).toEqual(expectedValue)
+
+
+  describe 'of styles', ->
+
+    it 'saves all styles', ->
+      expectedValue =
+        'Extra Space': 'extra-space'
+        'Color': 'color--blue'
+
+      hero = test.getSnippet('hero')
+      hero.style('Extra Space', 'extra-space')
+      hero.style('Color', 'color--blue')
+      json = hero.toJson()
+      expect(json.styles).toEqual(expectedValue)
+
 
 
 describe 'SnippetTree Serialization', ->
@@ -85,6 +104,34 @@ describe 'Deserialization', ->
       snippet = SnippetModel.fromJson(@json, @design)
       expect(snippet instanceof SnippetModel).toEqual(true)
       expect(snippet.get('title')).toEqual('Baby Geniuses')
+
+
+  describe 'of a snippet with styles', ->
+
+    beforeEach ->
+      @json = test.localstore
+        identifier: 'test.hero'
+        styles:
+          'Color': 'color--blue'
+
+
+    it 'returns a snippet with its styles', ->
+      snippet = SnippetModel.fromJson(@json, @design)
+      expect(snippet.style('Color')).toEqual('color--blue')
+
+
+  describe 'of a snippet with invalid styles', ->
+
+    beforeEach ->
+      @json = test.localstore
+        identifier: 'test.hero'
+        styles:
+          'Color': 'no-color-at-all'
+
+
+    it 'returns a snippet with its styles', ->
+      snippet = SnippetModel.fromJson(@json, @design)
+      expect(snippet.style('Color')).toEqual(undefined)
 
 
   describe 'of a snippet with children', ->

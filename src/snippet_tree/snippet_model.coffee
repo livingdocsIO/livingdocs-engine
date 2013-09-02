@@ -136,7 +136,7 @@ class SnippetModel
       if @styles[name] != value
         @styles[name] = value
         if @snippetTree
-          @snippetTree.htmlChanging(this, 'style', { name, value})
+          @snippetTree.htmlChanging(this, 'style', { name, value })
 
 
 
@@ -252,21 +252,35 @@ class SnippetModel
       id: @id
       identifier: @identifier
 
-    if @hasEditables()
-      json.editables = {}
-      for name, value of @editables
-        json.editables[name] = value
+    # copy all data to json
+    for name, data of { @editables, @images, @styles }
+      unless @isEmpty(data)
+        json[name] = @flatCopy(data)
 
-    for name of @images
-      json.images ||= {}
-      for name, value of @images
-        json.images[name] = value
-
+    # create an array for every container
     for name of @containers
       json.containers ||= {}
       json.containers[name] = []
 
     json
+
+
+  isEmpty: (obj) ->
+    return true unless obj?
+    for name of obj
+      return false if obj.hasOwnProperty(name)
+
+    true
+
+
+  flatCopy: (obj) ->
+    copy = undefined
+
+    for name, value of obj
+      copy ||= {}
+      copy[name] = value
+
+    copy
 
 
 SnippetModel.fromJson = (json, design) ->
@@ -287,6 +301,9 @@ SnippetModel.fromJson = (json, design) ->
       model.images[imageName] = value
     else
       log.error("error while deserializing snippet: unknown image #{ imageName }")
+
+  for styleName, value of json.styles
+    model.style(styleName, value)
 
   for containerName, snippetArray of json.containers
     if not model.containers.hasOwnProperty(containerName)
