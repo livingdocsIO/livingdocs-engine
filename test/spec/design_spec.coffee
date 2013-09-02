@@ -1,26 +1,35 @@
 describe 'Design', ->
 
-  beforeEach ->
-    @design = new Design
-      templates: []
-      config: { namespace: 'test' }
+  describe 'with no params', ->
 
-  it 'has a namespace', ->
-    expect(@design.namespace).toEqual('test')
+    beforeEach ->
+      @design = new Design
+        templates: []
+        config: {}
 
 
-  it 'adds a default namespace', ->
-    design =
-      templates: {}
-      config: {}
-    expect( (new Design(design)).namespace ).toEqual('livingdocs-templates')
+    it 'adds a default namespace', ->
+      expect(@design.namespace).toEqual('livingdocs-templates')
+
+
+  describe 'with no templates', ->
+
+    beforeEach ->
+      @design = new Design
+        templates: []
+        config: { namespace: 'test' }
+
+
+    it 'has a namespace', ->
+      expect(@design.namespace).toEqual('test')
 
 
   describe 'with a template', ->
 
     beforeEach ->
-      for i, template of testDesign.templates
-        @design.add(template)
+      @design = new Design
+        templates: testDesign.templates
+        config: { namespace: 'test' }
 
 
     it 'stores the template as Template', ->
@@ -52,19 +61,47 @@ describe 'Design', ->
         expect( @design.get('title') ).not.toBeDefined()
 
 
-    describe 'group configuration', ->
+  describe 'group configuration', ->
 
-      beforeEach ->
-        @design = new Design(testDesign)
-
-
-      it 'is available in design', ->
-        groups = Object.keys @design.groups
-        expect(groups).toContain('layout')
-        expect(groups).toContain('header')
-        expect(groups).toContain('other')
+    beforeEach ->
+      @design = new Design(testDesign)
 
 
-      it 'design contains templates', ->
-        container = @design.get('container')
-        expect(@design.groups['layout'].templates['container']).toBe(container)
+    it 'is available in design', ->
+      groups = Object.keys @design.groups
+      expect(groups).toContain('layout')
+      expect(groups).toContain('header')
+      expect(groups).toContain('other')
+
+
+    it 'design contains templates', ->
+      container = @design.get('container')
+      expect(@design.groups['layout'].templates['container']).toBe(container)
+
+
+  describe 'styles configuration', ->
+
+    beforeEach ->
+      @design = new Design(testDesign)
+
+
+    it 'has global style Color', ->
+      expect(@design.globalStyles['Color'] instanceof DesignStyle).toBe(true)
+
+
+    it 'hero contains all styles', ->
+      template = @design.get('hero')
+      templateStyles = Object.keys template.styles
+      expect(templateStyles).toContain('Color') # global style
+      expect(templateStyles).toContain('Capitalized') # group style
+      expect(templateStyles).toContain('Extra Space') # template style
+
+
+    it 'container contains only global styles', ->
+      template = @design.get('container')
+      templateStyles = Object.keys template.styles
+      expect(templateStyles).toContain('Color') # global style
+      expect(templateStyles).not.toContain('Capitalized') # group style
+      expect(templateStyles).not.toContain('Extra Space') # template style
+
+

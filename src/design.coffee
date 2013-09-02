@@ -7,43 +7,86 @@ class Design
 
     @namespace = config?.namespace || 'livingdocs-templates'
     @css = config.css
-    @js = config.js #todo
-    @fonts = config.fonts #todo
+    @js = config.js
+    @fonts = config.fonts
     @templates = []
     @groups = {}
+    @styles = {}
 
-    @addTemplates(templates)
+    @storeTemplateDefinitions(templates)
+    @globalStyles = @createDesignStyles(design.config.styles)
     @addGroups(groups)
+    @addTemplatesNotInGroups()
+
+
+  storeTemplateDefinitions: (templates) ->
+    @templateDefinitions = {}
+    for template in templates
+      @templateDefinitions[template.id] = template
 
 
   # pass the template as object
   # e.g add({id: "title", name:"Title", html: "<h1 doc-editable>Title</h1>"})
-  add: (template) ->
-    object = new Template
-        namespace: @namespace
-        id: template.id
-        title: template.title
-        styles: template.styles
-        html: template.html
-        weight: @templates.length + 1
+  add: (templateDefinition, styles) ->
+    @templateDefinitions[templateDefinition.id] = undefined
+    templateOnlyStyles = @createDesignStyles(templateDefinition.styles)
+    templateStyles = $.extend(templateOnlyStyles, styles)
 
-    @templates.push(object)
+    template = new Template
+      namespace: @namespace
+      id: templateDefinition.id
+      title: templateDefinition.title
+      styles: templateStyles
+      html: templateDefinition.html
+      weight: templateDefinition.sortOrder || 0
 
-
-  addTemplates: (templates) ->
-    for template in templates
-      @add(template)
+    @templates.push(template)
+    template
 
 
   addGroups: (collection) ->
-    for key, group of collection
-      templates = {}
-      for template in group.templates
-        templates[template] = @get(template)
+    for groupName, group of collection
+      groupOnlyStyles = @createDesignStyles(group.styles)
+      groupStyles = $.extend({}, @globalStyles, groupOnlyStyles)
 
-      @groups[key] = new Object
-        title: group.title
-        templates: templates
+      templates = {}
+      for templateId in group.templates
+        templateDefinition = @templateDefinitions[templateId]
+        template = @add(templateDefinition, groupStyles)
+        templates[template.id] = template
+
+      @addGroup(groupName, group, templates)
+
+
+  addTemplatesNotInGroups: (globalStyles) ->
+    for templateId, templateDefinition of @templateDefinitions
+      if templateDefinition
+        @add(templateDefinition, @globalStyles)
+
+
+  addGroup: (name, group, templates) ->
+    @groups[name] =
+      title: group.title
+      templates: templates
+
+
+  createDesignStyles: (styles) ->
+    designStyles = {}
+    if styles
+      for styleDefinition in styles
+        designStyle = @createDesignStyle(styleDefinition)
+        designStyles[designStyle.name] = designStyle if designStyle
+
+    designStyles
+
+
+  createDesignStyle: (styleDefinition) ->
+    if styleDefinition && styleDefinition.name
+      new DesignStyle
+        name: styleDefinition.name
+        type: styleDefinition.type
+        options: styleDefinition.options
+        value: styleDefinition.value
 
 
   remove: (identifier) ->
