@@ -17,20 +17,20 @@ class DesignStyle
   # since the UI or other scripts can mess with it any time. So the
   # instructions are designed not to interfere with other css classes
   # present in an elements class attribute.
-  cssClassChanges: (name, value) ->
+  cssClassChanges: (value) ->
     if @validateValue(value)
       if @type is 'option'
-        remove: if value is undefined then @value else undefined
+        remove: if value is undefined then [@value] else undefined
         add: value
       else if @type is 'select'
-        remove: @otherOptions(value)
+        remove: @otherClasses(value)
         add: value
     else
       if @type is 'option'
         remove: currentValue
         add: undefined
       else if @type is 'select'
-        remove: @otherOptions(undefined)
+        remove: @otherClasses(undefined)
         add: undefined
 
 
@@ -42,7 +42,7 @@ class DesignStyle
     else if @type is 'select'
       @containsOption(value)
     else
-      log.warn ""
+      log.warn "Not implemented: DesignStyle#validateValue() for type #{ @type }"
 
 
   containsOption: (value) ->
@@ -56,5 +56,13 @@ class DesignStyle
     others = []
     for option in @options
       others.push option if option.value isnt value
+
+    others
+
+
+  otherClasses: (value) ->
+    others = []
+    for option in @options
+      others.push option.value if option.value isnt value
 
     others

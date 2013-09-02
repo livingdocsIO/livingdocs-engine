@@ -25,6 +25,7 @@ class Renderer
     @snippetTree.snippetRemoved.add( $.proxy(this, 'snippetRemoved') )
     @snippetTree.snippetMoved.add( $.proxy(this, 'snippetMoved') )
     @snippetTree.snippetContentChanged.add( $.proxy(this, 'snippetContentChanged') )
+    @snippetTree.snippetHtmlChanged.add( $.proxy(this, 'snippetHtmlChanged') )
 
 
   snippetAdded: (model) ->
@@ -48,6 +49,12 @@ class Renderer
     view = @ensureSnippetView(model)
     @insertIntoDom(view) if not view.attachedToDom
     view.updateContent()
+
+
+  snippetHtmlChanged: (model) ->
+    view = @ensureSnippetView(model)
+    @insertIntoDom(view) if not view.attachedToDom
+    view.updateHtml()
 
 
   # Rendering
