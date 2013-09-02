@@ -102,8 +102,10 @@ describe 'SnippetTree (Content Events)', ->
 
     @snippetA = test.getSnippet('title')
     @imageSnippet = test.getSnippet('image')
+    @coverSnippet = test.getSnippet('cover')
     @tree.append(@snippetA)
     @tree.append(@imageSnippet)
+    @tree.append(@coverSnippet)
 
 
   describe 'changing the title content', ->
@@ -131,4 +133,14 @@ describe 'SnippetTree (Content Events)', ->
     it 'fires snippetContentChanged event', ->
       @expectContentChanged 1, => @changeSnippetContent()
 
+
+  describe 'changing the background image', ->
+
+    beforeEach ->
+      @changeSnippetContent = =>
+        @coverSnippet.set('image', 'http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg')
+
+
+    it 'fires snippetContentChanged event', ->
+      @expectContentChanged 1, => @changeSnippetContent()
 

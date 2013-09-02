@@ -1,5 +1,5 @@
 testTemplates =
-  
+
   config:
     namespace: 'test'
 
@@ -29,6 +29,19 @@ testTemplates =
       id: 'image'
       title: 'Image'
       html: """<img #{ docAttr.image }="image" src=""/>"""
+    ,
+      id: 'cover'
+      title: 'Cover'
+      html:
+        """
+        <div>
+          <h4 doc-editable="title">Titel</h4>
+          <div #{ docAttr.image }="image" style="background-image:url();">
+            <h3 doc-editable="uppertitle">Oberzeile</h3>
+            <h2 doc-editable="maintitle">Titel</h2>
+          </div>
+        </div>
+        """
     ,
       id: 'row'
       title: 'Row with two columns'

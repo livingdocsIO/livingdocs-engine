@@ -3,6 +3,7 @@ class SnippetView
   constructor: ({ @model, @$html, @editables, @containers, @images }) ->
     @template = @model.template
     @attachedToDom = false
+    @wasAttachedToDom = $.Callbacks();
 
     # add attributes and references to the html
     @$html
@@ -56,9 +57,33 @@ class SnippetView
         return @editables[name]
 
 
+  setPlaceholderImage: ($elem) ->
+    if $elem.context.tagName == 'IMG'
+      width = $elem.width()
+      height = $elem.height()
+    else
+      width = $elem.outerWidth()
+      height = $elem.outerHeight()
+    value = "http://placehold.it/#{width}x#{height}/BEF56F/B2E668"
+    @setImageAttribute($elem, value)
+
+
+  setImageAttribute: ($elem, value) ->
+    if $elem.context.tagName == 'IMG'
+      $elem.attr('src', value)
+    else
+      $elem.attr('style', "background-image:url(#{value})")
+
+
   setImage: (name, value) ->
-    elem = @images[name]
-    $(elem).attr('src', value)
+    $elem = $(@images[name])
+    unless value
+      if @attachedToDom
+        @setPlaceholderImage($elem)
+      else
+        @wasAttachedToDom.add($.proxy(@setPlaceholderImage, @, $elem))
+    else
+      @setImageAttribute($elem, value)
 
 
   set: (editable, value) ->
@@ -101,6 +126,8 @@ class SnippetView
     else if parentContainer
       @appendToContainer(parentContainer, renderer)
       @attachedToDom = true
+
+    @wasAttachedToDom.fire()
 
     this
 
