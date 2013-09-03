@@ -35,7 +35,7 @@ class DesignStyle
 
 
   validateValue: (value) ->
-    if value is undefined
+    if !value
       true
     else if @type is 'option'
       value == @value
