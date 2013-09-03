@@ -14,7 +14,7 @@ class SnippetView
 
 
   updateContent: ->
-    @content(@model.editables, @model.images)
+    @content(@model.content)
 
 
   next: ->
@@ -39,12 +39,13 @@ class SnippetView
     dom.getBoundingClientRect(@$html[0])
 
 
-  content: (editables, images) ->
-    for field, value of editables
-      @set(field, value)
-
-    for field, value of images
-      @setImage(field, value)
+  content: (content) ->
+    for field, value of content
+      directive = @template.directives.get(field)
+      if directive.type == 'editable'
+        @set(field, value)
+      else if directive.type == 'image'
+        @setImage(field, value)
 
 
   getEditable: (name) ->

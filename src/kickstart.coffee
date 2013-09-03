@@ -1,4 +1,5 @@
 kickstart = do ->
+
   init: (destination, design) ->
     domElements = $(destination).children().not('script')
     $(destination).html('<div class="doc-section"></div>')
@@ -36,13 +37,15 @@ kickstart = do ->
 
       setEditables = (snippet, data) =>
         if snippet.hasEditables()
-          for key of snippet.editables
-            snippet.set(key, null)
-            child = $(key + ':first', data).get()[0]
-            if !child
-              snippet.set(key, data.innerHTML)
-            else
-              snippet.set(key, child.innerHTML)
+          for key of snippet.content
+            directive = snippet.template.directives.get(key)
+            if directive.type == 'editable'
+              snippet.set(key, null)
+              child = $(key + ':first', data).get()[0]
+              if !child
+                snippet.set(key, data.innerHTML)
+              else
+                snippet.set(key, child.innerHTML)
 
 
       #add all rootSnippets, process their containers and set values
