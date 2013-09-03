@@ -11,7 +11,7 @@ class SnippetNode
       attributeName = attr.name
       normalizedName = attributeName.replace(attributePrefix, '')
       if type = templateAttrLookup[normalizedName]
-        @isDataNode = true
+        @isDirective = true
         @type = type
         @name = attr.value || templateAttr.defaultValues[@type]
 

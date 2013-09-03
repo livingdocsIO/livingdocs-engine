@@ -8,7 +8,7 @@ describe 'SnippetNode', ->
 
     it 'is not a data node', ->
       node = new SnippetNode(@elem)
-      expect(node.isDataNode).toBeFalsy()
+      expect(node.isDirective).toBeFalsy()
 
 
   describe 'container node', ->
@@ -19,7 +19,7 @@ describe 'SnippetNode', ->
 
     it 'is dataNode', ->
       node = new SnippetNode(@elem)
-      expect(node.isDataNode).toBeTruthy()
+      expect(node.isDirective).toBeTruthy()
 
 
     it 'is of type container', ->

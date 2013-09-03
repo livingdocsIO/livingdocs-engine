@@ -86,7 +86,7 @@ class Template
 
     while element = iterator.nextElement()
       node = new SnippetNode(element)
-      directives.add(node) if node.isDataNode
+      directives.add(node) if node.isDirective
 
     directives
 
