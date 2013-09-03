@@ -71,8 +71,32 @@ class EditableController
 
 
   split: (element, before, after, cursor) ->
-    snippetView = dom.findSnippetView(element)
     log('engine: split')
+    view = dom.findSnippetView(element)
+    if view.model.editableCount == 1
+      # create copy of current snippet to populate with splitted content
+      template = document.design.get(view.template.identifier)
+      copy = template.createModel()
+
+      # convert DocumentFragment of "before" to dom element, get innerHTML
+      firstFragment = window.document.createElement('div')
+      firstFragment.appendChild(before)
+      firstFragment = firstFragment.firstChild.innerHTML
+
+      # convert DocumentFragment of "after" to dom element, get innerHTML
+      secondFragment = window.document.createElement('div')
+      secondFragment.appendChild(after)
+      secondFragment = secondFragment.firstChild.innerHTML
+
+      # set editable of snippets to innerHTML of fragments
+      editable = Object.keys(template.editables)[0]
+      view.set(editable, firstFragment)
+      copy.set(editable, secondFragment)
+
+      # append and focus copy of snippet
+      view.model.after(copy)
+      view.next().focus()
+
     false # disable editableJS default behaviour
 
 
