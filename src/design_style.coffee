@@ -20,7 +20,7 @@ class DesignStyle
   cssClassChanges: (value) ->
     if @validateValue(value)
       if @type is 'option'
-        remove: if value is '' or null then [@value] else undefined
+        remove: if not value then [@value] else undefined
         add: value
       else if @type is 'select'
         remove: @otherClasses(value)
@@ -35,7 +35,7 @@ class DesignStyle
 
 
   validateValue: (value) ->
-    if !value
+    if not value
       true
     else if @type is 'option'
       value == @value
