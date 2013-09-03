@@ -1,15 +1,15 @@
 class DesignStyle
 
   constructor: ({ @name, @type, value, options }) ->
-    if @type isnt 'option' && @type isnt 'select'
-      log.error "TemplateStyle error: unknown type '#{ @type }'"
-
-    if @type is 'option'
-      @value = value
-    else if @type is 'select'
-      @options = options
-    else
-      log.error 'TemplateStyle error: no value or options provided'
+    switch @type
+      when 'option'
+        assert value, "TemplateStyle error: no 'value' provided"
+        @value = value
+      when 'select'
+        assert options, "TemplateStyle error: no 'options' provided"
+        @options = options
+      else
+        log.error "TemplateStyle error: unknown type '#{ @type }'"
 
 
   # Get instructions which css classes to add and remove.
