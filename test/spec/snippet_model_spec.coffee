@@ -103,6 +103,17 @@ describe 'Hero SnippetModel#style', ->
     expect(@hero.styles['Extra Space']).toEqual('extra-space')
 
 
+  it 'resets style "Extra Space" with "" (empty string)', ->
+    @hero.style('Extra Space', 'extra-space')
+    @hero.style('Extra Space', '')
+    expect(@hero.styles['Extra Space']).toBe('')
+
+
+  it 'resets style "Extra Space" with null', ->
+    @hero.style('Extra Space', 'extra-space')
+    @hero.style('Extra Space', null)
+    expect(@hero.styles['Extra Space']).toBe(null)
+
   it 'sets style "Color"', ->
     @hero.style('Color', 'color--blue')
     expect(@hero.styles['Color']).toEqual('color--blue')

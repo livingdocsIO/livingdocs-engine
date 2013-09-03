@@ -92,6 +92,12 @@ describe 'SnippetView hero', ->
     expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
 
 
+  it 'resets "Extra Space"', ->
+    @snippetView.style('Extra Space', 'extra-space')
+    @snippetView.style('Extra Space', '')
+    expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
+
+
 describe 'SnippetView image', ->
 
   beforeEach ->
