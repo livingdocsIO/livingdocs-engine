@@ -2,40 +2,35 @@
 # Every node with an doc- attribute will be stored by its type
 class SnippetNodeList
 
-
   constructor: (@all={}) ->
+    @length = 0
 
 
   add: (node) ->
     @assertNodeNameNotUsed(node)
 
+    # create pseudo array
+    this[@length] = node
+    @length += 1
+
+    # index by name
     @all[node.name] = node
+
+    # index by type
+    # node.type is one of those 'container', 'editable', 'image'
     this[node.type] ||= []
     this[node.type].push(node)
-
-    # node.type
-    # 'container', 'editable', 'image'
-
-    # if node.type == 'container'
-    #   log node.name
-    #   @containers ||= {}
-    #   @containers[node.name] = node
-
-    # this[node.type] ||= {}
-    # this[node.type][node.name] = node.elem
-    # @count[node.type] = if @count[node.type] then @count[node.type] + 1 else 1
 
 
   get: (name) ->
     @all[name]
 
-  # deprecated
+
   count: (type) ->
-    this[type]?.length
-
-
-  length: (type) ->
-    this[type]?.length
+    if type
+      this[type]?.length
+    else
+      @length
 
 
   # @api private

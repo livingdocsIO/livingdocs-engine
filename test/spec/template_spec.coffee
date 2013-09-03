@@ -15,6 +15,10 @@ describe 'Title Template', ->
     expect(template.name).toEqual('h1')
 
 
+  it 'has one directive', ->
+    expect(template.directives.length).toEqual(1)
+
+
   it 'has stored the html', ->
     expected =
       "<h1 #{ docAttr.editable }='title' class='#{ docClass.editable }'></h1>"
