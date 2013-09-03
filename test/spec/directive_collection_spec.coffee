@@ -1,9 +1,9 @@
-describe 'SnippetNodeList', ->
+describe 'DirectiveCollection', ->
 
   describe 'add', ->
 
     beforeEach ->
-      @list = new SnippetNodeList()
+      @list = new DirectiveCollection()
       @node = name: 'foo', type: 'editable'
       @list.add(@node)
 

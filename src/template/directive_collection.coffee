@@ -1,6 +1,6 @@
 # A list of all directives of a template
 # Every node with an doc- attribute will be stored by its type
-class SnippetNodeList
+class DirectiveCollection
 
   constructor: (@all={}) ->
     @length = 0

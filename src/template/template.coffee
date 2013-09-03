@@ -81,7 +81,7 @@ class Template
   # in the html of a snippet or the html of a template.
   getDirectives: (elem) ->
     iterator = new SnippetNodeIterator(elem)
-    directives = new SnippetNodeList()
+    directives = new DirectiveCollection()
 
     while elem = iterator.nextElement()
       directive = directiveParser.parse(elem)
