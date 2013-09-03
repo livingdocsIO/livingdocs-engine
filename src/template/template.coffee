@@ -64,10 +64,9 @@ class Template
     html
 
 
-  # @param snippetNode: root DOM node of the snippet
   parseTemplate: () ->
-    snippetNode = @$template[0]
-    @directives = @getDirectives(snippetNode)
+    elem = @$template[0]
+    @directives = @getDirectives(elem)
 
     if editables = @directives.editable
       for directive in editables
@@ -80,13 +79,13 @@ class Template
 
   # Find and store all DOM nodes which are editables or containers
   # in the html of a snippet or the html of a template.
-  getDirectives: (snippetNode) ->
-    iterator = new SnippetNodeIterator(snippetNode)
+  getDirectives: (elem) ->
+    iterator = new SnippetNodeIterator(elem)
     directives = new SnippetNodeList()
 
-    while element = iterator.nextElement()
-      node = new SnippetNode(element)
-      directives.add(node) if node.isDirective
+    while elem = iterator.nextElement()
+      directive = directiveParser.parse(elem)
+      directives.add(directive) if directive
 
     directives
 
