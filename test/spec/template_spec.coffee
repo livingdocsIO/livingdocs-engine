@@ -144,7 +144,7 @@ describe 'Container', ->
 
  it 'creates a default container', ->
     container = test.getTemplate('container')
-    expect(container.containers.hasOwnProperty('default'))
+    expect(container.directives.all.hasOwnProperty('default')).toBe(true)
 
 
 describe 'Stuffed Container', ->

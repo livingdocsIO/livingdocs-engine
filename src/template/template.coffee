@@ -33,11 +33,6 @@ class Template
     @$template = $( @pruneHtml(html) ).wrap('<div>')
     @$wrap = @$template.parent()
     @title = title || words.humanize( @name )
-
-    @editables = undefined
-    @editableCount = 0
-    @containers = undefined
-    @containerCount = 0
     @defaults = {}
 
     @parseTemplate()
@@ -73,17 +68,13 @@ class Template
   parseTemplate: () ->
     snippetNode = @$template[0]
     @directives = @getDirectives(snippetNode)
-    @editables = @directives.editable
-    @containers = @directives.container
-    @editableCount = @directives.count('editable')
-    @containerCount = @directives.count('container')
 
-    if @editables
-      for directive in @editables
+    if editables = @directives.editable
+      for directive in editables
         @formatEditable(directive.name, directive.elem)
 
-    if @containers
-      for directive in @containers
+    if containers = @directives.container
+      for directive in containers
         @formatContainer(directive.name, directive.elem)
 
 
@@ -138,8 +129,8 @@ class Template
   printDoc: () ->
     doc =
       identifier: @identifier
-      editables: Object.keys @editables if @editables
-      containers: Object.keys @containers if @containers
+      # editables: Object.keys @editables if @editables
+      # containers: Object.keys @containers if @containers
 
     words.readableJson(doc)
 
