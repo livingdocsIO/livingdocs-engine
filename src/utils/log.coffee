@@ -34,11 +34,11 @@ do ->
 
 
   log.debug = (message) ->
-    notify(message, 'debug')
+    notify(message, 'debug') unless log.debugDisabled
 
 
   log.warn = (message) ->
-    notify(message, 'warning')
+    notify(message, 'warning') unless log.warningsDisabled
 
 
   # Log error and throw exception

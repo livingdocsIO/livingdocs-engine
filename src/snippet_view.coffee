@@ -12,10 +12,16 @@ class SnippetView
       .attr(docAttr.template, @template.identifier)
 
     @updateContent()
+    @updateHtml()
 
 
   updateContent: ->
     @content(@model.editables, @model.images)
+
+
+  updateHtml: ->
+    for name, value of @model.styles
+      @style(name, value)
 
 
   next: ->
@@ -84,6 +90,15 @@ class SnippetView
         @wasAttachedToDom.add($.proxy(@setPlaceholderImage, @, $elem))
     else
       @setImageAttribute($elem, value)
+
+
+  style: (name, className) ->
+    changes = @template.styles[name].cssClassChanges(className)
+    if changes.remove
+      for removeClass in changes.remove
+        @$html.removeClass(removeClass)
+
+    @$html.addClass(changes.add)
 
 
   set: (editable, value) ->

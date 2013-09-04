@@ -185,6 +185,10 @@ class SnippetTree
     @fireEvent('snippetContentChanged', snippet)
 
 
+  htmlChanging: (snippet) ->
+    @fireEvent('snippetHtmlChanged', snippet)
+
+
   # Serialization
   # -------------
 

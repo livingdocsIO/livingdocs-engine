@@ -18,7 +18,7 @@ describe 'Public API', ->
     # so this is not really unit testable
     it 'loads an empty document', ->
       node = $('<div>')[0]
-      doc.init(design: testTemplates, json: undefined, rootNode: node)
+      doc.init(design: testDesign, json: undefined, rootNode: node)
       expect( doc.toJson().content ).toEqual([])
 
 

@@ -21,6 +21,7 @@ class SnippetModel
     @initializeContainers()
     @initializeEditables()
     @initializeImages()
+    @styles = {}
 
     @id = id || guid.next()
     @identifier = @template.identifier
@@ -115,6 +116,27 @@ class SnippetModel
       @images[name]
     else
       log.error("get error: #{ @identifier } has no name named #{ name }")
+
+
+  style: (name, value) ->
+    if arguments.length == 1
+      @styles[name]
+    else
+      @setStyle(name, value)
+
+
+  setStyle: (name, value) ->
+    style = @template.styles[name]
+    if not style
+      log.warn "Unknown style '#{ name }' in SnippetModel #{ @identifier }"
+    else if not style.validateValue(value)
+      log.warn "Invalid value '#{ value }' for style '#{ name }' in SnippetModel #{ @identifier }"
+    else
+      if @styles[name] != value
+        @styles[name] = value
+        if @snippetTree
+          @snippetTree.htmlChanging(this, 'style', { name, value })
+
 
 
   copy: ->
@@ -229,21 +251,35 @@ class SnippetModel
       id: @id
       identifier: @identifier
 
-    if @hasEditables()
-      json.editables = {}
-      for name, value of @editables
-        json.editables[name] = value
+    # copy all data to json
+    for name, data of { @editables, @images, @styles }
+      unless @isEmpty(data)
+        json[name] = @flatCopy(data)
 
-    for name of @images
-      json.images ||= {}
-      for name, value of @images
-        json.images[name] = value
-
+    # create an array for every container
     for name of @containers
       json.containers ||= {}
       json.containers[name] = []
 
     json
+
+
+  isEmpty: (obj) ->
+    return true unless obj?
+    for name of obj
+      return false if obj.hasOwnProperty(name)
+
+    true
+
+
+  flatCopy: (obj) ->
+    copy = undefined
+
+    for name, value of obj
+      copy ||= {}
+      copy[name] = value
+
+    copy
 
 
 SnippetModel.fromJson = (json, design) ->
@@ -262,6 +298,9 @@ SnippetModel.fromJson = (json, design) ->
     assert model.images.hasOwnProperty(imageName),
       "error while deserializing snippet: unknown image #{ imageName }"
     model.images[imageName] = value
+
+  for styleName, value of json.styles
+    model.style(styleName, value)
 
   for containerName, snippetArray of json.containers
     assert model.containers.hasOwnProperty(containerName),
