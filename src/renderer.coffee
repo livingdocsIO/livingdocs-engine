@@ -10,7 +10,6 @@ class Renderer
     @setupSnippetTreeListeners()
     @snippets = {}
 
-    # focus
 
   # Snippet Tree Event Handling
   # ---------------------------
@@ -106,9 +105,12 @@ class Renderer
 
 
   afterDomInsert: (snippetView) ->
-    # initialize editables
-    if snippetView.editables
-      editableNodes = for directive in snippetView.editables
+    @initializeEditables(snippetView)
+
+
+  initializeEditables: (snippetView) ->
+    if snippetView.directives.editable
+      editableNodes = for directive in snippetView.directives.editable
         directive.elem
 
     @page.editableController.add(editableNodes)
