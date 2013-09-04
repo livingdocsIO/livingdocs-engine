@@ -73,16 +73,14 @@ class EditableController
   split: (element, before, after, cursor) ->
     view = dom.findSnippetView(element)
     if view.model.editableCount == 1
-      # create copy of current snippet to populate with splitted content
-      template = document.design.get(view.template.identifier)
-      copy = template.createModel()
+      copy = view.template.createModel()
 
       # get content out of 'before' and 'after'
       beforeContent = before.querySelector('*').innerHTML
       afterContent = after.querySelector('*').innerHTML
 
       # set editable of snippets to innerHTML of fragments
-      editableName = Object.keys(template.editables)[0]
+      editableName = Object.keys(view.template.editables)[0]
       view.model.set(editableName, beforeContent)
       copy.set(editableName, afterContent)
 
