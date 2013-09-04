@@ -1,11 +1,59 @@
-testTemplates =
+testDesign =
 
   config:
     namespace: 'test'
 
+    groups:
+      layout:
+        title: 'Layout'
+        templates: [
+          'row'
+          'container'
+          'stuffedContainer'
+        ]
+      header:
+        title: 'Header'
+        styles: [
+          name: 'Capitalized'
+          type: 'option'
+          value: 'capitalized'
+        ]
+        templates: [
+          'cover'
+          'hero'
+          'title'
+        ]
+      other:
+        title: 'Other'
+        templates: [
+          'subtitle'
+          'text'
+          'image'
+        ]
+
+    styles: [
+      name: 'Color'
+      type: 'select'
+      options: [
+        caption: 'Red'
+        value: 'color--red'
+      ,
+        caption: 'Blue'
+        value: 'color--blue'
+      ,
+        caption: 'Green'
+        value: 'color--green'
+      ]
+    ]
+
   templates: [
       id:   'hero'
       title: 'Hero'
+      styles: [
+        name: 'Extra Space'
+        type: 'option'
+        value: 'extra-space'
+      ]
       html:
         """
           <div>

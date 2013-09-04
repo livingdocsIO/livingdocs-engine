@@ -144,3 +144,40 @@ describe 'SnippetTree (Content Events)', ->
     it 'fires snippetContentChanged event', ->
       @expectContentChanged 1, => @changeSnippetContent()
 
+
+describe 'SnippetTree (Html Events)', ->
+
+  beforeEach ->
+    @tree = new SnippetTree()
+    monitor = test.createCallbackMonitor
+    @expectHtlmChanged = monitor(@tree.snippetHtmlChanged)
+    @expectChanged = monitor(@tree.changed)
+
+    @hero = test.getSnippet('hero')
+    @tree.append(@hero)
+
+
+  describe 'adding a style', ->
+
+    beforeEach ->
+      @changeStyle = => @hero.style('Extra Space', 'extra-space')
+
+    it 'fires htmlChanged event', ->
+      @expectHtlmChanged 1, => @changeStyle()
+
+
+    it 'fires changed event', ->
+      @expectChanged 1, => @changeStyle()
+
+
+    it '...twice fires htmlChanged event only once', ->
+      @expectHtlmChanged 1, =>
+        @changeStyle()
+        @changeStyle()
+
+
+  describe 'adding an invalid style', ->
+
+    it 'does not fire the htmlChanged event', ->
+      @expectHtlmChanged 0, =>
+        @hero.style('Extra Space', 'gazillion-pixel-whitespace')

@@ -87,3 +87,50 @@ describe 'Image snippet', ->
   it 'has one image', ->
     expect(@image.images.hasOwnProperty('image')).toBeTruthy()
 
+
+describe 'Hero SnippetModel#style', ->
+
+  beforeEach ->
+    @hero = test.getSnippet('hero')
+
+
+  it 'gets style "Extra Space', ->
+    expect(@hero.style('Extra Space')).toBe(undefined)
+
+
+  it 'sets style "Extra Space"', ->
+    @hero.style('Extra Space', 'extra-space')
+    expect(@hero.styles['Extra Space']).toEqual('extra-space')
+
+
+  it 'resets style "Extra Space" with "" (empty string)', ->
+    @hero.style('Extra Space', 'extra-space')
+    @hero.style('Extra Space', '')
+    expect(@hero.styles['Extra Space']).toBe('')
+
+
+  it 'resets style "Extra Space" with null', ->
+    @hero.style('Extra Space', 'extra-space')
+    @hero.style('Extra Space', null)
+    expect(@hero.styles['Extra Space']).toBe(null)
+
+  it 'sets style "Color"', ->
+    @hero.style('Color', 'color--blue')
+    expect(@hero.styles['Color']).toEqual('color--blue')
+
+
+  it 'gets previously set style "Extra Space', ->
+    @hero.style('Extra Space', 'extra-space')
+    expect(@hero.style('Extra Space')).toEqual('extra-space')
+
+
+  it 'does not set style "Extra Space" with unknown class', ->
+    @hero.style('Extra Space', 'are-you-kidding-me')
+    expect(@hero.styles['Extra Space']).toBe(undefined)
+
+
+  it 'does not set unspecified style "Conundrum"', ->
+    @hero.style('Conundrum', 'wtf')
+    expect(@hero.styles['Conundrum']).toBe(undefined)
+
+

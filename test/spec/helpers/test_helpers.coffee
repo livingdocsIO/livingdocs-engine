@@ -1,5 +1,7 @@
 test = do ->
 
+  log.debugDisabled = true
+  log.warningsDisabled = true
   cachedDesign = undefined
 
   # wrapper for `'prop' in object`
@@ -10,16 +12,7 @@ test = do ->
 
 
   getTemplate: (id) ->
-    templates = {}
-    for templ in testTemplates.templates
-      templates[templ.id] = templ
-    
-    template = templates[id]
-    new Template
-      id: id
-      namespace: testTemplates.config.namespace
-      title: template.name
-      html: template.html
+    @getDesign().get(id)
 
 
   getSnippet: (id) ->
@@ -27,8 +20,7 @@ test = do ->
 
 
   getDesign: () ->
-    cachedDesign = new Design(testTemplates) unless cachedDesign
-    cachedDesign
+    cachedDesign ||= new Design(testDesign)
 
 
   # simple helper to get the length of an object
