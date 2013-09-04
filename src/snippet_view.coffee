@@ -1,6 +1,6 @@
 class SnippetView
 
-  constructor: ({ @model, @$html, @directives, @editables, @containers, @images }) ->
+  constructor: ({ @model, @$html, @directives }) ->
     @template = @model.template
     @attachedToDom = false
 
@@ -26,13 +26,8 @@ class SnippetView
 
 
   focus: ->
-    first = @firstEditableElem()
+    first = @directives.editable?[0].elem
     $(first).focus()
-
-
-  firstEditableElem: ->
-    for directive in @editables
-      return directive.elem
 
 
   getBoundingClientRect: ->
@@ -40,19 +35,27 @@ class SnippetView
 
 
   content: (content) ->
-    for field, value of content
-      directive = @template.directives.get(field)
-      if directive.type == 'editable'
-        @set(field, value)
-      else if directive.type == 'image'
-        @setImage(field, value)
+    for name, value of content
+      @set(name, value)
 
 
-  getEditable: (name) ->
-    if name?
-      return @directives.get(name).elem
-    else if @editables.length
-      return @editables[0].elem
+  set: (name, value) ->
+    directive = @directives.get(name)
+    switch directive.type
+      when 'editable' then @setEditable(name, value)
+      when 'image' then @setImage(name, value)
+
+
+  get: (name) ->
+    directive = @directives.get(name)
+    switch directive.type
+      when 'editable' then @getEditable(name, value)
+      when 'image' then @getImage(name, value)
+
+
+  getImage: (name) ->
+    elem = @directives.get(name).elem
+    $(elem).attr('src')
 
 
   setImage: (name, value) ->
@@ -60,22 +63,14 @@ class SnippetView
     $(elem).attr('src', value)
 
 
-  set: (editable, value) ->
-    if arguments.length == 1
-      value = editable
-      editable = undefined
-
-    if elem = @getEditable(editable)
-      $(elem).html(value)
-    else
-      log.error 'cannot set value without editable name'
+  getEditable: (name) ->
+    elem = @directives.get(name).elem
+    $(elem).html()
 
 
-  get: (editable) ->
-    if elem = @getEditable(editable)
-      $(elem).html()
-    else
-      log.error 'cannot get value without editable name'
+  setEditable: (name, value) ->
+    elem = @directives.get(name).elem
+    $(elem).html(value)
 
 
   append: (containerName, $elem) ->

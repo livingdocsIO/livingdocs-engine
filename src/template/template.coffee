@@ -53,9 +53,6 @@ class Template
       model: snippetModel
       $html: $elem
       directives: directives
-      editables: directives.editable
-      containers: directives.container
-      images: directives.image
 
 
   # todo
