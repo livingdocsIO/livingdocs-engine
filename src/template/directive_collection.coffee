@@ -6,20 +6,20 @@ class DirectiveCollection
     @length = 0
 
 
-  add: (node) ->
-    @assertNodeNameNotUsed(node)
+  add: (directive) ->
+    @assertNameNotUsed(directive)
 
     # create pseudo array
-    this[@length] = node
+    this[@length] = directive
     @length += 1
 
     # index by name
-    @all[node.name] = node
+    @all[directive.name] = directive
 
     # index by type
-    # node.type is one of those 'container', 'editable', 'image'
-    this[node.type] ||= []
-    this[node.type].push(node)
+    # directive.type is one of those 'container', 'editable', 'image'
+    this[directive.type] ||= []
+    this[directive.type].push(directive)
 
 
   get: (name) ->
@@ -34,7 +34,7 @@ class DirectiveCollection
 
 
   # @api private
-  assertNodeNameNotUsed: (node) ->
+  assertNameNotUsed: (node) ->
     if @all[node.name]
       log.error(
         """
