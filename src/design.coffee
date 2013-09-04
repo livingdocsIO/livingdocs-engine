@@ -14,7 +14,7 @@ class Design
     @styles = {}
 
     @storeTemplateDefinitions(templates)
-    @globalStyles = @createDesignStyles(design.config.styles)
+    @globalStyles = @createDesignStyleCollection(design.config.styles)
     @addGroups(groups)
     @addTemplatesNotInGroups()
 
@@ -29,7 +29,7 @@ class Design
   # e.g add({id: "title", name:"Title", html: "<h1 doc-editable>Title</h1>"})
   add: (templateDefinition, styles) ->
     @templateDefinitions[templateDefinition.id] = undefined
-    templateOnlyStyles = @createDesignStyles(templateDefinition.styles)
+    templateOnlyStyles = @createDesignStyleCollection(templateDefinition.styles)
     templateStyles = $.extend({}, styles, templateOnlyStyles)
 
     template = new Template
@@ -46,7 +46,7 @@ class Design
 
   addGroups: (collection) ->
     for groupName, group of collection
-      groupOnlyStyles = @createDesignStyles(group.styles)
+      groupOnlyStyles = @createDesignStyleCollection(group.styles)
       groupStyles = $.extend({}, @globalStyles, groupOnlyStyles)
 
       templates = {}
@@ -70,7 +70,7 @@ class Design
       templates: templates
 
 
-  createDesignStyles: (styles) ->
+  createDesignStyleCollection: (styles) ->
     designStyles = {}
     if styles
       for styleDefinition in styles
