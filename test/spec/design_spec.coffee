@@ -61,20 +61,20 @@ describe 'Design', ->
         expect( @design.get('title') ).not.toBeDefined()
 
 
-  describe 'group configuration', ->
+  describe 'groups', ->
 
     beforeEach ->
       @design = new Design(testDesign)
 
 
-    it 'is available in design', ->
+    it 'are available through #groups', ->
       groups = Object.keys @design.groups
       expect(groups).toContain('layout')
       expect(groups).toContain('header')
       expect(groups).toContain('other')
 
 
-    it 'design contains templates', ->
+    it 'contain templates', ->
       container = @design.get('container')
       expect(@design.groups['layout'].templates['container']).toBe(container)
 
@@ -89,7 +89,7 @@ describe 'Design', ->
       expect(@design.globalStyles['Color'] instanceof DesignStyle).toBe(true)
 
 
-    it 'hero contains all styles', ->
+    it 'merges global, group and template styles', ->
       template = @design.get('hero')
       templateStyles = Object.keys template.styles
       expect(templateStyles).toContain('Color') # global style
@@ -97,7 +97,7 @@ describe 'Design', ->
       expect(templateStyles).toContain('Extra Space') # template style
 
 
-    it 'container contains only global styles', ->
+    it 'assigns global styles to a template with no other styles', ->
       template = @design.get('container')
       templateStyles = Object.keys template.styles
       expect(templateStyles).toContain('Color') # global style
