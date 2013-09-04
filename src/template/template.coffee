@@ -28,7 +28,6 @@ class Template
       "#{ @namespace }.#{ @id }"
 
     @version = version || 1
-
     @$template = $( @pruneHtml(html) ).wrap('<div>')
     @$wrap = @$template.parent()
     @title = title || words.humanize( @id )
@@ -63,11 +62,16 @@ class Template
       images: list.image
 
 
-  # todo
   pruneHtml: (html) ->
-    # e.g. remove ids
-    html
 
+    # remove all comments
+    html = $(html).filter (index) ->
+      @nodeType !=8
+
+    # only allow one root element
+    assert html.length == 1, "Templates must contain one root element. The Template \"#{@identifier}\" contains #{ html.length }"
+
+    html
 
   # @param snippetNode: root DOM node of the snippet
   parseTemplate: () ->
