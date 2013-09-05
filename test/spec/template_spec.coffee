@@ -3,7 +3,7 @@ describe 'Title Template', ->
   template = undefined
   beforeEach ->
     template = new Template
-      name: 'h1'
+      id: 'h1'
       html: """<h1 #{ docAttr.editable }="title"></h1>"""
 
 
@@ -11,8 +11,8 @@ describe 'Title Template', ->
     expect(template.$template).toBeDefined()
 
 
-  it 'has a name', ->
-    expect(template.name).toEqual('h1')
+  it 'has an id', ->
+    expect(template.id).toEqual('h1')
 
 
   it 'has one directive', ->
@@ -45,7 +45,7 @@ describe 'Dropdown Template', ->
   template = null
   beforeEach ->
     template = new Template
-      name: 'dropdown'
+      id: 'dropdown'
       html:
         """
         <div>
@@ -86,13 +86,13 @@ describe 'Template.parseIdentifier()', ->
   it 'parses "bootstrap.title"', ->
     identifier = Template.parseIdentifier('bootstrap.title')
     expect(identifier.namespace).toEqual('bootstrap')
-    expect(identifier.name).toEqual('title')
+    expect(identifier.id).toEqual('title')
 
 
   it 'does not parse "bootstrap"', ->
     identifier = Template.parseIdentifier('title')
     expect(identifier.namespace).toBeUndefined()
-    expect(identifier.name).toEqual('title')
+    expect(identifier.id).toEqual('title')
 
 
   it 'does not parse emtpy string', ->
@@ -114,7 +114,7 @@ describe 'new Template()', ->
       html: """<h1 #{ docAttr.editable }="title"></h1>"""
 
     expect(template.namespace).toEqual('bootstrap')
-    expect(template.name).toEqual('title')
+    expect(template.id).toEqual('title')
 
 
 # Snippet with snippet containers

@@ -5,53 +5,61 @@ kickstart = do ->
     $(destination).html('<div class="doc-section"></div>')
     doc.init(design: design)
     doc.ready =>
-
-      # Convert a dom element into a camelCase snippetName
-      domElementToSnippetName = (element) =>
-        if element.tagName
-          $.camelCase(element.tagName.toLowerCase())
-        else
-          null
-
-
-      parseContainers = (parent, data) =>
-        containers = if parent.containers then Object.keys(parent.containers) else []
-        if containers.length == 1 && containers.indexOf('default') != -1 && !$(data).children('default').length
-          children = $(data).children()
-          for child in children
-            parseSnippets(parent, 'default', child)
-
-        elements = $(containers.join(','), data)
-        for element in elements
-          children = $(element).children()
-          for child in children
-            parseSnippets(parent, domElementToSnippetName(element), child)
-
-
-      parseSnippets = (parentContainer, region, data) =>
-        snippet = doc.create(domElementToSnippetName(data))
-        parentContainer.append(region, snippet)
-        parseContainers(snippet, data)
-        setEditables(snippet, data)
-
-
-      setEditables = (snippet, data) =>
-        if snippet.hasEditables()
-          for key of snippet.content
-            directive = snippet.template.directives.get(key)
-            if directive.type == 'editable'
-              snippet.set(key, null)
-              child = $(key + ':first', data).get()[0]
-              if !child
-                snippet.set(key, data.innerHTML)
-              else
-                snippet.set(key, child.innerHTML)
-
-
-      #add all rootSnippets, process their containers and set values
+      #add all root snippets, set their editables
       domElements.each (index, element) =>
-        row = doc.add(domElementToSnippetName(element))
-        parseContainers(row, element)
-        setEditables(row, element)
+        row = doc.add(@nodeToSnippetName(element))
+        @setChildren(row, element)
 
 
+  parseContainers: (snippet, data) ->
+    containers = if snippet.containers then Object.keys(snippet.containers) else []
+    if containers.length == 1 && containers.indexOf('default') != -1 && !$(data).children('default').length
+      for child in $(data).children()
+        @parseSnippets(snippet, 'default', child)
+
+    for editableContainer in $(containers.join(','), data)
+      for child in $(editableContainer).children()
+        @parseSnippets(snippet, editableContainer.localName, child)
+
+
+  parseSnippets: (parentContainer, region, data) ->
+    snippet = doc.create(@nodeToSnippetName(data))
+    parentContainer.append(region, snippet)
+    @setChildren(snippet, data)
+
+
+  setChildren: (snippet, data) ->
+    @parseContainers(snippet, data)
+    @setEditables(snippet, data)
+
+
+  setEditables: (snippet, data) ->
+    for key of snippet.content
+      directive = snippet.template.directives.get(key)
+      snippet.set(key, null)
+      child = $(key, data).get()[0]
+
+      if key == 'image' && !child
+        child = $('img', data).get()[0]
+
+      if !child
+        log('The snippet "' + key + '" has no content. Display parent HTML instead.')
+        child = data
+
+      snippet.set(key, child.innerHTML)
+
+
+  # Convert a dom element into a camelCase snippetName
+  nodeToSnippetName: (element) ->
+    snippetName = $.camelCase(element.localName)
+    snippet = doc.document.design.get(snippetName)
+
+    # check deprecated HTML elements that automatically convert to new element name.
+    if snippetName == 'img' && !snippet
+      snippetName = 'image'
+      snippet = doc.document.design.get('image')
+
+    assert snippet,
+      "The Template named '#{snippetName}' does not exist."
+
+    snippetName

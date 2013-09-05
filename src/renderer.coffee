@@ -2,8 +2,8 @@ class Renderer
 
 
   constructor: ({ @snippetTree, rootNode, @page }) ->
-    log.error('no snippet tree specified') if !@snippetTree
-    log.error('no root node specified') if !rootNode
+    assert @snippetTree, 'no snippet tree specified'
+    assert rootNode, 'no root node specified'
 
     @$root = $(rootNode)
     @setupPageListeners()
@@ -24,6 +24,7 @@ class Renderer
     @snippetTree.snippetRemoved.add( $.proxy(this, 'snippetRemoved') )
     @snippetTree.snippetMoved.add( $.proxy(this, 'snippetMoved') )
     @snippetTree.snippetContentChanged.add( $.proxy(this, 'snippetContentChanged') )
+    @snippetTree.snippetHtmlChanged.add( $.proxy(this, 'snippetHtmlChanged') )
 
 
   snippetAdded: (model) ->
@@ -47,6 +48,12 @@ class Renderer
     view = @ensureSnippetView(model)
     @insertIntoDom(view) if not view.attachedToDom
     view.updateContent()
+
+
+  snippetHtmlChanged: (model) ->
+    view = @ensureSnippetView(model)
+    @insertIntoDom(view) if not view.attachedToDom
+    view.updateHtml()
 
 
   # Rendering
@@ -98,7 +105,7 @@ class Renderer
   # in the SnippetTree
   insertIntoDom: (snippetView) ->
     snippetView.attach(this)
-    log.error('could not insert snippet into Dom') if not snippetView.attachedToDom
+    assert snippetView.attachedToDom, 'could not insert snippet into Dom'
     @afterDomInsert(snippetView)
 
     this

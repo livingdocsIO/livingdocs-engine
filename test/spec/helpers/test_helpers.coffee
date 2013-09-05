@@ -1,5 +1,7 @@
 test = do ->
 
+  log.debugDisabled = true
+  log.warningsDisabled = true
   cachedDesign = undefined
 
   # wrapper for `'prop' in object`
@@ -9,22 +11,16 @@ test = do ->
     `expectedProperty in obj`
 
 
-  getTemplate: (name) ->
-    template = testSnippets.snippets[name]
-    new Template
-      name: name
-      namespace: testSnippets.config.namespace
-      title: template.name
-      html: template.html
+  getTemplate: (id) ->
+    @getDesign().get(id)
 
 
-  getSnippet: (name) ->
-    @getTemplate(name).createModel()
+  getSnippet: (id) ->
+    @getTemplate(id).createModel()
 
 
   getDesign: () ->
-    cachedDesign = new Design(testSnippets) unless cachedDesign
-    cachedDesign
+    cachedDesign ||= new Design(testDesign)
 
 
   # simple helper to get the length of an object

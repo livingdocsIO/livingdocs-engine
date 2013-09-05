@@ -1,0 +1,67 @@
+<html>
+<head>
+  <title>Emmet Documentation</title>
+
+
+    <link rel="stylesheet" href="test/manual/css/livingdocs.css">
+
+    <!-- dependencies of livingdocs-engine -->
+    <script src="vendor/jquery-1.9.1.min.js"></script>
+
+    <!-- dependencies of livingdocs-engine -->
+    <script src="vendor/yepnope/yepnope.1.5.3-min.js"></script>
+    <script src="vendor/store/store.js"></script>
+    <script src="vendor/editableJS/editable.js"></script>
+
+    <!-- designs for manual testing -->
+    <script src="designs/bootstrap/design.js"></script>
+
+    <!-- livingdocs-engine. yeah! -->
+    <script src=".tmp/livingdocs_engine.js"></script>
+
+</head>
+<body>
+
+  <!-- document template with content to easily preview and test a design -->
+  <hero>
+    <title>Snippet outside container</title>
+    <tagline>Yep, it works</tagline>
+  </hero>
+
+  <column>
+      <main-and-sidebar>
+        <main>
+          <hero>
+            <title>Houston, we have a problem.</title>
+            <tagline>Test</tagline>
+          </hero>
+        </main>
+        <sidebar>
+          <text>Sharks in a tornado. Sharknado. Simply stunning.</text>
+          <text>Have you ever sucked feet for weed?</text> 
+        </sidebar>
+      </main-and-sidebar>
+
+      <text>Sharks in a tornado. Sharknado. Simply stunning.</text>
+      <text>Have you ever sucked feet for weed?</text>
+      <text>That pet store's got everything we need. Except for piranhas.</text>
+      <text></text>
+      <text></text>
+  </column>
+
+
+
+  
+  <!-- script to parse and render the template -->
+  <script>
+
+    //doc.init({design: design.bootstrap});
+    
+    // use a jQuery selector as destination
+    doc.kickstart('body', design.bootstrap);
+
+
+  </script>
+
+</body>
+</html>

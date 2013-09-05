@@ -43,7 +43,7 @@ class Page
     else
       $root = $(rootNode).addClass(".#{ docClass.section }")
 
-    log.error('no rootNode found') if !$root.length
+    assert $root.length, 'no rootNode found'
     $root
 
 
@@ -93,7 +93,7 @@ class Page
       @focus.snippetFocused(snippetView)
 
       if imageName = dom.getImageName(event.target)
-        @imageClick.fire(snippetView, imageName)
+        @imageClick.fire(snippetView, imageName, event)
     else
       @focus.blur()
 

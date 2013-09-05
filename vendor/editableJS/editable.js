@@ -3416,6 +3416,10 @@ var string = (function() {
 
     trimLeft: function(text) {
       return text.replace(/^\s+/, "");
+    },
+
+    trim: function(text) {
+      return text.replace(/^\s+|\s+$/g, "");
     }
   };
 })();
@@ -3789,11 +3793,14 @@ var behavior = (function() {
   return {
     focus: function(element) {
       log('Default focus behavior');
+      content.normalizeSpaces(element);
+      content.removeEmptyTags(element);
     },
 
     blur: function(element) {
       log('Default blur behavior');
-      element.innerHTML = content.cleanInternals(element.innerHTML);
+      content.normalizeTags(element);
+      content.cleanInternals(element);
     },
 
     flow: function(element, action) {
@@ -3808,7 +3815,7 @@ var behavior = (function() {
       }
     },
 
-    cursor: function(element, cursor) {
+    cursor: function(element, cursor) {
       if (cursor) {
         log('Default cursor behavior');
       } else {
@@ -3820,11 +3827,11 @@ var behavior = (function() {
       log(cursor);
       log('Default newline behavior');
 
-      var atTheEnd = cursor.isAtTheEnd();
+      var atEnd = cursor.isAtEnd();
       var br = document.createElement('br');
       cursor.insertBefore(br);
 
-      if(atTheEnd) {
+      if(atEnd) {
         log('at the end');
 
         var noWidthSpace = document.createTextNode('\u200B');
@@ -3850,13 +3857,13 @@ var behavior = (function() {
       switch(direction) {
       case 'before':
         parent.insertBefore(newElement, element);
+        element.focus();
         break;
       case 'after':
         parent.insertBefore(newElement, element.nextSibling);
+        newElement.focus();
         break;
       }
-
-      newElement.focus();
     },
 
     split: function(element, before, after, cursor) {
@@ -3867,16 +3874,65 @@ var behavior = (function() {
       newStart.focus();
     },
 
-    merge: function(element, direction) {
-      log('Default merge behavior');
+    merge: function(element, direction, cursor) {
+      log('Default merge ' + direction + ' behavior');
+      var container, merger, fragment, chunks, i, newChild;
+
+      switch(direction) {
+      case 'before':
+        container = block.previous(element);
+        merger = element;
+        break;
+      case 'after':
+        container = element;
+        merger = block.next(element);
+        break;
+      }
+
+      if(!(container && merger))
+        return;
+
+      if(container.childNodes.length > 0)
+        cursor.moveAfter(container.lastChild);
+      else
+        cursor.moveBefore(container);
+      cursor.update();
+
+      fragment = document.createDocumentFragment();
+      chunks = merger.childNodes;
+      for(i = 0; i < chunks.length; i++) {
+        fragment.appendChild(chunks[i].cloneNode(true));
+      }
+      newChild = container.appendChild(fragment);
+
+      merger.parentNode.removeChild(merger);
     },
 
     empty: function(element) {
       log('Default empty behavior');
     },
 
-    'switch': function(element, direction) {
+    'switch': function(element, direction, cursor) {
       log('Default switch behavior');
+
+      var next, previous;
+
+      switch(direction) {
+      case 'before':
+        previous = block.previous(element);
+        if(previous) {
+          cursor.moveAfter(previous);
+          cursor.update();
+        }
+        break;
+      case 'after':
+        next = block.next(element);
+        if(next) {
+          cursor.moveBefore(next);
+          cursor.update();
+        }
+        break;
+      }
     },
 
     move: function(element, selection, direction) {
@@ -3885,6 +3941,22 @@ var behavior = (function() {
 
     clipboard: function(element, selection, action) {
       log('Default clipboard behavior');
+    }
+  };
+})();
+
+var block = (function() {
+  return {
+    next: function(element) {
+      var next = element.nextElementSibling;
+      if(next && next.getAttribute('contenteditable')) return next;
+      return null;
+    },
+
+    previous: function(element) {
+      var previous = element.previousElementSibling;
+      if(previous && previous.getAttribute('contenteditable')) return previous;
+      return null;
     }
   };
 })();
@@ -3958,7 +4030,7 @@ var config = {
      * @param {HTMLElement} element The element triggering the event.
      * @param {Cursor} cursor The actual Cursor object.
      */
-    cursor: function(element, cursor) {
+    cursor: function(element, cursor) {
       behavior.cursor(element, cursor);
     },
 
@@ -4017,9 +4089,10 @@ var config = {
      * @event merge
      * @param {HTMLElement} element The element triggering the event.
      * @param {String} direction The merge direction: "before" or "after".
+     * @param {Cursor} cursor The actual cursor object.
      */
-    merge: function(element, direction) {
-      behavior.merge(element, direction);
+    merge: function(element, direction, cursor) {
+      behavior.merge(element, direction, cursor);
     },
 
     /**
@@ -4035,16 +4108,16 @@ var config = {
 
     /**
      * The switch event is triggered when the user switches to another block.
-     * This happens when TAB is pressed (move one block after) or SHIFT+TAB
-     * is pressed (move one block before).
+     * This happens when an ARROW key is pressed near the boundaries of a block.
      * The default behavior is to... TODO
      *
      * @event switch
      * @param {HTMLElement} element The element triggering the event.
      * @param {String} direction The switch direction: "before" or "after".
+     * @param {Cursor} cursor The actual cursor object.*
      */
-    'switch': function(element, direction) {
-      behavior.switch(element, direction);
+    'switch': function(element, direction, cursor) {
+      behavior.switch(element, direction, cursor);
     },
 
     /**
@@ -4081,11 +4154,68 @@ var config = {
 
 var content = (function() {
   return {
-    cleanInternals: function(htmlString) {
-      return htmlString.replace(/\u200B/g, '<br />');
+    normalizeTags: function(element) {
+      var i, j, node, sibling;
+
+      var fragment = document.createDocumentFragment();
+
+      for (i = 0; i < element.childNodes.length; i++) {
+        node = element.childNodes[i];
+        if(!node) continue;
+
+        if(node.nodeType === 1 && node.nodeName !== 'BR') {
+          sibling = node;
+          while((sibling = sibling.nextSibling) !== null) {
+            if(!parser.isSameNode(sibling, node))
+              break;
+
+            for(j = 0; j < sibling.childNodes.length; j++) {
+              node.appendChild(sibling.childNodes[j].cloneNode(true));
+            }
+
+            sibling.parentNode.removeChild(sibling);
+          }
+
+          this.normalizeTags(node);
+        }
+
+        fragment.appendChild(node.cloneNode(true));
+      }
+
+      while (element.firstChild) {
+        element.removeChild(element.firstChild);
+      }
+      element.appendChild(fragment);
+    },
+
+    cleanInternals: function(element) {
+      element.innerHTML = element.innerHTML.replace(/\u200B/g, '<br />');
+    },
+
+    normalizeSpaces: function(element) {
+      var firstChild = element.firstChild;
+
+      if(!firstChild) return;
+
+      if(firstChild.nodeType === 3) {
+        firstChild.nodeValue = firstChild.nodeValue.replace(/^(\s)/, '\u00A0');
+      }
+      else {
+        this.normalizeSpaces(firstChild);
+      }
+    },
+
+    removeEmptyTags: function(element) {
+      var i, len, node;
+
+      for (i = 0, len = element.childNodes.length; i < len; i++) {
+        node = element.childNodes[i];
+        if(node && node.nodeName !== 'BR' && !node.textContent) {
+          node.parentNode.removeChild(node);
+        }
+      }
     }
   };
-
 })();
 
 /**
@@ -4110,14 +4240,14 @@ var Cursor = (function() {
 
   Cursor.prototype = (function() {
     return {
-      isAtTheEnd: function() {
+      isAtEnd: function() {
         return parser.isEndOfHost(
           this.host,
           this.range.endContainer,
           this.range.endOffset);
       },
 
-      isAtTheBeginning: function() {
+      isAtBeginning: function() {
         return parser.isBeginningOfHost(
           this.host,
           this.range.startContainer,
@@ -4192,6 +4322,28 @@ var Cursor = (function() {
 
       detach: function() {
         this.range.detach();
+      },
+
+      moveBefore: function(element) {
+        this.range.setStart(element, 0);
+        this.range.setEnd(element, 0);
+      },
+
+      moveAfter: function(element) {
+        this.range.selectNodeContents(element);
+        this.range.collapse(false);
+      },
+
+      equals: function(cursor) {
+        if(!cursor) return false;
+
+        if(!cursor.host) return false;
+        if(!cursor.host.isEqualNode(this.host)) return false;
+
+        if(!cursor.range) return false;
+        if(!cursor.range.equals(this.range)) return false;
+
+        return true;
       }
     };
   })();
@@ -4246,18 +4398,41 @@ var dispatcher = (function() {
    * @param {Function} notifier: The callback to be triggered when the event is caught.
    */
   var setupKeyboardEvents = function($document, notifier) {
+    var dispatchSwitchEvent = function(event, element, direction) {
+      var cursor;
+
+      if(event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
+        return;
+
+      cursor = selectionWatcher.getSelection();
+      if(cursor instanceof Selection) return;
+
+      setTimeout(function() {
+        var newCursor = selectionWatcher.getCursor();
+        if(newCursor.equals(cursor)) {
+          event.preventDefault();
+          event.stopPropagation();
+          notifier('switch', element, direction, newCursor);
+        }
+      }, 1);
+    }
+
     $document.on('keydown.editable', '.-js-editable', function(event) {
       keyboard.dispatchKeyEvent(event, this);
     });
 
     keyboard.on('left', function(event) {
       log('Left key pressed');
+      dispatchSwitchEvent(event, this, 'before');
     }).on('up', function(event) {
       log('Up key pressed');
+      dispatchSwitchEvent(event, this, 'before');
     }).on('right', function(event) {
       log('Right key pressed');
+      dispatchSwitchEvent(event, this, 'after');
     }).on('down', function(event) {
       log('Down key pressed');
+      dispatchSwitchEvent(event, this, 'after');
     }).on('tab', function(event) {
       log('Tab key pressed');
     }).on('shiftTab', function(event) {
@@ -4266,8 +4441,22 @@ var dispatcher = (function() {
       log('Esc key pressed');
     }).on('backspace', function(event) {
       log('Backspace key pressed');
+
+      var cursor = selectionWatcher.getCursor();
+      if(cursor.isAtBeginning()) {
+        event.preventDefault();
+        event.stopPropagation();
+        notifier('merge', this, 'before', cursor);
+      }
     }).on('delete', function(event) {
       log('Delete key pressed');
+
+      var cursor = selectionWatcher.getCursor();
+      if(cursor.isAtEnd()) {
+        event.preventDefault();
+        event.stopPropagation();
+        notifier('merge', this, 'after', cursor);
+      }
     }).on('enter', function(event) {
       log('Enter key pressed');
 
@@ -4275,10 +4464,10 @@ var dispatcher = (function() {
       event.stopPropagation();
       var cursor = selectionWatcher.getCursor();
 
-      if (cursor.isAtTheEnd()) {
-        notifier('insert', this, 'after', cursor);
-      } else if(cursor.isAtTheBeginning()) {
+      if (cursor.isAtBeginning()) {
         notifier('insert', this, 'before', cursor);
+      } else if(cursor.isAtEnd()) {
+        notifier('insert', this, 'after', cursor);
       } else {
         notifier('split', this, cursor.before(), cursor.after(), cursor);
       }
@@ -4689,9 +4878,7 @@ var parser = (function() {
 
     isStartOffset: function (container, offset) {
       if (container.nodeType === 3) {
-        var text = container.nodeValue;
-        var actualStart = text.length - string.trimLeft(text).length;
-        return offset <= actualStart;
+        return offset === 0;
       } else {
         if(container.childNodes.length === 0)
           return true;
@@ -4702,17 +4889,31 @@ var parser = (function() {
 
     isEndOffset: function (container, offset) {
       if (container.nodeType === 3) {
-        // ignore whitespace at the end
-        var text = container.nodeValue;
-        return offset >= string.trimRight(text).length;
-
-        // return offset === container.length;
+        return offset === container.length;
       } else {
         if(container.childNodes.length === 0)
           return true;
         else
           return container.childNodes[offset] === container.lastChild;
       }
+    },
+
+    isSameNode: function(target, source) {
+      var i, len, attr;
+
+      if(target.nodeType !== source.nodeType)
+        return false;
+
+      if(target.nodeName !== source.nodeName)
+        return false;
+
+      for(i = 0, len = target.attributes.length; i < len; i++) {
+        attr = target.attributes[i];
+        if(source.getAttribute(attr.name) !== attr.value)
+          return false;
+      }
+
+      return true;
     }
   };
 })();

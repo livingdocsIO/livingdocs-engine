@@ -1,5 +1,5 @@
 # SnippetTree Events
-# ------------------
+# ------------------
 # Check that SnippetTree fires events properly
 
 describe 'SnippetTree (Layout Events) ->', ->
@@ -102,8 +102,10 @@ describe 'SnippetTree (Content Events)', ->
 
     @snippetA = test.getSnippet('title')
     @imageSnippet = test.getSnippet('image')
+    @coverSnippet = test.getSnippet('cover')
     @tree.append(@snippetA)
     @tree.append(@imageSnippet)
+    @tree.append(@coverSnippet)
 
 
   describe 'changing the title content', ->
@@ -132,3 +134,50 @@ describe 'SnippetTree (Content Events)', ->
       @expectContentChanged 1, => @changeSnippetContent()
 
 
+  describe 'changing the background image', ->
+
+    beforeEach ->
+      @changeSnippetContent = =>
+        @coverSnippet.set('image', 'http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg')
+
+
+    it 'fires snippetContentChanged event', ->
+      @expectContentChanged 1, => @changeSnippetContent()
+
+
+describe 'SnippetTree (Html Events)', ->
+
+  beforeEach ->
+    @tree = new SnippetTree()
+    monitor = test.createCallbackMonitor
+    @expectHtlmChanged = monitor(@tree.snippetHtmlChanged)
+    @expectChanged = monitor(@tree.changed)
+
+    @hero = test.getSnippet('hero')
+    @tree.append(@hero)
+
+
+  describe 'adding a style', ->
+
+    beforeEach ->
+      @changeStyle = => @hero.style('Extra Space', 'extra-space')
+
+    it 'fires htmlChanged event', ->
+      @expectHtlmChanged 1, => @changeStyle()
+
+
+    it 'fires changed event', ->
+      @expectChanged 1, => @changeStyle()
+
+
+    it '...twice fires htmlChanged event only once', ->
+      @expectHtlmChanged 1, =>
+        @changeStyle()
+        @changeStyle()
+
+
+  describe 'adding an invalid style', ->
+
+    it 'does not fire the htmlChanged event', ->
+      @expectHtlmChanged 0, =>
+        @hero.style('Extra Space', 'gazillion-pixel-whitespace')

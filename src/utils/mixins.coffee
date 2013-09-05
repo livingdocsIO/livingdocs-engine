@@ -1,7 +1,7 @@
 # Mixin utility
 # -------------
 # Allow classes to extend from multiple mixins via `extends`.
-# Currently this is a simplified version of the [mixin pattern](http://coffeescriptcookbook.com/chapters/classes_and_objects/mixins)
+# Currently this is a simplified version of the [mixin pattern](http://coffeescriptcookbook.com/chapters/classes_and_objects/mixins)
 #
 # __Usage:__
 # `class Superhero extends mixins Flying, SuperAngry, Indestructible`

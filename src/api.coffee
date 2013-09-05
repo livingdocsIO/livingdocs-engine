@@ -64,7 +64,7 @@ setupApi = ->
   @words = words
 
 
-  # For Plugins & Extensions
+  # For Plugins & Extensions
   # ------------------------
 
   # enable snippet finder plugins (jquery like)

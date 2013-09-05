@@ -19,7 +19,7 @@
 #
 # ### Events:
 # The first set of SnippetTree Events are concerned with layout changes like
-# adding, removing or moving snippets.
+# adding, removing or moving snippets.
 #
 # Consider: Have a documentFragment as the rootNode if no rootNode is given
 # maybe this would help simplify some code (since snippets are always
@@ -60,7 +60,7 @@ class SnippetTree
     @snippetRemoved = $.Callbacks()
     @snippetMoved = $.Callbacks()
 
-    # content changes
+    # content changes
     @snippetContentChanged = $.Callbacks()
     @snippetHtmlChanged = $.Callbacks()
     @snippetSettingsChanged = $.Callbacks()
@@ -86,7 +86,7 @@ class SnippetTree
     if typeof search == 'string'
       res = []
       @each (snippet) ->
-        if snippet.identifier == search || snippet.template.name == search
+        if snippet.identifier == search || snippet.template.id == search
           res.push(snippet)
 
       new SnippetArray(res)
@@ -145,7 +145,7 @@ class SnippetTree
 
   # Tree Change Events
   # ------------------
-  # Raise events for Add, Remove and Move of snippets
+  # Raise events for Add, Remove and Move of snippets
   # These functions should only be called by snippetContainers
 
   attachingSnippet: (snippet, attachSnippetFunc) ->
@@ -171,19 +171,22 @@ class SnippetTree
 
 
   detachingSnippet: (snippet, detachSnippetFunc) ->
-    if snippet.snippetTree == this
+    assert snippet.snippetTree is this,
+      'cannot remove snippet from another SnippetTree'
 
-      snippet.descendantsAndSelf (descendants) ->
-        descendants.snippetTree = undefined
+    snippet.descendantsAndSelf (descendants) ->
+      descendants.snippetTree = undefined
 
-      detachSnippetFunc()
-      @fireEvent('snippetRemoved', snippet)
-    else
-      log.error('cannot remove snippet from another SnippetTree')
+    detachSnippetFunc()
+    @fireEvent('snippetRemoved', snippet)
 
 
   contentChanging: (snippet) ->
     @fireEvent('snippetContentChanged', snippet)
+
+
+  htmlChanging: (snippet) ->
+    @fireEvent('snippetHtmlChanged', snippet)
 
 
   # Serialization

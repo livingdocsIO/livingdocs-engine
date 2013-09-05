@@ -5,7 +5,7 @@
 #
 # The snippetContainer is responsible for keeping its snippetTree
 # informed about changes (only if they are attached to one).
-# 
+#
 # @prop first: first snippet in the container
 # @prop last: last snippet in the container
 # @prop parentSnippet: parent SnippetModel
@@ -27,8 +27,8 @@ class SnippetContainer
 
 
   append: (snippet) ->
-    if @parentSnippet? and snippet == @parentSnippet
-      log.error('cannot append snippet to itself')
+    if @parentSnippet
+      assert snippet isnt @parentSnippet, 'cannot append snippet to itself'
 
     if @last
       @insertAfter(@last, snippet)
@@ -40,7 +40,7 @@ class SnippetContainer
 
   insertBefore: (snippet, insertedSnippet) ->
     return if snippet.previous == insertedSnippet
-    log.error('cannot insert snippet before itself') if snippet == insertedSnippet
+    assert snippet isnt insertedSnippet, 'cannot insert snippet before itself'
 
     position =
       previous: snippet.previous
@@ -52,7 +52,7 @@ class SnippetContainer
 
   insertAfter: (snippet, insertedSnippet) ->
     return if snippet.next == insertedSnippet
-    log.error('cannot insert snippet after itself') if snippet == insertedSnippet
+    assert snippet isnt insertedSnippet, 'cannot insert snippet after itself'
 
     position =
       previous: snippet
@@ -129,7 +129,7 @@ class SnippetContainer
       func()
 
 
-  # Every snippet that is removed must come through here.
+  # Every snippet that is removed must come through here.
   # Notifies the snippetTree if the parent snippet is
   # attached to one.
   # Snippets that are moved inside a snippetTree should not
@@ -160,7 +160,7 @@ class SnippetContainer
     container = snippet.parentContainer
     if container
 
-      # update parentContainer links
+      # update parentContainer links
       container.first = snippet.next unless snippet.previous?
       container.last = snippet.previous unless snippet.next?
 

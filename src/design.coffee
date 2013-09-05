@@ -7,66 +7,128 @@ class Design
 
     @namespace = config?.namespace || 'livingdocs-templates'
     @css = config.css
-    @js = config.js #todo
-    @fonts = config.fonts #todo
-    @templates = {}
+    @js = config.js
+    @fonts = config.fonts
+    @templates = []
     @groups = {}
+    @styles = {}
 
-    @addTemplates(templates)
+    @storeTemplateDefinitions(templates)
+    @globalStyles = @createDesignStyleCollection(design.config.styles)
     @addGroups(groups)
+    @addTemplatesNotInGroups()
 
 
-  # pass the name and template in two parameters
-  # e.g add('title', '[template]')
-  add: (name, template) ->
-    @templates[name] = new Template
+  storeTemplateDefinitions: (templates) ->
+    @templateDefinitions = {}
+    for template in templates
+      @templateDefinitions[template.id] = template
+
+
+  # pass the template as object
+  # e.g add({id: "title", name:"Title", html: "<h1 doc-editable>Title</h1>"})
+  add: (templateDefinition, styles) ->
+    @templateDefinitions[templateDefinition.id] = undefined
+    templateOnlyStyles = @createDesignStyleCollection(templateDefinition.styles)
+    templateStyles = $.extend({}, styles, templateOnlyStyles)
+
+    template = new Template
       namespace: @namespace
-      name: name
-      html: template.html
-      title: template.name
+      id: templateDefinition.id
+      title: templateDefinition.title
+      styles: templateStyles
+      html: templateDefinition.html
+      weight: templateDefinition.sortOrder || 0
 
-
-  addTemplates: (templates) ->
-    for name, template of templates
-      @add(name, template)
+    @templates.push(template)
+    template
 
 
   addGroups: (collection) ->
-    for key, group of collection
-      snippets = {}
-      for index, snippet of group.snippets
-        snippets[snippet] = @templates[snippet]
+    for groupName, group of collection
+      groupOnlyStyles = @createDesignStyleCollection(group.styles)
+      groupStyles = $.extend({}, @globalStyles, groupOnlyStyles)
 
-      @groups[key] = new Object
-        name: group.name
-        snippets: snippets
+      templates = {}
+      for templateId in group.templates
+        templateDefinition = @templateDefinitions[templateId]
+        template = @add(templateDefinition, groupStyles)
+        templates[template.id] = template
+
+      @addGroup(groupName, group, templates)
+
+
+  addTemplatesNotInGroups: (globalStyles) ->
+    for templateId, templateDefinition of @templateDefinitions
+      if templateDefinition
+        @add(templateDefinition, @globalStyles)
+
+
+  addGroup: (name, group, templates) ->
+    @groups[name] =
+      title: group.title
+      templates: templates
+
+
+  createDesignStyleCollection: (styles) ->
+    designStyles = {}
+    if styles
+      for styleDefinition in styles
+        designStyle = @createDesignStyle(styleDefinition)
+        designStyles[designStyle.name] = designStyle if designStyle
+
+    designStyles
+
+
+  createDesignStyle: (styleDefinition) ->
+    if styleDefinition && styleDefinition.name
+      new DesignStyle
+        name: styleDefinition.name
+        type: styleDefinition.type
+        options: styleDefinition.options
+        value: styleDefinition.value
 
 
   remove: (identifier) ->
-    @checkNamespace identifier, (name) =>
-      delete @templates[name]
+    @checkNamespace identifier, (id) =>
+      @templates.splice(@getIndex(id), 1)
 
 
   get: (identifier) ->
-    @checkNamespace identifier, (name) =>
-      @templates[name]
+    @checkNamespace identifier, (id) =>
+      template = undefined
+      @each (t, index) ->
+        if t.id == id
+          template = t
+
+      template
+
+
+  getIndex: (identifier) ->
+    @checkNamespace identifier, (id) =>
+      index = undefined
+      @each (t, i) ->
+        if t.id == id
+          index = i
+
+      index
 
 
   checkNamespace: (identifier, callback) ->
-    { namespace, name } = Template.parseIdentifier(identifier)
+    { namespace, id } = Template.parseIdentifier(identifier)
 
-    if not namespace || @namespace == namespace
-      callback(name)
-    else
-      log.error("design #{ @namespace }: cannot get template with different namespace #{ namespace } ")
+    assert not namespace or @namespace is namespace,
+      "design #{ @namespace }: cannot get template with different namespace #{ namespace } "
+
+    callback(id)
 
 
   each: (callback) ->
-    for name, template of @templates
-      callback(template)
+    for template, index in @templates
+      callback(template, index)
 
 
-  # list available Templates
+  # list available Templates
   list: ->
     templates = []
     @each (template) ->

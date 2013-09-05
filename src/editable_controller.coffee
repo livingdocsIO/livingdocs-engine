@@ -3,9 +3,7 @@
 # Integrate EditableJS into Livingdocs
 class EditableController
 
-
   constructor: (@page) ->
-
     # configure editableJS
     Editable.init
       log: false
@@ -16,6 +14,7 @@ class EditableController
       .focus($.proxy(@focus, @))
       .blur($.proxy(@blur, @))
       .insert($.proxy(@insert, @))
+      .merge($.proxy(@merge, @))
       .split($.proxy(@split, @))
       .selection($.proxy(@selectionChanged, @))
 
@@ -37,18 +36,42 @@ class EditableController
 
 
   insert: (element, direction, cursor) ->
-    snippetView = dom.findSnippetView(element)
-    template = snippetView.template
-    if template.editableCount == 1
+    view = dom.findSnippetView(element)
+    if view.model.editableCount == 1
+
+      # todo: make this configurable
+      template = document.design.get('text')
       copy = template.createModel()
-      snippetView.model.after(copy)
-      if copiedElem = snippetView.next()
-        copiedElem.focus()
+
+      newView = if direction == 'before'
+        view.model.before(copy)
+        view.prev()
+      else
+        view.model.after(copy)
+        view.next()
+
+      newView.focus() if newView
 
     false # disable editableJS default behaviour
 
 
+  merge: (element, direction, cursor) ->
+    view = dom.findSnippetView(element)
+    if view.model.editableCount == 1
+      mergedView = if direction == 'before' then view.prev() else view.next()
+      mergedView.focus() if mergedView
+
+      # todo: check if mergedView is of same type or of type text
+      if mergedView.template == view.template
+        view.model.remove()
+
+
+    log('engine: merge')
+    false # disable editableJS default behaviour
+
+
   split: (element, before, after, cursor) ->
+    snippetView = dom.findSnippetView(element)
     log('engine: split')
     false # disable editableJS default behaviour
 
@@ -56,4 +79,3 @@ class EditableController
   selectionChanged: (element, selection) ->
     snippetView = dom.findSnippetView(element)
     @selection.fire(snippetView, element, selection)
-

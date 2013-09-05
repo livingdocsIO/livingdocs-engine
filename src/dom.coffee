@@ -1,7 +1,7 @@
 # DOM helper methods
 # ------------------
 # Methods to parse and update the Dom tree in accordance to
-# the SnippetTree and Livingdocs classes and attributes
+# the SnippetTree and Livingdocs classes and attributes
 dom = do ->
   snippetRegex = new RegExp("(?: |^)#{ docClass.snippet }(?: |$)")
   sectionRegex = new RegExp("(?: |^)#{ docClass.section }(?: |$)")
@@ -46,6 +46,13 @@ dom = do ->
     if node.hasAttribute(docAttr.image)
       imageName = node.getAttribute(docAttr.image)
       return imageName
+
+
+  getEditableName: (node) ->
+    if node.hasAttribute(docAttr.editable)
+      imageName = node.getAttribute(docAttr.editable)
+      return editableName
+
 
 
   dropTarget: (node, { top, left }) ->
@@ -98,7 +105,7 @@ dom = do ->
       { position: 'after' }
 
 
-  # figure out if the user wanted to insert between snippets
+  # figure out if the user wanted to insert between snippets
   # instead of appending to the container
   # (this can be the case if the drop occurs on a margin)
   getPositionInContainer: ($container, { top, left }) ->

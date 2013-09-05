@@ -13,26 +13,28 @@
 # (a comment or a script tag like ember does for example)
 #
 # Consider: Replace lists with inline Templates. Inline
-# Templates are repeatable and can only be used inside their
+# Templates are repeatable and can only be used inside their
 # defining snippet.
 class Template
 
 
-  constructor: ({ html, @namespace, @name, identifier, title, version } = {}) ->
-    if not html
-      log.error('Template: param html missing')
+  constructor: ({ html, @namespace, @id, identifier, title, styles, weight, version } = {}) ->
+    assert html, 'Template: param html missing'
 
     if identifier
-      { @namespace, @name } = Template.parseIdentifier(identifier)
+      { @namespace, @id } = Template.parseIdentifier(identifier)
 
-    @identifier = if @namespace && @name
-      "#{ @namespace }.#{ @name }"
+    @identifier = if @namespace && @id
+      "#{ @namespace }.#{ @id }"
 
     @version = version || 1
 
     @$template = $( @pruneHtml(html) ).wrap('<div>')
     @$wrap = @$template.parent()
-    @title = title || words.humanize( @name )
+
+    @title = title || words.humanize( @id )
+    @styles = styles || {}
+    @weight = weight
     @defaults = {}
 
     @parseTemplate()
@@ -139,11 +141,11 @@ Template.parseIdentifier = (identifier) ->
 
   parts = identifier.split('.')
   if parts.length == 1
-    { namespace: undefined, name: parts[0] }
+    { namespace: undefined, id: parts[0] }
   else if parts.length == 2
-    { namespace: parts[0], name: parts[1] }
+    { namespace: parts[0], id: parts[1] }
   else
     log.error("could not parse snippet template identifier: #{ identifier }")
-    { namespace: undefined , name: undefined }
+    { namespace: undefined , id: undefined }
 
 

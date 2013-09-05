@@ -30,10 +30,8 @@ stash = do ->
   restore: ->
     json = @store.get()
 
-    if json
-      document.restore(json)
-    else
-      log.error('stash is empty')
+    assert json, 'stash is empty'
+    document.restore(json)
 
 
   list: ->

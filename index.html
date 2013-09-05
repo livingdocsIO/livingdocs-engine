@@ -40,7 +40,7 @@
     <script src="vendor/editableJS/editable.js"></script>
 
     <!-- designs for manual testing -->
-    <script src=".tmp/designs.js"></script>
+    <script src="designs/bootstrap/design.js"></script>
 
     <!-- livingdocs-engine. yeah! -->
     <script src=".tmp/livingdocs_engine.js"></script>
@@ -56,12 +56,12 @@
         doc.ready(function() {
 
           if (!json) {
-            var row = doc.add("bootstrap.mainAndSidebar");
-            row.append("main", doc.create("bootstrap.hero"));
-            row.append("main", doc.create("bootstrap.text"));
-            row.append("sidebar", doc.create("bootstrap.title"));
-            var single = doc.add("bootstrap.column");
-            single.append(doc.create("bootstrap.hero"));
+            var row = doc.add("mainAndSidebar");
+            row.append("main", doc.create("hero"));
+            row.append("main", doc.create("text"));
+            row.append("sidebar", doc.create("title"));
+            var single = doc.add("column");
+            single.append(doc.create("hero"));
           }
 
           // drag in new hero snippet
@@ -71,7 +71,7 @@
             preventDefault: true
           });
           $newSnippet.on('mousedown', function(event) {
-            var newSnippet = doc.create('bootstrap.image')
+            var newSnippet = doc.create('image')
             doc.startDrag({ snippet: newSnippet, dragDrop: dragDrop })
           });
           $(document.body).append($newSnippet)

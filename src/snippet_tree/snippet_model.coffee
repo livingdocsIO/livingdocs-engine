@@ -16,11 +16,10 @@ class SnippetModel
 
 
   constructor: ({ @template, id } = {}) ->
-    if !@template
-      log.error('cannot instantiate snippet without template reference')
+    assert @template, 'cannot instantiate snippet without template reference'
 
     @initializeDirectives()
-
+    @styles = {}
     @id = id || guid.next()
     @identifier = @template.identifier
 
@@ -104,6 +103,39 @@ class SnippetModel
       @content[name]
     else
       log.error("get error: #{ @identifier } has no name named #{ name }")
+
+
+  style: (name, value) ->
+    if arguments.length == 1
+      @styles[name]
+    else
+      @setStyle(name, value)
+
+
+  setStyle: (name, value) ->
+    style = @template.styles[name]
+    if not style
+      log.warn "Unknown style '#{ name }' in SnippetModel #{ @identifier }"
+    else if not style.validateValue(value)
+      log.warn "Invalid value '#{ value }' for style '#{ name }' in SnippetModel #{ @identifier }"
+    else
+      if @styles[name] != value
+        @styles[name] = value
+        if @snippetTree
+          @snippetTree.htmlChanging(this, 'style', { name, value })
+
+
+  copy: ->
+    log.warn("SnippetModel#copy() is not implemented yet.")
+
+    # serializing/deserializing should work but needs to get some tests first
+    # json = @toJson()
+    # json.id = guid.next()
+    # SnippetModel.fromJson(json)
+
+
+  copyWithoutContent: ->
+    @template.createModel()
 
 
   # move up (previous)
@@ -201,10 +233,13 @@ class SnippetModel
       id: @id
       identifier: @identifier
 
-    for name, value of @content
-      json.content ||= {}
-      json.content[name] = value
+    unless @isEmpty(@content)
+      json.content = @flatCopy(@content)
 
+    unless @isEmpty(@styles)
+      json.styles = @flatCopy(@styles)
+
+    # create an array for every container
     for name of @containers
       json.containers ||= {}
       json.containers[name] = []
@@ -212,28 +247,48 @@ class SnippetModel
     json
 
 
+  isEmpty: (obj) ->
+    return true unless obj?
+    for name of obj
+      return false if obj.hasOwnProperty(name)
+
+    true
+
+
+  flatCopy: (obj) ->
+    copy = undefined
+
+    for name, value of obj
+      copy ||= {}
+      copy[name] = value
+
+    copy
+
+
 SnippetModel.fromJson = (json, design) ->
   template = design.get(json.identifier)
 
-  if not template?
-    log.error("error while deserializing snippet: unknown template identifier '#{ json.identifier }'")
+  assert template,
+    "error while deserializing snippet: unknown template identifier '#{ json.identifier }'"
 
   model = new SnippetModel({ template, id: json.id })
+
   for name, value of json.content
     if model.content.hasOwnProperty(name)
       model.content[name] = value
     else
       log.error("error while deserializing snippet: unknown content '#{ name }'")
 
+  for styleName, value of json.styles
+    model.style(styleName, value)
+
   for containerName, snippetArray of json.containers
-    if not model.containers.hasOwnProperty(containerName)
-      log.error("error while deserializing snippet: unknown container #{ containerName }")
+    assert model.containers.hasOwnProperty(containerName),
+      "error while deserializing snippet: unknown container #{ containerName }"
 
     if snippetArray
-
-      if not $.isArray(snippetArray)
-        log.error("error while deserializing snippet: container is not array #{ containerName }")
-
+      assert $.isArray(snippetArray),
+        "error while deserializing snippet: container is not array #{ containerName }"
       for child in snippetArray
         model.append( containerName, SnippetModel.fromJson(child, design) )
 

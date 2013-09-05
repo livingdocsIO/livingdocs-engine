@@ -3,6 +3,7 @@ class SnippetView
   constructor: ({ @model, @$html, @directives }) ->
     @template = @model.template
     @attachedToDom = false
+    @wasAttachedToDom = $.Callbacks();
 
     # add attributes and references to the html
     @$html
@@ -11,10 +12,16 @@ class SnippetView
       .attr(docAttr.template, @template.identifier)
 
     @updateContent()
+    @updateHtml()
 
 
   updateContent: ->
     @content(@model.content)
+
+
+  updateHtml: ->
+    for name, value of @model.styles
+      @style(name, value)
 
 
   next: ->
@@ -25,7 +32,8 @@ class SnippetView
     @$html.prev().data('snippet')
 
 
-  focus: ->
+  # @param cursor: undefined, 'start', 'end'
+  focus: (cursor) ->
     first = @directives.editable?[0].elem
     $(first).focus()
 
@@ -49,18 +57,8 @@ class SnippetView
   get: (name) ->
     directive = @directives.get(name)
     switch directive.type
-      when 'editable' then @getEditable(name, value)
-      when 'image' then @getImage(name, value)
-
-
-  getImage: (name) ->
-    elem = @directives.get(name).elem
-    $(elem).attr('src')
-
-
-  setImage: (name, value) ->
-    elem = @directives.get(name).elem
-    $(elem).attr('src', value)
+      when 'editable' then @getEditable(name)
+      when 'image' then @getImage(name)
 
 
   getEditable: (name) ->
@@ -71,6 +69,51 @@ class SnippetView
   setEditable: (name, value) ->
     elem = @directives.get(name).elem
     $(elem).html(value)
+
+
+  getImage: (name) ->
+    elem = @directives.get(name).elem
+    $(elem).attr('src')
+
+
+  setImage: (name, value) ->
+    elem = @directives.get(name).elem
+    $elem = $(elem)
+
+    if value
+      @setImageAttribute($elem, value)
+    else
+      if @attachedToDom
+        @setPlaceholderImage($elem)
+      else
+        @wasAttachedToDom.add($.proxy(@setPlaceholderImage, @, $elem))
+
+
+  setImageAttribute: ($elem, value) ->
+    if $elem.context.tagName == 'IMG'
+      $elem.attr('src', value)
+    else
+      $elem.attr('style', "background-image:url(#{value})")
+
+
+  setPlaceholderImage: ($elem) ->
+    if $elem.context.tagName == 'IMG'
+      width = $elem.width()
+      height = $elem.height()
+    else
+      width = $elem.outerWidth()
+      height = $elem.outerHeight()
+    value = "http://placehold.it/#{width}x#{height}/BEF56F/B2E668"
+    @setImageAttribute($elem, value)
+
+
+  style: (name, className) ->
+    changes = @template.styles[name].cssClassChanges(className)
+    if changes.remove
+      for removeClass in changes.remove
+        @$html.removeClass(removeClass)
+
+    @$html.addClass(changes.add)
 
 
   append: (containerName, $elem) ->
@@ -97,6 +140,8 @@ class SnippetView
     else if parentContainer
       @appendToContainer(parentContainer, renderer)
       @attachedToDom = true
+
+    @wasAttachedToDom.fire()
 
     this
 
