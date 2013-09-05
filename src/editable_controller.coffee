@@ -23,6 +23,14 @@ class EditableController
     Editable.add(nodes)
 
 
+  disableAll: ->
+    $('[contenteditable]').attr('contenteditable', 'false')
+
+
+  reenableAll: ->
+    $('[contenteditable]').attr('contenteditable', 'true')
+
+
   focus: (element) ->
     snippetView = dom.findSnippetView(element)
     @page.focus.editableFocused(element, snippetView)

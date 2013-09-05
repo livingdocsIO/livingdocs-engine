@@ -17,6 +17,7 @@ class SnippetDrag
       .append(@$insertPreview)
       .css('cursor', 'pointer')
 
+    @page.editableController.disableAll()
     @page.blurFocusedElement()
 
     #todo get all valid containers
@@ -73,6 +74,7 @@ class SnippetDrag
   onDrop: (drag) ->
     # @removeCssClasses()
     @page.$body.css('cursor', '')
+    @page.editableController.reenableAll()
     @$insertPreview.remove()
     @$highlightedContainer.removeClass?(docClass.containerHighlight)
     dom.restoreContainerHeight()
