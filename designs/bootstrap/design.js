@@ -3,7 +3,7 @@
     {
       "title": "Single Centered Column",
       "id": "column",
-      "html": "<div class=\"row-fluid\"><div class=\"span8 offset2\" doc-container=\"\"></div></div>"
+      "html": "<!-- test --><div class=\"row-fluid\"><div class=\"span8 offset2\" doc-container=\"\"></div></div>"
     },
     {
       "title": "Main and Sidebar Columns",
