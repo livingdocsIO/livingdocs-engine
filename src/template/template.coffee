@@ -79,7 +79,7 @@ class Template
   # Find and store all DOM nodes which are editables or containers
   # in the html of a snippet or the html of a template.
   getDirectives: (elem) ->
-    iterator = new SnippetNodeIterator(elem)
+    iterator = new DirectiveIterator(elem)
     directives = new DirectiveCollection()
 
     while elem = iterator.nextElement()
