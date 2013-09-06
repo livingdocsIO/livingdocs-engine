@@ -1,10 +1,11 @@
-# Snippet node Iterator
+# Directive Iterator
 # ---------------------
-# Code is ported from rangy NodeIterator and adapted for snippets so it
-# does not traverse into containers.
-# Use to traverse all element nodes of a snippet but not any appended
-# snippets.
-class SnippetNodeIterator
+# Code is ported from rangy NodeIterator and adapted for snippet templates
+# so it does not traverse into containers.
+#
+# Use to traverse all nodes of a template. The iterator does not go into
+# containers and is safe to use even if there is content in these containers.
+class DirectiveIterator
 
   constructor: (root) ->
     @root = @_next = root

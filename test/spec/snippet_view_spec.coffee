@@ -1,6 +1,6 @@
-describe 'SnippetView title', ->
+describe 'SnippetView', ->
 
-  describe 'set content', ->
+  describe 'title', ->
 
     beforeEach ->
       @snippetView = test.getTemplate('title').createView()
@@ -24,19 +24,9 @@ describe 'SnippetView title', ->
       expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
 
 
-    it 'sets title without editable name parameter', ->
-      @snippetView.set('Humble Bundle')
-      expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
-
-
     it 'gets the title', ->
-      @snippetView.set('Games Galore')
+      @snippetView.set('title', 'Games Galore')
       expect( @snippetView.get('title') ).toEqual('Games Galore')
-
-
-    it 'gets the title without params', ->
-      @snippetView.set('Double Fine')
-      expect( @snippetView.get() ).toEqual('Double Fine')
 
 
 describe 'SnippetView title set style', ->

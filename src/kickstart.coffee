@@ -34,7 +34,8 @@ kickstart = do ->
 
 
   setEditables: (snippet, data) ->
-    for key of snippet.editables
+    for key of snippet.content
+      directive = snippet.template.directives.get(key)
       snippet.set(key, null)
       child = $(key, data).get()[0]
 
@@ -57,7 +58,7 @@ kickstart = do ->
     if snippetName == 'img' && !snippet
       snippetName = 'image'
       snippet = doc.document.design.get('image')
-  
+
     assert snippet,
       "The Template named '#{snippetName}' does not exist."
 

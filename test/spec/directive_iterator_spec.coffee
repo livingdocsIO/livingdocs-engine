@@ -1,4 +1,4 @@
-describe 'NodeIterator', ->
+describe 'DirectiveIterator', ->
 
   beforeEach ->
     @html = $(
@@ -14,7 +14,7 @@ describe 'NodeIterator', ->
       """
     )[0]
 
-    @iterator = new SnippetNodeIterator(@html)
+    @iterator = new DirectiveIterator(@html)
 
 
   it 'searches only through snippet and not descendant nodes', ->

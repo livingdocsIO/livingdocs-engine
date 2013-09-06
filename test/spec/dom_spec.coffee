@@ -57,7 +57,7 @@ describe 'DOM method', ->
 
     it 'returns an object with all necessary info', ->
       elem = @title.$html[0]
-      containerElem = @row.containers['main']
+      containerElem = @row.directives.get('main').elem
       containerInfo = dom.findContainer(elem)
       expect(containerInfo.node).toEqual(containerElem)
       expect(containerInfo.containerName).toEqual('main')

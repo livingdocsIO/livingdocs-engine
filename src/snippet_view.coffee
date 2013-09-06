@@ -1,6 +1,6 @@
 class SnippetView
 
-  constructor: ({ @model, @$html, @editables, @containers, @images }) ->
+  constructor: ({ @model, @$html, @directives }) ->
     @template = @model.template
     @attachedToDom = false
     @wasAttachedToDom = $.Callbacks();
@@ -16,7 +16,7 @@ class SnippetView
 
 
   updateContent: ->
-    @content(@model.editables, @model.images)
+    @content(@model.content)
 
 
   updateHtml: ->
@@ -34,33 +34,66 @@ class SnippetView
 
   # @param cursor: undefined, 'start', 'end'
   focus: (cursor) ->
-    first = @firstEditableElem()
+    first = @directives.editable?[0].elem
     $(first).focus()
-
-
-  firstEditableElem: ->
-    for name, elem of @editables
-      return elem
 
 
   getBoundingClientRect: ->
     dom.getBoundingClientRect(@$html[0])
 
 
-  content: (content, images) ->
-    for field, value of content
-      @set(field, value)
+  content: (content) ->
+    for name, value of content
+      @set(name, value)
 
-    for field, value of images
-      @setImage(field, value)
+
+  set: (name, value) ->
+    directive = @directives.get(name)
+    switch directive.type
+      when 'editable' then @setEditable(name, value)
+      when 'image' then @setImage(name, value)
+
+
+  get: (name) ->
+    directive = @directives.get(name)
+    switch directive.type
+      when 'editable' then @getEditable(name)
+      when 'image' then @getImage(name)
 
 
   getEditable: (name) ->
-    if name?
-      return @editables[name]
+    elem = @directives.get(name).elem
+    $(elem).html()
+
+
+  setEditable: (name, value) ->
+    elem = @directives.get(name).elem
+    $(elem).html(value)
+
+
+  getImage: (name) ->
+    elem = @directives.get(name).elem
+    $(elem).attr('src')
+
+
+  setImage: (name, value) ->
+    elem = @directives.get(name).elem
+    $elem = $(elem)
+
+    if value
+      @setImageAttribute($elem, value)
     else
-      for name of @editables
-        return @editables[name]
+      if @attachedToDom
+        @setPlaceholderImage($elem)
+      else
+        @wasAttachedToDom.add($.proxy(@setPlaceholderImage, @, $elem))
+
+
+  setImageAttribute: ($elem, value) ->
+    if $elem.context.tagName == 'IMG'
+      $elem.attr('src', value)
+    else
+      $elem.attr('style', "background-image:url(#{value})")
 
 
   setPlaceholderImage: ($elem) ->
@@ -74,24 +107,6 @@ class SnippetView
     @setImageAttribute($elem, value)
 
 
-  setImageAttribute: ($elem, value) ->
-    if $elem.context.tagName == 'IMG'
-      $elem.attr('src', value)
-    else
-      $elem.attr('style', "background-image:url(#{value})")
-
-
-  setImage: (name, value) ->
-    $elem = $(@images[name])
-    unless value
-      if @attachedToDom
-        @setPlaceholderImage($elem)
-      else
-        @wasAttachedToDom.add($.proxy(@setPlaceholderImage, @, $elem))
-    else
-      @setImageAttribute($elem, value)
-
-
   style: (name, className) ->
     changes = @template.styles[name].cssClassChanges(className)
     if changes.remove
@@ -101,24 +116,8 @@ class SnippetView
     @$html.addClass(changes.add)
 
 
-  set: (editable, value) ->
-    if arguments.length == 1
-      value = editable
-      editable = undefined
-
-    elem = @getEditable(editable)
-    assert elem, 'cannot set value without editable name'
-    $(elem).html(value)
-
-
-  get: (editable) ->
-    elem = @getEditable(editable)
-    assert elem, 'cannot get value without editable name'
-    $(elem).html()
-
-
   append: (containerName, $elem) ->
-    $container = $(@containers[containerName])
+    $container = $(@directives.get(containerName)?.elem)
     $container.append($elem)
 
 

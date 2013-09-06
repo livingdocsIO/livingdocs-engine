@@ -22,22 +22,18 @@ describe 'Title Snippet', ->
     expect(@title.containers).not.toBeDefined()
 
 
-  it 'has no images', ->
-    expect(@title.images).not.toBeDefined()
-
-
   it 'has no next or previous', ->
     expect(@title.next).not.toBeDefined()
     expect(@title.previous).not.toBeDefined()
 
 
   it 'has one editable named "title"', ->
-    expect( test.size(@title.editables) ).toEqual(1)
-    expect( @title.editables.hasOwnProperty('title') ).toEqual(true)
+    expect( test.size(@title.content) ).toEqual(1)
+    expect( @title.content.hasOwnProperty('title') ).toEqual(true)
 
 
   it 'title editable has no value at the beginning', ->
-    expect(@title.editables['title']).not.toBeDefined()
+    expect(@title.content['title']).not.toBeDefined()
 
 
   describe '#set()', ->
@@ -64,8 +60,8 @@ describe 'Row Snippet', ->
     expect(@row.containers.hasOwnProperty('sidebar')).toEqual(true)
 
 
-  it 'has no editables', ->
-    expect(@row.editables).not.toBeDefined()
+  it 'has no editables or images', ->
+    expect(@row.content).not.toBeDefined()
 
 
 describe 'Container Snippet', ->
@@ -85,7 +81,7 @@ describe 'Image snippet', ->
 
 
   it 'has one image', ->
-    expect(@image.images.hasOwnProperty('image')).toBeTruthy()
+    expect(@image.content.hasOwnProperty('image')).toBeTruthy()
 
 
 describe 'Hero SnippetModel#style', ->
