@@ -45,7 +45,7 @@ class EditableController
 
   insert: (element, direction, cursor) ->
     view = dom.findSnippetView(element)
-    if view.model.editableCount == 1
+    if @hasSingleEditable(view)
 
       # todo: make this configurable
       template = document.design.get('text')
@@ -65,7 +65,7 @@ class EditableController
 
   merge: (element, direction, cursor) ->
     view = dom.findSnippetView(element)
-    if view.model.editableCount == 1
+    if @hasSingleEditable(view)
       mergedView = if direction == 'before' then view.prev() else view.next()
       mergedView.focus() if mergedView
 
@@ -80,7 +80,7 @@ class EditableController
 
   split: (element, before, after, cursor) ->
     view = dom.findSnippetView(element)
-    if view.model.editableCount == 1
+    if @hasSingleEditable(view)
       copy = view.template.createModel()
 
       # get content out of 'before' and 'after'
@@ -88,7 +88,7 @@ class EditableController
       afterContent = after.querySelector('*').innerHTML
 
       # set editable of snippets to innerHTML of fragments
-      editableName = Object.keys(view.template.editables)[0]
+      editableName = view.directives[0].name
       view.model.set(editableName, beforeContent)
       copy.set(editableName, afterContent)
 
@@ -102,3 +102,7 @@ class EditableController
   selectionChanged: (element, selection) ->
     snippetView = dom.findSnippetView(element)
     @selection.fire(snippetView, element, selection)
+
+
+  hasSingleEditable: (view) ->
+    view.directives.length == 1 && view.directives[0].type == 'editable'
