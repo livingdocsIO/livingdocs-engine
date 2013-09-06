@@ -18,11 +18,8 @@ class SnippetModel
   constructor: ({ @template, id } = {}) ->
     assert @template, 'cannot instantiate snippet without template reference'
 
-    @initializeContainers()
-    @initializeEditables()
-    @initializeImages()
+    @initializeDirectives()
     @styles = {}
-
     @id = id || guid.next()
     @identifier = @template.identifier
 
@@ -31,35 +28,31 @@ class SnippetModel
     @snippetTree = undefined # set by SnippetTree
 
 
-  initializeContainers: ->
-    @containerCount = @template.directives.count.container
-    for containerName of @template.directives.container
-      @containers ||= {}
-      @containers[containerName] = new SnippetContainer
-        name: containerName
-        parentSnippet: this
-
-
-  initializeEditables: ->
-    @editableCount = @template.directives.count.editable
-    for editableName of @template.directives.editable
-      @editables ||= {}
-      @editables[editableName] = undefined
-
-
-  initializeImages: ->
-    @imageCount = @template.directives.count.image
-    for imageName of @template.directives.image
-      @images ||= {}
-      @images[imageName] = undefined
-
-
-  hasImages: ->
-    @imageCount > 0
+  initializeDirectives: ->
+    for directive in @template.directives
+      switch directive.type
+        when 'container'
+          @containers ||= {}
+          @containers[directive.name] = new SnippetContainer
+            name: directive.name
+            parentSnippet: this
+        when 'editable', 'image'
+          @content ||= {}
+          @content[directive.name] = undefined
+        else
+          log.error "Template directive type '#{ directive.type }' not implemented in SnippetModel"
 
 
   hasContainers: ->
-    @containers?
+    @template.directives.count('container') > 0
+
+
+  hasEditables: ->
+    @template.directives.count('editable') > 0
+
+
+  hasImages: ->
+    @template.directives.count('image') > 0
 
 
   before: (snippetModel) ->
@@ -97,23 +90,17 @@ class SnippetModel
 
 
   set: (name, value) ->
-    if @editables?.hasOwnProperty(name)
-      if @editables[name] != value
-        @editables[name] = value
-        @snippetTree.contentChanging(this) if @snippetTree
-    else if @images?.hasOwnProperty(name)
-      if @images[name] != value
-        @images[name] = value
-        @snippetTree.contentChanging(this) if @snippetTree
+    if @content?.hasOwnProperty(name)
+      if @content[name] != value
+        @content[name] = value
+        @snippetTree.contentChanging(this, name) if @snippetTree
     else
       log.error("set error: #{ @identifier } has no content named #{ name }")
 
 
   get: (name) ->
-    if @editables?.hasOwnProperty(name)
-      @editables[name]
-    else if @images?.hasOwnProperty(name)
-      @images[name]
+    if @content?.hasOwnProperty(name)
+      @content[name]
     else
       log.error("get error: #{ @identifier } has no name named #{ name }")
 
@@ -138,7 +125,6 @@ class SnippetModel
           @snippetTree.htmlChanging(this, 'style', { name, value })
 
 
-
   copy: ->
     log.warn("SnippetModel#copy() is not implemented yet.")
 
@@ -150,10 +136,6 @@ class SnippetModel
 
   copyWithoutContent: ->
     @template.createModel()
-
-
-  hasEditables: ->
-    @editables?
 
 
   # move up (previous)
@@ -251,10 +233,11 @@ class SnippetModel
       id: @id
       identifier: @identifier
 
-    # copy all data to json
-    for name, data of { @editables, @images, @styles }
-      unless @isEmpty(data)
-        json[name] = @flatCopy(data)
+    unless @isEmpty(@content)
+      json.content = @flatCopy(@content)
+
+    unless @isEmpty(@styles)
+      json.styles = @flatCopy(@styles)
 
     # create an array for every container
     for name of @containers
@@ -289,15 +272,12 @@ SnippetModel.fromJson = (json, design) ->
     "error while deserializing snippet: unknown template identifier '#{ json.identifier }'"
 
   model = new SnippetModel({ template, id: json.id })
-  for editableName, value of json.editables
-    assert model.editables.hasOwnProperty(editableName),
-      "error while deserializing snippet: unknown editable #{ editableName }"
-    model.editables[editableName] = value
 
-  for imageName, value of json.images
-    assert model.images.hasOwnProperty(imageName),
-      "error while deserializing snippet: unknown image #{ imageName }"
-    model.images[imageName] = value
+  for name, value of json.content
+    if model.content.hasOwnProperty(name)
+      model.content[name] = value
+    else
+      log.error("error while deserializing snippet: unknown content '#{ name }'")
 
   for styleName, value of json.styles
     model.style(styleName, value)

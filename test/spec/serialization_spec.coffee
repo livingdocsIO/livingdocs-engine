@@ -14,7 +14,7 @@ describe 'Snippet Serialization', ->
       title = test.getSnippet('title')
       title.set('title', expectedValue)
       json = title.toJson()
-      expect(json.editables['title']).toEqual(expectedValue)
+      expect(json.content['title']).toEqual(expectedValue)
 
 
   describe 'of styles', ->
@@ -29,7 +29,6 @@ describe 'Snippet Serialization', ->
       hero.style('Color', 'color--blue')
       json = hero.toJson()
       expect(json.styles).toEqual(expectedValue)
-
 
 
 describe 'SnippetTree Serialization', ->
@@ -82,7 +81,7 @@ describe 'Deserialization', ->
     it 'throws an error', ->
       json =
         identifier: 'test.title'
-        editables:
+        content:
           'title-misspelled': 'Baby Geniusses'
 
       deserialize = =>
@@ -96,7 +95,7 @@ describe 'Deserialization', ->
     beforeEach ->
       @json = test.localstore
         identifier: 'test.title'
-        editables:
+        content:
           'title': 'Baby Geniuses'
 
 
@@ -143,11 +142,11 @@ describe 'Deserialization', ->
           main : [
             {
               identifier : 'test.title'
-              editables : { 'title' : 'Do you feel lucky?' }
+              content : { 'title' : 'Do you feel lucky?' }
             },
             {
               identifier : 'test.text'
-              editables : { 'text' : 'Well, do ya punk?' }
+              content : { 'text' : 'Well, do ya punk?' }
             },
           ]
           sidebar : []

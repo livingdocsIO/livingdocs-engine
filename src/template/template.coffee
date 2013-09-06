@@ -30,14 +30,10 @@ class Template
     @version = version || 1
     @$template = $( @pruneHtml(html) ).wrap('<div>')
     @$wrap = @$template.parent()
+
     @title = title || words.humanize( @id )
     @styles = styles || {}
     @weight = weight
-
-    @editables = undefined
-    @editableCount = 0
-    @containers = undefined
-    @containerCount = 0
     @defaults = {}
 
     @parseTemplate()
@@ -51,15 +47,13 @@ class Template
 
   createView: (snippetModel) ->
     snippetModel ||= @createModel()
-    $html = @$template.clone()
-    list = @getNodeLinks($html[0])
+    $elem = @$template.clone()
+    directives = @getDirectives($elem[0])
 
     snippetView = new SnippetView
       model: snippetModel
-      $html: $html
-      editables: list.editable
-      containers: list.container
-      images: list.image
+      $html: $elem
+      directives: directives
 
 
   pruneHtml: (html) ->
@@ -73,33 +67,30 @@ class Template
 
     html
 
-  # @param snippetNode: root DOM node of the snippet
   parseTemplate: () ->
-    snippetNode = @$template[0]
-    @directives = @getNodeLinks(snippetNode)
-    @editables = @directives.editable
-    @containers = @directives.container
-    @editableCount = @directives.count.editable
-    @containerCount = @directives.count.container
+    elem = @$template[0]
+    @directives = @getDirectives(elem)
 
-    for name, node of @editables
-      @formatEditable(name, node)
+    if editables = @directives.editable
+      for directive in editables
+        @formatEditable(directive.name, directive.elem)
 
-    for name, node of @containers
-      @formatContainer(name, node)
+    if containers = @directives.container
+      for directive in containers
+        @formatContainer(directive.name, directive.elem)
 
 
   # Find and store all DOM nodes which are editables or containers
   # in the html of a snippet or the html of a template.
-  getNodeLinks: (snippetNode) ->
-    iterator = new SnippetNodeIterator(snippetNode)
-    list = new SnippetNodeList()
+  getDirectives: (elem) ->
+    iterator = new DirectiveIterator(elem)
+    directives = new DirectiveCollection()
 
-    while element = iterator.nextElement()
-      node = new SnippetNode(element)
-      list.add(node) if node.isDataNode
+    while elem = iterator.nextElement()
+      directive = directiveParser.parse(elem)
+      directives.add(directive) if directive
 
-    list
+    directives
 
 
   formatEditable: (name, elem) ->
@@ -140,8 +131,8 @@ class Template
   printDoc: () ->
     doc =
       identifier: @identifier
-      editables: Object.keys @editables if @editables
-      containers: Object.keys @containers if @containers
+      # editables: Object.keys @editables if @editables
+      # containers: Object.keys @containers if @containers
 
     words.readableJson(doc)
 
