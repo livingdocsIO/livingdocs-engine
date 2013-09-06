@@ -19,9 +19,9 @@ class Page
       preventDefault: false
 
     @$document
-      .on('click.livingdocs', $.proxy(@click, @))
-      .on('mousedown.livingdocs', $.proxy(@mousedown, @))
-      .on('dragstart', $.proxy(@browserDragStart, @))
+      .on('click.livingdocs', $.proxy(@click, this))
+      .on('mousedown.livingdocs', $.proxy(@mousedown, this))
+      .on('dragstart', $.proxy(@browserDragStart, this))
 
 
   # prevent the browser Drag&Drop from interfering

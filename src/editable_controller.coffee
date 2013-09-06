@@ -11,12 +11,12 @@ class EditableController
     @selection = $.Callbacks()
 
     Editable
-      .focus($.proxy(@focus, @))
-      .blur($.proxy(@blur, @))
-      .insert($.proxy(@insert, @))
-      .merge($.proxy(@merge, @))
-      .split($.proxy(@split, @))
-      .selection($.proxy(@selectionChanged, @))
+      .focus($.proxy(@focus, this))
+      .blur($.proxy(@blur, this))
+      .insert($.proxy(@insert, this))
+      .merge($.proxy(@merge, this))
+      .split($.proxy(@split, this))
+      .selection($.proxy(@selectionChanged, this))
 
 
   add: (nodes) ->
