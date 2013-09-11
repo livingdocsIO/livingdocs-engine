@@ -93,11 +93,6 @@ pageReady = ->
   # callback: (snippetModel) ->
   @snippetAdded = chainable(document.snippetTree.snippetAdded, 'add')
 
-  # Raised once the snippet tree has been built from json
-  # Uses the memory flag to trigger event once a subscriber has subscribed
-  # callback: (snippetModels) ->
-  @snippetsLoaded = chainable(document.snippetTree.snippetsLoaded, 'add')
-
   # Raised when a snippet is being dragged
   @startDrag = $.proxy(page, 'startDrag')
 
