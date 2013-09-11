@@ -30,9 +30,6 @@ class SnippetTree
   constructor: ({ content, design } = {}) ->
     @root = new SnippetContainer(isRoot: true)
 
-    # This event will fire with all the snippets built from the json
-    @snippetsLoaded = $.Callbacks('memory')
-
     # initialize content before we set the snippet tree to the root
     # otherwise all the events will be triggered while building the tree
     if content? and design?
@@ -234,12 +231,5 @@ class SnippetTree
         @root.append(snippet)
 
     @root.snippetTree = this
-    loadedSnippets = []
     @root.each (snippet) =>
       snippet.snippetTree = this
-      loadedSnippets.push(snippet)
-
-    @snippetsLoaded.fire(loadedSnippets)
-
-
-
