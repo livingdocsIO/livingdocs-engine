@@ -20,6 +20,7 @@ class SnippetModel
 
     @initializeDirectives()
     @styles = {}
+    @dataValues = {}
     @id = id || guid.next()
     @identifier = @template.identifier
 
@@ -103,6 +104,18 @@ class SnippetModel
       @content[name]
     else
       log.error("get error: #{ @identifier } has no name named #{ name }")
+
+
+  data: (name, value) ->
+    if arguments.length == 1
+      @dataValues[name]
+    else
+      @setData(name, value)
+
+
+  setData: (name, value) ->
+    @dataValues[name] = value
+    # TODO: change event
 
 
   style: (name, value) ->
@@ -239,6 +252,9 @@ class SnippetModel
     unless @isEmpty(@styles)
       json.styles = @flatCopy(@styles)
 
+    unless @isEmpty(@dataValues)
+      json.data = $.extend(true, {}, @dataValues)
+
     # create an array for every container
     for name of @containers
       json.containers ||= {}
@@ -281,6 +297,9 @@ SnippetModel.fromJson = (json, design) ->
 
   for styleName, value of json.styles
     model.style(styleName, value)
+
+  for dataName, value of json.data
+    model.data(dataName, value)
 
   for containerName, snippetArray of json.containers
     assert model.containers.hasOwnProperty(containerName),

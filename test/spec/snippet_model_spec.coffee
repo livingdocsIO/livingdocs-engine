@@ -128,5 +128,3 @@ describe 'Hero SnippetModel#style', ->
   it 'does not set unspecified style "Conundrum"', ->
     @hero.style('Conundrum', 'wtf')
     expect(@hero.styles['Conundrum']).toBe(undefined)
-
-
