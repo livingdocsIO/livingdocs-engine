@@ -58,6 +58,7 @@ class EditableController
 
 
   blur: (view, editableName) ->
+    element = view.directives.get(editableName).elem
     @page.focus.editableBlurred(element, view)
     @updateModel(view, editableName)
     true # enable editableJS default behaviour
@@ -85,14 +86,18 @@ class EditableController
   merge: (view, editableName, direction, cursor) ->
     if @hasSingleEditable(view)
       mergedView = if direction == 'before' then view.prev() else view.next()
-      mergedView.focus() if mergedView
 
-      # todo: check if mergedView is of same type or of type text
       if mergedView.template == view.template
+        content = view.get(editableName) || ''
+        mergedContent = mergedView.model.get(editableName) || ''
+
+        combinedContent = if direction == 'before' then mergedContent + content else content + mergedContent
+        mergedView.model.set(editableName, combinedContent)
+
         view.model.remove()
+        mergedView.focus() if mergedView
+        # todo: set cursor to the right position
 
-
-    log('engine: merge')
     false # disable editableJS default behaviour
 
 
