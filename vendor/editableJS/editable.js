@@ -3223,6 +3223,202 @@ rangy.createModule("DomUtil", function(api, module) {
     });
 });
 
+/**
+ * @license Selection save and restore module for Rangy.
+ * Saves and restores user selections using marker invisible elements in the DOM.
+ *
+ * Part of Rangy, a cross-browser JavaScript range and selection library
+ * http://code.google.com/p/rangy/
+ *
+ * Depends on Rangy core.
+ *
+ * Copyright 2012, Tim Down
+ * Licensed under the MIT license.
+ * Version: 1.2.3
+ * Build date: 26 February 2012
+ */
+rangy.createModule("SaveRestore", function(api, module) {
+    api.requireModules( ["DomUtil", "DomRange", "WrappedRange"] );
+
+    var dom = api.dom;
+
+    var markerTextChar = "\ufeff";
+
+    function gEBI(id, doc) {
+        return (doc || document).getElementById(id);
+    }
+
+    function insertRangeBoundaryMarker(range, atStart) {
+        var markerId = "selectionBoundary_" + (+new Date()) + "_" + ("" + Math.random()).slice(2);
+        var markerEl;
+        var doc = dom.getDocument(range.startContainer);
+
+        // Clone the Range and collapse to the appropriate boundary point
+        var boundaryRange = range.cloneRange();
+        boundaryRange.collapse(atStart);
+
+        // Create the marker element containing a single invisible character using DOM methods and insert it
+        markerEl = doc.createElement("span");
+        markerEl.id = markerId;
+        markerEl.style.lineHeight = "0";
+        markerEl.style.display = "none";
+        markerEl.className = "rangySelectionBoundary";
+        markerEl.appendChild(doc.createTextNode(markerTextChar));
+
+        boundaryRange.insertNode(markerEl);
+        boundaryRange.detach();
+        return markerEl;
+    }
+
+    function setRangeBoundary(doc, range, markerId, atStart) {
+        var markerEl = gEBI(markerId, doc);
+        if (markerEl) {
+            range[atStart ? "setStartBefore" : "setEndBefore"](markerEl);
+            markerEl.parentNode.removeChild(markerEl);
+        } else {
+            module.warn("Marker element has been removed. Cannot restore selection.");
+        }
+    }
+
+    function compareRanges(r1, r2) {
+        return r2.compareBoundaryPoints(r1.START_TO_START, r1);
+    }
+
+    function saveSelection(win) {
+        win = win || window;
+        var doc = win.document;
+        if (!api.isSelectionValid(win)) {
+            module.warn("Cannot save selection. This usually happens when the selection is collapsed and the selection document has lost focus.");
+            return;
+        }
+        var sel = api.getSelection(win);
+        var ranges = sel.getAllRanges();
+        var rangeInfos = [], startEl, endEl, range;
+
+        // Order the ranges by position within the DOM, latest first
+        ranges.sort(compareRanges);
+
+        for (var i = 0, len = ranges.length; i < len; ++i) {
+            range = ranges[i];
+            if (range.collapsed) {
+                endEl = insertRangeBoundaryMarker(range, false);
+                rangeInfos.push({
+                    markerId: endEl.id,
+                    collapsed: true
+                });
+            } else {
+                endEl = insertRangeBoundaryMarker(range, false);
+                startEl = insertRangeBoundaryMarker(range, true);
+
+                rangeInfos[i] = {
+                    startMarkerId: startEl.id,
+                    endMarkerId: endEl.id,
+                    collapsed: false,
+                    backwards: ranges.length == 1 && sel.isBackwards()
+                };
+            }
+        }
+
+        // Now that all the markers are in place and DOM manipulation over, adjust each range's boundaries to lie
+        // between its markers
+        for (i = len - 1; i >= 0; --i) {
+            range = ranges[i];
+            if (range.collapsed) {
+                range.collapseBefore(gEBI(rangeInfos[i].markerId, doc));
+            } else {
+                range.setEndBefore(gEBI(rangeInfos[i].endMarkerId, doc));
+                range.setStartAfter(gEBI(rangeInfos[i].startMarkerId, doc));
+            }
+        }
+
+        // Ensure current selection is unaffected
+        sel.setRanges(ranges);
+        return {
+            win: win,
+            doc: doc,
+            rangeInfos: rangeInfos,
+            restored: false
+        };
+    }
+
+    function restoreSelection(savedSelection, preserveDirection) {
+        if (!savedSelection.restored) {
+            var rangeInfos = savedSelection.rangeInfos;
+            var sel = api.getSelection(savedSelection.win);
+            var ranges = [];
+
+            // Ranges are in reverse order of appearance in the DOM. We want to restore earliest first to avoid
+            // normalization affecting previously restored ranges.
+            for (var len = rangeInfos.length, i = len - 1, rangeInfo, range; i >= 0; --i) {
+                rangeInfo = rangeInfos[i];
+                range = api.createRange(savedSelection.doc);
+                if (rangeInfo.collapsed) {
+                    var markerEl = gEBI(rangeInfo.markerId, savedSelection.doc);
+                    if (markerEl) {
+                        markerEl.style.display = "inline";
+                        var previousNode = markerEl.previousSibling;
+
+                        // Workaround for issue 17
+                        if (previousNode && previousNode.nodeType == 3) {
+                            markerEl.parentNode.removeChild(markerEl);
+                            range.collapseToPoint(previousNode, previousNode.length);
+                        } else {
+                            range.collapseBefore(markerEl);
+                            markerEl.parentNode.removeChild(markerEl);
+                        }
+                    } else {
+                        module.warn("Marker element has been removed. Cannot restore selection.");
+                    }
+                } else {
+                    setRangeBoundary(savedSelection.doc, range, rangeInfo.startMarkerId, true);
+                    setRangeBoundary(savedSelection.doc, range, rangeInfo.endMarkerId, false);
+                }
+
+                // Normalizing range boundaries is only viable if the selection contains only one range. For example,
+                // if the selection contained two ranges that were both contained within the same single text node,
+                // both would alter the same text node when restoring and break the other range.
+                if (len == 1) {
+                    range.normalizeBoundaries();
+                }
+                ranges[i] = range;
+            }
+            if (len == 1 && preserveDirection && api.features.selectionHasExtend && rangeInfos[0].backwards) {
+                sel.removeAllRanges();
+                sel.addRange(ranges[0], true);
+            } else {
+                sel.setRanges(ranges);
+            }
+
+            savedSelection.restored = true;
+        }
+    }
+
+    function removeMarkerElement(doc, markerId) {
+        var markerEl = gEBI(markerId, doc);
+        if (markerEl) {
+            markerEl.parentNode.removeChild(markerEl);
+        }
+    }
+
+    function removeMarkers(savedSelection) {
+        var rangeInfos = savedSelection.rangeInfos;
+        for (var i = 0, len = rangeInfos.length, rangeInfo; i < len; ++i) {
+            rangeInfo = rangeInfos[i];
+            if (rangeInfo.collapsed) {
+                removeMarkerElement(savedSelection.doc, rangeInfo.markerId);
+            } else {
+                removeMarkerElement(savedSelection.doc, rangeInfo.startMarkerId);
+                removeMarkerElement(savedSelection.doc, rangeInfo.endMarkerId);
+            }
+        }
+    }
+
+    api.saveSelection = saveSelection;
+    api.restoreSelection = restoreSelection;
+    api.removeMarkerElement = removeMarkerElement;
+    api.removeMarkers = removeMarkers;
+});
+
 /*!
   * Bowser - a browser detector
   * https://github.com/ded/bowser
@@ -3411,15 +3607,19 @@ error = function() {
 var string = (function() {
   return {
     trimRight: function(text) {
-      return text.replace(/\s+$/, "");
+      return text.replace(/\s+$/, '');
     },
 
     trimLeft: function(text) {
-      return text.replace(/^\s+/, "");
+      return text.replace(/^\s+/, '');
     },
 
     trim: function(text) {
-      return text.replace(/^\s+|\s+$/g, "");
+      return text.replace(/^\s+|\s+$/g, '');
+    },
+
+    isString: function(obj) {
+      return toString.call(obj) === '[object String]';
     }
   };
 })();
@@ -3492,19 +3692,9 @@ var string = (function() {
       initialize();
       var elemConfig = $.extend(true, {}, config, elementConfiguration);
       // todo: store element configuration
-
-      if (!this.isDisabled) {
-        $(target)
-          .attr('contenteditable', true)
-          .addClass('-js-editable');
-      } else {
-        $(target)
-          .removeAttr('contenteditable')
-          .addClass('-js-editable-disabled');
-      }
+      this.enable($(target));
 
       // todo: check css whitespace settings
-      // todo: much much more obviously...
       return this;
     },
 
@@ -3521,32 +3711,55 @@ var string = (function() {
      * @chainable
      */
     remove: function(target) {
-      $(target)
-        .removeAttr('contenteditable')
-        .removeClass('-js-editable')
-        .removeClass('-js-editable-disabled');
+      var $target = $(target);
+      this.disable($target);
+      $target.removeClass(config.editableDisabledClass);
       return this;
     },
 
 
-    isDisabled: false,
-
-    disable: function() {
-      this.isDisabled = true;
-
-      $('.-js-editable')
+    /**
+     * Removes the Editable.JS API from the given target elements.
+     * The target elements are marked as disabled.
+     *
+     * @method disable
+     * @param { jQuery element | undefined  } target editable root element(s)
+     *    If no param is specified all editables are disabled.
+     * @static
+     * @chainable
+     */
+    disable: function($elem) {
+      $elem = $elem || $('.' + config.editableClass);
+      $elem
         .removeAttr('contenteditable')
-        .removeClass('-js-editable')
-        .addClass('-js-editable-disabled');
+        .removeClass(config.editableClass)
+        .addClass(config.editableDisabledClass);
+
+      return this;
     },
 
-    enable: function() {
-      this.isDisabled = false;
 
-      $('.-js-editable-disabled')
+    /**
+     * Adds the Editable.JS API to the given target elements.
+     *
+     * @method enable
+     * @param { jQuery element | undefined } target editable root element(s)
+     *    If no param is specified all editables marked as disabled are enabled.
+     * @static
+     * @chainable
+     */
+    enable: function($elem) {
+      $elem = $elem || $('.' + config.editableDisabledClass);
+      $elem
         .attr('contenteditable', true)
-        .removeClass('-js-editable-disabled')
-        .addClass('-js-editable');
+        .removeClass(config.editableDisabledClass)
+        .addClass(config.editableClass);
+
+      $elem.each(function(index, el) {
+        content.normalizeSpaces(el);
+      });
+
+      return this;
     },
 
 
@@ -3939,8 +4152,39 @@ var behavior = (function() {
       log('Default move behavior');
     },
 
-    clipboard: function(element, selection, action) {
+    clipboard: function(element, action, cursor) {
       log('Default clipboard behavior');
+      var pasteHolder, sel;
+
+      if(action !== 'paste') return;
+
+      element.setAttribute(config.pastingAttribute, true);
+
+      if(cursor.isSelection) {
+        cursor = cursor.deleteContent();
+      }
+
+      pasteHolder = document.createElement('textarea');
+      pasteHolder.setAttribute('style', 'position: absolute; left: -9999px');
+      cursor.insertAfter(pasteHolder);
+      sel = rangy.saveSelection();
+      pasteHolder.focus();
+
+      setTimeout(function() {
+        var pasteValue, pasteElement, cursor;
+        pasteValue = pasteHolder.value;
+        element.removeChild(pasteHolder);
+
+        rangy.restoreSelection(sel);
+        cursor = selectionWatcher.forceCursor();
+        pasteElement = document.createTextNode(pasteValue);
+        content.normalizeSpaces(pasteElement);
+        cursor.insertAfter(pasteElement);
+        cursor.moveAfter(pasteElement);
+        cursor.update();
+
+        element.removeAttribute(config.pastingAttribute);
+      }, 0);
     }
   };
 })();
@@ -3970,8 +4214,9 @@ var block = (function() {
  */
 var config = {
   log: false,
-  cssClass: '-js-editable',
-  cssClassDisabled: '-js-editable-disabled',
+  editableClass: 'js-editable',
+  editableDisabledClass: 'js-editable-disabled',
+  pastingAttribute: 'data-editable-is-pasting',
   mouseMoveSelectionChanges: false,
 
   event: {
@@ -4142,17 +4387,24 @@ var config = {
      *
      * @event clipboard
      * @param {HTMLElement} element The element triggering the event.
-     * @param {Selection} selection The actual Selection object.
      * @param {String} action The clipboard action: "copy", "paste", "cut".
+     * @param {Cursor} cursor The actual cursor object.
      */
-    clipboard: function(element, selection, action) {
-      behavior.move(element, selection, action);
+    clipboard: function(element, action, cursor) {
+      behavior.clipboard(element, action, cursor);
     }
   }
 };
 
 
 var content = (function() {
+
+  var restoreRange = function(host, range, func) {
+    range = rangeSaveRestore.save(range);
+    func.call(content);
+    return rangeSaveRestore.restore(host, range);
+  };
+
   return {
     normalizeTags: function(element) {
       var i, j, node, sibling;
@@ -4193,15 +4445,14 @@ var content = (function() {
     },
 
     normalizeSpaces: function(element) {
-      var firstChild = element.firstChild;
+      if(!element) return;
 
-      if(!firstChild) return;
-
-      if(firstChild.nodeType === 3) {
-        firstChild.nodeValue = firstChild.nodeValue.replace(/^(\s)/, '\u00A0');
+      if(element.nodeType === 3) {
+        element.nodeValue = element.nodeValue.replace(/^(\s)/, '\u00A0').replace(/(\s)$/, '\u00A0');
       }
       else {
-        this.normalizeSpaces(firstChild);
+        this.normalizeSpaces(element.firstChild);
+        this.normalizeSpaces(element.lastChild);
       }
     },
 
@@ -4213,6 +4464,155 @@ var content = (function() {
         if(node && node.nodeName !== 'BR' && !node.textContent) {
           node.parentNode.removeChild(node);
         }
+      }
+    },
+
+    /**
+     * Get all tags that start or end inside the range
+     */
+    getTags: function(host, range) {
+      var tags = this.getInnerTags(range);
+
+      // get all tags that surround the range
+      var node = range.commonAncestorContainer;
+      while (node !== host) {
+        tags.push(node);
+        node = node.parentNode;
+      }
+      return tags;
+    },
+
+    /**
+     * Get all tags that start or end inside the range
+     */
+    getInnerTags: function(range) {
+      var tags = [], node;
+
+      var iterator = range.createNodeIterator();
+      while( (node = iterator.next()) ) {
+        if (node.nodeType === 1)
+          tags.push(node);
+      }
+      return tags;
+    },
+
+    /**
+     * Transform an array of elements into a an array
+     * of tagnames in uppercase
+     *
+     * @return example: ['STRONG', 'B']
+     */
+    getTagNames: function(elements) {
+      var names = [];
+      for (var i=0; i < elements.length; i++) {
+        names.push(elements[i].nodeName);
+      }
+      return names;
+    },
+
+    wrap: function(range, elem) {
+      elem = string.isString(elem) ?
+        $(elem)[0] :
+        elem;
+
+      if(this.isWrappable(range)) {
+        var a = range.surroundContents(elem);
+      } else {
+        console.log('content.wrap(): can not surround range');
+      }
+    },
+
+    unwrap: function(elem) {
+      $(elem).contents().unwrap();
+    },
+
+    isWrappable: function(range) {
+      return range.canSurroundContents();
+    },
+
+    forceWrap: function(host, range, elem) {
+      range = restoreRange(host, range, function(){
+        this.nuke(host, range, elem.tagName);
+      });
+
+      // remove all tags if the range is not wrappable
+      if (!this.isWrappable(range)) {
+        range = restoreRange(host, range, function(){
+          this.nuke(host, range);
+        });
+      }
+
+      this.wrap(range, elem);
+      return range;
+    },
+
+    link: function(host, range, attrs) {
+      var $elem = $('<a>');
+      for (var name in attrs) {
+        $elem.attr(name, attrs[name]);
+      }
+      return this.forceWrap(host, range, $elem[0]);
+    },
+
+    removeFormatting: function(host, range, tagName) {
+      return restoreRange(host, range, function(){
+        this.nuke(host, range, tagName);
+      });
+    },
+
+    /**
+     * Unwrap all tags this range is affected by.
+     * Can also affect content outside of the range.
+     */
+    nuke: function(host, range, tagName) {
+      var tags = this.getTags(host, range);
+      for (var i = 0; i < tags.length; i++) {
+        var elem = tags[i];
+        if ( !tagName || elem.tagName === tagName.toUpperCase() ) {
+          this.unwrap(elem);
+        }
+      }
+    },
+
+    /**
+     * Insert a single character (or string) before or after the
+     * the range.
+     */
+    insertCharacter: function(range, character, atStart) {
+      var insertEl = document.createTextNode(character);
+
+      var boundaryRange = range.cloneRange();
+      boundaryRange.collapse(atStart);
+      boundaryRange.insertNode(insertEl);
+      boundaryRange.detach();
+
+      if (atStart) {
+        range.setStartBefore(insertEl);
+      } else {
+        range.setEndAfter(insertEl);
+      }
+      range.normalizeBoundaries();
+    },
+
+    /**
+     * Surround the range with characters like start and end quotes.
+     */
+    surround: function(host, range, startCharacter, endCharacter) {
+      if (!endCharacter) endCharacter = startCharacter;
+      this.insertCharacter(range, endCharacter, false);
+      this.insertCharacter(range, startCharacter, true);
+    },
+
+    /**
+     * Unwrap all tags this range is affected by.
+     * Can also affect content outside of the range.
+     */
+    nukeTag: function(host, range, tagName) {
+      var tags = this.getTags(host, range);
+      for (var i = 0; i < tags.length; i++) {
+        var elem = tags[i];
+        if (elem.tagName === tagName)
+          this.unwrap(elem);
       }
     }
   };
@@ -4236,12 +4636,20 @@ var Cursor = (function() {
   var Cursor = function(editableHost, rangyRange) {
     this.host = editableHost;
     this.range = rangyRange;
+    this.isCursor = true;
   };
 
   Cursor.prototype = (function() {
     return {
       isAtEnd: function() {
         return parser.isEndOfHost(
+          this.host,
+          this.range.endContainer,
+          this.range.endOffset);
+      },
+
+      isAtTextEnd: function() {
+        return parser.isTextEndOfHost(
           this.host,
           this.range.endContainer,
           this.range.endOffset);
@@ -4366,7 +4774,8 @@ var dispatcher = (function() {
    * @private
    * @type {Object}
    */
-  var listeners = {};
+  var listeners = {},
+      editableSelector;
 
   /**
    * Sets up events that are triggered on modifying an element.
@@ -4376,16 +4785,21 @@ var dispatcher = (function() {
    * @param {Function} notifier: The callback to be triggered when the event is caught.
    */
   var setupElementEvents = function($document, notifier) {
-    $document.on('focus.editable', '.-js-editable', function(event) {
+    $document.on('focus.editable', editableSelector, function(event) {
+      if(this.getAttribute(config.pastingAttribute)) return;
       notifier('focus', this);
-    }).on('blur.editable', '.-js-editable', function(event) {
+    }).on('blur.editable', editableSelector, function(event) {
+      if(this.getAttribute(config.pastingAttribute)) return;
       notifier('blur', this);
-    }).on('copy.editable', '.-js-editable', function(event) {
+    }).on('copy.editable', editableSelector, function(event) {
       log('Copy');
-    }).on('cut.editable', '.-js-editable', function(event) {
+      notifier('clipboard', this, 'copy', selectionWatcher.getFreshSelection());
+    }).on('cut.editable', editableSelector, function(event) {
       log('Cut');
-    }).on('paste.editable', '.-js-editable', function(event) {
+      notifier('clipboard', this, 'cut', selectionWatcher.getFreshSelection());
+    }).on('paste.editable', editableSelector, function(event) {
       log('Paste');
+      notifier('clipboard', this, 'paste', selectionWatcher.getFreshSelection());
     });
   };
 
@@ -4401,23 +4815,25 @@ var dispatcher = (function() {
     var dispatchSwitchEvent = function(event, element, direction) {
       var cursor;
 
-      if(event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
+      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
         return;
 
       cursor = selectionWatcher.getSelection();
-      if(cursor instanceof Selection) return;
+      if (cursor.isSelection) return;
 
+      // Detect if the browser moved the cursor in the next tick.
+      // If the cursor stays at its position, fire the switch event.
       setTimeout(function() {
-        var newCursor = selectionWatcher.getCursor();
-        if(newCursor.equals(cursor)) {
+        var newCursor = selectionWatcher.forceCursor();
+        if (newCursor.equals(cursor)) {
           event.preventDefault();
           event.stopPropagation();
           notifier('switch', element, direction, newCursor);
         }
       }, 1);
-    }
+    };
 
-    $document.on('keydown.editable', '.-js-editable', function(event) {
+    $document.on('keydown.editable', editableSelector, function(event) {
       keyboard.dispatchKeyEvent(event, this);
     });
 
@@ -4442,31 +4858,38 @@ var dispatcher = (function() {
     }).on('backspace', function(event) {
       log('Backspace key pressed');
 
-      var cursor = selectionWatcher.getCursor();
-      if(cursor.isAtBeginning()) {
-        event.preventDefault();
-        event.stopPropagation();
-        notifier('merge', this, 'before', cursor);
+      var range = selectionWatcher.getFreshRange();
+      if (range.isCursor) {
+        var cursor = range.getCursor();
+        if ( cursor.isAtBeginning() ) {
+          event.preventDefault();
+          event.stopPropagation();
+          notifier('merge', this, 'before', cursor);
+        }
       }
     }).on('delete', function(event) {
       log('Delete key pressed');
 
-      var cursor = selectionWatcher.getCursor();
-      if(cursor.isAtEnd()) {
-        event.preventDefault();
-        event.stopPropagation();
-        notifier('merge', this, 'after', cursor);
+      var range = selectionWatcher.getFreshRange();
+      if (range.isCursor) {
+        var cursor = range.getCursor();
+        if(cursor.isAtTextEnd()) {
+          event.preventDefault();
+          event.stopPropagation();
+          notifier('merge', this, 'after', cursor);
+        }
       }
     }).on('enter', function(event) {
       log('Enter key pressed');
 
       event.preventDefault();
       event.stopPropagation();
-      var cursor = selectionWatcher.getCursor();
+      var range = selectionWatcher.getFreshRange();
+      var cursor = range.forceCursor();
 
       if (cursor.isAtBeginning()) {
         notifier('insert', this, 'before', cursor);
-      } else if(cursor.isAtEnd()) {
+      } else if(cursor.isAtTextEnd()) {
         notifier('insert', this, 'after', cursor);
       } else {
         notifier('split', this, cursor.before(), cursor.after(), cursor);
@@ -4476,7 +4899,7 @@ var dispatcher = (function() {
       log('Shift+Enter key pressed');
       event.preventDefault();
       event.stopPropagation();
-      var cursor = selectionWatcher.getCursor();
+      var cursor = selectionWatcher.forceCursor();
       notifier('newline', this, cursor);
     });
   };
@@ -4505,7 +4928,7 @@ var dispatcher = (function() {
     // listen for selection changes by mouse so we can
     // suppress the selectionchange event and only fire the
     // change event on mouseup
-    $document.on('mousedown.editable', '.-js-editable', function(event) {
+    $document.on('mousedown.editable', editableSelector, function(event) {
       if (config.mouseMoveSelectionChanges === false) {
         suppressSelectionChanges = true;
 
@@ -4545,7 +4968,7 @@ var dispatcher = (function() {
     });
 
     // listen for selection changes by keys
-    $document.on('keyup.editable', '.-js-editable', function(event) {
+    $document.on('keyup.editable', editableSelector, function(event) {
 
       // when pressing Command + Shift + Left for example the keyup is only triggered
       // after at least two keys are released. Strange. The culprit seems to be the
@@ -4597,6 +5020,7 @@ var dispatcher = (function() {
 
       var $document = $(document);
       var eventType = null;
+      editableSelector = '.' + config.editableClass;
 
       listeners = {};
       // TODO check the config.event object to prevent
@@ -4816,20 +5240,20 @@ var parser = (function() {
     },
 
     /**
-     * check if node contains text or element nodes
+     * Check if node contains text or element nodes
      * whitespace counts too!
      *
-     * @method isEmpty
+     * @method isVoid
      * @param {HTMLElement}
      */
-    isEmpty: function(node) {
+    isVoid: function(node) {
       var child, i, len;
       var childNodes = node.childNodes;
 
       for (i = 0, len = childNodes.length; i < len; i++) {
         child = childNodes[i];
 
-        if (child.nodeType === 3 && !this.isEmptyTextNode(child)) {
+        if (child.nodeType === 3 && !this.isVoidTextNode(child)) {
           return false;
         } else if (child.nodeType === 1) {
           return false;
@@ -4839,13 +5263,56 @@ var parser = (function() {
     },
 
     /**
-     * check if node is a text node and completely empty without any whitespace
+     * Check if node is a text node and completely empty without any whitespace
      *
-     * @method isEmptyTextNode
+     * @method isVoidTextNode
      * @param {HTMLElement}
      */
-    isEmptyTextNode: function(node) {
+    isVoidTextNode: function(node) {
       return node.nodeType === 3 && !node.nodeValue;
+    },
+
+    /**
+     * Check if node is a text node and contains nothing but whitespace
+     *
+     * @method isWhitespaceOnly
+     * @param {HTMLElement}
+     */
+    isWhitespaceOnly: function(node) {
+      return node.nodeType === 3 && this.lastOffsetWithContent(node) === 0;
+    },
+
+    isLinebreak: function(node) {
+      return node.nodeType === 1 && node.tagName === 'BR';
+    },
+
+    /**
+     * Returns the last offset where the cursor can be positioned to
+     * be at the visible end of its container.
+     * Currently works only for empty text nodes (not empty tags)
+     *
+     * @method isWhitespaceOnly
+     * @param {HTMLElement}
+     */
+    lastOffsetWithContent: function(node) {
+      if (node.nodeType === 3) {
+        return string.trimRight(node.nodeValue).length;
+      } else {
+        var i,
+            childNodes = node.childNodes;
+
+        for (i = childNodes.length - 1; i >= 0; i--) {
+          node = childNodes[i];
+          if (this.isWhitespaceOnly(node) || this.isLinebreak(node)) {
+            continue;
+          } else {
+            // The offset starts at 0 before the first element
+            // and ends with the length after the last element.
+            return i + 1;
+          }
+        }
+        return 0;
+      }
     },
 
     isBeginningOfHost: function(host, container, offset) {
@@ -4855,6 +5322,9 @@ var parser = (function() {
 
       if (this.isStartOffset(container, offset)) {
         var parentContainer = container.parentNode;
+
+        // The index of the element simulates a range offset
+        // right before the element.
         var offsetInParent = this.getNodeIndex(container);
         return this.isBeginningOfHost(host, parentContainer, offsetInParent);
       } else {
@@ -4869,7 +5339,10 @@ var parser = (function() {
 
       if (this.isEndOffset(container, offset)) {
         var parentContainer = container.parentNode;
-        var offsetInParent = this.getNodeIndex(container);
+
+        // The index of the element plus one simulates a range offset
+        // right after the element.
+        var offsetInParent = this.getNodeIndex(container) + 1;
         return this.isEndOfHost(host, parentContainer, offsetInParent);
       } else {
         return false;
@@ -4893,8 +5366,39 @@ var parser = (function() {
       } else {
         if(container.childNodes.length === 0)
           return true;
+        else if (offset > 0)
+          return container.childNodes[offset - 1] === container.lastChild;
         else
-          return container.childNodes[offset] === container.lastChild;
+          return false;
+      }
+    },
+
+    isTextEndOfHost: function(host, container, offset) {
+      if (container === host) {
+        return this.isTextEndOffset(container, offset);
+      }
+
+      if (this.isTextEndOffset(container, offset)) {
+        var parentContainer = container.parentNode;
+
+        // The index of the element plus one simulates a range offset
+        // right after the element.
+        var offsetInParent = this.getNodeIndex(container) + 1;
+        return this.isTextEndOfHost(host, parentContainer, offsetInParent);
+      } else {
+        return false;
+      }
+    },
+
+    isTextEndOffset: function (container, offset) {
+      if (container.nodeType === 3) {
+        var text = string.trimRight(container.nodeValue);
+        return offset >= text.length;
+      } else if (container.childNodes.length === 0) {
+        return true;
+      } else {
+        var lastOffset = this.lastOffsetWithContent(container);
+        return offset >= lastOffset;
       }
     },
 
@@ -4918,6 +5422,169 @@ var parser = (function() {
   };
 })();
 
+/** RangeContainer
+ *
+ * primarily used to compare ranges
+ * its designed to work with undefined ranges as well
+ * so we can easily compare them without checking for undefined
+ * all the time
+ */
+var RangeContainer = function(editableHost, rangyRange) {
+  this.host = editableHost;
+  this.range = rangyRange;
+  this.isAnythingSelected = (rangyRange !== undefined);
+  this.isCursor = (this.isAnythingSelected && rangyRange.collapsed);
+  this.isSelection = (this.isAnythingSelected && !this.isCursor);
+};
+
+RangeContainer.prototype.getCursor = function() {
+  if (this.isCursor) {
+    return new Cursor(this.host, this.range);
+  }
+};
+
+RangeContainer.prototype.getSelection = function() {
+  if (this.isSelection) {
+    return new Selection(this.host, this.range);
+  }
+};
+
+RangeContainer.prototype.forceCursor = function() {
+  if (this.isSelection) {
+    var selection = this.getSelection();
+    return selection.deleteContent();
+  } else {
+    return this.getCursor();
+  }
+};
+
+RangeContainer.prototype.isDifferentFrom = function(otherRangeContainer) {
+  otherRangeContainer = otherRangeContainer || new RangeContainer();
+  var self = this.range;
+  var other = otherRangeContainer.range;
+  if (self && other) {
+    return !self.equals(other);
+  } else if (!self && !other) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+
+/**
+ * Inspired by the Selection save and restore module for Rangy by Tim Down
+ * Saves and restores ranges using invisible marker elements in the DOM.
+ */
+var rangeSaveRestore = (function() {
+  var boundaryMarkerId = 0;
+
+  // (U+FEFF) zero width no-break space
+  var markerTextChar = '\ufeff';
+
+  var getMarker = function(host, id) {
+    return host.querySelector('#'+ id);
+  };
+
+  return {
+
+    insertRangeBoundaryMarker: function(range, atStart) {
+      var markerId = 'editable-range-boundary-' + (boundaryMarkerId += 1);
+      var markerEl;
+      var doc = window.document;
+
+      // Clone the Range and collapse to the appropriate boundary point
+      var boundaryRange = range.cloneRange();
+      boundaryRange.collapse(atStart);
+
+      // Create the marker element containing a single invisible character using DOM methods and insert it
+      markerEl = doc.createElement('span');
+      markerEl.id = markerId;
+      markerEl.style.lineHeight = '0';
+      markerEl.style.display = 'none';
+      // markerEl.className = "rangySelectionBoundary";
+      markerEl.appendChild(doc.createTextNode(markerTextChar));
+
+      boundaryRange.insertNode(markerEl);
+      boundaryRange.detach();
+      return markerEl;
+    },
+
+    setRangeBoundary: function(host, range, markerId, atStart) {
+      var markerEl = getMarker(host, markerId);
+      if (markerEl) {
+        range[atStart ? 'setStartBefore' : 'setEndBefore'](markerEl);
+        markerEl.parentNode.removeChild(markerEl);
+      } else {
+        console.log('Marker element has been removed. Cannot restore selection.');
+      }
+    },
+
+    save: function(range) {
+      var doc = window.document;
+      var rangeInfo, startEl, endEl;
+
+      // insert markers
+      if (range.collapsed) {
+        endEl = this.insertRangeBoundaryMarker(range, false);
+        rangeInfo = {
+          markerId: endEl.id,
+          collapsed: true
+        };
+      } else {
+        endEl = this.insertRangeBoundaryMarker(range, false);
+        startEl = this.insertRangeBoundaryMarker(range, true);
+
+        rangeInfo = {
+          startMarkerId: startEl.id,
+          endMarkerId: endEl.id,
+          collapsed: false
+        };
+      }
+
+      // Adjust each range's boundaries to lie between its markers
+      if (range.collapsed) {
+        range.collapseBefore(endEl);
+      } else {
+        range.setEndBefore(endEl);
+        range.setStartAfter(startEl);
+      }
+
+      return rangeInfo;
+    },
+
+    restore: function(host, rangeInfo) {
+      if (rangeInfo.restored) return;
+
+      var range = rangy.createRange();
+      if (rangeInfo.collapsed) {
+        var markerEl = getMarker(host, rangeInfo.markerId);
+        if (markerEl) {
+          markerEl.style.display = 'inline';
+          var previousNode = markerEl.previousSibling;
+
+          // Workaround for rangy issue 17
+          if (previousNode && previousNode.nodeType === 3) {
+            markerEl.parentNode.removeChild(markerEl);
+            range.collapseToPoint(previousNode, previousNode.length);
+          } else {
+            range.collapseBefore(markerEl);
+            markerEl.parentNode.removeChild(markerEl);
+          }
+        } else {
+          console.log('Marker element has been removed. Cannot restore selection.');
+        }
+      } else {
+        this.setRangeBoundary(host, range, rangeInfo.startMarkerId, true);
+        this.setRangeBoundary(host, range, rangeInfo.endMarkerId, false);
+      }
+
+      range.normalizeBoundaries();
+      return range;
+    }
+  };
+})();
+
 /**
  * The SelectionWatcher module watches for selection changes inside
  * of editable blocks.
@@ -4925,50 +5592,21 @@ var parser = (function() {
  * @module core
  * @submodule selectionWatcher
  */
-
 var selectionWatcher = (function() {
-
-  /** RangeContainer
-   *
-   * primarily used to compare ranges
-   * its designed to work with undefined ranges as well
-   * so we can easily compare them without checking for undefined
-   * all the time
-   */
-  var RangeContainer = function(editableHost, rangyRange) {
-    this.host = editableHost;
-    this.range = rangyRange;
-    this.isAnythingSelected = (rangyRange !== undefined);
-    this.cursor = (this.isAnythingSelected && rangyRange.collapsed);
-    this.selection = !this.cursor;
-  };
-
-  RangeContainer.prototype.isDifferentFrom = function(otherRangeContainer) {
-    var self = this.range;
-    var other = otherRangeContainer.range;
-    if (self && other) {
-      return !self.equals(other);
-    } else if (!self && !other) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-
 
   var rangySelection,
       currentSelection,
-      currentRange = new RangeContainer();
+      currentRange;
 
   /**
    * Return a RangeContainer if the current selection is within an editable
    * otherwise return an empty RangeContainer
    */
   var getRangeContainer = function() {
-    if (!rangySelection) {
-      rangySelection = rangy.getSelection();
-    } else {
+    if (rangySelection) {
       rangySelection.refresh();
+    } else {
+      rangySelection = rangy.getSelection();
     }
 
     // rangeCount is 0 or 1 in all browsers except firefox
@@ -4976,8 +5614,8 @@ var selectionWatcher = (function() {
     // (I don't know if this occurs from normal use though)
     if (rangySelection.rangeCount) {
       var range = rangySelection.getRangeAt(0);
-
-      var hostNode = $(range.commonAncestorContainer).closest('.-js-editable');
+      var editableSelector = '.' + config.editableClass;
+      var hostNode = $(range.commonAncestorContainer).closest(editableSelector);
       if (hostNode.length) {
         return new RangeContainer(hostNode[0], range);
       }
@@ -4989,65 +5627,71 @@ var selectionWatcher = (function() {
 
   return {
 
-    // get a fresh Selection or Cursor
+    /**
+     * Gets a fresh RangeContainer with the current selection or cursor.
+     *
+     * @return RangeContainer instance
+     */
+    getFreshRange: function() {
+      return getRangeContainer();
+    },
+
+    /**
+     * Gets a fresh RangeContainer with the current selection or cursor.
+     *
+     * @return Either a Cursor or Selection instance or undefined if
+     * there is neither a selection or cursor.
+     */
     getFreshSelection: function() {
       var range = getRangeContainer();
-      if (!range.isAnythingSelected) return undefined;
 
-      return range.cursor ?
-        new Cursor(range.host, range.range) :
-        new Selection(range.host, range.range);
+      return range.isCursor ?
+        range.getCursor() :
+        range.getSelection();
     },
 
-    getCursor: function() {
-      var cursor = this.getFreshSelection();
-      if (cursor instanceof Selection) {
-        cursor = cursor.deleteContent();
-      }
-      return cursor;
-    },
-
+    /**
+     * Get the selection set by the last selectionChanged event.
+     * Sometimes the event does not fire fast enough and the seleciton
+     * you get is not the one the user sees.
+     * In those cases use #getFreshSelection()
+     *
+     * @return Either a Cursor or Selection instance or undefined if
+     * there is neither a selection or cursor.
+     */
     getSelection: function() {
       return currentSelection;
+    },
+
+    forceCursor: function() {
+      var range = getRangeContainer();
+      return range.forceCursor();
     },
 
     selectionChanged: function() {
       var newRange = getRangeContainer();
       if (newRange.isDifferentFrom(currentRange)) {
+        var lastSelection = currentSelection;
         currentRange = newRange;
 
-        if (currentRange.isAnythingSelected) {
-          if (currentRange.cursor) {
-
-            // emtpy selection
-            if (currentSelection instanceof Selection) {
-              dispatcher.notifyListeners('selection', currentSelection.host);
-            }
-
-            // new cursor
-            currentSelection = new Cursor(currentRange.host, currentRange.range);
-            dispatcher.notifyListeners('cursor', currentSelection.host, currentSelection);
-          } else {
-
-            // emtpy cursor
-            if (currentSelection instanceof Cursor) {
-              dispatcher.notifyListeners('cursor', currentSelection.host);
-            }
-
-            // new selection
-            currentSelection = new Selection(currentRange.host, currentRange.range);
-            dispatcher.notifyListeners('selection', currentSelection.host, currentSelection);
+        // empty selection or cursor
+        if (lastSelection) {
+          if (lastSelection.isCursor && !currentRange.isCursor) {
+            dispatcher.notifyListeners('cursor', lastSelection.host);
+          } else if (lastSelection.isSelection && !currentRange.isSelection) {
+            dispatcher.notifyListeners('selection', lastSelection.host);
           }
+        }
+
+        // set new selection or cursor and fire event
+        if (currentRange.isCursor) {
+          currentSelection = new Cursor(currentRange.host, currentRange.range);
+          dispatcher.notifyListeners('cursor', currentSelection.host, currentSelection);
+        } else if (currentRange.isSelection) {
+          currentSelection = new Selection(currentRange.host, currentRange.range);
+          dispatcher.notifyListeners('selection', currentSelection.host, currentSelection);
         } else {
-          var previousSelection = currentSelection;
           currentSelection = undefined;
-
-          // empty selection or cursor
-          if (previousSelection instanceof Cursor) {
-            dispatcher.notifyListeners('cursor', previousSelection.host);
-          } else if (previousSelection instanceof Selection) {
-            dispatcher.notifyListeners('selection', previousSelection.host);
-          }
         }
       }
     }
@@ -5074,6 +5718,7 @@ var Selection = (function() {
   var Selection = function(editableHost, rangyRange) {
     this.host = editableHost;
     this.range = rangyRange;
+    this.isSelection = true;
   };
 
   // add Cursor prototpye to Selection prototype chain
@@ -5103,7 +5748,14 @@ var Selection = (function() {
      * @method isAllSelected
      */
     isAllSelected: function() {
-
+      return parser.isBeginningOfHost(
+        this.host,
+        this.range.startContainer,
+        this.range.startOffset) &&
+      parser.isTextEndOfHost(
+        this.host,
+        this.range.endContainer,
+        this.range.endOffset);
     },
 
     /**
@@ -5128,7 +5780,59 @@ var Selection = (function() {
 
     /**
      *
+     * @method link
+     */
+    link: function(link, target) {
+      var attrs = {
+        href: link
+      };
+      if (target) attrs.target = target;
+      this.range = content.link(this.host, this.range, attrs);
+      this.update();
+    },
+
+    /**
+     *
+     * @method bold
+     */
+    makeBold: function() {
+      var $bold = $('<strong>');
+      this.range = content.forceWrap(this.host, this.range, $bold[0]);
+      this.update();
+    },
+
+    /**
+     *
+     * @method emphasis
+     */
+    giveEmphasis: function() {
+      var $em = $('<em>');
+      this.range = content.forceWrap(this.host, this.range, $em[0]);
+      this.update();
+    },
+
+    /**
+     *
+     * @method surround
+     */
+    surround: function(startCharacter, endCharacter) {
+      content.surround(this.host, this.range, startCharacter, endCharacter);
+      this.update();
+    },
+
+    /**
+     *
+     * @method removeFormatting
+     */
+    removeFormatting: function() {
+      this.range = content.removeFormatting(this.host, this.range);
+      this.update();
+    },
+
+    /**
+     *
      * @method deleteContent
+     * @return Cursor instance
      */
     deleteContent: function() {
       this.range.deleteContents();
