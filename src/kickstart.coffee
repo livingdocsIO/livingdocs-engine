@@ -6,6 +6,7 @@ kickstart = do ->
     doc.init(design: design)
     doc.ready =>
       #add all root snippets, set their editables
+
       domElements.each (index, element) =>
         row = doc.add(@nodeToSnippetName(element))
         @setChildren(row, element)
@@ -23,8 +24,14 @@ kickstart = do ->
 
 
   parseSnippets: (parentContainer, region, data) ->
-    snippet = doc.create(@nodeToSnippetName(data))
+    snippetName = @nodeToSnippetName(data)
+    snippet = doc.create(snippetName)
     parentContainer.append(region, snippet)
+
+    if snippetName == 'title'
+      console.log(data.text)
+      data = $("<div>").append(data.text)
+
     @setChildren(snippet, data)
 
 
@@ -37,16 +44,22 @@ kickstart = do ->
     for key of snippet.content
       directive = snippet.template.directives.get(key)
       snippet.set(key, null)
-      child = $(key, data).get()[0]
 
-      if key == 'image' && !child
-        child = $('img', data).get()[0]
+      if key == 'image'
+        child = data.querySelector('img')?.innerHTML
+
+      else if key == 'title'
+        log.warn("Your design contains an editable named '#{key}'. This can cause unexpected results due to some Browser limitations.")
+        child = data.querySelector(key)?.text
+
+      else
+        child = data.querySelector(key)?.innerHTML
 
       if !child
-        log('The snippet "' + key + '" has no content. Display parent HTML instead.')
-        child = data
+        log.warn("The editable '#{key}' of '#{snippet.identifier}' has no content. Display parent HTML instead.")
+        child = data.innerHTML
 
-      snippet.set(key, child.innerHTML)
+      snippet.set(key, child)
 
 
   # Convert a dom element into a camelCase snippetName
