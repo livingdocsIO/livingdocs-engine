@@ -29,7 +29,7 @@ kickstart = do ->
     parentContainer.append(region, snippet)
 
     if snippetName == 'title'
-      data = $("<div>").append(data.text)
+      data = $.parseHTML("<div>#{data.text}</div>")[0]
 
     @setChildren(snippet, data)
 
@@ -41,7 +41,7 @@ kickstart = do ->
 
   setEditables: (snippet, data) ->
     for key of snippet.content
-      directive = snippet.template.directives.get(key)
+      #directive = snippet.template.directives.get(key)
       snippet.set(key, null)
 
       if key == 'image'
