@@ -29,7 +29,6 @@ kickstart = do ->
     parentContainer.append(region, snippet)
 
     if snippetName == 'title'
-      console.log(data.text)
       data = $("<div>").append(data.text)
 
     @setChildren(snippet, data)
