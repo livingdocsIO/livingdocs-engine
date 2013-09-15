@@ -88,15 +88,20 @@ class EditableController
       mergedView = if direction == 'before' then view.prev() else view.next()
 
       if mergedView.template == view.template
-        content = view.get(editableName) || ''
-        mergedContent = mergedView.model.get(editableName) || ''
 
-        combinedContent = if direction == 'before' then mergedContent + content else content + mergedContent
-        mergedView.model.set(editableName, combinedContent)
+        # create document fragment
+        contents = $(view.directives.get(editableName).elem).contents()
+        frag = @page.document.createDocumentFragment()
+        for el in contents
+          frag.appendChild(el)
+
+        mergedView.focus()
+        elem = mergedView.directives.get(editableName).elem
+        cursor = Editable.createCursor(elem, if direction == 'before' then false else true)
+        cursor[ if direction == 'before' then 'insertAfter' else 'insertBefore' ](frag)
 
         view.model.remove()
-        mergedView.focus() if mergedView
-        # todo: set cursor to the right position
+        cursor.update()
 
     false # disable editableJS default behaviour
 
