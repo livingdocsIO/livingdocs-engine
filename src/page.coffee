@@ -5,8 +5,9 @@ class Page
 
 
   constructor: ->
-    @$document = $(window.document)
-    @$body = $(window.document.body)
+    @document = window.document
+    @$document = $(@document)
+    @$body = $(@document.body)
 
     @loader = new Loader()
     @focus = new Focus()
