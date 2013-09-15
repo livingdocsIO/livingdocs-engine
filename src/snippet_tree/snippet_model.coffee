@@ -114,8 +114,10 @@ class SnippetModel
 
 
   setData: (name, value) ->
-    @dataValues[name] = value
-    # TODO: change event
+    if @dataValues[name] != value
+      @dataValues[name] = value
+      if @snippetTree
+        @snippetTree.dataChanging(this)
 
 
   style: (name, value) ->

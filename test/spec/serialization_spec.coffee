@@ -159,7 +159,7 @@ describe 'Deserialization', ->
       expect(snippet.style('Color')).toEqual(undefined)
 
 
-  ddescribe 'of a snippet with data', ->
+  describe 'of a snippet with data', ->
 
     beforeEach ->
       @json = test.localstore
