@@ -44,6 +44,10 @@
     JSON.stringify(obj, null, 2) # "\t"
 
 
+  trim: (str) ->
+    str.replace(/^\s+|\s+$/g, '')
+
+
   # camelize: (str) ->
   #   $.trim(str).replace(/[-_\s]+(.)?/g, (match, c) ->
   #     c.toUpperCase()

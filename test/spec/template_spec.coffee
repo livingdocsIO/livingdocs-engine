@@ -105,7 +105,16 @@ describe 'Template.parseIdentifier()', ->
     expect(identifier).toBeUndefined()
 
 
-# Template constructor
+describe 'Template with default value', ->
+
+  it 'trims the default value', ->
+    template = new Template
+      identifier: 'bootstrap.title'
+      html: """<h1 #{ docAttr.editable }="title">\n\t your title\t </h1>"""
+
+    expect(template.defaults['title']).toEqual('your title')
+
+
 describe 'new Template()', ->
 
   it 'accepts idenfitier param', ->
