@@ -48,7 +48,12 @@ class DragDrop
     @reset()
     @drag.initialized = true
     @options = $.extend({}, @defaultOptions, options)
-    @drag.startPoint = { left: event.pageX, top: event.pageY }
+    if event.type == 'touchstart'
+      @drag.startPoint =
+      left: event.originalEvent.changedTouches[0].pageX
+      top: event.originalEvent.changedTouches[0].pageY
+    else
+      @drag.startPoint = { left: event.pageX, top: event.pageY }
     @$origin = $origin
 
     if @options.longpressDelay and @options.longpressDistanceLimit
@@ -132,12 +137,18 @@ class DragDrop
   dropTarget: (mouseLeft, mouseTop, event) ->
     if @$dragged && event
       elem = undefined
+      if event.type == 'touchstart' || event.type == 'touchmove'
+        x = event.originalEvent.changedTouches[0].clientX
+        y = event.originalEvent.changedTouches[0].clientY
+      else
+        x = event.clientX
+        y = event.clientY
 
       # get the element we're currently hovering
-      if event.clientX && event.clientY
+      if x && y
         @$dragged.hide()
         # todo: Safari 4 and Opera 10.10 need pageX/Y.
-        elem = window.document.elementFromPoint(event.clientX, event.clientY)
+        elem = window.document.elementFromPoint(x, y)
         @$dragged.show()
 
       # check if a drop is possible
