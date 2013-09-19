@@ -33,6 +33,7 @@ class DragDrop
         direct: false
         preventDefault: true
         createPlaceholder: DragDrop.placeholder
+        scrollNearEdge: 40
       }, options)
 
     # per drag properties
@@ -50,8 +51,8 @@ class DragDrop
     @options = $.extend({}, @defaultOptions, options)
     if event.type == 'touchstart'
       @drag.startPoint =
-      left: event.originalEvent.changedTouches[0].pageX
-      top: event.originalEvent.changedTouches[0].pageY
+        left: event.originalEvent.changedTouches[0].pageX
+        top: event.originalEvent.changedTouches[0].pageY
     else
       @drag.startPoint = { left: event.pageX, top: event.pageY }
     @$origin = $origin
@@ -94,6 +95,22 @@ class DragDrop
       @$origin?.addClass(docClass.dragged)
 
 
+  # only vertical scrolling
+  scrollIntoView: (top, event) ->
+    if @lastScrollPosition
+      delta = @lastScrollPosition - top
+      viewportTop = $(window).scrollTop()
+      viewportBottom = viewportTop + $(window).height()
+      if @lastScrollPosition > top # upward movement
+        if viewportTop != 0 && top < viewportTop + @defaultOptions.scrollNearEdge
+          window.scrollTo(0, top + delta)
+      else # downward movement
+        if viewportBottom < ($(document).height() - $(window).height()) && top > viewportBottom - @defaultOptions.scrollNearEdge
+          window.scrollTo(0, top - $(window).height() + delta)
+
+    @lastScrollPosition = top
+
+
   move: (mouseLeft, mouseTop, event) ->
     if @drag.started
       if @drag.mouseToSnippet
@@ -111,6 +128,7 @@ class DragDrop
       top = 2 if top < 2
 
       @$dragged.css({ position:'absolute', left:"#{ left }px", top:"#{ top }px" })
+      @scrollIntoView(top, event)
       @dropTarget(mouseLeft, mouseTop, event) if !@direct
 
     else if @drag.initialized

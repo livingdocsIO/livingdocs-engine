@@ -59,6 +59,7 @@ class Page
         event: event
 
 
+  # These events are initialized immediately to allow a long-press finish
   registerDragStopEvents: (dragDrop, event) ->
     if event.type == 'touchstart'
       @$document.on 'touchend.livingdocs-drag touchcancel.livingdocs-drag touchleave.livingdocs-drag', =>
@@ -70,7 +71,7 @@ class Page
         @$document.off('.livingdocs-drag')
 
 
-  # These events are possibly delayed and initialized on snippetDrag#onStart
+  # These events are possibly initialized with a delay in snippetDrag#onStart
   registerDragStartEvents: (dragDrop, event) ->
     if event.type == 'touchstart'
       @$document.on 'touchmove.livingdocs-drag', (event) ->
