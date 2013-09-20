@@ -33,7 +33,7 @@ class DragDrop
         direct: false
         preventDefault: true
         createPlaceholder: DragDrop.placeholder
-        scrollNearEdge: 40
+        scrollNearEdge: 50
       }, options)
 
     # per drag properties
@@ -103,10 +103,10 @@ class DragDrop
       viewportBottom = viewportTop + $(window).height()
       if @lastScrollPosition > top # upward movement
         if viewportTop != 0 && top < viewportTop + @defaultOptions.scrollNearEdge
-          window.scrollTo(0, top + delta)
+          window.scrollBy(0, -1 * Math.abs(delta))
       else # downward movement
-        if viewportBottom < ($(document).height() - $(window).height()) && top > viewportBottom - @defaultOptions.scrollNearEdge
-          window.scrollTo(0, top - $(window).height() + delta)
+        if viewportBottom - $(window).height() < ($(window.document).height()) && top > viewportBottom - @defaultOptions.scrollNearEdge
+          window.scrollBy(0, Math.abs(delta))
 
     @lastScrollPosition = top
 
