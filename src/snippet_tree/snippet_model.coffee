@@ -55,6 +55,10 @@ class SnippetModel
     @template.directives.count('image') > 0
 
 
+  isAttachedToDom: ->
+    @snippetView?.attachedToDom
+
+
   before: (snippetModel) ->
     if snippetModel
       @parentContainer.insertBefore(this, snippetModel)
