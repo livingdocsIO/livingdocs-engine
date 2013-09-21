@@ -100,7 +100,7 @@ class SnippetModel
 
   get: (name) ->
     assert @content?.hasOwnProperty(name),
-      "get error: #{ @identifier } has no name named #{ name }"
+      "get error: #{ @identifier } has no content named #{ name }"
 
     @content[name]
 
