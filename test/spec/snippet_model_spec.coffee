@@ -130,3 +130,25 @@ describe 'Hero SnippetModel#style', ->
     expect(@hero.styles['Conundrum']).toBe(undefined)
 
 
+describe 'SnippetModel', ->
+
+  describe '#isAttachedToDom', ->
+    snippet = null
+
+    beforeEach ->
+      snippet = test.getSnippet('title')
+      delete snippet.snippetView
+
+    describe 'when it has a snippet view that is attached to dom', ->
+      it 'is truthy', ->
+        snippet.snippetView = { attachedToDom: true }
+        expect(snippet.isAttachedToDom()).toBeTruthy()
+
+    describe 'when it has a snippet view that is not attached to dom', ->
+      it 'is falsy', ->
+        snippet.snippetView = { attachedToDom: false }
+        expect(snippet.isAttachedToDom()).toBeFalsy()
+
+    describe 'when it does not have a snippet view', ->
+      it 'is falsy', ->
+        expect(snippet.isAttachedToDom()).toBeFalsy()
