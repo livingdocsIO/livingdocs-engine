@@ -112,6 +112,10 @@ class SnippetContainer
     @uiInjector
 
 
+  isAttachedToDom: ->
+    @isRoot || @parentSnippet?.isAttachedToDom()
+
+
   # Private
   # -------
 
