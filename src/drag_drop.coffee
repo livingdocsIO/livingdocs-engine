@@ -98,15 +98,20 @@ class DragDrop
   # only vertical scrolling
   scrollIntoView: (top, event) ->
     if @lastScrollPosition
-      delta = @lastScrollPosition - top
+      delta = top - @lastScrollPosition
       viewportTop = $(window).scrollTop()
       viewportBottom = viewportTop + $(window).height()
-      if @lastScrollPosition > top # upward movement
-        if viewportTop != 0 && top < viewportTop + @defaultOptions.scrollNearEdge
-          window.scrollBy(0, -1 * Math.abs(delta))
-      else # downward movement
-        if viewportBottom - $(window).height() < ($(window.document).height()) && top > viewportBottom - @defaultOptions.scrollNearEdge
-          window.scrollBy(0, Math.abs(delta))
+
+      shouldScroll =
+        if delta < 0 # upward movement
+          inScrollUpArea = top < viewportTop + @defaultOptions.scrollNearEdge
+          viewportTop != 0 && inScrollUpArea
+        else # downward movement
+          abovePageBottom = viewportBottom - $(window).height() < ($(window.document).height())
+          inScrollDownArea = top > viewportBottom - @defaultOptions.scrollNearEdge
+          abovePageBottom && inScrollDownArea
+
+      window.scrollBy(0, delta) if shouldScroll
 
     @lastScrollPosition = top
 

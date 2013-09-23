@@ -3,6 +3,7 @@
 # Defines the API between the DOM and the document
 class Page
 
+  LEFT_MOUSE_BUTTON = 1
 
   constructor: ->
     @$document = $(window.document)
@@ -49,7 +50,7 @@ class Page
 
 
   mousedown: (event) ->
-    return if event.which != 1 && event.type == 'mousedown' # only respond to left mouse button
+    return if event.which != LEFT_MOUSE_BUTTON && event.type == 'mousedown' # only respond to left mouse button
     snippetView = dom.findSnippetView(event.target)
 
     if snippetView
@@ -61,14 +62,14 @@ class Page
 
   # These events are initialized immediately to allow a long-press finish
   registerDragStopEvents: (dragDrop, event) ->
-    if event.type == 'touchstart'
-      @$document.on 'touchend.livingdocs-drag touchcancel.livingdocs-drag touchleave.livingdocs-drag', =>
-        dragDrop.drop()
-        @$document.off('.livingdocs-drag')
-    else
-      @$document.on 'mouseup.livingdocs-drag', =>
-        dragDrop.drop()
-        @$document.off('.livingdocs-drag')
+    eventNames =
+      if event.type == 'touchstart'
+        'touchend.livingdocs-drag touchcancel.livingdocs-drag touchleave.livingdocs-drag'
+      else
+        'mouseup.livingdocs-drag'
+    @$document.on eventNames, =>
+      dragDrop.drop()
+      @$document.off('.livingdocs-drag')
 
 
   # These events are possibly initialized with a delay in snippetDrag#onStart
