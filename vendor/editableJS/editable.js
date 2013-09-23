@@ -3587,9 +3587,8 @@ log = function() {
 
 // Allows for safe error logging
 // Falls back to console.log if console.error is not available
-// configuration: disable with config.log = false
 error = function() {
-  if (config.log === false) { return; }
+  if (config.logErrors === false) { return; }
 
   var args;
   args = Array.prototype.slice.call(arguments);
@@ -3620,6 +3619,16 @@ var string = (function() {
 
     isString: function(obj) {
       return toString.call(obj) === '[object String]';
+    },
+
+    /**
+     * Turn any string into a regular expression.
+     * This can be used to search or replace a string conveniently.
+     */
+    regexp: function(str, flags) {
+      if (!flags) flags = 'g';
+      var escapedStr = str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+      return new RegExp(escapedStr, flags);
     }
   };
 })();
@@ -3640,8 +3649,6 @@ var string = (function() {
   var initialize = function() {
     if (!isInitialized) {
       isInitialized = true;
-
-      // TODO check config file integrity
       editableSelector = '.' + config.editableClass;
 
       // make sure rangy is initialized. e.g Rangy doesn't initialize
@@ -3759,6 +3766,7 @@ var string = (function() {
         .addClass(config.editableClass);
 
       $elem.each(function(index, el) {
+        content.normalizeTags(el);
         content.normalizeSpaces(el);
       });
 
@@ -3766,25 +3774,57 @@ var string = (function() {
     },
 
     /**
-     * Static method to set the cursor
+     * Set the cursor inside of an editable block.
      *
      * @method createCursor
+     * @param position 'beginning', 'end', 'before', 'after'
      * @static
      */
-    createCursor: function(element, atStart) {
+    createCursor: function(element, position) {
       var cursor;
       var $host = $(element).closest(editableSelector);
+      position = position || 'beginning';
 
       if ($host.length) {
         var range = rangy.createRange();
-        range.selectNodeContents(element);
-        range.collapse(atStart);
+
+        if (position === 'beginning' || position === 'end') {
+          range.selectNodeContents(element);
+          range.collapse(position === 'beginning' ? true : false);
+        } else if (element !== $host[0]) {
+          if (position === 'before') {
+            range.setStartBefore(element);
+            range.setEndBefore(element);
+          } else if (position === 'after') {
+            range.setStartAfter(element);
+            range.setEndAfter(element);
+          }
+        } else {
+          error('EditableJS: cannot create cursor outside of an editable block.');
+        }
 
         cursor = new Cursor($host[0], range);
       }
 
       return cursor;
     },
+
+    createCursorAtBeginning: function(element) {
+      this.createCursor(element, 'beginning');
+    },
+
+    createCursorAtEnd: function(element) {
+      this.createCursor(element, 'end');
+    },
+
+    createCursorBefore: function(element) {
+      this.createCursor(element, 'before');
+    },
+
+    createCursorAfter: function(element) {
+      this.createCursor(element, 'after');
+    },
+
 
     /**
      * Subscribe a callback function to a custom event fired by the API.
@@ -4003,7 +4043,7 @@ var string = (function() {
      */
     clipboard: function(handler) {
       return this.on('clipboard', handler);
-    },
+    }
   };
 })();
 
@@ -4029,13 +4069,10 @@ var behavior = (function() {
   return {
     focus: function(element) {
       log('Default focus behavior');
-      content.normalizeSpaces(element);
-      content.removeEmptyTags(element);
     },
 
     blur: function(element) {
       log('Default blur behavior');
-      content.normalizeTags(element);
       content.cleanInternals(element);
     },
 
@@ -4081,7 +4118,7 @@ var behavior = (function() {
         log('not at the end');
       }
 
-      cursor.update();
+      cursor.setSelection();
     },
 
     insert: function(element, direction, cursor) {
@@ -4107,12 +4144,14 @@ var behavior = (function() {
       var newStart = after.firstChild;
       parent.insertBefore(before, element);
       parent.replaceChild(after, element);
+      content.normalizeTags(newStart);
+      content.normalizeSpaces(newStart);
       newStart.focus();
     },
 
     merge: function(element, direction, cursor) {
       log('Default merge ' + direction + ' behavior');
-      var container, merger, fragment, chunks, i, newChild;
+      var container, merger, fragment, chunks, i, newChild, range;
 
       switch(direction) {
       case 'before':
@@ -4129,10 +4168,10 @@ var behavior = (function() {
         return;
 
       if(container.childNodes.length > 0)
-        cursor.moveAfter(container.lastChild);
+        cursor.moveAtEnd(container);
       else
-        cursor.moveBefore(container);
-      cursor.update();
+        cursor.moveAtBeginning(container);
+      cursor.setSelection();
 
       fragment = document.createDocumentFragment();
       chunks = merger.childNodes;
@@ -4142,6 +4181,12 @@ var behavior = (function() {
       newChild = container.appendChild(fragment);
 
       merger.parentNode.removeChild(merger);
+
+      cursor.save();
+      content.normalizeTags(container);
+      content.normalizeSpaces(container);
+      cursor.restore();
+      cursor.setSelection();
     },
 
     empty: function(element) {
@@ -4156,16 +4201,16 @@ var behavior = (function() {
       switch(direction) {
       case 'before':
         previous = block.previous(element);
-        if(previous) {
-          cursor.moveAfter(previous);
-          cursor.update();
+        if (previous) {
+          cursor.moveAtEnd(previous);
+          cursor.setSelection();
         }
         break;
       case 'after':
         next = block.next(element);
-        if(next) {
-          cursor.moveBefore(next);
-          cursor.update();
+        if (next) {
+          cursor.moveAtBeginning(next);
+          cursor.setSelection();
         }
         break;
       }
@@ -4204,7 +4249,7 @@ var behavior = (function() {
         content.normalizeSpaces(pasteElement);
         cursor.insertAfter(pasteElement);
         cursor.moveAfter(pasteElement);
-        cursor.update();
+        cursor.setSelection();
 
         element.removeAttribute(config.pastingAttribute);
       }, 0);
@@ -4237,10 +4282,13 @@ var block = (function() {
  */
 var config = {
   log: false,
+  logErrors: true,
   editableClass: 'js-editable',
   editableDisabledClass: 'js-editable-disabled',
   pastingAttribute: 'data-editable-is-pasting',
   mouseMoveSelectionChanges: false,
+  boldTag: '<strong>',
+  italicTag: '<em>',
 
   event: {
     /**
@@ -4429,6 +4477,13 @@ var content = (function() {
   };
 
   return {
+    /**
+     * Remove empty tags and merge consecutive tags (they must have the same
+     * attributes).
+     *
+     * @method normalizeTags
+     * @param  {HTMLElement} element The element to process.
+     */
     normalizeTags: function(element) {
       var i, j, node, sibling;
 
@@ -4437,6 +4492,9 @@ var content = (function() {
       for (i = 0; i < element.childNodes.length; i++) {
         node = element.childNodes[i];
         if(!node) continue;
+
+        // skip empty tags, so they'll get removed
+        if(node.nodeName !== 'BR' && !node.textContent) continue;
 
         if(node.nodeType === 1 && node.nodeName !== 'BR') {
           sibling = node;
@@ -4463,15 +4521,30 @@ var content = (function() {
       element.appendChild(fragment);
     },
 
+    /**
+     * Clean the element from character, tags, etc... added by the plugin logic.
+     *
+     * @method cleanInternals
+     * @param  {HTMLElement} element The element to process.
+     */
     cleanInternals: function(element) {
       element.innerHTML = element.innerHTML.replace(/\u200B/g, '<br />');
     },
 
+    /**
+     * Convert the first and last space to a non breaking space charcter to
+     * prevent visual collapse by some browser.
+     *
+     * @method normalizeSpaces
+     * @param  {HTMLElement} element The element to process.
+     */
     normalizeSpaces: function(element) {
+      var nonBreakingSpace = '\u00A0';
+
       if(!element) return;
 
       if(element.nodeType === 3) {
-        element.nodeValue = element.nodeValue.replace(/^(\s)/, '\u00A0').replace(/(\s)$/, '\u00A0');
+        element.nodeValue = element.nodeValue.replace(/^(\s)/, nonBreakingSpace).replace(/(\s)$/, nonBreakingSpace);
       }
       else {
         this.normalizeSpaces(element.firstChild);
@@ -4479,44 +4552,34 @@ var content = (function() {
       }
     },
 
-    removeEmptyTags: function(element) {
-      var i, len, node;
-
-      for (i = 0, len = element.childNodes.length; i < len; i++) {
-        node = element.childNodes[i];
-        if(node && node.nodeName !== 'BR' && !node.textContent) {
-          node.parentNode.removeChild(node);
-        }
-      }
-    },
-
     /**
      * Get all tags that start or end inside the range
      */
-    getTags: function(host, range) {
-      var tags = this.getInnerTags(range);
+    getTags: function(host, range, filterFunc) {
+      var tags = this.getInnerTags(range, filterFunc);
 
       // get all tags that surround the range
       var node = range.commonAncestorContainer;
       while (node !== host) {
-        tags.push(node);
+        if (!filterFunc || filterFunc(node)) {
+          tags.push(node);
+        }
         node = node.parentNode;
       }
       return tags;
     },
 
+    getTagsByName: function(host, range, tagName) {
+      return this.getTags(host, range, function(node) {
+        return node.nodeName === tagName.toUpperCase();
+      });
+    },
+
     /**
      * Get all tags that start or end inside the range
      */
-    getInnerTags: function(range) {
-      var tags = [], node;
-
-      var iterator = range.createNodeIterator();
-      while( (node = iterator.next()) ) {
-        if (node.nodeType === 1)
-          tags.push(node);
-      }
-      return tags;
+    getInnerTags: function(range, filterFunc) {
+      return range.getNodes([1], filterFunc);
     },
 
     /**
@@ -4527,10 +4590,86 @@ var content = (function() {
      */
     getTagNames: function(elements) {
       var names = [];
-      for (var i=0; i < elements.length; i++) {
+      if (!elements) return names;
+
+      for (var i = 0; i < elements.length; i++) {
         names.push(elements[i].nodeName);
       }
       return names;
+    },
+
+    isAffectedBy: function(host, range, tagName) {
+      var elem;
+      var tags = this.getTags(host, range);
+      for (var i = 0; i < tags.length; i++) {
+        elem = tags[i];
+        if (elem.nodeName === tagName.toUpperCase()) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+
+    /**
+     * Check if the range selects all of the elements contents,
+     * not less or more.
+     *
+     * @param visible: Only compare visible text. That way it does not
+     *   matter if the user selects an additional whitespace or not.
+     */
+    isExactSelection: function(range, elem, visible) {
+      var elemRange = rangy.createRange();
+      elemRange.selectNodeContents(elem);
+      if (range.intersectsRange(elemRange)) {
+        var rangeText = range.toString();
+        var elemText = $(elem).text();
+
+        if (visible) {
+          rangeText = string.trim(rangeText);
+          elemText = string.trim(elemText);
+        }
+
+        return rangeText !== '' && rangeText === elemText;
+      } else {
+        return false;
+      }
+    },
+
+    expandTo: function(host, range, elem) {
+      range.selectNodeContents(elem);
+      return range;
+    },
+
+    toggleTag: function(host, range, elem) {
+      var elems = this.getTagsByName(host, range, elem.nodeName);
+
+      if (elems.length === 1 &&
+          this.isExactSelection(range, elems[0], 'visible')) {
+        return this.removeFormatting(host, range, elem.nodeName);
+      }
+
+      return this.forceWrap(host, range, elem);
+    },
+
+    isWrappable: function(range) {
+      return range.canSurroundContents();
+    },
+
+    forceWrap: function(host, range, elem) {
+      range = restoreRange(host, range, function(){
+        this.nuke(host, range, elem.nodeName);
+      });
+
+      // remove all tags if the range is not wrappable
+      if (!this.isWrappable(range)) {
+        range = restoreRange(host, range, function(){
+          this.nuke(host, range);
+        });
+      }
+
+      this.wrap(range, elem);
+      return range;
     },
 
     wrap: function(range, elem) {
@@ -4549,34 +4688,6 @@ var content = (function() {
       $(elem).contents().unwrap();
     },
 
-    isWrappable: function(range) {
-      return range.canSurroundContents();
-    },
-
-    forceWrap: function(host, range, elem) {
-      range = restoreRange(host, range, function(){
-        this.nuke(host, range, elem.tagName);
-      });
-
-      // remove all tags if the range is not wrappable
-      if (!this.isWrappable(range)) {
-        range = restoreRange(host, range, function(){
-          this.nuke(host, range);
-        });
-      }
-
-      this.wrap(range, elem);
-      return range;
-    },
-
-    link: function(host, range, attrs) {
-      var $elem = $('<a>');
-      for (var name in attrs) {
-        $elem.attr(name, attrs[name]);
-      }
-      return this.forceWrap(host, range, $elem[0]);
-    },
-
     removeFormatting: function(host, range, tagName) {
       return restoreRange(host, range, function(){
         this.nuke(host, range, tagName);
@@ -4591,7 +4702,7 @@ var content = (function() {
       var tags = this.getTags(host, range);
       for (var i = 0; i < tags.length; i++) {
         var elem = tags[i];
-        if ( !tagName || elem.tagName === tagName.toUpperCase() ) {
+        if ( !tagName || elem.nodeName === tagName.toUpperCase() ) {
           this.unwrap(elem);
         }
       }
@@ -4619,11 +4730,45 @@ var content = (function() {
 
     /**
      * Surround the range with characters like start and end quotes.
+     *
+     * @method surround
      */
     surround: function(host, range, startCharacter, endCharacter) {
       if (!endCharacter) endCharacter = startCharacter;
       this.insertCharacter(range, endCharacter, false);
       this.insertCharacter(range, startCharacter, true);
+      return range;
+    },
+
+    /**
+     * Removes a character from the text within a range.
+     *
+     * @method deleteCharacter
+     */
+    deleteCharacter: function(host, range, character) {
+      if (this.containsString(range, character)) {
+        range.splitBoundaries();
+        range = restoreRange(host, range, function() {
+          var charRegexp = string.regexp(character);
+
+          var textNodes = range.getNodes([3], function(node) {
+            return node.nodeValue.search(charRegexp) >= 0;
+          });
+
+          for(var i = 0; i < textNodes.length; i++) {
+            var node = textNodes[i];
+            node.nodeValue = node.nodeValue.replace(charRegexp, '');
+          }
+        });
+        range.normalizeBoundaries();
+      }
+
+      return range;
+    },
+
+    containsString: function(range, str) {
+      var text = range.toString();
+      return text.indexOf(str) >= 0;
     },
 
     /**
@@ -4634,7 +4779,7 @@ var content = (function() {
       var tags = this.getTags(host, range);
       for (var i = 0; i < tags.length; i++) {
         var elem = tags[i];
-        if (elem.tagName === tagName)
+        if (elem.nodeName === tagName)
           this.unwrap(elem);
       }
     }
@@ -4712,10 +4857,8 @@ var Cursor = (function() {
         this.range.insertNode(element);
       },
 
-      update: function() {
-        var sel = rangy.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(this.range);
+      setSelection: function() {
+        rangy.getSelection().setSingleRange(this.range);
       },
 
       before: function() {
@@ -4758,22 +4901,60 @@ var Cursor = (function() {
         };
       },
 
-      setAsSelection: function() {
-        rangy.getSelection().setSingleRange(this.range);
-      },
-
       detach: function() {
         this.range.detach();
       },
 
       moveBefore: function(element) {
-        this.range.setStart(element, 0);
-        this.range.setEnd(element, 0);
+        this.setHost(element);
+        this.range.setStartBefore(element);
+        this.range.setEndBefore(element);
+        if (this.isSelection) return new Cursor(this.host, this.range);
       },
 
       moveAfter: function(element) {
+        this.setHost(element);
+        this.range.setStartAfter(element);
+        this.range.setEndAfter(element);
+        if (this.isSelection) return new Cursor(this.host, this.range);
+      },
+
+      moveAtBeginning: function(element) {
+        if (!element) element = this.host;
+        this.setHost(element);
+        this.range.selectNodeContents(element);
+        this.range.collapse(true);
+        if (this.isSelection) return new Cursor(this.host, this.range);
+      },
+
+      moveAtEnd: function(element) {
+        if (!element) element = this.host;
+        this.setHost(element);
         this.range.selectNodeContents(element);
         this.range.collapse(false);
+        if (this.isSelection) return new Cursor(this.host, this.range);
+      },
+
+      setHost: function(element) {
+        this.host = parser.getHost(element);
+        if (!this.host) {
+          error('Can not set cursor outside of an editable block');
+        }
+      },
+
+      save: function() {
+        this.savedRangeInfo = rangeSaveRestore.save(this.range);
+        this.savedRangeInfo.host = this.host;
+      },
+
+      restore: function() {
+        if (this.savedRangeInfo) {
+          this.host = this.savedRangeInfo.host;
+          this.range = rangeSaveRestore.restore(this.host, this.savedRangeInfo);
+          this.savedRangeInfo = undefined;
+        } else {
+          error('Could not restore selection');
+        }
       },
 
       equals: function(cursor) {
@@ -4853,7 +5034,7 @@ var dispatcher = (function() {
         return;
 
       cursor = selectionWatcher.getSelection();
-      if (cursor.isSelection) return;
+      if (!cursor || cursor.isSelection) return;
 
       // Detect if the browser moved the cursor in the next tick.
       // If the cursor stays at its position, fire the switch event.
@@ -5127,15 +5308,17 @@ jQuery.fn.editable = function(add) {
  */
 
 var keyboard = (function() {
-  var KEY_LEFT = 37,
-      KEY_UP = 38,
-      KEY_RIGHT = 39,
-      KEY_DOWN = 40,
-      KEY_TAB = 9,
-      KEY_ESC = 27,
-      KEY_BACKSPACE = 8,
-      KEY_DELETE = 46,
-      KEY_ENTER = 13;
+  var key = {
+    left: 37,
+    up: 38,
+    right: 39,
+    down: 40,
+    tab: 9,
+    esc: 27,
+    backspace: 8,
+    'delete': 46,
+    enter: 13
+  };
 
   var listeners = {};
 
@@ -5171,23 +5354,23 @@ var keyboard = (function() {
     dispatchKeyEvent: function(event, target) {
       switch (event.keyCode) {
 
-      case KEY_LEFT:
+      case key.left:
         notifyListeners('left', target, event);
         break;
 
-      case KEY_RIGHT:
+      case key.right:
         notifyListeners('right', target, event);
         break;
 
-      case KEY_UP:
+      case key.up:
         notifyListeners('up', target, event);
         break;
 
-      case KEY_DOWN:
+      case key.down:
         notifyListeners('down', target, event);
         break;
 
-      case KEY_TAB:
+      case key.tab:
         if (event.shiftKey) {
           notifyListeners('shiftTab', target, event);
         } else {
@@ -5195,19 +5378,19 @@ var keyboard = (function() {
         }
         break;
 
-      case KEY_ESC:
+      case key.esc:
         notifyListeners('esc', target, event);
         break;
 
-      case KEY_BACKSPACE:
+      case key.backspace:
         notifyListeners('backspace', target, event);
         break;
 
-      case KEY_DELETE:
+      case key['delete']:
         notifyListeners('delete', target, event);
         break;
 
-      case KEY_ENTER:
+      case key.enter:
         if (event.shiftKey) {
           notifyListeners('shiftEnter', target, event);
         } else {
@@ -5221,7 +5404,10 @@ var keyboard = (function() {
     on: function(event, handler) {
       addListener(event, handler);
       return this;
-    }
+    },
+
+    // export key-codes for testing
+    key: key
   };
 })();
 
@@ -5257,6 +5443,19 @@ var parser = (function() {
    * @static
    */
   return {
+
+    /**
+     * Get the editableJS host block of a node.
+     *
+     * @method getHost
+     * @param {DOM Node}
+     * @return {DOM Node}
+     */
+    getHost: function(node) {
+      var editableSelector = '.' + config.editableClass;
+      var hostNode = $(node).closest(editableSelector);
+      return hostNode.length ? hostNode[0] : undefined;
+    },
 
     /**
      * Get the index of a node.
@@ -5464,7 +5663,9 @@ var parser = (function() {
  * all the time
  */
 var RangeContainer = function(editableHost, rangyRange) {
-  this.host = editableHost;
+  this.host = editableHost && editableHost.jquery ?
+    editableHost[0] :
+    editableHost;
   this.range = rangyRange;
   this.isAnythingSelected = (rangyRange !== undefined);
   this.isCursor = (this.isAnythingSelected && rangyRange.collapsed);
@@ -5637,21 +5838,16 @@ var selectionWatcher = (function() {
    * otherwise return an empty RangeContainer
    */
   var getRangeContainer = function() {
-    if (rangySelection) {
-      rangySelection.refresh();
-    } else {
-      rangySelection = rangy.getSelection();
-    }
+    rangySelection = rangy.getSelection();
 
     // rangeCount is 0 or 1 in all browsers except firefox
     // firefox can work with multiple ranges
-    // (I don't know if this occurs from normal use though)
+    // (on a mac hold down the command key to select multiple ranges)
     if (rangySelection.rangeCount) {
       var range = rangySelection.getRangeAt(0);
-      var editableSelector = '.' + config.editableClass;
-      var hostNode = $(range.commonAncestorContainer).closest(editableSelector);
-      if (hostNode.length) {
-        return new RangeContainer(hostNode[0], range);
+      var hostNode = parser.getHost(range.commonAncestorContainer);
+      if (hostNode) {
+        return new RangeContainer(hostNode, range);
       }
     }
 
@@ -5806,64 +6002,108 @@ var Selection = (function() {
 
     /**
      *
-     * @method strip
-     */
-    strip: function() {
-
-    },
-
-    /**
-     *
      * @method link
      */
-    link: function(link, target) {
-      var attrs = {
-        href: link
-      };
-      if (target) attrs.target = target;
-      this.range = content.link(this.host, this.range, attrs);
-      this.update();
+    link: function(href, attrs) {
+      var $link = $('<a>');
+      if (href) $link.attr('href', href);
+      for (var name in attrs) {
+        $link.attr(name, attrs[name]);
+      }
+
+      this.forceWrap($link[0]);
+    },
+
+    unlink: function() {
+      this.removeFormatting('a');
+    },
+
+    toggleLink: function(href, attrs) {
+      var links = this.getTagsByName('a');
+      if (links.length >= 1) {
+        var firstLink = links[0];
+        if (this.isExactSelection(firstLink, 'visible')) {
+          this.unlink();
+        } else {
+          this.expandTo(firstLink);
+        }
+      } else {
+        this.link(href, attrs);
+      }
+    },
+
+    toggle: function(elem) {
+      this.range = content.toggleTag(this.host, this.range, elem);
+      this.setSelection();
     },
 
     /**
      *
-     * @method bold
+     * @method makeBold
      */
     makeBold: function() {
-      var $bold = $('<strong>');
-      this.range = content.forceWrap(this.host, this.range, $bold[0]);
-      this.update();
+      var $bold = $(config.boldTag);
+      this.forceWrap($bold[0]);
+    },
+
+    toggleBold: function() {
+      var $bold = $(config.boldTag);
+      this.toggle($bold[0]);
     },
 
     /**
      *
-     * @method emphasis
+     * @method giveEmphasis
      */
     giveEmphasis: function() {
-      var $em = $('<em>');
-      this.range = content.forceWrap(this.host, this.range, $em[0]);
-      this.update();
+      var $em = $(config.italicTag);
+      this.forceWrap($em[0]);
+    },
+
+    toggleEmphasis: function() {
+      var $italic = $(config.italicTag);
+      this.toggle($italic[0]);
     },
 
     /**
+     * Surround the selection with characters like quotes.
      *
      * @method surround
+     * @param {String} E.g. '«'
+     * @param {String} E.g. '»'
      */
     surround: function(startCharacter, endCharacter) {
-      content.surround(this.host, this.range, startCharacter, endCharacter);
-      this.update();
+      this.range = content.surround(this.host, this.range, startCharacter, endCharacter);
+      this.setSelection();
+    },
+
+    removeSurround: function(startCharacter, endCharacter) {
+      this.range = content.deleteCharacter(this.host, this.range, startCharacter);
+      this.range = content.deleteCharacter(this.host, this.range, endCharacter);
+      this.setSelection();
+    },
+
+    toggleSurround: function(startCharacter, endCharacter) {
+      if (this.containsString(startCharacter) &&
+        this.containsString(endCharacter)) {
+        this.removeSurround(startCharacter, endCharacter);
+      } else {
+        this.surround(startCharacter, endCharacter);
+      }
     },
 
     /**
-     *
      * @method removeFormatting
+     * @param {String} tagName. E.g. 'a' to remove all links.
      */
-    removeFormatting: function() {
-      this.range = content.removeFormatting(this.host, this.range);
-      this.update();
+    removeFormatting: function(tagName) {
+      this.range = content.removeFormatting(this.host, this.range, tagName);
+      this.setSelection();
     },
 
     /**
+     * Delete the contents inside the range. After that the selection will be a
+     * cursor.
      *
      * @method deleteContent
      * @return Cursor instance
@@ -5874,13 +6114,85 @@ var Selection = (function() {
     },
 
     /**
-     * Expand the current selection
+     * Expand the current selection.
      *
-     * @method expand
-     * @param {String} scope: either of: 'word', 'sentence', 'tag' or 'block'.
+     * @method expandTo
+     * @param {DOM Node}
      */
-    expand: function(scope) {
+    expandTo: function(elem) {
+      this.range = content.expandTo(this.host, this.range, elem);
+      this.setSelection();
+    },
 
+    /**
+     * Wrap the selection with the specified tag. If any other tag with
+     * the same tagName is affecting the selection this tag will be
+     * remove first.
+     *
+     * @method forceWrap
+     */
+    forceWrap: function(elem) {
+      this.range = content.forceWrap(this.host, this.range, elem);
+      this.setSelection();
+    },
+
+    /**
+     * Get all tags that affect the current selection. Optionally pass a
+     * method to filter the returned elements.
+     *
+     * @method getTags
+     * @param {Function filter(node)} [Optional] Method to filter the returned
+     *   DOM Nodes.
+     * @return {Array of DOM Nodes}
+     */
+    getTags: function(filterFunc) {
+      return content.getTags(this.host, this.range, filterFunc);
+    },
+
+    /**
+     * Get all tags of the specified type that affect the current selection.
+     *
+     * @method getTagsByName
+     * @param {String} tagName. E.g. 'a' to get all links.
+     * @return {Array of DOM Nodes}
+     */
+    getTagsByName: function(tagName) {
+      return content.getTagsByName(this.host, this.range, tagName);
+    },
+
+    /**
+     * Check if the selection is the same as the elements contents.
+     *
+     * @method isExactSelection
+     * @param {DOM Node}
+     * @param {flag:  undefined or 'visible'} if 'visible' is passed
+     *   whitespaces at the beginning or end of the selection will
+     *   be ignored.
+     * @return {Boolean}
+     */
+    isExactSelection: function(elem, onlyVisible) {
+      return content.isExactSelection(this.range, elem, onlyVisible);
+    },
+
+    /**
+     * Check if the selection contains the passed string.
+     *
+     * @method containsString
+     * @return {Boolean}
+     */
+    containsString: function(str) {
+      return content.containsString(this.range, str);
+    },
+
+    /**
+     * Delete all occurences of the specified character from the
+     * selection.
+     *
+     * @method deleteCharacter
+     */
+    deleteCharacter: function(character) {
+      this.range = content.deleteCharacter(this.host, this.range, character);
+      this.setSelection();
     }
   });
 
