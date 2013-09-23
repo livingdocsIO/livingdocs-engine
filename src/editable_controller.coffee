@@ -97,11 +97,12 @@ class EditableController
 
         mergedView.focus()
         elem = mergedView.directives.get(editableName).elem
-        cursor = Editable.createCursor(elem, if direction == 'before' then false else true)
+        cursor = Editable.createCursor(elem, if direction == 'before' then 'end' else 'beginning')
+        log direction
         cursor[ if direction == 'before' then 'insertAfter' else 'insertBefore' ](frag)
 
         view.model.remove()
-        cursor.update()
+        cursor.setSelection()
 
     false # disable editableJS default behaviour
 
