@@ -17,6 +17,7 @@ class EditableController
       .merge(@withContext(@merge))
       .split(@withContext(@split))
       .selection(@withContext(@selectionChanged))
+      .newline(@withContext(@newline))
 
 
   # Register DOM nodes with EditableJS.
@@ -129,6 +130,10 @@ class EditableController
   selectionChanged: (view, editableName, selection) ->
     element = view.directives.get(editableName).elem
     @selection.fire(view, element, selection)
+
+
+  newline: (view, editable, cursor) ->
+    false # disable editableJS default behaviour
 
 
   hasSingleEditable: (view) ->
