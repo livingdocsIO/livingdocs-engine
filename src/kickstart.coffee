@@ -6,7 +6,6 @@ kickstart = do ->
     doc.init(design: design)
     doc.ready =>
       #add all root snippets, set their editables
-
       domElements.each (index, element) =>
         row = doc.add(@nodeToSnippetName(element))
         @setChildren(row, element)
@@ -39,26 +38,41 @@ kickstart = do ->
     @setEditables(snippet, data)
 
 
-  setEditables: (snippet, data) ->
-    for key of snippet.content
-      #directive = snippet.template.directives.get(key)
-      snippet.set(key, null)
-
+  getValueForEditable: (key, editableData, snippet) ->
       if key == 'image'
-        child = data.querySelector('img')?.innerHTML
+        child = editableData.querySelector('img')?.innerHTML
 
       else if key == 'title'
         log.warn("Your design contains an editable named '#{key}'. This can cause unexpected results due to some Browser limitations.")
-        child = data.querySelector(key)?.text
+        child = editableData.querySelector(key)?.text
 
       else
-        child = data.querySelector(key)?.innerHTML
+        child = editableData.querySelector(key)?.innerHTML
 
       if !child
         log.warn("The editable '#{key}' of '#{snippet.identifier}' has no content. Display parent HTML instead.")
-        child = data.innerHTML
+        child = editableData.innerHTML
 
+      child
+
+
+  setEditableStyles: (snippet, name, styleclass) ->
+    snippet.style(name, styleclass)
+
+
+  setEditables: (snippet, data) ->
+    for key of snippet.content
+      snippet.set(key, null)
+      child = @getValueForEditable(key, data, snippet)
       snippet.set(key, child)
+
+    styles = $(data).attr('data-doc-styles') || $(data).attr('doc-styles')
+    if styles
+      styles = styles.split(';')
+      styles.forEach (style) =>
+        style = style.split(':')
+        @setEditableStyles(snippet, style[0], style[1])
+
 
 
   # Convert a dom element into a camelCase snippetName
