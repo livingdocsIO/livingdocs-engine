@@ -225,9 +225,10 @@ class SnippetTree
 
   fromJson: (json, design) ->
     @root.snippetTree = undefined
-    for snippetJson in json.content
-      snippet = SnippetModel.fromJson(snippetJson, design)
-      @root.append(snippet)
+    if json.content
+      for snippetJson in json.content
+        snippet = SnippetModel.fromJson(snippetJson, design)
+        @root.append(snippet)
 
     @root.snippetTree = this
     @root.each (snippet) =>

@@ -52,8 +52,11 @@ class Design
       templates = {}
       for templateId in group.templates
         templateDefinition = @templateDefinitions[templateId]
-        template = @add(templateDefinition, groupStyles)
-        templates[template.id] = template
+        if templateDefinition
+          template = @add(templateDefinition, groupStyles)
+          templates[template.id] = template
+        else
+          log.warn("The template '#{templateId}' referenced in the group '#{groupName}' does not exist.")
 
       @addGroup(groupName, group, templates)
 

@@ -3,6 +3,7 @@
 # Defines the API between the DOM and the document
 class Page
 
+  LEFT_MOUSE_BUTTON = 1
 
   constructor: ->
     @document = window.document
@@ -22,6 +23,7 @@ class Page
     @$document
       .on('click.livingdocs', $.proxy(@click, this))
       .on('mousedown.livingdocs', $.proxy(@mousedown, this))
+      .on('touchstart.livingdocs', $.proxy(@mousedown, this))
       .on('dragstart', $.proxy(@browserDragStart, this))
 
 
@@ -49,25 +51,46 @@ class Page
 
 
   mousedown: (event) ->
-    return if event.which != 1 # only respond to left mouse button
+    return if event.which != LEFT_MOUSE_BUTTON && event.type == 'mousedown' # only respond to left mouse button
     snippetView = dom.findSnippetView(event.target)
 
     if snippetView
-      @startDrag(snippetView: snippetView, dragDrop: @snippetDragDrop)
+      @startDrag
+        snippetView: snippetView
+        dragDrop: @snippetDragDrop
+        event: event
 
 
-  startDrag: ({ snippet, snippetView, dragDrop }) ->
-    return unless snippet || snippetView
-    snippet = snippetView.model if snippetView
-
-    @$document.on 'mousemove.livingdocs-drag', (event) ->
-      dragDrop.move(event.pageX, event.pageY, event)
-
-    @$document.on 'mouseup.livingdocs-drag', =>
+  # These events are initialized immediately to allow a long-press finish
+  registerDragStopEvents: (dragDrop, event) ->
+    eventNames =
+      if event.type == 'touchstart'
+        'touchend.livingdocs-drag touchcancel.livingdocs-drag touchleave.livingdocs-drag'
+      else
+        'mouseup.livingdocs-drag'
+    @$document.on eventNames, =>
       dragDrop.drop()
       @$document.off('.livingdocs-drag')
 
-    snippetDrag = new SnippetDrag({ snippet: snippet, page: this })
+
+  # These events are possibly initialized with a delay in snippetDrag#onStart
+  registerDragStartEvents: (dragDrop, event) ->
+    if event.type == 'touchstart'
+      @$document.on 'touchmove.livingdocs-drag', (event) ->
+        event.preventDefault()
+        dragDrop.move(event.originalEvent.changedTouches[0].pageX, event.originalEvent.changedTouches[0].pageY, event)
+
+    else # all other input devices behave like a mouse
+      @$document.on 'mousemove.livingdocs-drag', (event) ->
+        dragDrop.move(event.pageX, event.pageY, event)
+
+
+  startDrag: ({ snippet, snippetView, dragDrop, event }) ->
+    return unless snippet || snippetView
+    snippet = snippetView.model if snippetView
+
+    @registerDragStopEvents(dragDrop, event)
+    snippetDrag = new SnippetDrag({ snippet: snippet, page: this, registerDragStartEvents: $.proxy(@registerDragStartEvents, this, dragDrop, event)})
 
     $snippet = snippetView.$html if snippetView
     dragDrop.mousedown $snippet, event,
