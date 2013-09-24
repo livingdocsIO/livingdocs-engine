@@ -15,16 +15,16 @@ class Renderer
   # ---------------------------
 
   setupPageListeners: ->
-    @page.focus.snippetFocus.add( $.proxy(this, 'highlightSnippet') )
-    @page.focus.snippetBlur.add( $.proxy(this, 'removeSnippetHighlight') )
+    @page.focus.snippetFocus.add( $.proxy(@highlightSnippet, this) )
+    @page.focus.snippetBlur.add( $.proxy(@removeSnippetHighlight, this) )
 
 
   setupSnippetTreeListeners: ->
-    @snippetTree.snippetAdded.add( $.proxy(this, 'snippetAdded') )
-    @snippetTree.snippetRemoved.add( $.proxy(this, 'snippetRemoved') )
-    @snippetTree.snippetMoved.add( $.proxy(this, 'snippetMoved') )
-    @snippetTree.snippetContentChanged.add( $.proxy(this, 'snippetContentChanged') )
-    @snippetTree.snippetHtmlChanged.add( $.proxy(this, 'snippetHtmlChanged') )
+    @snippetTree.snippetAdded.add( $.proxy(@snippetAdded, this) )
+    @snippetTree.snippetRemoved.add( $.proxy(@snippetRemoved, this) )
+    @snippetTree.snippetMoved.add( $.proxy(@snippetMoved, this) )
+    @snippetTree.snippetContentChanged.add( $.proxy(@snippetContentChanged, this) )
+    @snippetTree.snippetHtmlChanged.add( $.proxy(@snippetHtmlChanged, this) )
 
 
   snippetAdded: (model) ->
