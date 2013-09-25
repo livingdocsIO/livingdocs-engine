@@ -73,7 +73,7 @@ class Page
 
 
   # These events are possibly initialized with a delay in snippetDrag#onStart
-  registerDragStartEvents: (dragDrop, event) ->
+  registerDragMoveEvents: (dragDrop, event) ->
     if event.type == 'touchstart'
       @$document.on 'touchmove.livingdocs-drag', (event) ->
         event.preventDefault()
@@ -88,8 +88,9 @@ class Page
     return unless snippet || snippetView
     snippet = snippetView.model if snippetView
 
+    @registerDragMoveEvents(dragDrop, event)
     @registerDragStopEvents(dragDrop, event)
-    snippetDrag = new SnippetDrag({ snippet: snippet, page: this, registerDragStartEvents: $.proxy(@registerDragStartEvents, this, dragDrop, event)})
+    snippetDrag = new SnippetDrag({ snippet: snippet, page: this })
 
     $snippet = snippetView.$html if snippetView
     dragDrop.mousedown $snippet, event,

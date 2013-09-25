@@ -1,8 +1,7 @@
 class SnippetDrag
 
 
-  constructor: ({ snippet, page, registerDragStartEvents }) ->
-    @registerDragStartEvents = registerDragStartEvents
+  constructor: ({ snippet, page }) ->
     @snippet = snippet
     @page = page
     @$highlightedContainer = {}
@@ -13,7 +12,6 @@ class SnippetDrag
 
 
   onStart: () ->
-    @registerDragStartEvents()
     @$insertPreview = $("<div class='doc-drag-preview'>")
     @page.$body
       .append(@$insertPreview)
