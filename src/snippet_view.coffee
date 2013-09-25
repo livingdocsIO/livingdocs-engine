@@ -52,6 +52,7 @@ class SnippetView
     switch directive.type
       when 'editable' then @setEditable(name, value)
       when 'image' then @setImage(name, value)
+      when 'html' then @setHtml(name, value)
 
 
   get: (name) ->
@@ -59,6 +60,7 @@ class SnippetView
     switch directive.type
       when 'editable' then @getEditable(name)
       when 'image' then @getImage(name)
+      when 'html' then @getHtml(name)
 
 
   getEditable: (name) ->
@@ -67,6 +69,16 @@ class SnippetView
 
 
   setEditable: (name, value) ->
+    elem = @directives.get(name).elem
+    $(elem).html(value)
+
+
+  getHtml: (name) ->
+    elem = @directives.get(name).elem
+    $(elem).html()
+
+
+  setHtml: (name, value) ->
     elem = @directives.get(name).elem
     $(elem).html(value)
 
@@ -90,14 +102,14 @@ class SnippetView
 
 
   setImageAttribute: ($elem, value) ->
-    if $elem.context.tagName == 'IMG'
+    if $elem[0].nodeName == 'IMG'
       $elem.attr('src', value)
     else
       $elem.attr('style', "background-image:url(#{value})")
 
 
   setPlaceholderImage: ($elem) ->
-    if $elem.context.tagName == 'IMG'
+    if $elem[0].nodeName == 'IMG'
       width = $elem.width()
       height = $elem.height()
     else

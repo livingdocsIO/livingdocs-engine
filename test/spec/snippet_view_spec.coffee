@@ -128,3 +128,27 @@ describe 'SnippetView background image', ->
       """
     expect(snippetView.$html).toLookLike(expected)
 
+
+describe 'SnippetView html', ->
+
+  beforeEach ->
+    @snippet = test.getSnippet('html')
+    @snippet.set('html', '<section>test</section>')
+    @view = @snippet.template.createView(@snippet)
+
+
+  describe 'set("html", value)', ->
+    it 'adds the html to the snippet', ->
+      expect(@view.$html).toLookLike(
+        """
+        <div class="#{ docClass.snippet }"
+          #{ docAttr.template }="test.html"
+          #{ docAttr.html }="html">
+          <section>test</section>
+        </div>
+        """
+      )
+
+  describe 'get("html")', ->
+    it 'returns the html that was set', ->
+      expect(@view.get('html')).toEqual('<section>test</section>')
