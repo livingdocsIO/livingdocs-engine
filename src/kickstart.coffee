@@ -3,12 +3,19 @@ kickstart = do ->
   init: (destination, design) ->
     domElements = $(destination).children().not('script')
     $(destination).html('<div class="doc-section"></div>')
-    doc.init(design: design)
-    doc.ready =>
-      #add all root snippets, set their editables
-      domElements.each (index, element) =>
-        row = doc.add(@nodeToSnippetName(element))
-        @setChildren(row, element)
+
+    if not doc.document.initialized
+      doc.init(design: design)
+      doc.ready =>
+        @addRootSnippets(domElements)
+
+    else
+      @addRootSnippets(domElements)
+
+  addRootSnippets: (domElements) ->
+    domElements.each (index, element) =>
+      row = doc.add(@nodeToSnippetName(element))
+      @setChildren(row, element)
 
 
   parseContainers: (snippet, data) ->
@@ -78,7 +85,7 @@ kickstart = do ->
   # Convert a dom element into a camelCase snippetName
   nodeToSnippetName: (element) ->
     snippetName = $.camelCase(element.localName)
-    snippet = doc.document.design.get(snippetName)
+    snippet = doc.getDesign().get(snippetName)
 
     # check deprecated HTML elements that automatically convert to new element name.
     if snippetName == 'img' && !snippet
