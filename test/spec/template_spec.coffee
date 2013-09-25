@@ -160,4 +160,13 @@ describe 'Stuffed Container', ->
     expect($container.html()).toEqual('')
 
 
+describe 'Html Template', ->
+
+  template = null
+  beforeEach ->
+    template = test.getTemplate('html')
+
+  it 'has a html directive', ->
+    directive = template.directives.html[0]
+    expect(directive).toBeDefined()
 

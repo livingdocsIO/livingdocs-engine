@@ -123,4 +123,11 @@ testDesign =
           </div>
         </div>
         """
+    ,
+      id: 'html'
+      title: 'Freeform html'
+      html:
+        """
+        <div #{ docAttr.html }="html"></div>
+        """
     ]
