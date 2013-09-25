@@ -15,13 +15,13 @@ describe 'SnippetView', ->
 
     it 'sets title', ->
       @snippetView.set('title', 'Humble Bundle')
-      expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
+      expect(@snippetView.$html).toLookLike(@expected)
 
 
     it 'updates its content from snippet', ->
       @snippetView.model.set('title', 'Humble Bundle')
       @snippetView.updateContent()
-      expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
+      expect(@snippetView.$html).toLookLike(@expected)
 
 
     it 'gets the title', ->
@@ -45,14 +45,14 @@ describe 'SnippetView title set style', ->
   it 'sets "Color" style to "color--blue"', ->
     @expected.addClass('color--blue')
     snippetView = @title.template.createView(@title)
-    expect( htmlCompare.compare(snippetView.$html, @expected) ).toBe(true)
+    expect(snippetView.$html).toLookLike(@expected)
 
 
   it 'changes "Color" style from "color--blue" to "color--red"', ->
     @expected.addClass('color--red')
     snippetView = @title.template.createView(@title)
     snippetView.style('Color', 'color--red')
-    expect( htmlCompare.compare(snippetView.$html, @expected) ).toBe(true)
+    expect(snippetView.$html).toLookLike(@expected)
 
 
 describe 'SnippetView hero', ->
@@ -73,19 +73,19 @@ describe 'SnippetView hero', ->
     )
 
   it 'renders snippet content on creation', ->
-    expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
+    expect(@snippetView.$html).toLookLike(@expected)
 
 
   it 'sets "Extra Space"', ->
     @expected.addClass('extra-space')
     @snippetView.style('Extra Space', 'extra-space')
-    expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
+    expect(@snippetView.$html).toLookLike(@expected)
 
 
   it 'resets "Extra Space"', ->
     @snippetView.style('Extra Space', 'extra-space')
     @snippetView.style('Extra Space', '')
-    expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
+    expect(@snippetView.$html).toLookLike(@expected)
 
 
 describe 'SnippetView image', ->
@@ -104,7 +104,7 @@ describe 'SnippetView image', ->
 
 
   it 'renders the image src', ->
-    expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
+    expect(@snippetView.$html).toLookLike(@expected)
 
 
 describe 'SnippetView background image', ->
@@ -126,5 +126,5 @@ describe 'SnippetView background image', ->
         </div>
       </div>
       """
-    expect( htmlCompare.compare(snippetView.$html, expected) ).toBe(true)
+    expect(snippetView.$html).toLookLike(expected)
 
