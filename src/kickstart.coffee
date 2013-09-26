@@ -18,18 +18,18 @@ kickstart = do ->
       @setChildren(row, element)
 
 
-  parseContainers: (snippet, data) ->
+  populateSnippetContainers: (snippet, data) ->
     containers = if snippet.containers then Object.keys(snippet.containers) else []
     if containers.length == 1 && containers.indexOf('default') != -1 && !$(data).children('default').length
       for child in $(data).children()
-        @parseSnippets(snippet, 'default', child)
+        @appendSnippetToContainer(snippet, child, 'default')
 
     for editableContainer in $(containers.join(','), data)
       for child in $(editableContainer).children()
-        @parseSnippets(snippet, editableContainer.localName, child)
+        @appendSnippetToContainer(snippet, child, editableContainer.localName)
 
 
-  parseSnippets: (parentContainer, region, data) ->
+  appendSnippetToContainer: (parentContainer, data, region) ->
     snippetName = @nodeToSnippetName(data)
     snippet = doc.create(snippetName)
     parentContainer.append(region, snippet)
@@ -41,26 +41,27 @@ kickstart = do ->
 
 
   setChildren: (snippet, data) ->
-    @parseContainers(snippet, data)
+    @populateSnippetContainers(snippet, data)
     @setEditables(snippet, data)
 
 
   getValueForEditable: (key, editableData, snippet) ->
-      if key == 'image'
-        child = editableData.querySelector('img')?.innerHTML
+    if key == 'image'
+      # TODO: make a test - image innerHTML can't work
+      child = editableData.querySelector('img')?.innerHTML
 
-      else if key == 'title'
-        log.warn("Your design contains an editable named '#{key}'. This can cause unexpected results due to some Browser limitations.")
-        child = editableData.querySelector(key)?.text
+    else if key == 'title'
+      log.warn("Your design contains an editable named '#{key}'. This can cause unexpected results due to some Browser limitations.")
+      child = editableData.querySelector(key)?.text
 
-      else
-        child = editableData.querySelector(key)?.innerHTML
+    else
+      child = editableData.querySelector(key)?.innerHTML
 
-      if !child
-        log.warn("The editable '#{key}' of '#{snippet.identifier}' has no content. Display parent HTML instead.")
-        child = editableData.innerHTML
+    if !child
+      log.warn("The editable '#{key}' of '#{snippet.identifier}' has no content. Display parent HTML instead.")
+      child = editableData.innerHTML
 
-      child
+    child
 
 
   setEditableStyles: (snippet, name, styleclass) ->

@@ -14,28 +14,35 @@ describe 'kickstart', ->
       expect(snippetName).toEqual('stuffedContainer')
 
 
-  describe 'parseContainers()', ->
+  describe 'appendSnippetToContainer()', ->
+
+    it 'populates a snippet', ->
+      rowTemplate = test.getSnippet('row')
+      data = $("<text>#{@text1}</text>")[0]
+      kickstart.appendSnippetToContainer(rowTemplate, data,  'main')
+      expect(rowTemplate.containers.main.first.content.text).toEqual(@text1)
+
+
+  describe 'populateSnippetContainers()', ->
 
     it 'populates snippets of snippet containers', ->
       rowTemplate = test.getSnippet('row')
       template = $("<div><main><text>#{@text1}</text></main><sidebar><text>#{@text2}</text></sidebar></div>")[0]
-      kickstart.parseContainers(rowTemplate, template);
+      kickstart.populateSnippetContainers(rowTemplate, template);
       expect(rowTemplate.containers.main.first.content.text).toEqual(@text1)
       expect(rowTemplate.containers.sidebar.first.content.text).toEqual(@text2)
-
 
     it 'ignores empty containers', ->
       rowTemplate = test.getSnippet('row')
       template = $("<main-and-sidebar><main></main></main-and-sidebar>")[0]
-      kickstart.parseContainers(rowTemplate, template);
+      kickstart.populateSnippetContainers(rowTemplate, template);
       expect(rowTemplate.containers.main.first).toBeUndefined()
       expect(rowTemplate.containers.sidebar.first).toBeUndefined()
-
 
     it 'uses default container if only one exists', ->
       containerTemplate = test.getSnippet('container')
       template = $("<container><text>#{@text1}</text></container>")[0]
-      kickstart.parseContainers(containerTemplate, template);
+      kickstart.populateSnippetContainers(containerTemplate, template);
       expect(containerTemplate.containers.default.first.content.text).toEqual(@text1)
 
 
