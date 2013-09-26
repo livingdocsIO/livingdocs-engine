@@ -98,6 +98,11 @@ pageReady = ->
   @imageClick = chainable(page.imageClick, 'add')
 
 
+  # Raised when a user click on an editable html element or one of its children
+  # example callback methods:
+  # (snippetView, htmlElementName, event) -> # your code here
+  @htmlElementClick = chainable(page.htmlElementClick, 'add')
+
   # Text Events
   # -----------
 

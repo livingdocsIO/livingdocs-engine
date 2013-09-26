@@ -12,6 +12,7 @@ class Page
     @loader = new Loader()
     @focus = new Focus()
     @imageClick = $.Callbacks()
+    @htmlElementClick = $.Callbacks()
     @editableController = new EditableController(this)
 
     @snippetDragDrop = new DragDrop
@@ -101,6 +102,7 @@ class Page
 
   click: (event) ->
     snippetView = dom.findSnippetView(event.target)
+    nodeContext = dom.findNodeContext(event.target)
 
     # todo: if a user clicked on a margin of a snippet it should
     # still get selected. (if a snippet is found by parentSnippet
@@ -116,8 +118,11 @@ class Page
     if snippetView
       @focus.snippetFocused(snippetView)
 
-      if imageName = dom.getImageName(event.target)
-        @imageClick.fire(snippetView, imageName, event)
+      switch nodeContext.contextAttr
+        when docAttr.image
+          @imageClick.fire(snippetView, nodeContext.attrName, event)
+        when docAttr.html
+          @htmlElementClick.fire(snippetView, nodeContext.attrName, event)
     else
       @focus.blur()
 

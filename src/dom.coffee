@@ -21,6 +21,31 @@ dom = do ->
     return undefined
 
 
+  findNodeContext: (node) ->
+    node = @getElementNode(node)
+
+    while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
+
+      nodeContext = @getNodeContext(node)
+      return nodeContext if nodeContext
+
+      node = node.parentNode
+
+    return undefined
+
+
+  getNodeContext: (node) ->
+    for key, contextAttr of docAttr
+      continue if key == 'template'
+      if node.hasAttribute(contextAttr)
+        return {
+          contextAttr: contextAttr
+          attrName: node.getAttribute(contextAttr)
+        }
+
+    return undefined
+
+
   # Find the container this node is contained within.
   findContainer: (node) ->
     node = @getElementNode(node)
@@ -46,6 +71,12 @@ dom = do ->
     if node.hasAttribute(docAttr.image)
       imageName = node.getAttribute(docAttr.image)
       return imageName
+
+
+  getHtmlElementName: (node) ->
+    if node.hasAttribute(docAttr.html)
+      htmlElementName = node.getAttribute(docAttr.html)
+      return htmlElementName
 
 
   getEditableName: (node) ->
