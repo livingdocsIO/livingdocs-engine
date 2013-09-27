@@ -45,20 +45,22 @@ kickstart = do ->
     @setEditables(snippet, data)
 
 
-  getValueForEditable: (key, editableData, snippet) ->
-    if key == 'image'
+  getValueForEditable: (editableName, editableData, snippet) ->
+    if editableName == 'image'
       # TODO: make a test - image innerHTML can't work
       child = editableData.querySelector('img')?.innerHTML
 
-    else if key == 'title'
-      log.warn("Your design contains an editable named '#{key}'. This can cause unexpected results due to some Browser limitations.")
-      child = editableData.querySelector(key)?.text
+    else if editableName == 'title'
+      log.warn("Your design contains an editable named '#{editableName}'. This can cause unexpected results due to some Browser limitations.")
+      child = editableData.querySelector(editableName)?.text
 
     else
-      child = editableData.querySelector(key)?.innerHTML
+      child = editableData.querySelector(editableName)?.innerHTML
 
     if !child
-      log.warn("The editable '#{key}' of '#{snippet.identifier}' has no content. Display parent HTML instead.")
+      if !snippet
+        snippet = { identifier: "the current kickstart" }
+      log.warn("The editable '#{editableName}' of '#{snippet.identifier }' has no content. Display parent HTML instead.")
       child = editableData.innerHTML
 
     child
@@ -69,10 +71,10 @@ kickstart = do ->
 
 
   setEditables: (snippet, data) ->
-    for key of snippet.content
-      snippet.set(key, null)
-      child = @getValueForEditable(key, data, snippet)
-      snippet.set(key, child)
+    for editableName of snippet.content
+      snippet.set(editableName, null)
+      child = @getValueForEditable(editableName, data, snippet)
+      snippet.set(editableName, child)
 
     styles = $(data).attr('data-doc-styles') || $(data).attr('doc-styles')
     if styles
