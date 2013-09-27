@@ -46,6 +46,21 @@ describe 'kickstart', ->
       expect(containerTemplate.containers.default.first.content.text).toEqual(@text1)
 
 
+  describe 'getValueForEditable()', ->
+
+    it 'gets string value from the kickstart template', ->
+      expected = "title"
+      template = $("<div><title>#{expected}</title><foo>bar</foo></div>")[0]
+      value = kickstart.getValueForEditable('title', template)
+      expect(expected).toEqual(value)
+
+    it 'get html value from kickstart template', ->
+      expected = "<div>bar<b>Foo</b></div>"
+      template = $("<div><title>#{expected}</title><foo>bar</foo></div>")[0]
+      value = kickstart.getValueForEditable('title', template)
+      expect( htmlCompare.compare($(expected)[0], value) ).toBe(true)
+
+
   describe 'setEditables()', ->
 
     beforeEach ->
