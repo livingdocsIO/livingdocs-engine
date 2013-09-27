@@ -83,7 +83,24 @@ class SnippetView
     $elem = $(elem)
     $elem.html(value || '')
 
+    @directivesToReset ||= {}
+    @directivesToReset[name] = name
+
     @blockInteraction($elem)
+
+
+  # Reset directives that contain arbitrary html after the view is moved in
+  # the DOM to recreate iframes. In the case of twitter where the iframes
+  # don't have a src the reloading that happens when one moves an iframe clears
+  # all content (Maybe we could limit resetting to iframes without a src).
+  #
+  # Some more info about the issue on stackoverflow:
+  # http://stackoverflow.com/questions/8318264/how-to-move-an-iframe-in-the-dom-without-losing-its-state
+  resetDirectives: ->
+    for name of @directivesToReset
+      elem = @directives.get(name).elem
+      if $(elem).find('iframe').length
+        @set(name, @model.content[name])
 
 
   getImage: (name) ->
@@ -186,6 +203,7 @@ class SnippetView
       @appendToContainer(parentContainer, renderer)
       @attachedToDom = true
 
+    @resetDirectives()
     @wasAttachedToDom.fire()
 
     this
