@@ -81,12 +81,11 @@ class SnippetView
   setHtml: (name, value) ->
     elem = @directives.get(name).elem
     $elem = $(elem)
-    $elem.html(value || '')
+    $elem.html(value)
+    @blockInteraction($elem)
 
     @directivesToReset ||= {}
     @directivesToReset[name] = name
-
-    @blockInteraction($elem)
 
 
   # Reset directives that contain arbitrary html after the view is moved in
@@ -155,7 +154,7 @@ class SnippetView
   disableTabbing: ($elem) ->
     setTimeout( =>
       $elem.find('iframe').attr('tabindex', '-1')
-    , 100)
+    , 400)
 
 
   # Append a child to the element which will block user interaction
