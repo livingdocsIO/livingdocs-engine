@@ -66,23 +66,11 @@ kickstart = do ->
     child
 
 
-  setEditableStyles: (snippet, name, styleclass) ->
-    snippet.style(name, styleclass)
-
-
   setEditables: (snippet, data) ->
     for editableName of snippet.content
       snippet.set(editableName, null)
       child = @getValueForEditable(editableName, data, snippet)
       snippet.set(editableName, child)
-
-    styles = $(data).attr('data-doc-styles') || $(data).attr('doc-styles')
-    if styles
-      styles = styles.split(';')
-      styles.forEach (style) =>
-        style = style.split(':')
-        @setEditableStyles(snippet, style[0], style[1])
-
 
 
   # Convert a dom element into a camelCase snippetName
