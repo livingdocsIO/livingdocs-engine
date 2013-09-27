@@ -34,6 +34,7 @@ do ->
         # utility classes
         preventSelection: 'doc-no-selection'
         maximizedContainer: 'doc-js-maximized-container'
+        interactionBlocker: 'doc-interaction-blocker'
 
 
     template:
