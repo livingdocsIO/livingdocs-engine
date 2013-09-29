@@ -11,14 +11,17 @@ class EditableController
     @selection = $.Callbacks()
 
     Editable
-      .focus($.proxy(@focus, @))
-      .blur($.proxy(@blur, @))
-      .insert($.proxy(@insert, @))
-      .merge($.proxy(@merge, @))
-      .split($.proxy(@split, @))
-      .selection($.proxy(@selectionChanged, @))
+      .focus(@withContext(@focus))
+      .blur(@withContext(@blur))
+      .insert(@withContext(@insert))
+      .merge(@withContext(@merge))
+      .split(@withContext(@split))
+      .selection(@withContext(@selectionChanged))
+      .newline(@withContext(@newline))
 
 
+  # Register DOM nodes with EditableJS.
+  # After that Editable will fire events for that node.
   add: (nodes) ->
     Editable.add(nodes)
 
@@ -31,21 +34,39 @@ class EditableController
     $('[contenteditable]').attr('contenteditable', 'true')
 
 
-  focus: (element) ->
-    snippetView = dom.findSnippetView(element)
-    @page.focus.editableFocused(element, snippetView)
+  # Get view and editableName from the DOM element passed by EditableJS
+  #
+  # All listeners params get transformed so they get view and editableName
+  # instead of element:
+  #
+  # Example: listener(view, editableName, otherParams...)
+  withContext: (func) ->
+    (element, args...) =>
+      view = dom.findSnippetView(element)
+      editableName = element.getAttribute(docAttr.editable)
+      args.unshift(view, editableName)
+      func.apply(this, args)
 
 
-  blur: (element) ->
-    snippetView = dom.findSnippetView(element)
-    @page.focus.editableBlurred(element, snippetView)
-    editableName = element.getAttribute(docAttr.editable)
-    snippetView.model.set(editableName, element.innerHTML)
+  updateModel: (view, editableName) ->
+    view.model.set(editableName, view.get(editableName))
 
 
-  insert: (element, direction, cursor) ->
-    view = dom.findSnippetView(element)
-    if view.model.editableCount == 1
+  focus: (view, editableName) ->
+    element = view.directives.get(editableName).elem
+    @page.focus.editableFocused(element, view)
+    true # enable editableJS default behaviour
+
+
+  blur: (view, editableName) ->
+    element = view.directives.get(editableName).elem
+    @page.focus.editableBlurred(element, view)
+    @updateModel(view, editableName)
+    true # enable editableJS default behaviour
+
+
+  insert: (view, editableName, direction, cursor) ->
+    if @hasSingleEditable(view)
 
       # todo: make this configurable
       template = document.design.get('text')
@@ -63,24 +84,31 @@ class EditableController
     false # disable editableJS default behaviour
 
 
-  merge: (element, direction, cursor) ->
-    view = dom.findSnippetView(element)
-    if view.model.editableCount == 1
+  merge: (view, editableName, direction, cursor) ->
+    if @hasSingleEditable(view)
       mergedView = if direction == 'before' then view.prev() else view.next()
-      mergedView.focus() if mergedView
 
-      # todo: check if mergedView is of same type or of type text
       if mergedView.template == view.template
+
+        # create document fragment
+        contents = $(view.directives.get(editableName).elem).contents()
+        frag = @page.document.createDocumentFragment()
+        for el in contents
+          frag.appendChild(el)
+
+        mergedView.focus()
+        elem = mergedView.directives.get(editableName).elem
+        cursor = Editable.createCursor(elem, if direction == 'before' then 'end' else 'beginning')
+        cursor[ if direction == 'before' then 'insertAfter' else 'insertBefore' ](frag)
+
         view.model.remove()
+        cursor.setSelection()
 
-
-    log('engine: merge')
     false # disable editableJS default behaviour
 
 
-  split: (element, before, after, cursor) ->
-    view = dom.findSnippetView(element)
-    if view.model.editableCount == 1
+  split: (view, editableName, before, after, cursor) ->
+    if @hasSingleEditable(view)
       copy = view.template.createModel()
 
       # get content out of 'before' and 'after'
@@ -88,7 +116,6 @@ class EditableController
       afterContent = after.querySelector('*').innerHTML
 
       # set editable of snippets to innerHTML of fragments
-      editableName = Object.keys(view.template.editables)[0]
       view.model.set(editableName, beforeContent)
       copy.set(editableName, afterContent)
 
@@ -99,6 +126,14 @@ class EditableController
     false # disable editableJS default behaviour
 
 
-  selectionChanged: (element, selection) ->
-    snippetView = dom.findSnippetView(element)
-    @selection.fire(snippetView, element, selection)
+  selectionChanged: (view, editableName, selection) ->
+    element = view.directives.get(editableName).elem
+    @selection.fire(view, element, selection)
+
+
+  newline: (view, editable, cursor) ->
+    false # disable editableJS default behaviour
+
+
+  hasSingleEditable: (view) ->
+    view.directives.length == 1 && view.directives[0].type == 'editable'

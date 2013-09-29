@@ -97,7 +97,10 @@ class Template
     $elem = $(elem)
     $elem.addClass(docClass.editable)
 
-    defaultValue = elem.innerHTML
+
+    defaultValue = words.trim(elem.innerHTML)
+    elem.innerHTML = defaultValue
+
     # not sure how to deal with default values in editables...
     # elem.innerHTML = ''
 
@@ -150,6 +153,3 @@ Template.parseIdentifier = (identifier) ->
     { namespace: parts[0], id: parts[1] }
   else
     log.error("could not parse snippet template identifier: #{ identifier }")
-    { namespace: undefined , id: undefined }
-
-

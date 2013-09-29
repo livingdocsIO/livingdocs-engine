@@ -33,6 +33,7 @@ class DragDrop
         direct: false
         preventDefault: true
         createPlaceholder: DragDrop.placeholder
+        scrollNearEdge: 50
       }, options)
 
     # per drag properties
@@ -48,7 +49,12 @@ class DragDrop
     @reset()
     @drag.initialized = true
     @options = $.extend({}, @defaultOptions, options)
-    @drag.startPoint = { left: event.pageX, top: event.pageY }
+    if event.type == 'touchstart'
+      @drag.startPoint =
+        left: event.originalEvent.changedTouches[0].pageX
+        top: event.originalEvent.changedTouches[0].pageY
+    else
+      @drag.startPoint = { left: event.pageX, top: event.pageY }
     @$origin = $origin
 
     if @options.longpressDelay and @options.longpressDistanceLimit
@@ -89,6 +95,27 @@ class DragDrop
       @$origin?.addClass(docClass.dragged)
 
 
+  # only vertical scrolling
+  scrollIntoView: (top, event) ->
+    if @lastScrollPosition
+      delta = top - @lastScrollPosition
+      viewportTop = $(window).scrollTop()
+      viewportBottom = viewportTop + $(window).height()
+
+      shouldScroll =
+        if delta < 0 # upward movement
+          inScrollUpArea = top < viewportTop + @defaultOptions.scrollNearEdge
+          viewportTop != 0 && inScrollUpArea
+        else # downward movement
+          abovePageBottom = viewportBottom - $(window).height() < ($(window.document).height())
+          inScrollDownArea = top > viewportBottom - @defaultOptions.scrollNearEdge
+          abovePageBottom && inScrollDownArea
+
+      window.scrollBy(0, delta) if shouldScroll
+
+    @lastScrollPosition = top
+
+
   move: (mouseLeft, mouseTop, event) ->
     if @drag.started
       if @drag.mouseToSnippet
@@ -106,6 +133,7 @@ class DragDrop
       top = 2 if top < 2
 
       @$dragged.css({ position:'absolute', left:"#{ left }px", top:"#{ top }px" })
+      @scrollIntoView(top, event)
       @dropTarget(mouseLeft, mouseTop, event) if !@direct
 
     else if @drag.initialized
@@ -132,12 +160,18 @@ class DragDrop
   dropTarget: (mouseLeft, mouseTop, event) ->
     if @$dragged && event
       elem = undefined
+      if event.type == 'touchstart' || event.type == 'touchmove'
+        x = event.originalEvent.changedTouches[0].clientX
+        y = event.originalEvent.changedTouches[0].clientY
+      else
+        x = event.clientX
+        y = event.clientY
 
       # get the element we're currently hovering
-      if event.clientX && event.clientY
+      if x && y
         @$dragged.hide()
         # todo: Safari 4 and Opera 10.10 need pageX/Y.
-        elem = window.document.elementFromPoint(event.clientX, event.clientY)
+        elem = window.document.elementFromPoint(x, y)
         @$dragged.show()
 
       # check if a drop is possible

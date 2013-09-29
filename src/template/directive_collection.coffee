@@ -51,12 +51,9 @@ class DirectiveCollection
 
   # @api private
   assertNameNotUsed: (directive) ->
-    if @all[directive.name]
-      log.error(
-        """
-        #{directive.type} Template parsing error:
-        #{ docAttr[directive.type] }="#{ directive.name }".
-        "#{ directive.name }" is a duplicate name.
-        """
-      )
-
+    assert not @all[directive.name],
+      """
+      #{directive.type} Template parsing error:
+      #{ docAttr[directive.type] }="#{ directive.name }".
+      "#{ directive.name }" is a duplicate name.
+      """

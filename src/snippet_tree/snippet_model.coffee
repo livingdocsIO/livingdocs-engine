@@ -91,19 +91,19 @@ class SnippetModel
 
 
   set: (name, value) ->
-    if @content?.hasOwnProperty(name)
-      if @content[name] != value
-        @content[name] = value
-        @snippetTree.contentChanging(this, name) if @snippetTree
-    else
-      log.error("set error: #{ @identifier } has no content named #{ name }")
+    assert @content?.hasOwnProperty(name),
+      "set error: #{ @identifier } has no content named #{ name }"
+
+    if @content[name] != value
+      @content[name] = value
+      @snippetTree.contentChanging(this, name) if @snippetTree
 
 
   get: (name) ->
-    if @content?.hasOwnProperty(name)
-      @content[name]
-    else
-      log.error("get error: #{ @identifier } has no name named #{ name }")
+    assert @content?.hasOwnProperty(name),
+      "get error: #{ @identifier } has no content named #{ name }"
+
+    @content[name]
 
 
   data: (name, value) ->
@@ -292,10 +292,9 @@ SnippetModel.fromJson = (json, design) ->
   model = new SnippetModel({ template, id: json.id })
 
   for name, value of json.content
-    if model.content.hasOwnProperty(name)
-      model.content[name] = value
-    else
-      log.error("error while deserializing snippet: unknown content '#{ name }'")
+    assert model.content.hasOwnProperty(name),
+      "error while deserializing snippet: unknown content '#{ name }'"
+    model.content[name] = value
 
   for styleName, value of json.styles
     model.style(styleName, value)
