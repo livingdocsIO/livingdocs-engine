@@ -37,6 +37,10 @@ test = do ->
     size
 
 
+  createElem: (str) ->
+    $(str)[0]
+
+
   # use this to test serialization and deserialization
   # through localstorage
   localstore: (obj) ->

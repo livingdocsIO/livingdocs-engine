@@ -23,6 +23,10 @@ do ->
         renderedAttr: 'calculated later'
         elementDirective: true
         defaultName: 'image'
+      optional:
+        attr: 'doc-optional'
+        renderedAttr: 'calculated later'
+        elementDirective: false
   }
 
   # constants for classes used in a document

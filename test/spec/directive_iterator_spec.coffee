@@ -1,8 +1,7 @@
 describe 'DirectiveIterator', ->
 
   beforeEach ->
-    @html = $(
-      """
+    @html = test.createElem """
       <div class="#{ docClass.snippet }">
         <!-- Adding a comment node so we have another nodeType in play -->
         <h1 #{ test.editableAttr }="title"></h1>
@@ -12,7 +11,6 @@ describe 'DirectiveIterator', ->
         </div>
       </div>
       """
-    )[0]
 
     @iterator = new DirectiveIterator(@html)
 
