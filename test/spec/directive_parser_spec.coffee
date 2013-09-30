@@ -58,8 +58,9 @@ describe 'DirectiveParser', ->
         <div #{ config.directives.editable.attr }='text'
         #{ config.directives.optional.attr } />
         """
-
       @directive = directiveParser.parse(elem)
+
+
     it 'detects a doc-optional directive', ->
       expect(@directive.modifications[0].type).toEqual('optional')
 
