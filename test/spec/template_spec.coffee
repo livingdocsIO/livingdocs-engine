@@ -39,48 +39,6 @@ describe 'Title Template', ->
       expect(snippetView instanceof SnippetView).toBe(true)
 
 
-
-describe 'Dropdown Template', ->
-
-  template = null
-  beforeEach ->
-    template = new Template
-      id: 'dropdown'
-      html:
-        """
-        <div>
-          <a class='btn btn-primary dropdown-toggle' data-toggle='dropdown' href='#'>
-            <i class='icon-plus icon-white'></i>
-          </a>
-          <ul class='dropdown-menu' #{ docAttr.list }="links">
-            <li>
-              <a href='#' #{ docAttr.editable }="dropdownLink"></a>
-            </li>
-          </ul>
-        </div>
-        """
-
-
-  it 'has stored the html', ->
-    $template = template.$template
-    expect($template.findIn('div').length).toEqual(1)
-    expect($template.findIn('a').length).toEqual(1)
-    expect($template.findIn('i').length).toEqual(1)
-    expect($template.findIn('ul').length).toEqual(1)
-
-    # the <li> element should have been cut out and stored in a list item template
-    expect($template.findIn('li').length).toEqual(0)
-
-
-  it 'has a list called links', ->
-    expect(template.list('links').name).toEqual('links')
-
-
-  it 'returns a snippet', ->
-    snippet = template.createModel()
-    expect(snippet instanceof SnippetModel).toBe(true)
-
-
 describe 'Template.parseIdentifier()', ->
 
   it 'parses "bootstrap.title"', ->

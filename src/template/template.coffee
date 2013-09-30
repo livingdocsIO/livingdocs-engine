@@ -37,7 +37,6 @@ class Template
     @defaults = {}
 
     @parseTemplate()
-    @lists = @createLists()
 
 
   # create a new SnippetModel instance from this template
@@ -111,16 +110,6 @@ class Template
   formatContainer: (name, elem) ->
     # remove all content fron a container from the template
     elem.innerHTML = ''
-
-
-  createLists: () ->
-    lists = {}
-    @$wrap.find("[#{ docAttr.list }]").each( ->
-      $list = $(this)
-      listName = $list.attr("#{ docAttr.list }")
-      lists[listName] = new SnippetTemplateList(listName, $list)
-    )
-    lists
 
 
   # alias to lists
