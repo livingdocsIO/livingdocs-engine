@@ -1,4 +1,4 @@
-describe 'Directive', ->
+describe 'DirectiveParser', ->
 
   describe 'node without attributes', ->
 
