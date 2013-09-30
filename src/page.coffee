@@ -15,10 +15,10 @@ class Page
     @editableController = new EditableController(this)
 
     # events
-    @imageClick = $.Callbacks()
-    @htmlElementClick = $.Callbacks()
-    @snippetWillBeDragged = $.Callbacks()
-    @snippetWasDropped = $.Callbacks()
+    @imageClick = $.Callbacks() # (snippetView, fieldName, event) ->
+    @htmlElementClick = $.Callbacks() # (snippetView, fieldName, event) ->
+    @snippetWillBeDragged = $.Callbacks() # (snippetModel) ->
+    @snippetWasDropped = $.Callbacks() # (snippetModel) ->
 
     @snippetDragDrop = new DragDrop
       longpressDelay: 400
