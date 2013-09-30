@@ -112,12 +112,11 @@ class SnippetView
     $elem = $(elem)
 
     if value
+      @cancelDelayed(name)
       @setImageAttribute($elem, value)
     else
-      if @attachedToDom
-        @setPlaceholderImage($elem)
-      else
-        @wasAttachedToDom.add($.proxy(@setPlaceholderImage, @, $elem))
+      setPlaceholder = $.proxy(@setPlaceholderImage, this, $elem)
+      @delayUntilAttached(name, setPlaceholder)
 
 
   setImageAttribute: ($elem, value) ->
@@ -224,3 +223,19 @@ class SnippetView
   get$container: ->
     $(dom.findContainer(@$html[0]).node)
 
+
+  delayUntilAttached: (name, func) ->
+    if @attachedToDom
+      func()
+    else
+      @cancelDelayed(name)
+      @delayed ||= {}
+      @delayed[name] = eventing.callOnce @wasAttachedToDom, =>
+        @delayed[name] = undefined
+        func()
+
+
+  cancelDelayed: (name) ->
+    if @delayed?[name]
+      @wasAttachedToDom.remove(@delayed[name])
+      @delayed[name] = undefined

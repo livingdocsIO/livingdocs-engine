@@ -6,8 +6,9 @@ class Page
   LEFT_MOUSE_BUTTON = 1
 
   constructor: ->
-    @$document = $(window.document)
-    @$body = $(window.document.body)
+    @document = window.document
+    @$document = $(@document)
+    @$body = $(@document.body)
 
     @loader = new Loader()
     @focus = new Focus()
@@ -25,10 +26,10 @@ class Page
       preventDefault: false
 
     @$document
-      .on('click.livingdocs', $.proxy(@click, @))
-      .on('mousedown.livingdocs', $.proxy(@mousedown, @))
-      .on('touchstart.livingdocs', $.proxy(@mousedown, @))
-      .on('dragstart', $.proxy(@browserDragStart, @))
+      .on('click.livingdocs', $.proxy(@click, this))
+      .on('mousedown.livingdocs', $.proxy(@mousedown, this))
+      .on('touchstart.livingdocs', $.proxy(@mousedown, this))
+      .on('dragstart', $.proxy(@browserDragStart, this))
 
 
   # prevent the browser Drag&Drop from interfering

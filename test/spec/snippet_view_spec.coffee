@@ -91,9 +91,12 @@ describe 'SnippetView hero', ->
 describe 'SnippetView image', ->
 
   beforeEach ->
-    snippet = test.getSnippet('image')
-    snippet.set('image', 'http://www.lolcats.com/images/1.jpg')
-    @snippetView = snippet.template.createView(snippet)
+    @snippet = test.getSnippet('image')
+
+
+  it 'renders the image src', ->
+    @snippet.set('image', 'http://www.lolcats.com/images/1.jpg')
+    @snippetView = @snippet.template.createView(@snippet)
     @expected =
       """
       <img src="http://www.lolcats.com/images/1.jpg"
@@ -101,10 +104,54 @@ describe 'SnippetView image', ->
         class="#{ docClass.snippet }"
         #{ docAttr.template }="test.image">
       """
-
-
-  it 'renders the image src', ->
     expect(@snippetView.$html).toLookLike(@expected)
+
+
+  describe 'delayed placeholder insertion', ->
+
+    beforeEach ->
+      @view = @snippet.template.createView(@snippet)
+      @view.set('image', undefined)
+
+
+    it 'does not insert placeholders before view is attached', ->
+      expected =
+        """
+        <img src=""
+          #{ docAttr.image }="image"
+          class="#{ docClass.snippet }"
+          #{ docAttr.template }="test.image">
+        """
+      expect(@view.$html).toLookLike(expected)
+
+
+    it 'inserts placeholder when view is attached', ->
+      placeholderUrl = 'http://placehold.it/0x0/BEF56F/B2E668'
+      expected =
+        """
+        <img src="#{ placeholderUrl }"
+          #{ docAttr.image }="image"
+          class="#{ docClass.snippet }"
+          #{ docAttr.template }="test.image">
+        """
+
+      @view.wasAttachedToDom.fireWith(@view.$html)
+      expect(@view.$html).toLookLike(expected)
+
+
+    it 'does not re-insert placeholders if value is set later on', ->
+      imageUrl = 'http://www.bla.com'
+      expected =
+        """
+        <img src="#{ imageUrl }"
+          #{ docAttr.image }="image"
+          class="#{ docClass.snippet }"
+          #{ docAttr.template }="test.image">
+        """
+
+      @view.set('image', imageUrl)
+      @view.wasAttachedToDom.fireWith(@view.$html)
+      expect(@view.$html).toLookLike(expected)
 
 
 describe 'SnippetView background image', ->

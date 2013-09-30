@@ -5,9 +5,9 @@ class SnippetDrag
     @snippet = snippet
     @page = page
     @$highlightedContainer = {}
-    @onStart = $.proxy(@onStart, @)
-    @onDrag = $.proxy(@onDrag, @)
-    @onDrop = $.proxy(@onDrop, @)
+    @onStart = $.proxy(@onStart, this)
+    @onDrag = $.proxy(@onDrag, this)
+    @onDrop = $.proxy(@onDrop, this)
     @classAdded = []
 
 
