@@ -24,10 +24,11 @@ dom = do ->
   # Find the container this node is contained within.
   findContainer: (node) ->
     node = @getElementNode(node)
+    containerAttr = config.directives.container.renderedAttr
 
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
-      if node.hasAttribute(docAttr.container)
-        containerName = node.getAttribute(docAttr.container)
+      if node.hasAttribute(containerAttr)
+        containerName = node.getAttribute(containerAttr)
         if not sectionRegex.test(node.className)
           view = @findSnippetView(node)
 
@@ -43,24 +44,27 @@ dom = do ->
 
 
   getImageName: (node) ->
-    if node.hasAttribute(docAttr.image)
-      imageName = node.getAttribute(docAttr.image)
+    imageAttr = config.directives.image.renderedAttr
+    if node.hasAttribute(imageAttr)
+      imageName = node.getAttribute(imageAttr)
       return imageName
 
 
   getEditableName: (node) ->
-    if node.hasAttribute(docAttr.editable)
-      imageName = node.getAttribute(docAttr.editable)
+    editableAttr = config.directives.editable.renderedAttr
+    if node.hasAttribute(editableAttr)
+      imageName = node.getAttribute(editableAttr)
       return editableName
 
 
 
   dropTarget: (node, { top, left }) ->
     node = @getElementNode(node)
+    containerAttr = config.directives.container.renderedAttr
 
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
-      if node.hasAttribute(docAttr.container)
-        containerName = node.getAttribute(docAttr.container)
+      if node.hasAttribute(containerAttr)
+        containerName = node.getAttribute(containerAttr)
         if not sectionRegex.test(node.className)
           insertSnippet = @getPositionInContainer($(node), { top, left })
           if insertSnippet

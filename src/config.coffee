@@ -6,6 +6,23 @@ do ->
   @config = {
     wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?"
     attributePrefix: 'data'
+
+    directives:
+      container:
+        attr: 'doc-container'
+        renderedAttr: 'calculated later'
+        elementDirective: true
+        defaultName: 'default'
+      editable:
+        attr: 'doc-editable'
+        renderedAttr: 'calculated later'
+        elementDirective: true
+        defaultName: 'default'
+      image:
+        attr: 'doc-image'
+        renderedAttr: 'calculated later'
+        elementDirective: true
+        defaultName: 'image'
   }
 
   # constants for classes used in a document
@@ -44,21 +61,18 @@ do ->
       container: 'default'
       image: 'image'
 
-  @templateAttrLookup = {}
 
-  # constants for attributes used in a document
   @docAttr =
     # snippet attributes
     template: 'doc-template'
 
-  for n, v of @templateAttr
-    @templateAttrLookup[v] = n
 
+  @templateAttrLookup = {}
+  for name, value of config.directives
+    @templateAttrLookup[value.attr] = name
 
-  for name, value of @templateAttr
-    @docAttr[name] = value
 
   # prepend attributes with prefix
   if @config.attributePrefix
-    for key, value of @docAttr
-      @docAttr[key] = "#{ config.attributePrefix }-#{ value }"
+    for name, value of config.directives
+      value.renderedAttr = "#{ config.attributePrefix }-#{ value.attr }"

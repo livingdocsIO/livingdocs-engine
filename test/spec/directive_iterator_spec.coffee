@@ -5,10 +5,10 @@ describe 'DirectiveIterator', ->
       """
       <div class="#{ docClass.snippet }">
         <!-- Adding a comment node so we have another nodeType in play -->
-        <h1 #{ docAttr.editable }="title"></h1>
-        <div #{ docAttr.container }="children">
+        <h1 #{ test.editableAttr }="title"></h1>
+        <div #{ test.containerAttr }="children">
           <!-- This should not be traversed -->
-          <h1 class="#{ docClass.snippet }" #{ docAttr.editable }="title"></h1>
+          <h1 class="#{ docClass.snippet }" #{ test.editableAttr }="title"></h1>
         </div>
       </div>
       """
@@ -34,7 +34,7 @@ describe 'DirectiveIterator', ->
     foundEditables = 0
     while @iterator.next()
       node = @iterator.current
-      if node.nodeType == 1 && node.hasAttribute(docAttr.editable)
+      if node.nodeType == 1 && node.hasAttribute(test.editableAttr)
         foundEditables += 1
 
     expect(foundEditables).toEqual(1)

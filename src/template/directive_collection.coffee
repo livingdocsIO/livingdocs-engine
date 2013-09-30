@@ -54,6 +54,6 @@ class DirectiveCollection
     assert not @all[directive.name],
       """
       #{directive.type} Template parsing error:
-      #{ docAttr[directive.type] }="#{ directive.name }".
+      #{ config.directives[directive.type].renderedAttr }="#{ directive.name }".
       "#{ directive.name }" is a duplicate name.
       """

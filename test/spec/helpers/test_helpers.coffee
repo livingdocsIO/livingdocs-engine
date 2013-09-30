@@ -4,6 +4,10 @@ test = do ->
   log.warningsDisabled = true
   cachedDesign = undefined
 
+  containerAttr: config.directives.container.renderedAttr
+  editableAttr: config.directives.editable.renderedAttr
+  imageAttr: config.directives.image.renderedAttr
+
   # wrapper for `'prop' in object`
   # since this does not exist in coffeescript.
   # You can use this function to check for properties in the prototype chain.

@@ -9,6 +9,7 @@ class DirectiveIterator
 
   constructor: (root) ->
     @root = @_next = root
+    @containerAttr = config.directives.container.renderedAttr
 
 
   current: null
@@ -23,7 +24,7 @@ class DirectiveIterator
     child = next = undefined
     if @current
       child = n.firstChild
-      if child && n.nodeType == 1 && !n.hasAttribute(docAttr.container)
+      if child && n.nodeType == 1 && !n.hasAttribute(@containerAttr)
         @_next = child
       else
         next = null

@@ -4,7 +4,7 @@ describe 'Title Template', ->
   beforeEach ->
     template = new Template
       id: 'h1'
-      html: """<h1 #{ docAttr.editable }="title"></h1>"""
+      html: """<h1 #{ test.editableAttr }="title"></h1>"""
 
 
   it 'has $template Property', ->
@@ -21,7 +21,7 @@ describe 'Title Template', ->
 
   it 'has stored the html', ->
     expected =
-      "<h1 #{ docAttr.editable }='title' class='#{ docClass.editable }'></h1>"
+      "<h1 #{ test.editableAttr }='title' class='#{ docClass.editable }'></h1>"
     expect( htmlCompare.compare(template.$template, expected) ).toBe(true)
 
 
@@ -68,7 +68,7 @@ describe 'Template with default value', ->
   it 'trims the default value', ->
     template = new Template
       identifier: 'bootstrap.title'
-      html: """<h1 #{ docAttr.editable }="title">\n\t your title\t </h1>"""
+      html: """<h1 #{ test.editableAttr }="title">\n\t your title\t </h1>"""
 
     expect(template.defaults['title']).toEqual('your title')
 
@@ -78,7 +78,7 @@ describe 'new Template()', ->
   it 'accepts idenfitier param', ->
     template = new Template
       identifier: 'bootstrap.title'
-      html: """<h1 #{ docAttr.editable }="title"></h1>"""
+      html: """<h1 #{ test.editableAttr }="title"></h1>"""
 
     expect(template.namespace).toEqual('bootstrap')
     expect(template.id).toEqual('title')

@@ -8,6 +8,7 @@ class EditableController
     Editable.init
       log: false
 
+    @editableAttr = config.directives.editable.renderedAttr
     @selection = $.Callbacks()
 
     Editable
@@ -43,7 +44,7 @@ class EditableController
   withContext: (func) ->
     (element, args...) =>
       view = dom.findSnippetView(element)
-      editableName = element.getAttribute(docAttr.editable)
+      editableName = element.getAttribute(@editableAttr)
       args.unshift(view, editableName)
       func.apply(this, args)
 

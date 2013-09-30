@@ -6,7 +6,7 @@ describe 'SnippetView', ->
       @snippetView = test.getTemplate('title').createView()
       @expected =
         """
-        <h1 #{ docAttr.editable }="title"
+        <h1 #{ test.editableAttr }="title"
           class="#{ docClass.editable } #{ docClass.snippet }" #{ docAttr.template }="test.title">
           Humble Bundle
         </h1>
@@ -36,7 +36,7 @@ describe 'SnippetView title set style', ->
     @title.style('Color', 'color--blue')
     @expected = $(
       """
-      <h1 #{ docAttr.editable }="title"
+      <h1 #{ test.editableAttr }="title"
         class="#{ docClass.editable } #{ docClass.snippet }" #{ docAttr.template }="test.title">
       </h1>
       """
@@ -66,8 +66,8 @@ describe 'SnippetView hero', ->
     @expected = $(
       """
       <div class="#{ docClass.snippet }" #{ docAttr.template }="test.hero">
-        <h1 #{ docAttr.editable }="title" class="#{ docClass.editable }">Humble Bundle 2</h1>
-        <p #{ docAttr.editable }="tagline" class="#{ docClass.editable }">Get it now!</p>
+        <h1 #{ test.editableAttr }="title" class="#{ docClass.editable }">Humble Bundle 2</h1>
+        <p #{ test.editableAttr }="tagline" class="#{ docClass.editable }">Get it now!</p>
       </div>
       """
     )
@@ -100,7 +100,7 @@ describe 'SnippetView image', ->
     @expected =
       """
       <img src="http://www.lolcats.com/images/1.jpg"
-        #{ docAttr.image }="image"
+        #{ test.imageAttr }="image"
         class="#{ docClass.snippet }"
         #{ docAttr.template }="test.image">
       """
@@ -118,7 +118,7 @@ describe 'SnippetView image', ->
       expected =
         """
         <img src=""
-          #{ docAttr.image }="image"
+          #{ test.imageAttr }="image"
           class="#{ docClass.snippet }"
           #{ docAttr.template }="test.image">
         """
@@ -130,7 +130,7 @@ describe 'SnippetView image', ->
       expected =
         """
         <img src="#{ placeholderUrl }"
-          #{ docAttr.image }="image"
+          #{ test.imageAttr }="image"
           class="#{ docClass.snippet }"
           #{ docAttr.template }="test.image">
         """
@@ -144,7 +144,7 @@ describe 'SnippetView image', ->
       expected =
         """
         <img src="#{ imageUrl }"
-          #{ docAttr.image }="image"
+          #{ test.imageAttr }="image"
           class="#{ docClass.snippet }"
           #{ docAttr.template }="test.image">
         """
@@ -166,10 +166,10 @@ describe 'SnippetView background image', ->
     expected =
       """
       <div class="#{ docClass.snippet }" #{ docAttr.template }="test.cover">
-        <h4 #{ docAttr.editable }="title" class="#{ docClass.editable }">Titel</h4>
-        <div #{ docAttr.image }="image" style="background-image:url(http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg);">
-          <h3 #{ docAttr.editable }="uppertitle" class="#{ docClass.editable }">Oberzeile</h3>
-          <h2 #{ docAttr.editable }="maintitle" class="#{ docClass.editable }">Titel</h2>
+        <h4 #{ test.editableAttr }="title" class="#{ docClass.editable }">Titel</h4>
+        <div #{ test.imageAttr }="image" style="background-image:url(http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg);">
+          <h3 #{ test.editableAttr }="uppertitle" class="#{ docClass.editable }">Oberzeile</h3>
+          <h2 #{ test.editableAttr }="maintitle" class="#{ docClass.editable }">Titel</h2>
         </div>
       </div>
       """
