@@ -11,9 +11,13 @@ class Page
 
     @loader = new Loader()
     @focus = new Focus()
+    @editableController = new EditableController(this)
+
+    # events
     @imageClick = $.Callbacks()
     @htmlElementClick = $.Callbacks()
-    @editableController = new EditableController(this)
+    @snippetWillBeDragged = $.Callbacks()
+    @snippetWasDropped = $.Callbacks()
 
     @snippetDragDrop = new DragDrop
       longpressDelay: 400

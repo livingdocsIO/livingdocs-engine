@@ -89,8 +89,14 @@ pageReady = ->
   # callback: (snippetView) ->
   @snippetBlurred = chainable(page.focus.snippetBlur, 'add')
 
-  # Raised when a snippet is being dragged
+  # Call to start a drag operation
   @startDrag = $.proxy(page, 'startDrag')
+
+  # Snippet Drag & Drop events
+  @snippetWillBeDragged = $.proxy(page.snippetWillBeDragged, 'add')
+  @snippetWillBeDragged.remove = $.proxy(page.snippetWillBeDragged, 'remove')
+  @snippetWasDropped = $.proxy(page.snippetWasDropped, 'add')
+  @snippetWasDropped.remove = $.proxy(page.snippetWasDropped, 'remove')
 
   # Raised when a user clicks on an editable image
   # example callback method:

@@ -12,6 +12,8 @@ class SnippetDrag
 
 
   onStart: () ->
+    @page.snippetWillBeDragged.fire(snippet: @snippet)
+
     @$insertPreview = $("<div class='doc-drag-preview'>")
     @page.$body
       .append(@$insertPreview)
@@ -88,6 +90,8 @@ class SnippetDrag
           snippetView.model.after(@snippet)
       else if target.containerName
         target.parent.model.append(target.containerName, @snippet)
+
+      @page.snippetWasDropped.fire(snippet: @snippet)
     else
       #consider: maybe add a 'drop failed' effect
 
