@@ -3,7 +3,15 @@ directiveParser = do ->
   attributePrefix = /^(x-|data-)/
 
   parse: (elem) ->
-    directive = undefined
+    elemDirective = undefined
+    @parseDirectives elem, (directive) ->
+      if directive.isElementDirective()
+        elemDirective = directive
+
+    return elemDirective
+
+
+  parseDirectives: (elem, func) ->
     for attr in elem.attributes
       attributeName = attr.name
       normalizedName = attributeName.replace(attributePrefix, '')
@@ -13,12 +21,15 @@ directiveParser = do ->
           type: type
           elem: elem
 
-        if attributeName != docAttr[type]
-          @normalizeAttribute(directive, attributeName)
-        else if not attr.value
-          @normalizeAttribute(directive)
+        if directive.isElementDirective()
+          if attributeName != directive.renderedAttr()
+            @normalizeAttribute(directive, attributeName)
+          else if not attr.value
+            @normalizeAttribute(directive)
+        else
+          @removeAttribute(directive, attributeName)
 
-    return directive
+        func(directive)
 
 
   # force attribute style as specified in config
@@ -26,5 +37,10 @@ directiveParser = do ->
   normalizeAttribute: (directive, attributeName) ->
     elem = directive.elem
     if attributeName
-      elem.removeAttribute(attributeName)
-    elem.setAttribute(docAttr[directive.type], directive.name)
+      @removeAttribute(directive, attributeName)
+    elem.setAttribute(directive.renderedAttr(), directive.name)
+
+
+  removeAttribute: (directive, attributeName) ->
+    directive.elem.removeAttribute(attributeName)
+
