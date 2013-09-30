@@ -233,6 +233,3 @@ class SnippetTree
     @root.snippetTree = this
     @root.each (snippet) =>
       snippet.snippetTree = this
-
-
-

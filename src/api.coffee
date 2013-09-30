@@ -89,6 +89,10 @@ pageReady = ->
   # callback: (snippetView) ->
   @snippetBlurred = chainable(page.focus.snippetBlur, 'add')
 
+  # Raised when a snippet is inserted into the snippetTree
+  # callback: (snippetModel) ->
+  @snippetAdded = chainable(document.snippetTree.snippetAdded, 'add')
+
   # Raised when a snippet is being dragged
   @startDrag = $.proxy(page, 'startDrag')
 
