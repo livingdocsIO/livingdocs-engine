@@ -196,7 +196,7 @@ describe 'SnippetView html', ->
           #{ docAttr.html }="html"
           style="position: relative; ">
           <section>test</section>
-          <div class="doc-interaction-blocker" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 1000;"></div>
+          <div class="doc-interaction-blocker" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></div>
         </div>
         """
       )
