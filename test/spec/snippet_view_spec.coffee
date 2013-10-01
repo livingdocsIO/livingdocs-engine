@@ -15,13 +15,13 @@ describe 'SnippetView', ->
 
     it 'sets title', ->
       @snippetView.set('title', 'Humble Bundle')
-      expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
+      expect(@snippetView.$html).toLookLike(@expected)
 
 
     it 'updates its content from snippet', ->
       @snippetView.model.set('title', 'Humble Bundle')
       @snippetView.updateContent()
-      expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
+      expect(@snippetView.$html).toLookLike(@expected)
 
 
     it 'gets the title', ->
@@ -45,14 +45,14 @@ describe 'SnippetView title set style', ->
   it 'sets "Color" style to "color--blue"', ->
     @expected.addClass('color--blue')
     snippetView = @title.template.createView(@title)
-    expect( htmlCompare.compare(snippetView.$html, @expected) ).toBe(true)
+    expect(snippetView.$html).toLookLike(@expected)
 
 
   it 'changes "Color" style from "color--blue" to "color--red"', ->
     @expected.addClass('color--red')
     snippetView = @title.template.createView(@title)
     snippetView.style('Color', 'color--red')
-    expect( htmlCompare.compare(snippetView.$html, @expected) ).toBe(true)
+    expect(snippetView.$html).toLookLike(@expected)
 
 
 describe 'SnippetView hero', ->
@@ -73,19 +73,19 @@ describe 'SnippetView hero', ->
     )
 
   it 'renders snippet content on creation', ->
-    expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
+    expect(@snippetView.$html).toLookLike(@expected)
 
 
   it 'sets "Extra Space"', ->
     @expected.addClass('extra-space')
     @snippetView.style('Extra Space', 'extra-space')
-    expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
+    expect(@snippetView.$html).toLookLike(@expected)
 
 
   it 'resets "Extra Space"', ->
     @snippetView.style('Extra Space', 'extra-space')
     @snippetView.style('Extra Space', '')
-    expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
+    expect(@snippetView.$html).toLookLike(@expected)
 
 
 describe 'SnippetView image', ->
@@ -104,7 +104,7 @@ describe 'SnippetView image', ->
         class="#{ docClass.snippet }"
         #{ docAttr.template }="test.image">
       """
-    expect( htmlCompare.compare(@snippetView.$html, @expected) ).toBe(true)
+    expect(@snippetView.$html).toLookLike(@expected)
 
 
   describe 'delayed placeholder insertion', ->
@@ -122,7 +122,7 @@ describe 'SnippetView image', ->
           class="#{ docClass.snippet }"
           #{ docAttr.template }="test.image">
         """
-      expect( htmlCompare.compare(@view.$html, expected) ).toBe(true)
+      expect(@view.$html).toLookLike(expected)
 
 
     it 'inserts placeholder when view is attached', ->
@@ -136,7 +136,7 @@ describe 'SnippetView image', ->
         """
 
       @view.wasAttachedToDom.fireWith(@view.$html)
-      expect( htmlCompare.compare(@view.$html, expected) ).toBe(true)
+      expect(@view.$html).toLookLike(expected)
 
 
     it 'does not re-insert placeholders if value is set later on', ->
@@ -151,7 +151,7 @@ describe 'SnippetView image', ->
 
       @view.set('image', imageUrl)
       @view.wasAttachedToDom.fireWith(@view.$html)
-      expect( htmlCompare.compare(@view.$html, expected) ).toBe(true)
+      expect(@view.$html).toLookLike(expected)
 
 
 describe 'SnippetView background image', ->
@@ -173,5 +173,31 @@ describe 'SnippetView background image', ->
         </div>
       </div>
       """
-    expect( htmlCompare.compare(snippetView.$html, expected) ).toBe(true)
+    expect(snippetView.$html).toLookLike(expected)
+
+
+describe 'SnippetView html', ->
+
+  beforeEach ->
+    @snippet = test.getSnippet('html')
+    @snippet.set('html', '<section>test</section>')
+    @view = @snippet.template.createView(@snippet)
+
+
+  describe 'set("html", value)', ->
+    it 'adds the html to the snippet', ->
+      expect(@view.$html).toLookLike(
+
+        # There is additional code by the interaction blocker element in there
+        # which is not nice but hopefully works out just fine.
+        """
+        <div class="#{ docClass.snippet }"
+          #{ docAttr.template }="test.html"
+          #{ test.htmlAttr }="html"
+          style="position: relative; ">
+          <section>test</section>
+          <div class="doc-interaction-blocker" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></div>
+        </div>
+        """
+      )
 

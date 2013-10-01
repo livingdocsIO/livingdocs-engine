@@ -3,6 +3,7 @@ testDesign = do ->
   containerAttr = config.directives.container.renderedAttr
   editableAttr = config.directives.editable.renderedAttr
   imageAttr = config.directives.image.renderedAttr
+  htmlAttr = config.directives.html.renderedAttr
 
   config:
     namespace: 'test'
@@ -125,6 +126,15 @@ testDesign = do ->
               <notEvenATag>The Tony Blair Witch Project</notEvenATag>
             </section>
           </div>
+        </div>
+        """
+    ,
+      id: 'html'
+      title: 'Freeform html'
+      html:
+        """
+        <div #{ htmlAttr }="html">
+          <span class="html-placeholder">placholder text</text>
         </div>
         """
     ]

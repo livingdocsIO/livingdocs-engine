@@ -71,7 +71,8 @@ describe 'Container Snippet', ->
 
 
   it 'has named its unnamed container to the default', ->
-    expect(@container.containers[templateAttr.defaultValues.container]).toBeDefined()
+    defaultName = config.directives.container.defaultName
+    expect(@container.containers[defaultName]).toBeDefined()
 
 
 describe 'Image snippet', ->
@@ -129,4 +130,26 @@ describe 'Hero SnippetModel#style', ->
     @hero.style('Conundrum', 'wtf')
     expect(@hero.styles['Conundrum']).toBe(undefined)
 
+
+describe 'Html snippet', ->
+
+  beforeEach ->
+    @image = test.getSnippet('html')
+
+
+  it 'has one html field', ->
+    expect(@image.content.hasOwnProperty('html')).toBeTruthy()
+
+
+  describe 'with content', ->
+
+    beforeEach ->
+      @image.set('html', '<section>text</section>')
+
+    it 'has the html field set in content', ->
+      expect(@image.content['html']).toEqual('<section>text</section>')
+
+
+    it 'can get the content', ->
+      expect(@image.get('html')).toEqual('<section>text</section>')
 

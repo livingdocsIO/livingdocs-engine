@@ -21,6 +21,32 @@ dom = do ->
     return undefined
 
 
+  findNodeContext: (node) ->
+    node = @getElementNode(node)
+
+    while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
+      nodeContext = @getNodeContext(node)
+      return nodeContext if nodeContext
+
+      node = node.parentNode
+
+    return undefined
+
+
+  getNodeContext: (node) ->
+    for directiveType, obj of config.directives
+      continue if not obj.elementDirective
+
+      directiveAttr = obj.renderedAttr
+      if node.hasAttribute(directiveAttr)
+        return {
+          contextAttr: directiveAttr
+          attrName: node.getAttribute(directiveAttr)
+        }
+
+    return undefined
+
+
   # Find the container this node is contained within.
   findContainer: (node) ->
     node = @getElementNode(node)
@@ -48,6 +74,13 @@ dom = do ->
     if node.hasAttribute(imageAttr)
       imageName = node.getAttribute(imageAttr)
       return imageName
+
+
+  getHtmlElementName: (node) ->
+    htmlAttr = config.directives.html.renderedAttr
+    if node.hasAttribute(htmlAttr)
+      htmlElementName = node.getAttribute(htmlAttr)
+      return htmlElementName
 
 
   getEditableName: (node) ->

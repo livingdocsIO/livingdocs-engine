@@ -70,13 +70,12 @@ class Template
     elem = @$template[0]
     @directives = @getDirectives(elem)
 
-    if editables = @directives.editable
-      for directive in editables
-        @formatEditable(directive.name, directive.elem)
-
-    if containers = @directives.container
-      for directive in containers
-        @formatContainer(directive.name, directive.elem)
+    @directives.each (directive) =>
+      switch directive.type
+        when 'editable'
+          @formatEditable(directive.name, directive.elem)
+        when 'container'
+          @formatContainer(directive.name, directive.elem)
 
 
   # Find and store all DOM nodes which are editables or containers

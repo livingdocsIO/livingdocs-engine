@@ -14,7 +14,7 @@ describe 'DirectiveParser', ->
   describe 'container node', ->
 
     beforeEach ->
-      @elem = $("<div #{ templateAttr.container } />")[0]
+      @elem = $("<div #{ config.directives.container.attr } />")[0]
       @directive = directiveParser.parse(@elem)
 
 

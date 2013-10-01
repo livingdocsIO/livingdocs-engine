@@ -18,7 +18,7 @@ class DirectiveCollection
     @all[directive.name] = directive
 
     # index by type
-    # directive.type is one of those 'container', 'editable', 'image'
+    # directive.type is one of those 'container', 'editable', 'image', 'html'
     this[directive.type] ||= []
     this[directive.type].push(directive)
 
@@ -47,6 +47,11 @@ class DirectiveCollection
       this[type]?.length
     else
       @length
+
+
+  each: (callback) ->
+    for directive in this
+      callback(directive)
 
 
   # @api private

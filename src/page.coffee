@@ -12,8 +12,13 @@ class Page
 
     @loader = new Loader()
     @focus = new Focus()
-    @imageClick = $.Callbacks()
     @editableController = new EditableController(this)
+
+    # events
+    @imageClick = $.Callbacks() # (snippetView, fieldName, event) ->
+    @htmlElementClick = $.Callbacks() # (snippetView, fieldName, event) ->
+    @snippetWillBeDragged = $.Callbacks() # (snippetModel) ->
+    @snippetWasDropped = $.Callbacks() # (snippetModel) ->
 
     @snippetDragDrop = new DragDrop
       longpressDelay: 400
@@ -74,7 +79,7 @@ class Page
 
 
   # These events are possibly initialized with a delay in snippetDrag#onStart
-  registerDragStartEvents: (dragDrop, event) ->
+  registerDragMoveEvents: (dragDrop, event) ->
     if event.type == 'touchstart'
       @$document.on 'touchmove.livingdocs-drag', (event) ->
         event.preventDefault()
@@ -89,8 +94,9 @@ class Page
     return unless snippet || snippetView
     snippet = snippetView.model if snippetView
 
+    @registerDragMoveEvents(dragDrop, event)
     @registerDragStopEvents(dragDrop, event)
-    snippetDrag = new SnippetDrag({ snippet: snippet, page: this, registerDragStartEvents: $.proxy(@registerDragStartEvents, this, dragDrop, event)})
+    snippetDrag = new SnippetDrag({ snippet: snippet, page: this })
 
     $snippet = snippetView.$html if snippetView
     dragDrop.mousedown $snippet, event,
@@ -101,6 +107,7 @@ class Page
 
   click: (event) ->
     snippetView = dom.findSnippetView(event.target)
+    nodeContext = dom.findNodeContext(event.target)
 
     # todo: if a user clicked on a margin of a snippet it should
     # still get selected. (if a snippet is found by parentSnippet
@@ -116,8 +123,11 @@ class Page
     if snippetView
       @focus.snippetFocused(snippetView)
 
-      if imageName = dom.getImageName(event.target)
-        @imageClick.fire(snippetView, imageName, event)
+      switch nodeContext.contextAttr
+        when config.directives.image.renderedAttr
+          @imageClick.fire(snippetView, nodeContext.attrName, event)
+        when config.directives.html.renderedAttr
+          @htmlElementClick.fire(snippetView, nodeContext.attrName, event)
     else
       @focus.blur()
 
