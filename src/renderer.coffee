@@ -17,6 +17,8 @@ class Renderer
   setupPageListeners: ->
     @page.focus.snippetFocus.add( $.proxy(@highlightSnippet, this) )
     @page.focus.snippetBlur.add( $.proxy(@removeSnippetHighlight, this) )
+    @page.focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
+    @page.focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )
 
 
   setupSnippetTreeListeners: ->
@@ -126,6 +128,14 @@ class Renderer
   detachFromDom: (snippetView) ->
     snippetView.detach()
     this
+
+
+  afterSnippetFocused: (snippetView) ->
+    snippetView.afterFocused()
+
+
+  afterSnippetBlurred: (snippetView) ->
+    snippetView.afterBlurred()
 
 
   # Highlight methods

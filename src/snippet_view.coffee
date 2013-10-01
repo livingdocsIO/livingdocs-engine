@@ -17,6 +17,10 @@ class SnippetView
 
   updateContent: ->
     @content(@model.content)
+    @directives.each (directive) =>
+      if directive.optional
+        if not @model.get(directive.name)
+          $(directive.elem).css('display', 'none')
 
 
   updateHtml: ->
@@ -30,6 +34,20 @@ class SnippetView
 
   prev: ->
     @$html.prev().data('snippet')
+
+
+  afterFocused: () ->
+    @directives.each (directive) =>
+      if directive.optional
+        if not @model.get(directive.name)
+          $(directive.elem).css('display', '')
+
+
+  afterBlurred: () ->
+    @directives.each (directive) =>
+      if directive.optional
+        if not @model.get(directive.name)
+          $(directive.elem).css('display', 'none')
 
 
   # @param cursor: undefined, 'start', 'end'
