@@ -47,7 +47,7 @@ class Template
   createView: (snippetModel) ->
     snippetModel ||= @createModel()
     $elem = @$template.clone()
-    directives = @getDirectives($elem[0])
+    directives = @linkDirectives($elem[0])
 
     snippetView = new SnippetView
       model: snippetModel
@@ -68,7 +68,7 @@ class Template
 
   parseTemplate: () ->
     elem = @$template[0]
-    @directives = @getDirectives(elem)
+    @directives = @compileDirectives(elem)
 
     @directives.each (directive) =>
       switch directive.type
@@ -78,17 +78,29 @@ class Template
           @formatContainer(directive.name, directive.elem)
 
 
-  # Find and store all DOM nodes which are editables or containers
-  # in the html of a snippet or the html of a template.
-  getDirectives: (elem) ->
+  # In the html of the template find and store all DOM nodes
+  # which are directives (e.g. editables or containers).
+  compileDirectives: (elem) ->
     iterator = new DirectiveIterator(elem)
     directives = new DirectiveCollection()
 
     while elem = iterator.nextElement()
-      directive = directiveParser.parse(elem)
+      directive = directiveCompiler.parse(elem)
       directives.add(directive) if directive
 
     directives
+
+
+  # For every new SnippetView the directives are cloned
+  # and linked with the elements from the new view.
+  linkDirectives: (elem) ->
+    iterator = new DirectiveIterator(elem)
+    snippetDirectives = @directives.clone()
+
+    while elem = iterator.nextElement()
+      directiveFinder.link(elem, snippetDirectives)
+
+    snippetDirectives
 
 
   formatEditable: (name, elem) ->

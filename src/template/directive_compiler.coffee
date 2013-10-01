@@ -1,4 +1,4 @@
-directiveParser = do ->
+directiveCompiler = do ->
 
   attributePrefix = /^(x-|data-)/
 
@@ -11,9 +11,7 @@ directiveParser = do ->
       else
         modifications.push(directive)
 
-    if elemDirective
-      elemDirective.modifications = modifications
-
+    @applyModifications(elemDirective, modifications) if elemDirective
     return elemDirective
 
 
@@ -36,6 +34,13 @@ directiveParser = do ->
       directive = data.directive
       @rewriteAttribute(directive, data.attributeName)
       func(directive)
+
+
+  applyModifications: (mainDirective, modifications) ->
+    for directive in modifications
+      switch directive.type
+        when 'optional'
+          mainDirective.optional = true
 
 
   # Normalize or remove the attribute

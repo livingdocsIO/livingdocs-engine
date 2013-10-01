@@ -1,10 +1,10 @@
-describe 'DirectiveParser', ->
+describe 'DirectiveCompiler', ->
 
   describe 'node without attributes', ->
 
     beforeEach ->
       @elem = $('<div/>')[0]
-      @directive = directiveParser.parse(@elem)
+      @directive = directiveCompiler.parse(@elem)
 
 
     it 'is not a data node', ->
@@ -15,7 +15,7 @@ describe 'DirectiveParser', ->
 
     beforeEach ->
       @elem = $("<div #{ config.directives.container.attr } />")[0]
-      @directive = directiveParser.parse(@elem)
+      @directive = directiveCompiler.parse(@elem)
 
 
     it 'is Directive', ->
@@ -33,7 +33,7 @@ describe 'DirectiveParser', ->
       x =    $("<div x-#{ config.directives.container.attr } />")[0]
       data = $("<div data-#{ config.directives.container.attr } />")[0]
       for node in [nude, x, data]
-        directive = directiveParser.parse(node)
+        directive = directiveCompiler.parse(node)
         expect(directive.elem.hasAttribute(test.containerAttr)).toBeTruthy()
 
 
@@ -41,13 +41,13 @@ describe 'DirectiveParser', ->
 
     it 'finds data- prepended editable', ->
       elem = $("<div data-#{ config.directives.editable.attr } />")[0]
-      directive = directiveParser.parse(elem)
+      directive = directiveCompiler.parse(elem)
       expect(directive.type).toEqual('editable')
 
 
     it 'finds x- prepended editable', ->
       elem = $("<div x-#{ config.directives.editable.attr } />")[0]
-      directive = directiveParser.parse(elem)
+      directive = directiveCompiler.parse(elem)
       expect(directive.type).toEqual('editable')
 
 
@@ -58,11 +58,11 @@ describe 'DirectiveParser', ->
         <div #{ config.directives.editable.attr }='text'
         #{ config.directives.optional.attr } />
         """
-      @directive = directiveParser.parse(elem)
+      @directive = directiveCompiler.parse(elem)
 
 
     it 'detects a doc-optional directive', ->
-      expect(@directive.modifications[0].type).toEqual('optional')
+      expect(@directive.optional).toEqual(true)
 
 
     it 'removes the doc-optional directive attribute', ->

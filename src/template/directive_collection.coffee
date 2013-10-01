@@ -54,9 +54,24 @@ class DirectiveCollection
       callback(directive)
 
 
+  clone: ->
+    newCollection = new DirectiveCollection()
+    @each (directive) ->
+      newCollection.add(directive.clone())
+
+    newCollection
+
+
+  assertAllLinked: ->
+    @each (directive) ->
+      return false if not directive.elem
+
+    return true
+
+
   # @api private
   assertNameNotUsed: (directive) ->
-    assert not @all[directive.name],
+    assert directive && not @all[directive.name],
       """
       #{directive.type} Template parsing error:
       #{ config.directives[directive.type].renderedAttr }="#{ directive.name }".
