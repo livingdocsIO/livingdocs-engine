@@ -162,7 +162,7 @@ class SnippetView
   blockInteraction: ($elem) ->
     @ensureRelativePosition($elem)
     $blocker = $("<div class='#{ docClass.interactionBlocker }'>")
-      .attr('style', 'position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 1000;')
+      .attr('style', 'position: absolute; top: 0; bottom: 0; left: 0; right: 0;')
     $elem.append($blocker)
 
     @disableTabbing($elem)
