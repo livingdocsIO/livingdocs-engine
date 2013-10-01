@@ -123,4 +123,13 @@ testDesign =
           </div>
         </div>
         """
+    ,
+      id: 'html'
+      title: 'Freeform html'
+      html:
+        """
+        <div #{ docAttr.html }="html">
+          <span class="html-placeholder">placholder text</text>
+        </div>
+        """
     ]

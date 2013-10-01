@@ -56,6 +56,11 @@
       "html": "<p doc-editable=\"text\">Lorem ipsum dolorem. Lorem ipsum dolorem. Lorem ipsum dolorem</p>"
     },
     {
+      "title": "Html",
+      "id": "html",
+      "html": "<div doc-html=\"html\">Insert HTML here</div>"
+    },
+    {
       "title": "Title",
       "id": "title",
       "html": "<h1 doc-editable=\"title\">Titel</h1>"

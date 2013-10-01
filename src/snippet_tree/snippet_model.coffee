@@ -14,7 +14,6 @@
 # # @prop parentContainer: parent SnippetContainer
 class SnippetModel
 
-
   constructor: ({ @template, id } = {}) ->
     assert @template, 'cannot instantiate snippet without template reference'
 
@@ -36,7 +35,7 @@ class SnippetModel
           @containers[directive.name] = new SnippetContainer
             name: directive.name
             parentSnippet: this
-        when 'editable', 'image'
+        when 'editable', 'image', 'html'
           @content ||= {}
           @content[directive.name] = undefined
         else
@@ -49,6 +48,10 @@ class SnippetModel
 
   hasEditables: ->
     @template.directives.count('editable') > 0
+
+
+  hasHtml: ->
+    @template.directives.count('html') > 0
 
 
   hasImages: ->
