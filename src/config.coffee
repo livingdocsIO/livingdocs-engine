@@ -86,10 +86,9 @@ do ->
 
     # Create the renderedAttrs for the directives
     # (prepend directive attributes with the configured prefix)
-    value.renderedAttr = if @config.attributePrefix
-      "#{ config.attributePrefix }-#{ value.attr }"
-    else
-      value.attr
+    prefix = "#{ config.attributePrefix }-" if @config.attributePrefix
+    value.renderedAttr = "#{ prefix || '' }#{ value.attr }"
+
 
     @docDirective[name] = value.renderedAttr
     @templateAttrLookup[value.attr] = name
