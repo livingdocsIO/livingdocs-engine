@@ -35,14 +35,14 @@ class SnippetView
   showOptionals: ->
     @directives.each (directive) =>
       if directive.optional
-        $(directive.elem).css('display', '')
+        config.animations.optionals.show($(directive.elem))
 
 
   # Hide all empty doc-optionals
   hideEmptyOptionals: ->
     @directives.each (directive) =>
       if directive.optional && @model.isEmpty(directive.name)
-        $(directive.elem).css('display', 'none')
+        config.animations.optionals.hide($(directive.elem))
 
 
   next: ->

@@ -73,6 +73,15 @@ do ->
         attr: 'doc-optional'
         renderedAttr: 'calculated later'
         elementDirective: false
+
+
+    animations:
+      optionals:
+        show: ($elem) ->
+          $elem.slideDown(250)
+
+        hide: ($elem) ->
+          $elem.hide()
   }
 
   # Shorthands for stuff that is used all over the place to make
