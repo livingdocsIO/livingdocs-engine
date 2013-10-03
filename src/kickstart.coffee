@@ -1,31 +1,31 @@
 kickstart = do ->
 
-  init: (destination, design) ->
-    domElements = $(destination).children().not('script')
+  init: (template, destination, design) ->
+    xmlElements = $.parseXML("<root>" + $(template).text() + "</root>").firstChild.children
     $(destination).html('<div class="doc-section"></div>')
 
     if not doc.document.initialized
       doc.init(design: design)
       doc.ready =>
-        @addRootSnippets(domElements)
+        @addRootSnippets(xmlElements)
 
     else
-      @addRootSnippets(domElements)
+      @addRootSnippets(xmlElements)
 
-  addRootSnippets: (domElements) ->
-    domElements.each (index, element) =>
-      row = doc.add(@nodeToSnippetName(element))
-      @setChildren(row, element)
+  addRootSnippets: (xmlElements) ->
+    for xmlElement, index in xmlElements
+      row = doc.add(@nodeToSnippetName(xmlElement))
+      @setChildren(row, xmlElement)
 
 
-  populateSnippetContainers: (snippet, data) ->
+  populateSnippetContainers: (snippet, xmlData) ->
     containers = if snippet.containers then Object.keys(snippet.containers) else []
-    if containers.length == 1 && containers.indexOf('default') != -1 && !$(data).children('default').length
-      for child in $(data).children()
+    if containers.length == 1 && containers.indexOf('default') != -1 && !xmlData.getElementsByTagName('default').length
+      for child in xmlData.children
         @appendSnippetToContainer(snippet, child, 'default')
 
-    for editableContainer in $(containers.join(','), data)
-      for child in $(editableContainer).children()
+    for editableContainer in $(containers.join(','), xmlData)
+      for child in editableContainer.children
         @appendSnippetToContainer(snippet, child, editableContainer.localName)
 
 
@@ -34,42 +34,35 @@ kickstart = do ->
     snippet = doc.create(snippetName)
     parentContainer.append(region, snippet)
 
-    if snippetName == 'title'
-      data = $.parseHTML("<div>#{data.text}</div>")[0]
 
     @setChildren(snippet, data)
 
 
-  setChildren: (snippet, data) ->
-    @populateSnippetContainers(snippet, data)
-    @setEditables(snippet, data)
+  setChildren: (snippet, xmlData) ->
+    @populateSnippetContainers(snippet, xmlData)
+    @setEditables(snippet, xmlData)
+    window.data = xmlData
 
 
-  getValueForEditable: (editableName, editableData, snippet) ->
-    if editableName == 'image'
-      # TODO: make a test - image innerHTML can't work
-      child = editableData.querySelector('img')?.innerHTML
+  getValueForEditable: (editableName, xmlData, snippet) ->
+    child = xmlData.getElementsByTagName(editableName)?[0]
+    match = new XMLSerializer().serializeToString(child).match(new RegExp("<#{editableName}.*?>(.*?)<\\/#{editableName}>"))
 
-    else if editableName == 'title'
-      log.warn("Your design contains an editable named '#{editableName}'. This can cause unexpected results due to some Browser limitations.")
-      child = editableData.querySelector(editableName)?.text
-
+    if match
+      value = $("<div>#{match[1]}</div>").html()
     else
-      child = editableData.querySelector(editableName)?.innerHTML
-
-    if !child
       if !snippet
         snippet = { identifier: "the current kickstart" }
       log.warn("The editable '#{editableName}' of '#{snippet.identifier }' has no content. Display parent HTML instead.")
-      child = editableData.innerHTML
+      value = xmlData.firstChild
 
-    child
+    value
 
 
-  setEditables: (snippet, data) ->
+  setEditables: (snippet, xmlData) ->
     for editableName of snippet.content
       snippet.set(editableName, null)
-      child = @getValueForEditable(editableName, data, snippet)
+      child = @getValueForEditable(editableName, xmlData, snippet)
       snippet.set(editableName, child)
 
 

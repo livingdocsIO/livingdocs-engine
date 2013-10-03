@@ -18,6 +18,12 @@ describe 'kickstart', ->
 
     it 'populates a snippet', ->
       row = test.getSnippet('row')
+      data = $("<text><text>#{@text1}</text></text>")[0]
+      kickstart.appendSnippetToContainer(row, data,  'main')
+      expect(row.containers.main.first.get('text')).toEqual(@text1)
+
+    it 'populates a snippet without editable', ->
+      row = test.getSnippet('row')
       data = $("<text>#{@text1}</text>")[0]
       kickstart.appendSnippetToContainer(row, data,  'main')
       expect(row.containers.main.first.get('text')).toEqual(@text1)
