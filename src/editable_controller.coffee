@@ -101,6 +101,12 @@ class EditableController
         cursor = Editable.createCursor(elem, if direction == 'before' then 'end' else 'beginning')
         cursor[ if direction == 'before' then 'insertAfter' else 'insertBefore' ](frag)
 
+        # Make sure the model of the mergedView is up to date
+        # otherwise bugs like in issue #56 can occur.
+        cursor.save()
+        @updateModel(mergedView, editableName)
+        cursor.restore()
+
         view.model.remove()
         cursor.setSelection()
 
