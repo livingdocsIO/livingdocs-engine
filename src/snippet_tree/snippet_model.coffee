@@ -108,6 +108,11 @@ class SnippetModel
     @content[name]
 
 
+  isEmpty: (name) ->
+    value = @get(name)
+    value == undefined || value == ''
+
+
   style: (name, value) ->
     if arguments.length == 1
       @styles[name]

@@ -11,21 +11,38 @@ class SnippetView
       .addClass(docClass.snippet)
       .attr(docAttr.template, @template.identifier)
 
+    @render()
+
+
+  render: (mode) ->
     @updateContent()
     @updateHtml()
 
 
   updateContent: ->
     @content(@model.content)
-    @directives.each (directive) =>
-      if directive.optional
-        if not @model.get(directive.name)
-          $(directive.elem).css('display', 'none')
+
+    if not @hasFocus()
+      @hideEmptyOptionals()
 
 
   updateHtml: ->
     for name, value of @model.styles
       @style(name, value)
+
+
+  # Show all doc-optionals whether they are empty or not.
+  showOptionals: ->
+    @directives.each (directive) =>
+      if directive.optional
+        $(directive.elem).css('display', '')
+
+
+  # Hide all empty doc-optionals
+  hideEmptyOptionals: ->
+    @directives.each (directive) =>
+      if directive.optional && @model.isEmpty(directive.name)
+        $(directive.elem).css('display', 'none')
 
 
   next: ->
@@ -37,23 +54,23 @@ class SnippetView
 
 
   afterFocused: () ->
-    @directives.each (directive) =>
-      if directive.optional
-        if not @model.get(directive.name)
-          $(directive.elem).css('display', '')
+    @$html.addClass(docClass.snippetHighlight)
+    @showOptionals()
 
 
   afterBlurred: () ->
-    @directives.each (directive) =>
-      if directive.optional
-        if not @model.get(directive.name)
-          $(directive.elem).css('display', 'none')
+    @$html.removeClass(docClass.snippetHighlight)
+    @hideEmptyOptionals()
 
 
   # @param cursor: undefined, 'start', 'end'
   focus: (cursor) ->
     first = @directives.editable?[0].elem
     $(first).focus()
+
+
+  hasFocus: ->
+    @$html.hasClass(docClass.snippetHighlight)
 
 
   getBoundingClientRect: ->

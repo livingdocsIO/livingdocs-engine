@@ -15,8 +15,6 @@ class Renderer
   # ---------------------------
 
   setupPageListeners: ->
-    @page.focus.snippetFocus.add( $.proxy(@highlightSnippet, this) )
-    @page.focus.snippetBlur.add( $.proxy(@removeSnippetHighlight, this) )
     @page.focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
     @page.focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )
 
@@ -136,17 +134,6 @@ class Renderer
 
   afterSnippetBlurred: (snippetView) ->
     snippetView.afterBlurred()
-
-
-  # Highlight methods
-  # -----------------
-
-  highlightSnippet: (snippetView) ->
-    snippetView.$html.addClass(docClass.snippetHighlight)
-
-
-  removeSnippetHighlight: (snippetView) ->
-    snippetView.$html.removeClass(docClass.snippetHighlight)
 
 
   # UI Inserts
