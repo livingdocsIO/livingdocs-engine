@@ -4,7 +4,7 @@ test = do ->
   log.warningsDisabled = true
   cachedDesign = undefined
 
-  emptyPlaceholderAttr: "#{ docAttr.placeholder }='\ufeff'"
+  emptyPlaceholderAttr: "#{ docAttr.placeholder }='#{ config.zeroWidthCharacter }'"
 
   # wrapper for `'prop' in object`
   # since this does not exist in coffeescript.

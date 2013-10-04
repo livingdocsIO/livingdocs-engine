@@ -5,6 +5,10 @@ do ->
 
   @config = {
     wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?"
+
+    # (U+FEFF) zero width no-break space
+    zeroWidthCharacter: '\ufeff'
+
     attributePrefix: 'data'
 
     # Here you find everything that can end up in the html
