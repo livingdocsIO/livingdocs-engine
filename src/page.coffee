@@ -5,10 +5,11 @@ class Page
 
   LEFT_MOUSE_BUTTON = 1
 
-  constructor: ->
+  constructor: (renderNode) ->
     @document = window.document
     @$document = $(@document)
     @$body = $(@document.body)
+    @renderNode = renderNode || $(".#{ docClass.section }")[0]
 
     @loader = new Loader()
     @focus = new Focus()
@@ -41,18 +42,6 @@ class Page
   removeListeners: ->
     @$document.off('.livingdocs')
     @$document.off('.livingdocs-drag')
-
-
-  # @param rootNode (optional) DOM node that should contain the content
-  # @return jQuery object: the root node of the document
-  getDocumentSection: ({ rootNode } = {}) ->
-    if !rootNode
-      $root = $(".#{ docClass.section }").first()
-    else
-      $root = $(rootNode).addClass(".#{ docClass.section }")
-
-    assert $root.length, 'no rootNode found'
-    $root
 
 
   mousedown: (event) ->

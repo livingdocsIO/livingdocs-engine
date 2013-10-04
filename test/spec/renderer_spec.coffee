@@ -2,8 +2,9 @@ describe 'renderer', ->
 
   beforeEach ->
     @tree = new SnippetTree()
-    @fragment = $('<div>')
-    @renderer = new Renderer(snippetTree: @tree, rootNode: @fragment, page: new PageMock())
+    page = new PageMock()
+    @fragment = $(page.renderNode)
+    @renderer = new Renderer(snippetTree: @tree, page: page)
 
 
   describe 'for a few snippets', ->
