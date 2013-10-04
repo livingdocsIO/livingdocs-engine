@@ -10,7 +10,9 @@ class Renderer
     @setupPageListeners()
     @setupSnippetTreeListeners()
     @snippets = {}
+
     @readOnly = Boolean(readOnly)
+    @page.setInteractive(!@readOnly)
 
 
   # Snippet Tree Event Handling
