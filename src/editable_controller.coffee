@@ -80,8 +80,8 @@ class EditableController
   insert: (view, editableName, direction, cursor) ->
     if @hasSingleEditable(view)
 
-      # todo: make this configurable
-      template = document.design.get('text')
+      snippetName = config.editable.insertSnippet
+      template = document.design.get(snippetName)
       copy = template.createModel()
 
       newView = if direction == 'before'

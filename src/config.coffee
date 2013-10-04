@@ -87,6 +87,10 @@ do ->
           else
             $elem.hide()
 
+
+    editable:
+      insertSnippet: 'text'
+
   }
 
   # Shorthands for stuff that is used all over the place to make
