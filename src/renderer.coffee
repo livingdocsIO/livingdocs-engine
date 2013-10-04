@@ -1,7 +1,7 @@
 class Renderer
 
 
-  constructor: ({ @snippetTree, @page }) ->
+  constructor: ({ @snippetTree, @page, readOnly }) ->
     assert @snippetTree, 'no snippet tree specified'
     assert @page, 'no page specified'
     assert @page.renderNode, 'page does not specify a node to render to'
@@ -10,6 +10,7 @@ class Renderer
     @setupPageListeners()
     @setupSnippetTreeListeners()
     @snippets = {}
+    @readOnly = Boolean(readOnly)
 
 
   # Snippet Tree Event Handling
@@ -85,16 +86,28 @@ class Renderer
 
 
   clear: ->
+    @page.blurFocusedElement()
     @snippetTree.each (model) =>
       view = @getSnippetView(model)
       view?.attachedToDom = false
 
+    @snippets = {}
     @$root.empty()
 
 
   redraw: ->
     @clear()
     @render()
+
+
+  setReadOnly: (readOnly) ->
+    return unless readOnly?
+
+    readOnly = Boolean(readOnly)
+
+    if readOnly != @readOnly
+      @readOnly = readOnly
+      @redraw()
 
 
   updateDomPosition: (snippetView) ->
@@ -113,7 +126,7 @@ class Renderer
 
 
   afterDomInsert: (snippetView) ->
-    @initializeEditables(snippetView)
+    @initializeEditables(snippetView) unless @readOnly
 
 
   initializeEditables: (snippetView) ->
