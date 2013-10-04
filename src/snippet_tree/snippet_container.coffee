@@ -133,7 +133,7 @@ class SnippetContainer
   # Notifies the snippetTree if the parent snippet is
   # attached to one.
   # Snippets that are moved inside a snippetTree should not
-  # call _detachSnippet since we don't want to raise
+  # call _detachSnippet since we don't want to fire
   # SnippetRemoved events on the snippet tree, in these
   # cases unlink can be used
   # @api private

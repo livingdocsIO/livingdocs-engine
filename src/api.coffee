@@ -80,12 +80,12 @@ pageReady = ->
   # Events
   # ------
 
-  # Raised when a snippet is focused
+  # Fired when a snippet is focused
   # callback: (snippetView) ->
   @snippetFocused = chainable(page.focus.snippetFocus, 'add')
 
-  # Raised when a snippet is blurred
-  # (always raised before the next focus event)
+  # Fired when a snippet is blurred
+  # (always fire before the next focus event)
   # callback: (snippetView) ->
   @snippetBlurred = chainable(page.focus.snippetBlur, 'add')
 
@@ -98,13 +98,13 @@ pageReady = ->
   @snippetWasDropped = $.proxy(page.snippetWasDropped, 'add')
   @snippetWasDropped.remove = $.proxy(page.snippetWasDropped, 'remove')
 
-  # Raised when a user clicks on an editable image
+  # Fired when a user clicks on an editable image
   # example callback method:
   # (snippetView, imageName) -> snippetView.model.set(imageName, imageSrc)
   @imageClick = chainable(page.imageClick, 'add')
 
 
-  # Raised when a user click on an editable html element or one of its children
+  # Fired when a user click on an editable html element or one of its children
   # example callback methods:
   # (snippetView, htmlElementName, event) -> # your code here
   @htmlElementClick = chainable(page.htmlElementClick, 'add')
@@ -112,7 +112,7 @@ pageReady = ->
   # Text Events
   # -----------
 
-  # Raised when editable text is selected
+  # Fired when editable text is selected
   # callback: (snippetView, element, selection) ->
   # @callbackParam snippetView - snippetView instance
   # @callbackParam element - DOM node with contenteditable
