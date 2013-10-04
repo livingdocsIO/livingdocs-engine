@@ -107,6 +107,7 @@ class Renderer
 
     if readOnly != @readOnly
       @readOnly = readOnly
+      @page.setInteractive(!readOnly)
       @redraw()
 
 
