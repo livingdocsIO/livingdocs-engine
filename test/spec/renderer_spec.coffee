@@ -27,14 +27,17 @@ describe 'renderer', ->
       expected =
         """
         <div class="#{ docClass.snippet }" #{ docAttr.template }="test.cover">
-          <h4 #{ test.editableAttr }="title" class="#{ docClass.editable }">Titel</h4>
+          <h4 #{ test.editableAttr }="title" class="#{ docClass.editable }"
+            #{ docAttr.placeholder }="Titel"></h4>
           <div #{ test.imageAttr }="image" style="background-image:url(http://placehold.it/0x0/BEF56F/B2E668);">
-            <h3 #{ test.editableAttr }="uppertitle" class="#{ docClass.editable }">Oberzeile</h3>
-            <h2 #{ test.editableAttr }="maintitle" class="#{ docClass.editable }">Titel</h2>
+            <h3 #{ test.editableAttr }="uppertitle" class="#{ docClass.editable }"
+              #{ docAttr.placeholder }="Oberzeile"></h3>
+            <h2 #{ test.editableAttr }="maintitle" class="#{ docClass.editable }"
+              #{ docAttr.placeholder }="Titel"></h2>
           </div>
         </div>
         """
-      expect( htmlCompare.compare(snippetView.$html, expected) ).toBe(true)
+      expect(snippetView.$html).toLookLike(expected)
 
 
     describe 'getSnippetView()', ->

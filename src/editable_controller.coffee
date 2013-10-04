@@ -54,12 +54,16 @@ class EditableController
 
 
   focus: (view, editableName) ->
+    view.focusEditable(editableName)
+
     element = view.directives.get(editableName).elem
     @page.focus.editableFocused(element, view)
     true # enable editableJS default behaviour
 
 
   blur: (view, editableName) ->
+    view.blurEditable(editableName)
+
     element = view.directives.get(editableName).elem
     @page.focus.editableBlurred(element, view)
     @updateModel(view, editableName)

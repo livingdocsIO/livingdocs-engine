@@ -38,7 +38,8 @@ do ->
 
       # attributes injected by the engine
       attr:
-        template: 'doc-template'
+        template: 'data-doc-template'
+        placeholder: 'data-doc-placeholder'
 
 
     # Directive definitions
@@ -81,7 +82,11 @@ do ->
           $elem.slideDown(250)
 
         hide: ($elem) ->
-          $elem.hide()
+          if $elem.css('display') == 'block'
+            $elem.slideUp(250)
+          else
+            $elem.hide()
+
   }
 
   # Shorthands for stuff that is used all over the place to make

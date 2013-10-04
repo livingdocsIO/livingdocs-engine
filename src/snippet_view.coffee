@@ -1,6 +1,9 @@
 class SnippetView
 
   constructor: ({ @model, @$html, @directives }) ->
+  # (U+FEFF) zero width no-break space
+  zeroWidthCharacter = '\ufeff'
+
     @template = @model.template
     @attachedToDom = false
     @wasAttachedToDom = $.Callbacks();
@@ -105,7 +108,24 @@ class SnippetView
 
   setEditable: (name, value) ->
     elem = @directives.get(name).elem
+    if not value
+      $(elem).attr(config.html.attr.placeholder, @template.defaults[name])
+    else
+      $(elem).attr(config.html.attr.placeholder, zeroWidthCharacter)
+
     $(elem).html(value)
+
+
+  focusEditable: (name) ->
+    elem = @directives.get(name).elem
+    $(elem).attr(config.html.attr.placeholder, zeroWidthCharacter)
+
+
+  blurEditable: (name) ->
+    directive = @directives.get(name)
+    $elem = $(directive.elem)
+    if @model.isEmpty(name)
+      $elem.attr(config.html.attr.placeholder, @template.defaults[name])
 
 
   getHtml: (name) ->
