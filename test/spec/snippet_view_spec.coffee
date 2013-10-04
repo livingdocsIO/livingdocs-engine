@@ -20,9 +20,9 @@ describe 'SnippetView', ->
       expect(@snippetView.$html).toLookLike(@expected)
 
 
-    it 'updates its content from snippet', ->
+    it 'renders content from the model', ->
       @snippetView.model.set('title', 'Humble Bundle')
-      @snippetView.updateContent()
+      @snippetView.render()
       expect(@snippetView.$html).toLookLike(@expected)
 
 
@@ -90,6 +90,25 @@ describe 'SnippetView hero', ->
     @snippetView.style('Extra Space', 'extra-space')
     @snippetView.style('Extra Space', '')
     expect(@snippetView.$html).toLookLike(@expected)
+
+
+  describe 'empty optional', ->
+
+    beforeEach ->
+      @snippetView.model.set('tagline', undefined)
+      @snippetView.render()
+      @$p = @expected.find('p')
+      @$p.hide()
+
+
+    it 'is hidden by default', ->
+      expect(@snippetView.$html).toLookLike(@expected)
+
+
+    # in doubt delete this test (strongly tied to implementation)
+    it 'is revealed after view is focused', ->
+      @snippetView.afterFocused()
+      expect(@snippetView.$html.find('p').css('display')).not.toEqual('none')
 
 
 describe 'SnippetView image', ->

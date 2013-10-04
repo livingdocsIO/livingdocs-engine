@@ -1,9 +1,10 @@
 testDesign = do ->
 
-  containerAttr = config.directives.container.renderedAttr
-  editableAttr = config.directives.editable.renderedAttr
-  imageAttr = config.directives.image.renderedAttr
-  htmlAttr = config.directives.html.renderedAttr
+  containerAttr = config.directives.container.attr
+  editableAttr = config.directives.editable.attr
+  imageAttr = config.directives.image.attr
+  htmlAttr = config.directives.html.attr
+  optionalAttr = config.directives.optional.attr
 
   config:
     namespace: 'test'
@@ -63,7 +64,7 @@ testDesign = do ->
         """
           <div>
             <h1 #{ editableAttr }="title"></h1>
-            <p #{ editableAttr }="tagline"></p>
+            <p #{ editableAttr }="tagline" #{ optionalAttr }></p>
           </div>
         """
     ,
