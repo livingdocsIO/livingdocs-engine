@@ -1,5 +1,7 @@
 class PageMock
 
+  renderNode: $('<div/>')[0]
+
   focus:
 
     snippetFocus:

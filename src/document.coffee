@@ -61,15 +61,14 @@ document = do ->
       @changed.fire()
 
     # Page initialization
-    @page = new Page()
+    @page = new Page(rootNode)
 
     # load design assets into page
     if @design.css
       @page.loader.css(@design.css, doBeforeDocumentReady())
 
     # render document
-    rootNode ||= @page.getDocumentSection()[0]
-    @renderer = new Renderer(snippetTree: @snippetTree, rootNode: rootNode, page: @page)
+    @renderer = new Renderer(snippetTree: @snippetTree, page: @page)
 
     @ready.add =>
       @renderer.render()

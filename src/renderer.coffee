@@ -1,11 +1,12 @@
 class Renderer
 
 
-  constructor: ({ @snippetTree, rootNode, @page }) ->
+  constructor: ({ @snippetTree, @page }) ->
     assert @snippetTree, 'no snippet tree specified'
-    assert rootNode, 'no root node specified'
+    assert @page, 'no page specified'
+    assert @page.renderNode, 'page does not specify a node to render to'
 
-    @$root = $(rootNode)
+    @$root = $(@page.renderNode)
     @setupPageListeners()
     @setupSnippetTreeListeners()
     @snippets = {}
