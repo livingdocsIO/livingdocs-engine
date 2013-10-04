@@ -106,9 +106,9 @@ describe 'Subtitle Template', ->
     expect(subtitle.defaults['title']).toEqual('Who\'s your Caddy?')
 
 
-  it 'leaves the default value in the template', ->
+  it 'removes the default value from the template', ->
     subtitle = test.getTemplate('subtitle')
-    expect(subtitle.$template[0].innerHTML).toEqual('Who\'s your Caddy?')
+    expect(subtitle.$template[0].innerHTML).toEqual('')
 
 
 describe 'Container', ->
