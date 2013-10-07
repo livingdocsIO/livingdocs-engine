@@ -6,6 +6,9 @@ do ->
   @config = {
     wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?"
 
+    # string containng only a <br> followed by whitespaces
+    singleLineBreak: /^<br\s*\/?>\s*$/
+
     # (U+FEFF) zero width no-break space
     zeroWidthCharacter: '\ufeff'
 

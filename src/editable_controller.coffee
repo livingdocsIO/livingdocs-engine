@@ -3,9 +3,6 @@
 # Integrate EditableJS into Livingdocs
 class EditableController
 
-  # string containng only a <br> followed by whitespaces
-  singleLineBreak = /^<br\s*\/?>\s*/
-
   constructor: (@page) ->
     # configure editableJS
     Editable.init
@@ -54,7 +51,7 @@ class EditableController
 
   updateModel: (view, editableName) ->
     value = view.get(editableName)
-    if singleLineBreak.test(value) || value == ''
+    if config.singleLineBreak.test(value) || value == ''
       value = undefined
 
     view.model.set(editableName, value)
