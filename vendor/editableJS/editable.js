@@ -4168,7 +4168,7 @@ var behavior = (function() {
         return;
 
       if(container.childNodes.length > 0)
-        cursor.moveAtEnd(container);
+        cursor.moveAtTextEnd(container);
       else
         cursor.moveAtBeginning(container);
       cursor.setSelection();
@@ -4202,7 +4202,7 @@ var behavior = (function() {
       case 'before':
         previous = block.previous(element);
         if (previous) {
-          cursor.moveAtEnd(previous);
+          cursor.moveAtTextEnd(previous);
           cursor.setSelection();
         }
         break;
@@ -4935,6 +4935,10 @@ var Cursor = (function() {
         if (this.isSelection) return new Cursor(this.host, this.range);
       },
 
+      moveAtTextEnd: function(element) {
+        return this.moveAtEnd(parser.latestChild(element));
+      },
+
       setHost: function(element) {
         this.host = parser.getHost(element);
         if (!this.host) {
@@ -5102,10 +5106,10 @@ var dispatcher = (function() {
       var range = selectionWatcher.getFreshRange();
       var cursor = range.forceCursor();
 
-      if (cursor.isAtBeginning()) {
-        notifier('insert', this, 'before', cursor);
-      } else if(cursor.isAtTextEnd()) {
+      if (cursor.isAtTextEnd()) {
         notifier('insert', this, 'after', cursor);
+      } else if(cursor.isAtBeginning()) {
+        notifier('insert', this, 'before', cursor);
       } else {
         notifier('split', this, cursor.before(), cursor.after(), cursor);
       }
@@ -5651,6 +5655,20 @@ var parser = (function() {
       }
 
       return true;
+    },
+
+    /**
+     * Return the deepest last child of a node.
+     *
+     * @method  latestChild
+     * @param  {HTMLElement} container The container to iterate on.
+     * @return {HTMLElement}           THe deepest last child in the container.
+     */
+    latestChild: function(container) {
+      if(container.lastChild)
+        return this.latestChild(container.lastChild);
+      else
+        return container;
     }
   };
 })();

@@ -4,6 +4,20 @@ test = do ->
   log.warningsDisabled = true
   cachedDesign = undefined
 
+
+  # Configuration changes
+  # ---------------------
+
+  # Make sure the animation effects are visible immediately.
+  config.animations.optionals.show = ($elem) -> $elem.show()
+  config.animations.optionals.hide = ($elem) -> $elem.hide()
+
+
+  # Test Helpers
+  # ------------
+
+  emptyPlaceholderAttr: "#{ docAttr.placeholder }='#{ config.zeroWidthCharacter }'"
+
   # wrapper for `'prop' in object`
   # since this does not exist in coffeescript.
   # You can use this function to check for properties in the prototype chain.

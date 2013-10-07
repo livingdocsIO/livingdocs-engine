@@ -107,15 +107,9 @@ class Template
     $elem = $(elem)
     $elem.addClass(docClass.editable)
 
-
     defaultValue = words.trim(elem.innerHTML)
-    elem.innerHTML = defaultValue
-
-    # not sure how to deal with default values in editables...
-    # elem.innerHTML = ''
-
-    if defaultValue
-      @defaults[name] = defaultValue
+    @defaults[name] = defaultValue if defaultValue
+    elem.innerHTML = ''
 
 
   formatContainer: (name, elem) ->

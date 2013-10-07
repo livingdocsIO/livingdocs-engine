@@ -7,7 +7,9 @@ describe 'SnippetView', ->
       @expected =
         """
         <h1 #{ test.editableAttr }="title"
-          class="#{ docClass.editable } #{ docClass.snippet }" #{ docAttr.template }="test.title">
+          class="#{ docClass.editable } #{ docClass.snippet }"
+            #{ docAttr.template }="test.title"
+            #{ test.emptyPlaceholderAttr }>
           Humble Bundle
         </h1>
         """
@@ -18,9 +20,9 @@ describe 'SnippetView', ->
       expect(@snippetView.$html).toLookLike(@expected)
 
 
-    it 'updates its content from snippet', ->
+    it 'renders content from the model', ->
       @snippetView.model.set('title', 'Humble Bundle')
-      @snippetView.updateContent()
+      @snippetView.render()
       expect(@snippetView.$html).toLookLike(@expected)
 
 
@@ -66,8 +68,10 @@ describe 'SnippetView hero', ->
     @expected = $(
       """
       <div class="#{ docClass.snippet }" #{ docAttr.template }="test.hero">
-        <h1 #{ test.editableAttr }="title" class="#{ docClass.editable }">Humble Bundle 2</h1>
-        <p #{ test.editableAttr }="tagline" class="#{ docClass.editable }">Get it now!</p>
+        <h1 #{ test.editableAttr }="title" class="#{ docClass.editable }"
+          #{ test.emptyPlaceholderAttr }>Humble Bundle 2</h1>
+        <p #{ test.editableAttr }="tagline" class="#{ docClass.editable }"
+          #{ test.emptyPlaceholderAttr }>Get it now!</p>
       </div>
       """
     )
@@ -86,6 +90,25 @@ describe 'SnippetView hero', ->
     @snippetView.style('Extra Space', 'extra-space')
     @snippetView.style('Extra Space', '')
     expect(@snippetView.$html).toLookLike(@expected)
+
+
+  describe 'empty optional', ->
+
+    beforeEach ->
+      @snippetView.model.set('tagline', undefined)
+      @snippetView.render()
+      @$p = @expected.find('p')
+      @$p.hide()
+
+
+    it 'is hidden by default', ->
+      expect(@snippetView.$html).toLookLike(@expected)
+
+
+    # in doubt delete this test (strongly tied to implementation)
+    it 'is revealed after view is focused', ->
+      @snippetView.afterFocused()
+      expect(@snippetView.$html.find('p').css('display')).not.toEqual('none')
 
 
 describe 'SnippetView image', ->
@@ -166,10 +189,13 @@ describe 'SnippetView background image', ->
     expected =
       """
       <div class="#{ docClass.snippet }" #{ docAttr.template }="test.cover">
-        <h4 #{ test.editableAttr }="title" class="#{ docClass.editable }">Titel</h4>
+        <h4 #{ test.editableAttr }="title" class="#{ docClass.editable }"
+          #{ docAttr.placeholder }="Titel"></h4>
         <div #{ test.imageAttr }="image" style="background-image:url(http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg);">
-          <h3 #{ test.editableAttr }="uppertitle" class="#{ docClass.editable }">Oberzeile</h3>
-          <h2 #{ test.editableAttr }="maintitle" class="#{ docClass.editable }">Titel</h2>
+          <h3 #{ test.editableAttr }="uppertitle" class="#{ docClass.editable }"
+            #{ docAttr.placeholder }="Oberzeile"></h3>
+          <h2 #{ test.editableAttr }="maintitle" class="#{ docClass.editable }"
+            #{ docAttr.placeholder }="Titel"></h2>
         </div>
       </div>
       """

@@ -50,16 +50,24 @@ class EditableController
 
 
   updateModel: (view, editableName) ->
-    view.model.set(editableName, view.get(editableName))
+    value = view.get(editableName)
+    if config.singleLineBreak.test(value) || value == ''
+      value = undefined
+
+    view.model.set(editableName, value)
 
 
   focus: (view, editableName) ->
+    view.focusEditable(editableName)
+
     element = view.directives.get(editableName).elem
     @page.focus.editableFocused(element, view)
     true # enable editableJS default behaviour
 
 
   blur: (view, editableName) ->
+    view.blurEditable(editableName)
+
     element = view.directives.get(editableName).elem
     @page.focus.editableBlurred(element, view)
     @updateModel(view, editableName)
@@ -69,8 +77,8 @@ class EditableController
   insert: (view, editableName, direction, cursor) ->
     if @hasSingleEditable(view)
 
-      # todo: make this configurable
-      template = document.design.get('text')
+      snippetName = config.editable.insertSnippet
+      template = document.design.get(snippetName)
       copy = template.createModel()
 
       newView = if direction == 'before'
