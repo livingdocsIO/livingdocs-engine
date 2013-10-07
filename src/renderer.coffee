@@ -1,12 +1,11 @@
 class Renderer
 
 
-  constructor: ({ @snippetTree, @page }) ->
+  constructor: ({ @snippetTree, @renderingContainer }) ->
     assert @snippetTree, 'no snippet tree specified'
-    assert @page, 'no page specified'
-    assert @page.renderNode, 'page does not specify a node to render to'
+    assert @renderingContainer, 'no rendering container specified'
 
-    @$root = $(@page.renderNode)
+    @$root = $(@renderingContainer.renderNode)
     @setupSnippetTreeListeners()
     @snippets = {}
 
@@ -66,7 +65,7 @@ class Renderer
   # creates a snippetView instance for this snippet
   # @api: private
   createSnippetView: (model) ->
-    view = model.template.createView(model, @page.isReadOnly)
+    view = model.template.createView(model, @renderingContainer.isReadOnly)
     @snippets[model.id] = view
 
 
@@ -101,7 +100,7 @@ class Renderer
   insertIntoDom: (snippetView) ->
     snippetView.attach(this)
     assert snippetView.attachedToDom, 'could not insert snippet into Dom'
-    @page.snippetViewWasInserted(snippetView)
+    @renderingContainer.snippetViewWasInserted(snippetView)
 
     this
 

@@ -68,7 +68,9 @@ document = do ->
       @page.loader.css(@design.css, doBeforeDocumentReady())
 
     # render document
-    @renderer = new Renderer(snippetTree: @snippetTree, page: @page)
+    @renderer = new Renderer
+      snippetTree: @snippetTree
+      renderingContainer: @page
 
     @ready.add =>
       @renderer.render()
