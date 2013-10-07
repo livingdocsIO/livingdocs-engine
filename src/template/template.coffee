@@ -48,26 +48,12 @@ class Template
     snippetModel ||= @createModel()
     $elem = @$template.clone()
     directives = @linkDirectives($elem[0])
-    @stripDocData($elem) if isReadOnly
 
     snippetView = new SnippetView
       model: snippetModel
       $html: $elem
       directives: directives
       isReadOnly: isReadOnly
-
-
-  stripDocData: ($elem) ->
-    $elem.findIn('*').each ->
-      $node = $(this)
-      for klass in this.className.split(/\s+/)
-        $node.removeClass(klass) if /doc\-.*/i.test(klass)
-      for attribute in Array::slice.apply(this.attributes)
-        name = attribute.name
-        if /data\-doc\-.*/i.test(name) or attribute.value.trim() == ''
-          $node.removeAttr(name)
-
-    $elem
 
 
   pruneHtml: (html) ->

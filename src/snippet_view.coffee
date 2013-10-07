@@ -26,10 +26,14 @@ class SnippetView
     if not @hasFocus()
       @hideEmptyOptionals()
 
+    @stripHtmlIfReadOnly()
+
 
   updateHtml: ->
     for name, value of @model.styles
       @style(name, value)
+
+    @stripHtmlIfReadOnly()
 
 
   # Show all doc-optionals whether they are empty or not.
@@ -290,3 +294,35 @@ class SnippetView
     if @delayed?[name]
       @wasAttachedToDom.remove(@delayed[name])
       @delayed[name] = undefined
+
+
+  stripHtmlIfReadOnly: ->
+    return unless @isReadOnly
+
+    iterator = new DirectiveIterator(@$html[0])
+    while elem = iterator.nextElement()
+      if elem.style.display == 'none'
+        $(elem).remove()
+      else
+        @stripDocClasses(elem)
+        @stripDocAttributes(elem)
+        @stripEmptyAttributes(elem)
+
+
+  stripDocClasses: (elem) ->
+    $elem = $(elem)
+    for klass in elem.className.split(/\s+/)
+      $elem.removeClass(klass) if /doc\-.*/i.test(klass)
+
+
+  stripDocAttributes: (elem) ->
+    $elem = $(elem)
+    for attribute in Array::slice.apply(elem.attributes)
+      name = attribute.name
+      $elem.removeAttr(name) if /data\-doc\-.*/i.test(name)
+
+
+  stripEmptyAttributes: (elem) ->
+    $elem = $(elem)
+    for attribute in Array::slice.apply(elem.attributes)
+      $elem.removeAttr(attribute.name) if attribute.value.trim() == ''
