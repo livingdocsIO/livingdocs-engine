@@ -10,6 +10,11 @@ class Renderer
     @snippets = {}
 
 
+  html: ->
+    @render()
+    @renderingContainer.html()
+
+
   # Snippet Tree Event Handling
   # ---------------------------
 

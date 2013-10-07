@@ -5,6 +5,10 @@ class RenderingContainer
     @renderNode = $('<div/>')[0]
 
 
+  html: ->
+    $(@renderNode).html()
+
+
   snippetViewWasInserted: (snippetView) ->
 
 # page
