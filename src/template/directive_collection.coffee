@@ -42,6 +42,11 @@ class DirectiveCollection
     @all[name]
 
 
+  # helper to directly get element wrapped in a jQuery object
+  $getElem: (name) ->
+    $(@all[name].elem)
+
+
   count: (type) ->
     if type
       this[type]?.length
