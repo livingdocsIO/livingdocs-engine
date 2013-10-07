@@ -34,6 +34,7 @@ setupApi = ->
 
   # Json that can be used for saving of the document
   @toJson = $.proxy(document, 'toJson')
+  @toHtml = $.proxy(document, 'toHtml')
   @readableJson = -> words.readableJson( document.toJson() )
 
   # Print the content of the snippetTree in a readable string

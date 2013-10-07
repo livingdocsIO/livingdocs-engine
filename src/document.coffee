@@ -125,6 +125,13 @@ document = do ->
     json
 
 
+  toHtml: ->
+    new Renderer(
+      snippetTree: @snippetTree
+      renderingContainer: new RenderingContainer()
+    ).html()
+
+
   restore: (contentJson, resetFirst = true) ->
     @reset() if resetFirst
     @snippetTree.fromJson(contentJson, @design)
