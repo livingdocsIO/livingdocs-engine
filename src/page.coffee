@@ -1,19 +1,26 @@
+class RenderingContainer
+
+  constructor: ->
+    @isReadOnly = true
+    @renderNode = $('<div/>')[0]
+
+
+  snippetViewWasInserted: (snippetView) ->
+
 # page
 # ----
 # Defines the API between the DOM and the document
-class Page
+class Page extends RenderingContainer
 
   constructor: (renderNode) ->
-    @isReadOnly = true
+    super()
+
     @document = window.document
     @$document = $(@document)
     @$body = $(@document.body)
     @renderNode = renderNode || $(".#{ docClass.section }")[0]
 
     @loader = new Loader()
-
-
-  snippetViewWasInserted: (snippetView) ->
 
 
 class InteractivePage extends Page
