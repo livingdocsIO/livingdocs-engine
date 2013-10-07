@@ -324,5 +324,9 @@ class SnippetView
 
   stripEmptyAttributes: (elem) ->
     $elem = $(elem)
+    strippableAttributes = ['style', 'class']
     for attribute in Array::slice.apply(elem.attributes)
-      $elem.removeAttr(attribute.name) if attribute.value.trim() == ''
+      isStrippableAttribute = strippableAttributes.indexOf(attribute.name) >= 0
+      isEmptyAttribute = attribute.value.trim() == ''
+      if isStrippableAttribute and isEmptyAttribute
+        $elem.removeAttr(attribute.name)
