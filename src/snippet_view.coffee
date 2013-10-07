@@ -301,12 +301,9 @@ class SnippetView
 
     iterator = new DirectiveIterator(@$html[0])
     while elem = iterator.nextElement()
-      if elem.style.display == 'none'
-        $(elem).remove()
-      else
-        @stripDocClasses(elem)
-        @stripDocAttributes(elem)
-        @stripEmptyAttributes(elem)
+      @stripDocClasses(elem)
+      @stripDocAttributes(elem)
+      @stripEmptyAttributes(elem)
 
 
   stripDocClasses: (elem) ->
