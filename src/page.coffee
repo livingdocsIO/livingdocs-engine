@@ -3,8 +3,6 @@
 # Defines the API between the DOM and the document
 class Page
 
-  LEFT_MOUSE_BUTTON = 1
-
   constructor: (renderNode) ->
     @document = window.document
     @$document = $(@document)
@@ -12,6 +10,18 @@ class Page
     @renderNode = renderNode || $(".#{ docClass.section }")[0]
 
     @loader = new Loader()
+
+
+  snippetViewWasInserted: (snippetView) ->
+
+
+class InteractivePage extends Page
+
+  LEFT_MOUSE_BUTTON = 1
+
+  constructor: (renderNode) ->
+    super(renderNode)
+
     @focus = new Focus()
     @editableController = new EditableController(this)
 
