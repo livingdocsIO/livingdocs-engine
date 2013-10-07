@@ -105,11 +105,12 @@ class SnippetView
 
   setEditable: (name, value) ->
     $elem = @directives.$getElem(name)
-    if not value
-      $elem.attr(config.html.attr.placeholder, @template.defaults[name])
+    placeholder = if value
+      config.zeroWidthCharacter
     else
-      $elem.attr(config.html.attr.placeholder, config.zeroWidthCharacter)
+      @template.defaults[name]
 
+    $elem.attr(config.html.attr.placeholder, placeholder)
     $elem.html(value)
 
 
