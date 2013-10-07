@@ -77,7 +77,7 @@ class SnippetModel
   append: (containerName, snippetModel) ->
     if arguments.length == 1
       snippetModel = containerName
-      containerName = templateAttr.defaultValues.container
+      containerName = config.directives.container.defaultName
 
     @containers[containerName].append(snippetModel)
     this
@@ -86,7 +86,7 @@ class SnippetModel
   prepend: (containerName, snippetModel) ->
     if arguments.length == 1
       snippetModel = containerName
-      containerName = templateAttr.defaultValues.container
+      containerName = config.directives.container.defaultName
 
     @containers[containerName].prepend(snippetModel)
     this
@@ -106,6 +106,11 @@ class SnippetModel
       "get error: #{ @identifier } has no content named #{ name }"
 
     @content[name]
+
+
+  isEmpty: (name) ->
+    value = @get(name)
+    value == undefined || value == ''
 
 
   style: (name, value) ->
@@ -236,11 +241,11 @@ class SnippetModel
       id: @id
       identifier: @identifier
 
-    unless @isEmpty(@content)
-      json.content = @flatCopy(@content)
+    unless jsonHelper.isEmpty(@content)
+      json.content = jsonHelper.flatCopy(@content)
 
-    unless @isEmpty(@styles)
-      json.styles = @flatCopy(@styles)
+    unless jsonHelper.isEmpty(@styles)
+      json.styles = jsonHelper.flatCopy(@styles)
 
     # create an array for every container
     for name of @containers
@@ -248,24 +253,6 @@ class SnippetModel
       json.containers[name] = []
 
     json
-
-
-  isEmpty: (obj) ->
-    return true unless obj?
-    for name of obj
-      return false if obj.hasOwnProperty(name)
-
-    true
-
-
-  flatCopy: (obj) ->
-    copy = undefined
-
-    for name, value of obj
-      copy ||= {}
-      copy[name] = value
-
-    copy
 
 
 SnippetModel.fromJson = (json, design) ->

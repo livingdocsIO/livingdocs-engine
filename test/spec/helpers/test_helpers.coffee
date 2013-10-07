@@ -4,6 +4,20 @@ test = do ->
   log.warningsDisabled = true
   cachedDesign = undefined
 
+
+  # Configuration changes
+  # ---------------------
+
+  # Make sure the animation effects are visible immediately.
+  config.animations.optionals.show = ($elem) -> $elem.show()
+  config.animations.optionals.hide = ($elem) -> $elem.hide()
+
+
+  # Test Helpers
+  # ------------
+
+  emptyPlaceholderAttr: "#{ docAttr.placeholder }='#{ config.zeroWidthCharacter }'"
+
   # wrapper for `'prop' in object`
   # since this does not exist in coffeescript.
   # You can use this function to check for properties in the prototype chain.
@@ -31,6 +45,10 @@ test = do ->
         size += 1
 
     size
+
+
+  createElem: (str) ->
+    $(str)[0]
 
 
   # use this to test serialization and deserialization
@@ -80,4 +98,13 @@ test = do ->
       before = timesFired
       callback()
       expect(expectedEvents).toEqual(timesFired - before)
+
+
+# automatically add properties to test
+do ->
+
+  # add a Attr property for every directive
+  # e.g. test.containerAttr = 'doc-container'
+  for directiveName, obj of config.directives
+    test["#{ directiveName }Attr"] = obj.renderedAttr
 

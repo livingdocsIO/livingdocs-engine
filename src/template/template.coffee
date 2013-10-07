@@ -37,7 +37,6 @@ class Template
     @defaults = {}
 
     @parseTemplate()
-    @lists = @createLists()
 
 
   # create a new SnippetModel instance from this template
@@ -48,7 +47,7 @@ class Template
   createView: (snippetModel) ->
     snippetModel ||= @createModel()
     $elem = @$template.clone()
-    directives = @getDirectives($elem[0])
+    directives = @linkDirectives($elem[0])
 
     snippetView = new SnippetView
       model: snippetModel
@@ -69,7 +68,7 @@ class Template
 
   parseTemplate: () ->
     elem = @$template[0]
-    @directives = @getDirectives(elem)
+    @directives = @compileDirectives(elem)
 
     @directives.each (directive) =>
       switch directive.type
@@ -79,47 +78,43 @@ class Template
           @formatContainer(directive.name, directive.elem)
 
 
-  # Find and store all DOM nodes which are editables or containers
-  # in the html of a snippet or the html of a template.
-  getDirectives: (elem) ->
+  # In the html of the template find and store all DOM nodes
+  # which are directives (e.g. editables or containers).
+  compileDirectives: (elem) ->
     iterator = new DirectiveIterator(elem)
     directives = new DirectiveCollection()
 
     while elem = iterator.nextElement()
-      directive = directiveParser.parse(elem)
+      directive = directiveCompiler.parse(elem)
       directives.add(directive) if directive
 
     directives
+
+
+  # For every new SnippetView the directives are cloned
+  # and linked with the elements from the new view.
+  linkDirectives: (elem) ->
+    iterator = new DirectiveIterator(elem)
+    snippetDirectives = @directives.clone()
+
+    while elem = iterator.nextElement()
+      directiveFinder.link(elem, snippetDirectives)
+
+    snippetDirectives
 
 
   formatEditable: (name, elem) ->
     $elem = $(elem)
     $elem.addClass(docClass.editable)
 
-
     defaultValue = words.trim(elem.innerHTML)
-    elem.innerHTML = defaultValue
-
-    # not sure how to deal with default values in editables...
-    # elem.innerHTML = ''
-
-    if defaultValue
-      @defaults[name] = defaultValue
+    @defaults[name] = defaultValue if defaultValue
+    elem.innerHTML = ''
 
 
   formatContainer: (name, elem) ->
     # remove all content fron a container from the template
     elem.innerHTML = ''
-
-
-  createLists: () ->
-    lists = {}
-    @$wrap.find("[#{ docAttr.list }]").each( ->
-      $list = $(this)
-      listName = $list.attr("#{ docAttr.list }")
-      lists[listName] = new SnippetTemplateList(listName, $list)
-    )
-    lists
 
 
   # alias to lists

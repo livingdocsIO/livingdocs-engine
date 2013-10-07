@@ -5,6 +5,13 @@ do ->
 
   @config = {
     wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?"
+
+    # string containng only a <br> followed by whitespaces
+    singleLineBreak: /^<br\s*\/?>\s*$/
+
+    # (U+FEFF) zero width no-break space
+    zeroWidthCharacter: '\ufeff'
+
     attributePrefix: 'data'
 
     # Here you find everything that can end up in the html
@@ -36,43 +43,79 @@ do ->
         maximizedContainer: 'doc-js-maximized-container'
         interactionBlocker: 'doc-interaction-blocker'
 
+      # attributes injected by the engine
+      attr:
+        template: 'data-doc-template'
+        placeholder: 'data-doc-placeholder'
 
-    template:
 
-      # attributes used in templates to define directives
-      directives:
-        editable: 'doc-editable'
-        container: 'doc-container'
-        image: 'doc-image'
-        html: 'doc-html'
+    # Directive definitions
+    #
+    # attr: attribute used in templates to define the directive
+    # renderedAttr: attribute used in output html
+    # elementDirective: directive that takes control over the element
+    #   (there can only be one per element)
+    # defaultName: default name if none was specified in the template
+    directives:
+      container:
+        attr: 'doc-container'
+        renderedAttr: 'calculated later'
+        elementDirective: true
+        defaultName: 'default'
+      editable:
+        attr: 'doc-editable'
+        renderedAttr: 'calculated later'
+        elementDirective: true
+        defaultName: 'default'
+      image:
+        attr: 'doc-image'
+        renderedAttr: 'calculated later'
+        elementDirective: true
+        defaultName: 'image'
+      html:
+        attr: 'doc-html'
+        renderedAttr: 'calculated later'
+        elementDirective: true
+        defaultName: 'default'
+      optional:
+        attr: 'doc-optional'
+        renderedAttr: 'calculated later'
+        elementDirective: false
 
-      defaultValues:
-        editable: 'default'
-        container: 'default'
-        image: 'image'
-        html: 'default'
+
+    animations:
+      optionals:
+        show: ($elem) ->
+          $elem.slideDown(250)
+
+        hide: ($elem) ->
+          if $elem.css('display') == 'block'
+            $elem.slideUp(250)
+          else
+            $elem.hide()
+
+
+    editable:
+      insertSnippet: 'text'
+
   }
 
-  # shorthands
+  # Shorthands for stuff that is used all over the place to make
+  # code and specs more readable.
   @docClass = config.html.css
-  @templateAttr = config.template.directives
-  @templateAttr.defaultValues = config.template.defaultValues
-
+  @docAttr = config.html.attr
+  @docDirective = {}
   @templateAttrLookup = {}
 
-  # constants for attributes used in a document
-  @docAttr =
-    # snippet attributes
-    template: 'doc-template'
+  for name, value of config.directives
 
-  for n, v of @templateAttr
-    @templateAttrLookup[v] = n
+    # Create the renderedAttrs for the directives
+    # (prepend directive attributes with the configured prefix)
+    prefix = "#{ config.attributePrefix }-" if @config.attributePrefix
+    value.renderedAttr = "#{ prefix || '' }#{ value.attr }"
 
 
-  for name, value of @templateAttr
-    @docAttr[name] = value
+    @docDirective[name] = value.renderedAttr
+    @templateAttrLookup[value.attr] = name
 
-  # prepend attributes with prefix
-  if @config.attributePrefix
-    for key, value of @docAttr
-      @docAttr[key] = "#{ config.attributePrefix }-#{ value }"
+
