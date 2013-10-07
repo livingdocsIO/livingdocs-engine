@@ -97,10 +97,10 @@ class EditableController
     if @hasSingleEditable(view)
       mergedView = if direction == 'before' then view.prev() else view.next()
 
-      if mergedView.template == view.template
+      if mergedView && mergedView.template == view.template
 
         # create document fragment
-        contents = $(view.directives.get(editableName).elem).contents()
+        contents = view.directives.$getElem(editableName).contents()
         frag = @page.document.createDocumentFragment()
         for el in contents
           frag.appendChild(el)
