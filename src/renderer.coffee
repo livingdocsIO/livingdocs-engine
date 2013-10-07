@@ -7,18 +7,12 @@ class Renderer
     assert @page.renderNode, 'page does not specify a node to render to'
 
     @$root = $(@page.renderNode)
-    @setupPageListeners()
     @setupSnippetTreeListeners()
     @snippets = {}
 
 
   # Snippet Tree Event Handling
   # ---------------------------
-
-  setupPageListeners: ->
-    @page.focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
-    @page.focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )
-
 
   setupSnippetTreeListeners: ->
     @snippetTree.snippetAdded.add( $.proxy(@snippetAdded, this) )
@@ -115,14 +109,6 @@ class Renderer
   detachFromDom: (snippetView) ->
     snippetView.detach()
     this
-
-
-  afterSnippetFocused: (snippetView) ->
-    snippetView.afterFocused()
-
-
-  afterSnippetBlurred: (snippetView) ->
-    snippetView.afterBlurred()
 
 
   # UI Inserts

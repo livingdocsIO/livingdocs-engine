@@ -26,6 +26,9 @@ class Page
       longpressDistanceLimit: 10
       preventDefault: false
 
+    @focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
+    @focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )
+
     @$document
       .on('click.livingdocs', $.proxy(@click, this))
       .on('mousedown.livingdocs', $.proxy(@mousedown, this))
@@ -142,3 +145,11 @@ class Page
         directive.elem
 
     @editableController.add(editableNodes)
+
+
+  afterSnippetFocused: (snippetView) ->
+    snippetView.afterFocused()
+
+
+  afterSnippetBlurred: (snippetView) ->
+    snippetView.afterBlurred()
