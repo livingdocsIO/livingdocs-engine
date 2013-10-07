@@ -5,6 +5,13 @@ do ->
 
   @config = {
     wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?"
+
+    # string containng only a <br> followed by whitespaces
+    singleLineBreak: /^<br\s*\/?>\s*$/
+
+    # (U+FEFF) zero width no-break space
+    zeroWidthCharacter: '\ufeff'
+
     attributePrefix: 'data'
 
     # Here you find everything that can end up in the html
@@ -38,7 +45,8 @@ do ->
 
       # attributes injected by the engine
       attr:
-        template: 'doc-template'
+        template: 'data-doc-template'
+        placeholder: 'data-doc-placeholder'
 
 
     # Directive definitions
@@ -81,7 +89,15 @@ do ->
           $elem.slideDown(250)
 
         hide: ($elem) ->
-          $elem.hide()
+          if $elem.css('display') == 'block'
+            $elem.slideUp(250)
+          else
+            $elem.hide()
+
+
+    editable:
+      insertSnippet: 'text'
+
   }
 
   # Shorthands for stuff that is used all over the place to make
