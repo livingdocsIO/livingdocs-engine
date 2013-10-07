@@ -1,15 +1,16 @@
 class SnippetView
 
-  constructor: ({ @model, @$html, @directives }) ->
+  constructor: ({ @model, @$html, @directives, @isReadOnly }) ->
     @template = @model.template
     @attachedToDom = false
     @wasAttachedToDom = $.Callbacks();
 
-    # add attributes and references to the html
-    @$html
-      .data('snippet', this)
-      .addClass(docClass.snippet)
-      .attr(docAttr.template, @template.identifier)
+    unless @isReadOnly
+      # add attributes and references to the html
+      @$html
+        .data('snippet', this)
+        .addClass(docClass.snippet)
+        .attr(docAttr.template, @template.identifier)
 
     @render()
 

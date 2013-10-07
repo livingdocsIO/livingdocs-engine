@@ -66,7 +66,7 @@ class Renderer
   # creates a snippetView instance for this snippet
   # @api: private
   createSnippetView: (model) ->
-    view = model.template.createView(model)
+    view = model.template.createView(model, @page.isReadOnly)
     @snippets[model.id] = view
 
 

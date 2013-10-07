@@ -4,6 +4,7 @@
 class Page
 
   constructor: (renderNode) ->
+    @isReadOnly = true
     @document = window.document
     @$document = $(@document)
     @$body = $(@document.body)
@@ -21,6 +22,8 @@ class InteractivePage extends Page
 
   constructor: (renderNode) ->
     super(renderNode)
+
+    @isReadOnly = false
 
     @focus = new Focus()
     @editableController = new EditableController(this)
