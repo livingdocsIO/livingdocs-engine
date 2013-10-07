@@ -131,3 +131,14 @@ class Page
     focusedElement = @getFocusedElement()
     $(focusedElement).blur() if focusedElement
 
+
+  snippetViewWasInserted: (snippetView) ->
+    @initializeEditables(snippetView)
+
+
+  initializeEditables: (snippetView) ->
+    if snippetView.directives.editable
+      editableNodes = for directive in snippetView.directives.editable
+        directive.elem
+
+    @editableController.add(editableNodes)

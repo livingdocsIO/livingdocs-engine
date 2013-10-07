@@ -107,21 +107,9 @@ class Renderer
   insertIntoDom: (snippetView) ->
     snippetView.attach(this)
     assert snippetView.attachedToDom, 'could not insert snippet into Dom'
-    @afterDomInsert(snippetView)
+    @page.snippetViewWasInserted(snippetView)
 
     this
-
-
-  afterDomInsert: (snippetView) ->
-    @initializeEditables(snippetView)
-
-
-  initializeEditables: (snippetView) ->
-    if snippetView.directives.editable
-      editableNodes = for directive in snippetView.directives.editable
-        directive.elem
-
-    @page.editableController.add(editableNodes)
 
 
   detachFromDom: (snippetView) ->
