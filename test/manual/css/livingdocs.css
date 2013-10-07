@@ -28,6 +28,17 @@
   outline: none;
 }
 
+@-webkit-keyframes fadeIn {
+  0% {   opacity: 0; }
+  100% { opacity: 0.4; }
+}
+
+.doc-editable:before {
+  content: attr(data-doc-placeholder);
+  opacity: 0.4;
+  -webkit-animation: fadeIn 0.4s;
+}
+
 /**
  * Drag & Drop
  */

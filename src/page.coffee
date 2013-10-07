@@ -112,11 +112,12 @@ class Page
     if snippetView
       @focus.snippetFocused(snippetView)
 
-      switch nodeContext.contextAttr
-        when docAttr.image
-          @imageClick.fire(snippetView, nodeContext.attrName, event)
-        when docAttr.html
-          @htmlElementClick.fire(snippetView, nodeContext.attrName, event)
+      if nodeContext
+        switch nodeContext.contextAttr
+          when config.directives.image.renderedAttr
+            @imageClick.fire(snippetView, nodeContext.attrName, event)
+          when config.directives.html.renderedAttr
+            @htmlElementClick.fire(snippetView, nodeContext.attrName, event)
     else
       @focus.blur()
 

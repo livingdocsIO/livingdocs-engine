@@ -11,6 +11,10 @@ class SnippetView
       .addClass(docClass.snippet)
       .attr(docAttr.template, @template.identifier)
 
+    @render()
+
+
+  render: (mode) ->
     @updateContent()
     @updateHtml()
 
@@ -18,10 +22,27 @@ class SnippetView
   updateContent: ->
     @content(@model.content)
 
+    if not @hasFocus()
+      @hideEmptyOptionals()
+
 
   updateHtml: ->
     for name, value of @model.styles
       @style(name, value)
+
+
+  # Show all doc-optionals whether they are empty or not.
+  showOptionals: ->
+    @directives.each (directive) =>
+      if directive.optional
+        config.animations.optionals.show($(directive.elem))
+
+
+  # Hide all empty doc-optionals
+  hideEmptyOptionals: ->
+    @directives.each (directive) =>
+      if directive.optional && @model.isEmpty(directive.name)
+        config.animations.optionals.hide($(directive.elem))
 
 
   next: ->
@@ -32,10 +53,24 @@ class SnippetView
     @$html.prev().data('snippet')
 
 
+  afterFocused: () ->
+    @$html.addClass(docClass.snippetHighlight)
+    @showOptionals()
+
+
+  afterBlurred: () ->
+    @$html.removeClass(docClass.snippetHighlight)
+    @hideEmptyOptionals()
+
+
   # @param cursor: undefined, 'start', 'end'
   focus: (cursor) ->
     first = @directives.editable?[0].elem
     $(first).focus()
+
+
+  hasFocus: ->
+    @$html.hasClass(docClass.snippetHighlight)
 
 
   getBoundingClientRect: ->
@@ -64,23 +99,39 @@ class SnippetView
 
 
   getEditable: (name) ->
-    elem = @directives.get(name).elem
-    $(elem).html()
+    $elem = @directives.$getElem(name)
+    $elem.html()
 
 
   setEditable: (name, value) ->
-    elem = @directives.get(name).elem
-    $(elem).html(value)
+    $elem = @directives.$getElem(name)
+    placeholder = if value
+      config.zeroWidthCharacter
+    else
+      @template.defaults[name]
+
+    $elem.attr(config.html.attr.placeholder, placeholder)
+    $elem.html(value)
+
+
+  focusEditable: (name) ->
+    $elem = @directives.$getElem(name)
+    $elem.attr(config.html.attr.placeholder, config.zeroWidthCharacter)
+
+
+  blurEditable: (name) ->
+    $elem = @directives.$getElem(name)
+    if @model.isEmpty(name)
+      $elem.attr(config.html.attr.placeholder, @template.defaults[name])
 
 
   getHtml: (name) ->
-    elem = @directives.get(name).elem
-    $(elem).html()
+    $elem = @directives.$getElem(name)
+    $elem.html()
 
 
   setHtml: (name, value) ->
-    elem = @directives.get(name).elem
-    $elem = $(elem)
+    $elem = @directives.$getElem(name)
     $elem.html(value)
     @blockInteraction($elem)
 
@@ -97,19 +148,18 @@ class SnippetView
   # http://stackoverflow.com/questions/8318264/how-to-move-an-iframe-in-the-dom-without-losing-its-state
   resetDirectives: ->
     for name of @directivesToReset
-      elem = @directives.get(name).elem
-      if $(elem).find('iframe').length
+      $elem = @directives.$getElem(name)
+      if $elem.find('iframe').length
         @set(name, @model.content[name])
 
 
   getImage: (name) ->
-    elem = @directives.get(name).elem
-    $(elem).attr('src')
+    $elem = @directives.$getElem(name)
+    $elem.attr('src')
 
 
   setImage: (name, value) ->
-    elem = @directives.get(name).elem
-    $elem = $(elem)
+    $elem = @directives.$getElem(name)
 
     if value
       @cancelDelayed(name)

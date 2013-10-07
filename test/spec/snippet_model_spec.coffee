@@ -71,7 +71,8 @@ describe 'Container Snippet', ->
 
 
   it 'has named its unnamed container to the default', ->
-    expect(@container.containers[templateAttr.defaultValues.container]).toBeDefined()
+    defaultName = config.directives.container.defaultName
+    expect(@container.containers[defaultName]).toBeDefined()
 
 
 describe 'Image snippet', ->

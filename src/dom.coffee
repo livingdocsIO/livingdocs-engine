@@ -25,7 +25,6 @@ dom = do ->
     node = @getElementNode(node)
 
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
-
       nodeContext = @getNodeContext(node)
       return nodeContext if nodeContext
 
@@ -35,12 +34,14 @@ dom = do ->
 
 
   getNodeContext: (node) ->
-    for key, contextAttr of docAttr
-      continue if key == 'template'
-      if node.hasAttribute(contextAttr)
+    for directiveType, obj of config.directives
+      continue if not obj.elementDirective
+
+      directiveAttr = obj.renderedAttr
+      if node.hasAttribute(directiveAttr)
         return {
-          contextAttr: contextAttr
-          attrName: node.getAttribute(contextAttr)
+          contextAttr: directiveAttr
+          attrName: node.getAttribute(directiveAttr)
         }
 
     return undefined
@@ -49,10 +50,11 @@ dom = do ->
   # Find the container this node is contained within.
   findContainer: (node) ->
     node = @getElementNode(node)
+    containerAttr = config.directives.container.renderedAttr
 
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
-      if node.hasAttribute(docAttr.container)
-        containerName = node.getAttribute(docAttr.container)
+      if node.hasAttribute(containerAttr)
+        containerName = node.getAttribute(containerAttr)
         if not sectionRegex.test(node.className)
           view = @findSnippetView(node)
 
@@ -68,30 +70,34 @@ dom = do ->
 
 
   getImageName: (node) ->
-    if node.hasAttribute(docAttr.image)
-      imageName = node.getAttribute(docAttr.image)
+    imageAttr = config.directives.image.renderedAttr
+    if node.hasAttribute(imageAttr)
+      imageName = node.getAttribute(imageAttr)
       return imageName
 
 
   getHtmlElementName: (node) ->
-    if node.hasAttribute(docAttr.html)
-      htmlElementName = node.getAttribute(docAttr.html)
+    htmlAttr = config.directives.html.renderedAttr
+    if node.hasAttribute(htmlAttr)
+      htmlElementName = node.getAttribute(htmlAttr)
       return htmlElementName
 
 
   getEditableName: (node) ->
-    if node.hasAttribute(docAttr.editable)
-      imageName = node.getAttribute(docAttr.editable)
+    editableAttr = config.directives.editable.renderedAttr
+    if node.hasAttribute(editableAttr)
+      imageName = node.getAttribute(editableAttr)
       return editableName
 
 
 
   dropTarget: (node, { top, left }) ->
     node = @getElementNode(node)
+    containerAttr = config.directives.container.renderedAttr
 
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
-      if node.hasAttribute(docAttr.container)
-        containerName = node.getAttribute(docAttr.container)
+      if node.hasAttribute(containerAttr)
+        containerName = node.getAttribute(containerAttr)
         if not sectionRegex.test(node.className)
           insertSnippet = @getPositionInContainer($(node), { top, left })
           if insertSnippet

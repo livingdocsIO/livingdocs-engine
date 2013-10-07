@@ -42,6 +42,11 @@ class DirectiveCollection
     @all[name]
 
 
+  # helper to directly get element wrapped in a jQuery object
+  $getElem: (name) ->
+    $(@all[name].elem)
+
+
   count: (type) ->
     if type
       this[type]?.length
@@ -54,11 +59,26 @@ class DirectiveCollection
       callback(directive)
 
 
+  clone: ->
+    newCollection = new DirectiveCollection()
+    @each (directive) ->
+      newCollection.add(directive.clone())
+
+    newCollection
+
+
+  assertAllLinked: ->
+    @each (directive) ->
+      return false if not directive.elem
+
+    return true
+
+
   # @api private
   assertNameNotUsed: (directive) ->
-    assert not @all[directive.name],
+    assert directive && not @all[directive.name],
       """
       #{directive.type} Template parsing error:
-      #{ docAttr[directive.type] }="#{ directive.name }".
+      #{ config.directives[directive.type].renderedAttr }="#{ directive.name }".
       "#{ directive.name }" is a duplicate name.
       """

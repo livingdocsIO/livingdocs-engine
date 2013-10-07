@@ -6,8 +6,10 @@ describe 'SnippetView', ->
       @snippetView = test.getTemplate('title').createView()
       @expected =
         """
-        <h1 #{ docAttr.editable }="title"
-          class="#{ docClass.editable } #{ docClass.snippet }" #{ docAttr.template }="test.title">
+        <h1 #{ test.editableAttr }="title"
+          class="#{ docClass.editable } #{ docClass.snippet }"
+            #{ docAttr.template }="test.title"
+            #{ test.emptyPlaceholderAttr }>
           Humble Bundle
         </h1>
         """
@@ -18,9 +20,9 @@ describe 'SnippetView', ->
       expect(@snippetView.$html).toLookLike(@expected)
 
 
-    it 'updates its content from snippet', ->
+    it 'renders content from the model', ->
       @snippetView.model.set('title', 'Humble Bundle')
-      @snippetView.updateContent()
+      @snippetView.render()
       expect(@snippetView.$html).toLookLike(@expected)
 
 
@@ -36,7 +38,7 @@ describe 'SnippetView title set style', ->
     @title.style('Color', 'color--blue')
     @expected = $(
       """
-      <h1 #{ docAttr.editable }="title"
+      <h1 #{ test.editableAttr }="title"
         class="#{ docClass.editable } #{ docClass.snippet }" #{ docAttr.template }="test.title">
       </h1>
       """
@@ -66,8 +68,10 @@ describe 'SnippetView hero', ->
     @expected = $(
       """
       <div class="#{ docClass.snippet }" #{ docAttr.template }="test.hero">
-        <h1 #{ docAttr.editable }="title" class="#{ docClass.editable }">Humble Bundle 2</h1>
-        <p #{ docAttr.editable }="tagline" class="#{ docClass.editable }">Get it now!</p>
+        <h1 #{ test.editableAttr }="title" class="#{ docClass.editable }"
+          #{ test.emptyPlaceholderAttr }>Humble Bundle 2</h1>
+        <p #{ test.editableAttr }="tagline" class="#{ docClass.editable }"
+          #{ test.emptyPlaceholderAttr }>Get it now!</p>
       </div>
       """
     )
@@ -88,6 +92,25 @@ describe 'SnippetView hero', ->
     expect(@snippetView.$html).toLookLike(@expected)
 
 
+  describe 'empty optional', ->
+
+    beforeEach ->
+      @snippetView.model.set('tagline', undefined)
+      @snippetView.render()
+      @$p = @expected.find('p')
+      @$p.hide()
+
+
+    it 'is hidden by default', ->
+      expect(@snippetView.$html).toLookLike(@expected)
+
+
+    # in doubt delete this test (strongly tied to implementation)
+    it 'is revealed after view is focused', ->
+      @snippetView.afterFocused()
+      expect(@snippetView.$html.find('p').css('display')).not.toEqual('none')
+
+
 describe 'SnippetView image', ->
 
   beforeEach ->
@@ -100,7 +123,7 @@ describe 'SnippetView image', ->
     @expected =
       """
       <img src="http://www.lolcats.com/images/1.jpg"
-        #{ docAttr.image }="image"
+        #{ test.imageAttr }="image"
         class="#{ docClass.snippet }"
         #{ docAttr.template }="test.image">
       """
@@ -118,7 +141,7 @@ describe 'SnippetView image', ->
       expected =
         """
         <img src=""
-          #{ docAttr.image }="image"
+          #{ test.imageAttr }="image"
           class="#{ docClass.snippet }"
           #{ docAttr.template }="test.image">
         """
@@ -130,7 +153,7 @@ describe 'SnippetView image', ->
       expected =
         """
         <img src="#{ placeholderUrl }"
-          #{ docAttr.image }="image"
+          #{ test.imageAttr }="image"
           class="#{ docClass.snippet }"
           #{ docAttr.template }="test.image">
         """
@@ -144,7 +167,7 @@ describe 'SnippetView image', ->
       expected =
         """
         <img src="#{ imageUrl }"
-          #{ docAttr.image }="image"
+          #{ test.imageAttr }="image"
           class="#{ docClass.snippet }"
           #{ docAttr.template }="test.image">
         """
@@ -166,10 +189,13 @@ describe 'SnippetView background image', ->
     expected =
       """
       <div class="#{ docClass.snippet }" #{ docAttr.template }="test.cover">
-        <h4 #{ docAttr.editable }="title" class="#{ docClass.editable }">Titel</h4>
-        <div #{ docAttr.image }="image" style="background-image:url(http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg);">
-          <h3 #{ docAttr.editable }="uppertitle" class="#{ docClass.editable }">Oberzeile</h3>
-          <h2 #{ docAttr.editable }="maintitle" class="#{ docClass.editable }">Titel</h2>
+        <h4 #{ test.editableAttr }="title" class="#{ docClass.editable }"
+          #{ docAttr.placeholder }="Titel"></h4>
+        <div #{ test.imageAttr }="image" style="background-image:url(http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg);">
+          <h3 #{ test.editableAttr }="uppertitle" class="#{ docClass.editable }"
+            #{ docAttr.placeholder }="Oberzeile"></h3>
+          <h2 #{ test.editableAttr }="maintitle" class="#{ docClass.editable }"
+            #{ docAttr.placeholder }="Titel"></h2>
         </div>
       </div>
       """
@@ -193,7 +219,7 @@ describe 'SnippetView html', ->
         """
         <div class="#{ docClass.snippet }"
           #{ docAttr.template }="test.html"
-          #{ docAttr.html }="html"
+          #{ test.htmlAttr }="html"
           style="position: relative; ">
           <section>test</section>
           <div class="doc-interaction-blocker" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></div>
