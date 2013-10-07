@@ -26,17 +26,32 @@ class Page
       longpressDistanceLimit: 10
       preventDefault: false
 
-    @$document
-      .on('click.livingdocs', $.proxy(@click, this))
-      .on('mousedown.livingdocs', $.proxy(@mousedown, this))
-      .on('touchstart.livingdocs', $.proxy(@mousedown, this))
-      .on('dragstart', $.proxy(@browserDragStart, this))
+    @isInteractive = true
+    @addListeners()
+
+
+  setInteractive: (newVal) ->
+    return unless newVal?
+
+    newBoolVal = Boolean(newVal)
+
+    if newBoolVal != @isInteractive
+      @isInteractive = newBoolVal
+      if @isInteractive then @addListeners() else @removeListeners()
 
 
   # prevent the browser Drag&Drop from interfering
   browserDragStart: (event) ->
     event.preventDefault()
     event.stopPropagation()
+
+
+  addListeners: ->
+    @$document
+      .on('click.livingdocs', $.proxy(@click, this))
+      .on('mousedown.livingdocs', $.proxy(@mousedown, this))
+      .on('touchstart.livingdocs', $.proxy(@mousedown, this))
+      .on('dragstart.livingdocs', $.proxy(@browserDragStart, this))
 
 
   removeListeners: ->
