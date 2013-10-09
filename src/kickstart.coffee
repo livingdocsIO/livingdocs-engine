@@ -20,13 +20,16 @@ kickstart = do ->
 
   populateSnippetContainers: (snippet, xmlData) ->
     containers = if snippet.containers then Object.keys(snippet.containers) else []
+
+    # add snippets to root container if default container exists
     if containers.length == 1 && containers.indexOf('default') != -1 && !xmlData.getElementsByTagName('default').length
       for child in xmlData.children
         @appendSnippetToContainer(snippet, child, 'default')
 
-    for editableContainer in $(containers.join(','), xmlData)
-      for child in editableContainer.children
-        @appendSnippetToContainer(snippet, child, editableContainer.localName)
+    else
+      for editableContainer in $(containers.join(','), xmlData)
+        for child in editableContainer.children
+          @appendSnippetToContainer(snippet, child, editableContainer.localName)
 
 
   appendSnippetToContainer: (parentContainer, data, region) ->
@@ -34,14 +37,12 @@ kickstart = do ->
     snippet = doc.create(snippetName)
     parentContainer.append(region, snippet)
 
-
     @setChildren(snippet, data)
 
 
   setChildren: (snippet, xmlData) ->
     @populateSnippetContainers(snippet, xmlData)
     @setEditables(snippet, xmlData)
-    window.data = xmlData
 
 
   getValueForEditable: (editableName, xmlData, snippet) ->
@@ -70,11 +71,6 @@ kickstart = do ->
   nodeToSnippetName: (element) ->
     snippetName = $.camelCase(element.localName)
     snippet = doc.getDesign().get(snippetName)
-
-    # check deprecated HTML elements that automatically convert to new element name.
-    if snippetName == 'img' && !snippet
-      snippetName = 'image'
-      snippet = doc.document.design.get('image')
 
     assert snippet,
       "The Template named '#{snippetName}' does not exist."
