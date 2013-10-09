@@ -1,17 +1,15 @@
-# page
-# ----
-# Defines the API between the DOM and the document
-class Page
+# An InteractivePage is a subclass of Page which allows for manipulation of the
+# rendered SnippetTree.
+class InteractivePage extends Page
 
   LEFT_MOUSE_BUTTON = 1
 
-  constructor: (renderNode) ->
-    @document = window.document
-    @$document = $(@document)
-    @$body = $(@document.body)
-    @renderNode = renderNode || $(".#{ docClass.section }")[0]
+  isReadOnly: false
 
-    @loader = new Loader()
+
+  constructor: (renderNode) ->
+    super(renderNode)
+
     @focus = new Focus()
     @editableController = new EditableController(this)
 
@@ -25,6 +23,9 @@ class Page
       longpressDelay: 400
       longpressDistanceLimit: 10
       preventDefault: false
+
+    @focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
+    @focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )
 
     @$document
       .on('click.livingdocs', $.proxy(@click, this))
@@ -131,3 +132,22 @@ class Page
     focusedElement = @getFocusedElement()
     $(focusedElement).blur() if focusedElement
 
+
+  snippetViewWasInserted: (snippetView) ->
+    @initializeEditables(snippetView)
+
+
+  initializeEditables: (snippetView) ->
+    if snippetView.directives.editable
+      editableNodes = for directive in snippetView.directives.editable
+        directive.elem
+
+    @editableController.add(editableNodes)
+
+
+  afterSnippetFocused: (snippetView) ->
+    snippetView.afterFocused()
+
+
+  afterSnippetBlurred: (snippetView) ->
+    snippetView.afterBlurred()

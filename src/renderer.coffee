@@ -1,24 +1,22 @@
 class Renderer
 
 
-  constructor: ({ @snippetTree, @page }) ->
+  constructor: ({ @snippetTree, @renderingContainer }) ->
     assert @snippetTree, 'no snippet tree specified'
-    assert @page, 'no page specified'
-    assert @page.renderNode, 'page does not specify a node to render to'
+    assert @renderingContainer, 'no rendering container specified'
 
-    @$root = $(@page.renderNode)
-    @setupPageListeners()
+    @$root = $(@renderingContainer.renderNode)
     @setupSnippetTreeListeners()
     @snippets = {}
 
 
+  html: ->
+    @render()
+    @renderingContainer.html()
+
+
   # Snippet Tree Event Handling
   # ---------------------------
-
-  setupPageListeners: ->
-    @page.focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
-    @page.focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )
-
 
   setupSnippetTreeListeners: ->
     @snippetTree.snippetAdded.add( $.proxy(@snippetAdded, this) )
@@ -72,7 +70,7 @@ class Renderer
   # creates a snippetView instance for this snippet
   # @api: private
   createSnippetView: (model) ->
-    view = model.template.createView(model)
+    view = model.template.createView(model, @renderingContainer.isReadOnly)
     @snippets[model.id] = view
 
 
@@ -107,34 +105,14 @@ class Renderer
   insertIntoDom: (snippetView) ->
     snippetView.attach(this)
     assert snippetView.attachedToDom, 'could not insert snippet into Dom'
-    @afterDomInsert(snippetView)
+    @renderingContainer.snippetViewWasInserted(snippetView)
 
     this
-
-
-  afterDomInsert: (snippetView) ->
-    @initializeEditables(snippetView)
-
-
-  initializeEditables: (snippetView) ->
-    if snippetView.directives.editable
-      editableNodes = for directive in snippetView.directives.editable
-        directive.elem
-
-    @page.editableController.add(editableNodes)
 
 
   detachFromDom: (snippetView) ->
     snippetView.detach()
     this
-
-
-  afterSnippetFocused: (snippetView) ->
-    snippetView.afterFocused()
-
-
-  afterSnippetBlurred: (snippetView) ->
-    snippetView.afterBlurred()
 
 
   # UI Inserts

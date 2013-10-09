@@ -61,14 +61,16 @@ document = do ->
       @changed.fire()
 
     # Page initialization
-    @page = new Page(rootNode)
+    @page = new InteractivePage(rootNode)
 
     # load design assets into page
     if @design.css
       @page.loader.css(@design.css, doBeforeDocumentReady())
 
     # render document
-    @renderer = new Renderer(snippetTree: @snippetTree, page: @page)
+    @renderer = new Renderer
+      snippetTree: @snippetTree
+      renderingContainer: @page
 
     @ready.add =>
       @renderer.render()
@@ -121,6 +123,13 @@ document = do ->
       published: undefined
 
     json
+
+
+  toHtml: ->
+    new Renderer(
+      snippetTree: @snippetTree
+      renderingContainer: new RenderingContainer()
+    ).html()
 
 
   restore: (contentJson, resetFirst = true) ->

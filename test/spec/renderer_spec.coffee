@@ -4,7 +4,7 @@ describe 'renderer', ->
     @tree = new SnippetTree()
     page = new PageMock()
     @fragment = $(page.renderNode)
-    @renderer = new Renderer(snippetTree: @tree, page: page)
+    @renderer = new Renderer(snippetTree: @tree, renderingContainer: page)
 
 
   describe 'for a few snippets', ->

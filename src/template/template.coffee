@@ -44,7 +44,7 @@ class Template
     new SnippetModel(template: this)
 
 
-  createView: (snippetModel) ->
+  createView: (snippetModel, isReadOnly) ->
     snippetModel ||= @createModel()
     $elem = @$template.clone()
     directives = @linkDirectives($elem[0])
@@ -53,6 +53,7 @@ class Template
       model: snippetModel
       $html: $elem
       directives: directives
+      isReadOnly: isReadOnly
 
 
   pruneHtml: (html) ->

@@ -1,15 +1,16 @@
 class SnippetView
 
-  constructor: ({ @model, @$html, @directives }) ->
+  constructor: ({ @model, @$html, @directives, @isReadOnly }) ->
     @template = @model.template
     @attachedToDom = false
     @wasAttachedToDom = $.Callbacks();
 
-    # add attributes and references to the html
-    @$html
-      .data('snippet', this)
-      .addClass(docClass.snippet)
-      .attr(docAttr.template, @template.identifier)
+    unless @isReadOnly
+      # add attributes and references to the html
+      @$html
+        .data('snippet', this)
+        .addClass(docClass.snippet)
+        .attr(docAttr.template, @template.identifier)
 
     @render()
 
@@ -25,10 +26,14 @@ class SnippetView
     if not @hasFocus()
       @hideEmptyOptionals()
 
+    @stripHtmlIfReadOnly()
+
 
   updateHtml: ->
     for name, value of @model.styles
       @style(name, value)
+
+    @stripHtmlIfReadOnly()
 
 
   # Show all doc-optionals whether they are empty or not.
@@ -289,3 +294,36 @@ class SnippetView
     if @delayed?[name]
       @wasAttachedToDom.remove(@delayed[name])
       @delayed[name] = undefined
+
+
+  stripHtmlIfReadOnly: ->
+    return unless @isReadOnly
+
+    iterator = new DirectiveIterator(@$html[0])
+    while elem = iterator.nextElement()
+      @stripDocClasses(elem)
+      @stripDocAttributes(elem)
+      @stripEmptyAttributes(elem)
+
+
+  stripDocClasses: (elem) ->
+    $elem = $(elem)
+    for klass in elem.className.split(/\s+/)
+      $elem.removeClass(klass) if /doc\-.*/i.test(klass)
+
+
+  stripDocAttributes: (elem) ->
+    $elem = $(elem)
+    for attribute in Array::slice.apply(elem.attributes)
+      name = attribute.name
+      $elem.removeAttr(name) if /data\-doc\-.*/i.test(name)
+
+
+  stripEmptyAttributes: (elem) ->
+    $elem = $(elem)
+    strippableAttributes = ['style', 'class']
+    for attribute in Array::slice.apply(elem.attributes)
+      isStrippableAttribute = strippableAttributes.indexOf(attribute.name) >= 0
+      isEmptyAttribute = attribute.value.trim() == ''
+      if isStrippableAttribute and isEmptyAttribute
+        $elem.removeAttr(attribute.name)
