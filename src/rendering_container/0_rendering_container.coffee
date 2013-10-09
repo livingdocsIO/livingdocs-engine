@@ -9,8 +9,10 @@
 # page.
 class RenderingContainer
 
+  isReadOnly: true
+
+
   constructor: ->
-    @isReadOnly = true
     @renderNode = $('<div/>')[0]
 
 

@@ -4,10 +4,11 @@ class InteractivePage extends Page
 
   LEFT_MOUSE_BUTTON = 1
 
+  isReadOnly: false
+
+
   constructor: (renderNode) ->
     super(renderNode)
-
-    @isReadOnly = false
 
     @focus = new Focus()
     @editableController = new EditableController(this)
