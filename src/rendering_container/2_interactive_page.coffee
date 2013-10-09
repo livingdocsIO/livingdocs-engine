@@ -1,32 +1,5 @@
-class RenderingContainer
-
-  constructor: ->
-    @isReadOnly = true
-    @renderNode = $('<div/>')[0]
-
-
-  html: ->
-    $(@renderNode).html()
-
-
-  snippetViewWasInserted: (snippetView) ->
-
-# page
-# ----
-# Defines the API between the DOM and the document
-class Page extends RenderingContainer
-
-  constructor: (renderNode) ->
-    super()
-
-    @document = window.document
-    @$document = $(@document)
-    @$body = $(@document.body)
-    @renderNode = renderNode || $(".#{ docClass.section }")[0]
-
-    @loader = new Loader()
-
-
+# An InteractivePage is a subclass of Page which allows for manipulation of the
+# rendered SnippetTree.
 class InteractivePage extends Page
 
   LEFT_MOUSE_BUTTON = 1
