@@ -79,7 +79,7 @@ kickstart = do ->
 
   getXmlValue: (node, tagName) ->
     if !tagName
-      tagName = @nodeNameToCamelCase(node)
+      tagName = node.localName
 
     match = new XMLSerializer().serializeToString(node).match(new RegExp("<#{tagName}.*?>(.*?)<\\/#{tagName}>"))
     if match

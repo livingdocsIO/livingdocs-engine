@@ -56,13 +56,13 @@ describe 'kickstart', ->
 
     it 'gets string value from the kickstart template', ->
       expected = "title"
-      template = $($.parseXML("<div><title>#{expected}</title><foo>bar</foo></div>"))[0]
+      template = $.parseXML("<div><title>#{expected}</title><foo>bar</foo></div>")
       value = kickstart.getValueForEditable('title', template)
       expect(expected).toEqual(value)
 
     it 'get html value from kickstart template', ->
       expected = "<div>bar<b>Foo</b></div>"
-      template = $($.parseXML("<div><title>#{expected}</title><foo>bar</foo></div>"))[0]
+      template = $.parseXML("<div><title>#{expected}</title><foo>bar</foo></div>")
       value = kickstart.getValueForEditable('title', template)
       expect( htmlCompare.compare($(expected)[0], value) ).toBe(true)
 
@@ -86,3 +86,19 @@ describe 'kickstart', ->
       kickstart.setEditables(@b, @template)
       expect(@a.get('title')).toEqual(@b.get('title'))
       expect(@a.get('tagline')).toEqual(@b.get('tagline'))
+
+
+  describe 'getXmlValue()', ->
+
+    it 'gets a string of a node', ->
+      expected = "title"
+      template = $.parseXML("<test>#{expected}</test>").firstChild
+      #value = expected
+      value = kickstart.getXmlValue(template)
+      expect(value).toEqual(expected)
+
+    it 'gets html string of a node', ->
+      expected = '<div>example <b>html</b> <h1>in <a>a</a> xml node</h1></div>';
+      template = $.parseXML("<test>#{expected}</test>").firstChild
+      value = kickstart.getXmlValue(template)
+      expect(value).toEqual(expected)
