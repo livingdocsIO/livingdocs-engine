@@ -56,13 +56,13 @@ describe 'kickstart', ->
 
     it 'gets string value from the kickstart template', ->
       expected = "title"
-      template = $("<div><title>#{expected}</title><foo>bar</foo></div>")[0]
+      template = $($.parseXML("<div><title>#{expected}</title><foo>bar</foo></div>"))[0]
       value = kickstart.getValueForEditable('title', template)
       expect(expected).toEqual(value)
 
     it 'get html value from kickstart template', ->
       expected = "<div>bar<b>Foo</b></div>"
-      template = $("<div><title>#{expected}</title><foo>bar</foo></div>")[0]
+      template = $($.parseXML("<div><title>#{expected}</title><foo>bar</foo></div>"))[0]
       value = kickstart.getValueForEditable('title', template)
       expect( htmlCompare.compare($(expected)[0], value) ).toBe(true)
 
