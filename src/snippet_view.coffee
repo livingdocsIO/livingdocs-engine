@@ -231,50 +231,6 @@ class SnippetView
       $elem.css('position', 'relative')
 
 
-  append: (containerName, $elem) ->
-    $container = $(@directives.get(containerName)?.elem)
-    $container.append($elem)
-
-
-  attach: (renderer) ->
-    return if @attachedToDom
-    previous = @model.previous
-    next = @model.next
-    parentContainer = @model.parentContainer
-
-    if previous? and
-      (previousHtml = renderer.getSnippetView(previous)) and
-      previousHtml.attachedToDom
-        previousHtml.$html.after(@$html)
-        @attachedToDom = true
-    else if next? and
-      (nextHtml = renderer.getSnippetView(next)) and
-      nextHtml.attachedToDom
-        nextHtml.$html.before(@$html)
-        @attachedToDom = true
-    else if parentContainer
-      @appendToContainer(parentContainer, renderer)
-      @attachedToDom = true
-
-    @resetDirectives()
-    @wasAttachedToDom.fire()
-
-    this
-
-
-  appendToContainer: (container, renderer) ->
-    if container.isRoot
-      renderer.$root.append(@$html)
-    else
-      snippetView = renderer.getSnippetView(container.parentSnippet)
-      snippetView.append(container.name, @$html)
-
-
-  detach: ->
-    @attachedToDom = false
-    @$html.detach()
-
-
   get$container: ->
     $(dom.findContainer(@$html[0]).node)
 

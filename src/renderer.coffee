@@ -7,7 +7,7 @@ class Renderer
 
     @$root = $(@renderingContainer.renderNode)
     @setupSnippetTreeListeners()
-    @snippets = {}
+    @snippetViews = {}
 
 
   html: ->
@@ -27,64 +27,49 @@ class Renderer
 
 
   snippetAdded: (model) ->
-    view = @ensureSnippetView(model)
-    @updateDomPosition(view)
+    @insertSnippet(model)
 
 
   snippetRemoved: (model) ->
-    if view = @getSnippetView(model)
-      if view.attachedToDom
-        @detachFromDom(view)
-        delete @snippets[model.id]
+    @removeSnippet(model)
+    @deleteCachedSnippetViewForSnippet(model)
 
 
   snippetMoved: (model) ->
-    view = @ensureSnippetView(model)
-    @updateDomPosition(view)
+    @removeSnippet(model)
+    @insertSnippet(model)
 
 
   snippetContentChanged: (model) ->
-    view = @ensureSnippetView(model)
-    @insertIntoDom(view) if not view.attachedToDom
-    view.updateContent()
+    @snippetViewForSnippet(model).updateContent()
 
 
   snippetHtmlChanged: (model) ->
-    view = @ensureSnippetView(model)
-    @insertIntoDom(view) if not view.attachedToDom
-    view.updateHtml()
+    @snippetViewForSnippet(model).updateHtml()
 
 
   # Rendering
   # ---------
 
-  getSnippetView: (model) ->
-    @snippets[model.id] if model
+
+  snippetViewForSnippet: (model) ->
+    @snippetViews[model.id] ||= model.createView(@renderingContainer.isReadOnly)
 
 
-  ensureSnippetView: (model) ->
-    return unless model
-    @snippets[model.id] || @createSnippetView(model)
-
-
-  # creates a snippetView instance for this snippet
-  # @api: private
-  createSnippetView: (model) ->
-    view = model.template.createView(model, @renderingContainer.isReadOnly)
-    @snippets[model.id] = view
+  deleteCachedSnippetViewForSnippet: (model) ->
+    delete @snippetViews[model.id]
 
 
   render: ->
     @$root.empty()
 
     @snippetTree.each (model) =>
-      view = @ensureSnippetView(model)
-      @insertIntoDom(view)
+      @insertSnippet(model)
 
 
   clear: ->
     @snippetTree.each (model) =>
-      view = @getSnippetView(model)
+      view = @snippetViewForSnippet(model)
       view?.attachedToDom = false
 
     @$root.empty()
@@ -95,23 +80,52 @@ class Renderer
     @render()
 
 
-  updateDomPosition: (snippetView) ->
-    @detachFromDom(snippetView) if snippetView.attachedToDom
-    @insertIntoDom(snippetView)
+  insertSnippet: (model) ->
+    snippetView = @snippetViewForSnippet(model)
+    return if snippetView.attachedToDom
 
+    previous = model.previous
+    next = model.next
+    parentContainer = model.parentContainer
 
-  # insert the snippet into the Dom according to its position
-  # in the SnippetTree
-  insertIntoDom: (snippetView) ->
-    snippetView.attach(this)
-    assert snippetView.attachedToDom, 'could not insert snippet into Dom'
+    if previous? and
+      (previousHtml = @snippetViewForSnippet(previous)) and
+      previousHtml.attachedToDom
+        previousHtml.$html.after(snippetView.$html)
+        snippetView.attachedToDom = true
+    else if next? and
+      (nextHtml = @snippetViewForSnippet(next)) and
+      nextHtml.attachedToDom
+        nextHtml.$html.before(snippetView.$html)
+        snippetView.attachedToDom = true
+    else if parentContainer
+      @appendToContainer(parentContainer, snippetView)
+      snippetView.attachedToDom = true
+
+    snippetView.resetDirectives()
+    snippetView.wasAttachedToDom.fire()
+
     @renderingContainer.snippetViewWasInserted(snippetView)
 
-    this
+
+  appendToContainer: (container, snippetView) ->
+    if container.isRoot
+      @$root.append(snippetView.$html)
+    else
+      parentSnippetView = @snippetViewForSnippet(container.parentSnippet)
+      @appendToSnippetView(parentSnippetView, container.name, snippetView.$html)
 
 
-  detachFromDom: (snippetView) ->
-    snippetView.detach()
+  appendToSnippetView: (snippetView, containerName, $elem) ->
+    $container = $(snippetView.directives.get(containerName)?.elem)
+    $container.append($elem)
+
+
+  removeSnippet: (model) ->
+    snippetView = @snippetViewForSnippet(model)
+    snippetView.attachedToDom = false
+    snippetView.$html.detach()
+
     this
 
 
