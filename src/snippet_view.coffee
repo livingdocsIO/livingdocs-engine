@@ -2,7 +2,7 @@ class SnippetView
 
   constructor: ({ @model, @$html, @directives, @isReadOnly }) ->
     @template = @model.template
-    @attachedToDom = false
+    @isAttachedToDom = false
     @wasAttachedToDom = $.Callbacks();
 
     unless @isReadOnly
@@ -240,7 +240,7 @@ class SnippetView
 
 
   delayUntilAttached: (name, func) ->
-    if @attachedToDom
+    if @isAttachedToDom
       func()
     else
       @cancelDelayed(name)
@@ -287,3 +287,13 @@ class SnippetView
       isEmptyAttribute = attribute.value.trim() == ''
       if isStrippableAttribute and isEmptyAttribute
         $elem.removeAttr(attribute.name)
+
+
+  setAttachedToDom: (newVal) ->
+    return if newVal == @isAttachedToDom
+
+    @isAttachedToDom = newVal
+
+    if newVal
+      @resetDirectives()
+      @wasAttachedToDom.fire()

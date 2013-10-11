@@ -69,7 +69,7 @@ class Renderer
 
   clear: ->
     @snippetTree.each (model) =>
-      @snippetViewForSnippet(model).attachedToDom = false
+      @snippetViewForSnippet(model).setAttachedToDom(false)
 
     @$root.empty()
 
@@ -93,15 +93,12 @@ class Renderer
     else
       log.error('Snippet could not be inserted by renderer.')
 
-    snippetView.attachedToDom = true
-    snippetView.resetDirectives()
-    snippetView.wasAttachedToDom.fire()
-
+    snippetView.setAttachedToDom(true)
     @renderingContainer.snippetViewWasInserted(snippetView)
 
 
   isSnippetAttached: (model) ->
-    model && @snippetViewForSnippet(model).attachedToDom
+    model && @snippetViewForSnippet(model).isAttachedToDom
 
 
   insertSnippetAsSibling: (sibling, model) ->
@@ -126,7 +123,7 @@ class Renderer
 
   removeSnippet: (model) ->
     snippetView = @snippetViewForSnippet(model)
-    snippetView.attachedToDom = false
+    snippetView.setAttachedToDom(false)
     snippetView.$html.detach()
 
 
