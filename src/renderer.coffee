@@ -80,8 +80,9 @@ class Renderer
 
 
   insertSnippet: (model) ->
+    return if @isSnippetAttached(model)
+
     snippetView = @snippetViewForSnippet(model)
-    return if snippetView.attachedToDom
 
     previous = model.previous
     next = model.next
@@ -105,6 +106,10 @@ class Renderer
     snippetView.wasAttachedToDom.fire()
 
     @renderingContainer.snippetViewWasInserted(snippetView)
+
+
+  isSnippetAttached: (model) ->
+    model && @snippetViewForSnippet(model).attachedToDom
 
 
   appendToContainer: (container, snippetView) ->
