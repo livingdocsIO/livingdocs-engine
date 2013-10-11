@@ -24,7 +24,7 @@ describe 'renderer', ->
 
 
     it 'renders cover snippet with a placeholder image', ->
-      snippetView = @renderer.getSnippetView(@cover)
+      snippetView = @renderer.snippetViewForSnippet(@cover)
       expected =
         """
         <div class="#{ docClass.snippet }" #{ docAttr.template }="test.cover">

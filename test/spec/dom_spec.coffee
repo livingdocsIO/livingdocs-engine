@@ -96,7 +96,7 @@ describe 'DOM method', ->
       @row = test.getTemplate('row').createView()
       @title = test.getTemplate('title').createView()
       @row.model.append('main', @title)
-      @row.append('main', @title.$html)
+      @title.$html.appendTo(@row.getDirectiveElement('main'))
       @$html = @row.$html
 
 
