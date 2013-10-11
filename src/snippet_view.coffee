@@ -144,6 +144,10 @@ class SnippetView
     @directivesToReset[name] = name
 
 
+  getDirectiveElement: (directiveName) ->
+    @directives.get(directiveName)?.elem
+
+
   # Reset directives that contain arbitrary html after the view is moved in
   # the DOM to recreate iframes. In the case of twitter where the iframes
   # don't have a src the reloading that happens when one moves an iframe clears

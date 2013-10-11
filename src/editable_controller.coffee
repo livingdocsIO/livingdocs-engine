@@ -60,7 +60,7 @@ class EditableController
   focus: (view, editableName) ->
     view.focusEditable(editableName)
 
-    element = view.directives.get(editableName).elem
+    element = view.getDirectiveElement(editableName)
     @page.focus.editableFocused(element, view)
     true # enable editableJS default behaviour
 
@@ -68,7 +68,7 @@ class EditableController
   blur: (view, editableName) ->
     view.blurEditable(editableName)
 
-    element = view.directives.get(editableName).elem
+    element = view.getDirectiveElement(editableName)
     @page.focus.editableBlurred(element, view)
     @updateModel(view, editableName)
     true # enable editableJS default behaviour
@@ -106,7 +106,7 @@ class EditableController
           frag.appendChild(el)
 
         mergedView.focus()
-        elem = mergedView.directives.get(editableName).elem
+        elem = mergedView.getDirectiveElement(editableName)
         cursor = Editable.createCursor(elem, if direction == 'before' then 'end' else 'beginning')
         cursor[ if direction == 'before' then 'insertAfter' else 'insertBefore' ](frag)
 
@@ -142,7 +142,7 @@ class EditableController
 
 
   selectionChanged: (view, editableName, selection) ->
-    element = view.directives.get(editableName).elem
+    element = view.getDirectiveElement(editableName)
     @selection.fire(view, element, selection)
 
 
