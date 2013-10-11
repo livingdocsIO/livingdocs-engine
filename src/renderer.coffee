@@ -69,8 +69,7 @@ class Renderer
 
   clear: ->
     @snippetTree.each (model) =>
-      view = @snippetViewForSnippet(model)
-      view?.attachedToDom = false
+      @snippetViewForSnippet(model).attachedToDom = false
 
     @$root.empty()
 
