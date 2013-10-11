@@ -89,7 +89,7 @@ class Renderer
     else if @isSnippetAttached(model.next)
       @insertSnippetAsSibling(model.next, model)
     else if model.parentContainer
-      @appendToContainer(model.parentContainer, snippetView)
+      @appendSnippetToParentContainer(model)
     else
       log.error('Snippet could not be inserted by renderer.')
 
@@ -111,17 +111,17 @@ class Renderer
     siblingSnippetView.$html[method](snippetView.$html)
 
 
-  appendToContainer: (container, snippetView) ->
-    if container.isRoot
-      @$root.append(snippetView.$html)
+  appendSnippetToParentContainer: (model) ->
+    parentContainer = model.parentContainer
+    $snippetViewHtml = @snippetViewForSnippet(model).$html
+
+    container = if parentContainer.isRoot
+      @$root
     else
-      parentSnippetView = @snippetViewForSnippet(container.parentSnippet)
-      @appendToSnippetView(parentSnippetView, container.name, snippetView.$html)
+      parentSnippetView = @snippetViewForSnippet(parentContainer.parentSnippet)
+      parentSnippetView.getDirectiveElement(parentContainer.name)
 
-
-  appendToSnippetView: (snippetView, containerName, $elem) ->
-    $container = $(snippetView.directives.get(containerName)?.elem)
-    $container.append($elem)
+    $snippetViewHtml.appendTo(container)
 
 
   removeSnippet: (model) ->
