@@ -2,7 +2,7 @@ class SnippetView
 
   constructor: ({ @model, @$html, @directives, @isReadOnly }) ->
     @template = @model.template
-    @attachedToDom = false
+    @isAttachedToDom = false
     @wasAttachedToDom = $.Callbacks();
 
     unless @isReadOnly
@@ -144,6 +144,10 @@ class SnippetView
     @directivesToReset[name] = name
 
 
+  getDirectiveElement: (directiveName) ->
+    @directives.get(directiveName)?.elem
+
+
   # Reset directives that contain arbitrary html after the view is moved in
   # the DOM to recreate iframes. In the case of twitter where the iframes
   # don't have a src the reloading that happens when one moves an iframe clears
@@ -231,56 +235,12 @@ class SnippetView
       $elem.css('position', 'relative')
 
 
-  append: (containerName, $elem) ->
-    $container = $(@directives.get(containerName)?.elem)
-    $container.append($elem)
-
-
-  attach: (renderer) ->
-    return if @attachedToDom
-    previous = @model.previous
-    next = @model.next
-    parentContainer = @model.parentContainer
-
-    if previous? and
-      (previousHtml = renderer.getSnippetView(previous)) and
-      previousHtml.attachedToDom
-        previousHtml.$html.after(@$html)
-        @attachedToDom = true
-    else if next? and
-      (nextHtml = renderer.getSnippetView(next)) and
-      nextHtml.attachedToDom
-        nextHtml.$html.before(@$html)
-        @attachedToDom = true
-    else if parentContainer
-      @appendToContainer(parentContainer, renderer)
-      @attachedToDom = true
-
-    @resetDirectives()
-    @wasAttachedToDom.fire()
-
-    this
-
-
-  appendToContainer: (container, renderer) ->
-    if container.isRoot
-      renderer.$root.append(@$html)
-    else
-      snippetView = renderer.getSnippetView(container.parentSnippet)
-      snippetView.append(container.name, @$html)
-
-
-  detach: ->
-    @attachedToDom = false
-    @$html.detach()
-
-
   get$container: ->
     $(dom.findContainer(@$html[0]).node)
 
 
   delayUntilAttached: (name, func) ->
-    if @attachedToDom
+    if @isAttachedToDom
       func()
     else
       @cancelDelayed(name)
@@ -327,3 +287,13 @@ class SnippetView
       isEmptyAttribute = attribute.value.trim() == ''
       if isStrippableAttribute and isEmptyAttribute
         $elem.removeAttr(attribute.name)
+
+
+  setAttachedToDom: (newVal) ->
+    return if newVal == @isAttachedToDom
+
+    @isAttachedToDom = newVal
+
+    if newVal
+      @resetDirectives()
+      @wasAttachedToDom.fire()
