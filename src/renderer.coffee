@@ -84,24 +84,16 @@ class Renderer
 
     snippetView = @snippetViewForSnippet(model)
 
-    previous = model.previous
-    next = model.next
-    parentContainer = model.parentContainer
+    if @isSnippetAttached(model.previous)
+      @insertSnippetAsSibling(model.previous, model)
+    else if @isSnippetAttached(model.next)
+      @insertSnippetAsSibling(model.next, model)
+    else if model.parentContainer
+      @appendToContainer(model.parentContainer, snippetView)
+    else
+      log.error('Snippet could not be inserted by renderer.')
 
-    if previous? and
-      (previousHtml = @snippetViewForSnippet(previous)) and
-      previousHtml.attachedToDom
-        previousHtml.$html.after(snippetView.$html)
-        snippetView.attachedToDom = true
-    else if next? and
-      (nextHtml = @snippetViewForSnippet(next)) and
-      nextHtml.attachedToDom
-        nextHtml.$html.before(snippetView.$html)
-        snippetView.attachedToDom = true
-    else if parentContainer
-      @appendToContainer(parentContainer, snippetView)
-      snippetView.attachedToDom = true
-
+    snippetView.attachedToDom = true
     snippetView.resetDirectives()
     snippetView.wasAttachedToDom.fire()
 
@@ -110,6 +102,13 @@ class Renderer
 
   isSnippetAttached: (model) ->
     model && @snippetViewForSnippet(model).attachedToDom
+
+
+  insertSnippetAsSibling: (sibling, model) ->
+    method = if sibling == model.previous then 'after' else 'before'
+    snippetView = @snippetViewForSnippet(model)
+    siblingSnippetView = @snippetViewForSnippet(sibling)
+    siblingSnippetView.$html[method](snippetView.$html)
 
 
   appendToContainer: (container, snippetView) ->
