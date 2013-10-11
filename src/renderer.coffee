@@ -129,8 +129,6 @@ class Renderer
     snippetView.attachedToDom = false
     snippetView.$html.detach()
 
-    this
-
 
   # UI Inserts
   # ----------
