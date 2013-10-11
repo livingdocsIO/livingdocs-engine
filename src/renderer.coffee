@@ -82,8 +82,6 @@ class Renderer
   insertSnippet: (model) ->
     return if @isSnippetAttached(model)
 
-    snippetView = @snippetViewForSnippet(model)
-
     if @isSnippetAttached(model.previous)
       @insertSnippetAsSibling(model.previous, model)
     else if @isSnippetAttached(model.next)
@@ -93,6 +91,7 @@ class Renderer
     else
       log.error('Snippet could not be inserted by renderer.')
 
+    snippetView = @snippetViewForSnippet(model)
     snippetView.setAttachedToDom(true)
     @renderingContainer.snippetViewWasInserted(snippetView)
 
