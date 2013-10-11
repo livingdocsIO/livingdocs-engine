@@ -13,3 +13,5 @@ class PageMock
 
   editableController:
     add: ->
+
+  snippetViewWasInserted: ->
