@@ -2,7 +2,8 @@ beforeEach ->
 
   this.addMatchers
 
-    toLookLike: (expected) ->
+
+    toEqualHtmlOf: (expected) ->
       notText = if @isNot then ' not' else ''
 
       actualHtml = if @actual.jquery then @actual.outerHtml() else @actual
