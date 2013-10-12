@@ -5,14 +5,6 @@ test = do ->
   cachedDesign = undefined
 
 
-  # Configuration changes
-  # ---------------------
-
-  # Make sure the animation effects are visible immediately.
-  config.animations.optionals.show = ($elem) -> $elem.show()
-  config.animations.optionals.hide = ($elem) -> $elem.hide()
-
-
   # Test Helpers
   # ------------
 

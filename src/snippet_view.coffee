@@ -24,7 +24,7 @@ class SnippetView
     @content(@model.content)
 
     if not @hasFocus()
-      @hideEmptyOptionals()
+      @displayOptionals()
 
     @stripHtmlIfReadOnly()
 
@@ -36,7 +36,18 @@ class SnippetView
     @stripHtmlIfReadOnly()
 
 
+  displayOptionals: ->
+    @directives.each (directive) =>
+      if directive.optional
+        $elem = $(directive.elem)
+        if @model.isEmpty(directive.name)
+          $elem.css('display', 'none')
+        else
+          $elem.css('display', '')
+
+
   # Show all doc-optionals whether they are empty or not.
+  # Use on focus.
   showOptionals: ->
     @directives.each (directive) =>
       if directive.optional
@@ -44,6 +55,7 @@ class SnippetView
 
 
   # Hide all empty doc-optionals
+  # Use on blur.
   hideEmptyOptionals: ->
     @directives.each (directive) =>
       if directive.optional && @model.isEmpty(directive.name)

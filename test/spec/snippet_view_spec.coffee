@@ -64,11 +64,14 @@ describe 'SnippetView hero', ->
     template = test.getTemplate('hero')
     @snippetView = template.createView(snippet)
     @expected = $ """
-      <div class="#{ docClass.snippet }" #{ docAttr.template }="test.hero">
-        <h1 #{ test.editableAttr }="title" class="#{ docClass.editable }"
-          #{ test.emptyPlaceholderAttr }>Humble Bundle 2</h1>
-        <p #{ test.editableAttr }="tagline" class="#{ docClass.editable }"
-          #{ test.emptyPlaceholderAttr }>Get it now!</p>
+      <div  class="#{ docClass.snippet }"
+            #{ docAttr.template }="test.hero">
+        <h1 #{ test.editableAttr }="title"
+            class="#{ docClass.editable }"
+            #{ test.emptyPlaceholderAttr }>Humble Bundle 2</h1>
+        <p  #{ test.editableAttr }="tagline"
+            class="#{ docClass.editable }"
+            #{ test.emptyPlaceholderAttr }>Get it now!</p>
       </div>"""
 
 
