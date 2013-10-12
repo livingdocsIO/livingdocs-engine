@@ -12,43 +12,44 @@ kickstart = do ->
     else
       @addRootSnippets(xmlElements)
 
+
   addRootSnippets: (xmlElements) ->
     for xmlElement, index in xmlElements
       row = doc.add(@nodeToSnippetName(xmlElement))
       @setChildren(row, xmlElement)
 
 
-  setChildren: (snippet, xmlData) ->
-    @populateSnippetContainers(snippet, xmlData)
-    @setEditables(snippet, xmlData)
+  setChildren: (snippetModel, xmlData) ->
+    @populateSnippetContainers(snippetModel, xmlData)
+    @setEditables(snippetModel, xmlData)
 
 
-  populateSnippetContainers: (snippet, xmlData) ->
-    containers = if snippet.containers then Object.keys(snippet.containers) else []
+  populateSnippetContainers: (snippetModel, xmlData) ->
+    containers = if snippetModel.containers then Object.keys(snippetModel.containers) else []
 
     # add snippets to default container if no other containers exists
-    hasOnlyDefault = containers.indexOf('default') != -1 && containers.length == 1
-    templateNotInChildNode = !xmlData.getElementsByTagName('default').length
-    if hasOnlyDefault && templateNotInChildNode
-      for child in xmlData.children
-        @appendSnippetToContainer(snippet, child, 'default')
+    hasOnlyDefault = snippetModel.template.directives.length == 1 && containers.indexOf('default') != -1
+    if hasOnlyDefault && !@descendants(xmlData, 'default').length
+      for child in $(xmlData).children()
+        @appendSnippetToContainer(snippetModel, child, 'default')
 
-    else if containers.length
-      for editableContainer in xmlData.querySelectorAll(containers.join(','))
-        for child in editableContainer.children
-          @appendSnippetToContainer(snippet, child, @nodeNameToCamelCase(editableContainer))
+    else
+      for container in containers
+        for editableContainer in @descendants(xmlData,container)
+          for child in $(editableContainer).children()
+            @appendSnippetToContainer(snippetModel, child, @nodeNameToCamelCase(editableContainer))
 
 
-  appendSnippetToContainer: (parentContainer, snippetXML, region) ->
+  appendSnippetToContainer: (snippetModel, snippetXML, region) ->
     snippet = doc.create(@nodeToSnippetName(snippetXML))
-    parentContainer.append(region, snippet)
+    snippetModel.append(region, snippet)
     @setChildren(snippet, snippetXML)
 
 
-  setEditables: (snippet, xmlData) ->
-    for editableName of snippet.content
-      value = @getValueForEditable(editableName, xmlData, snippet)
-      snippet.set(editableName, value) if value
+  setEditables: (snippetModel, xmlData) ->
+    for editableName of snippetModel.content
+      value = @getValueForEditable(editableName, xmlData, snippetModel)
+      snippetModel.set(editableName, value) if value
 
 
   getValueForEditable: (editableName, xmlData, snippet) ->
@@ -63,10 +64,10 @@ kickstart = do ->
 
 
   nodeNameToCamelCase: (element) ->
-    $.camelCase(element.localName)
+    words.camelize(element.nodeName)
 
 
-  # Convert a dom element into a camelCase snippetName, check
+  # Convert a dom element into a camelCase snippetName
   nodeToSnippetName: (element) ->
     snippetName = @nodeNameToCamelCase(element)
     snippet = doc.getDesign().get(snippetName)
@@ -77,12 +78,17 @@ kickstart = do ->
     snippetName
 
 
-  getXmlValue: (node, tagName) ->
-    if !tagName
-      tagName = node.localName
+  descendants: (xml, tagName) ->
+    children = []
+    for child in $(xml).children()
+      if tagName is child.nodeName then children.push(child)
 
-    match = new XMLSerializer().serializeToString(node).match(new RegExp("<#{tagName}.*?>(.*?)<\\/#{tagName}>"))
-    if match
-      return $("<div>#{match[1]}</div>").html()
-    else
-      null
+    children
+
+
+  getXmlValue: (node) ->
+    string = new XMLSerializer().serializeToString(node)
+    start = string.indexOf('>') + 1
+    end = string.lastIndexOf('<')
+    if end > start
+      string.substring(start, end)
