@@ -33,6 +33,14 @@ test = do ->
     @getTemplate(id).createModel()
 
 
+  # helper to create snippets with one directive easier
+  createSnippet: (id, value) ->
+    snippet = @getSnippet(id)
+    firstDirective = snippet.template.directives[0]
+    snippet.set(firstDirective.name, value)
+    snippet
+
+
   getDesign: () ->
     cachedDesign ||= new Design(testDesign)
 
