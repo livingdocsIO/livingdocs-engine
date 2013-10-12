@@ -61,7 +61,7 @@ document = do ->
       @changed.fire()
 
     # Page initialization
-    @page = new InteractivePage(rootNode)
+    @page = new InteractivePage(renderNode: rootNode)
 
     # load design assets into page
     if @design.css
