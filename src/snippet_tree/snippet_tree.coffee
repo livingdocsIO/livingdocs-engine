@@ -36,8 +36,6 @@ class SnippetTree
       @fromJson(content, design)
 
     @root.snippetTree = this
-
-    @history = new History()
     @initializeEvents()
 
 
