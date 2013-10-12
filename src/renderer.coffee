@@ -125,28 +125,3 @@ class Renderer
     snippetView.setAttachedToDom(false)
     snippetView.$html.detach()
 
-
-  # UI Inserts
-  # ----------
-
-  createInterfaceInjector: (snippetOrContainer) ->
-    if snippetOrContainer instanceof SnippetModel
-      @createSnippetInterfaceInjector(snippetOrContainer)
-    else if snippetOrContainer instanceof SnippetContainer
-      @createSnippetContainerInterfaceInjector(snippetOrContainer)
-
-
-  createSnippetInterfaceInjector: (model) ->
-    if model.uiInjector == undefined
-      model.uiInjector = new InterfaceInjector
-        snippet: model
-        renderer: this
-
-
-  createSnippetContainerInterfaceInjector: (snippetContainer) ->
-    if snippetContainer.uiInjector == undefined
-      snippetContainer.uiInjector = new InterfaceInjector
-        snippetContainer: snippetContainer
-        renderer: this
-
-
