@@ -1,13 +1,30 @@
-describe 'renderer', ->
+describe 'Not ReadOnly Renderer', ->
 
   beforeEach ->
     @tree = new SnippetTree()
-    page = new PageMock()
-    @fragment = $(page.renderNode)
-    @renderer = new Renderer(snippetTree: @tree, renderingContainer: page)
+    @page = new Page
+      renderNode: $('<section>')
+      readOnly: false
+
+    @renderer = new Renderer(snippetTree: @tree, renderingContainer: @page)
 
 
-  describe 'for a few snippets', ->
+  describe 'with a single title snippet', ->
+
+    beforeEach ->
+      @title = test.createSnippet('title', 'A')
+      @tree.append(@title)
+
+
+    it 'renders the title', ->
+      expect(@page.renderNode).toEqualHtmlOf """
+        <section>
+          <h1
+            class="#{ docClass.snippet } #{ docClass.editable }"
+            #{ docAttr.template }="test.title"
+            #{ test.editableAttr }="title"
+            #{ test.emptyPlaceholderAttr }>A</h1>
+        </section>"""
 
     beforeEach ->
       row = test.getSnippet('row')
