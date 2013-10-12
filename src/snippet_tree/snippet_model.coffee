@@ -42,6 +42,10 @@ class SnippetModel
           log.error "Template directive type '#{ directive.type }' not implemented in SnippetModel"
 
 
+  createView: (isReadOnly) ->
+    @template.createView(this, isReadOnly)
+
+
   hasContainers: ->
     @template.directives.count('container') > 0
 

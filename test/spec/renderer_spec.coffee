@@ -24,7 +24,7 @@ describe 'renderer', ->
 
 
     it 'renders cover snippet with a placeholder image', ->
-      snippetView = @renderer.getSnippetView(@cover)
+      snippetView = @renderer.snippetViewForSnippet(@cover)
       expected =
         """
         <div class="#{ docClass.snippet }" #{ docAttr.template }="test.cover">
@@ -39,38 +39,3 @@ describe 'renderer', ->
         </div>
         """
       expect(snippetView.$html).toLookLike(expected)
-
-
-    describe 'getSnippetView()', ->
-
-      it 'gets snippetView for title', ->
-        expect(@renderer.getSnippetView(@title)).toBeDefined()
-
-
-      it 'returns undefined when called without any parameter', ->
-        expect(@renderer.getSnippetView()).toBeUndefined()
-
-
-      it 'returns undefined for a new snippet', ->
-        anotherTitle = test.getSnippet('title')
-        expect(@renderer.getSnippetView(anotherTitle)).toBeUndefined()
-
-
-    describe 'ensureSnippetView()', ->
-
-      it 'returns the same instance as getSnippetView()', ->
-        snippetView = @renderer.getSnippetView(@title)
-        expect(@renderer.ensureSnippetView(@title)).toBe(snippetView)
-
-
-      it 'returns undefined when called without any parameter', ->
-        expect(@renderer.ensureSnippetView()).toBeUndefined()
-
-
-      it 'creates snippetView for a new snippet', ->
-        anotherTitle = test.getSnippet('title')
-        expect(@renderer.getSnippetView(anotherTitle)).toBeUndefined()
-        anotherTitleElem = @renderer.ensureSnippetView(anotherTitle)
-        expect(anotherTitleElem).toBeDefined()
-        expect(@renderer.getSnippetView(anotherTitle)).toBe(anotherTitleElem)
-
