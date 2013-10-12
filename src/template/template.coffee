@@ -1,24 +1,10 @@
 # Template
 # --------
-# Parses snippet templates and creates snippet html.
-#
-# __Methods:__
-# @snippet() create new snippets with content
-#
-# Consider: allow tags to be optional. These tags can then be hidden by
-# the user. The template needs to know where to reinsert the tag if it is
-# reinserted again.
-# Options could be to set `display:none` or to remove the element and
-# leave a marker instead.
-# (a comment or a script tag like ember does for example)
-#
-# Consider: Replace lists with inline Templates. Inline
-# Templates are repeatable and can only be used inside their
-# defining snippet.
+# Parses snippet templates and creates SnippetModels and SnippetViews.
 class Template
 
 
-  constructor: ({ html, @namespace, @id, identifier, title, styles, weight, version } = {}) ->
+  constructor: ({ html, @namespace, @id, identifier, title, styles, weight } = {}) ->
     assert html, 'Template: param html missing'
 
     if identifier
@@ -27,7 +13,6 @@ class Template
     @identifier = if @namespace && @id
       "#{ @namespace }.#{ @id }"
 
-    @version = version || 1
     @$template = $( @pruneHtml(html) ).wrap('<div>')
     @$wrap = @$template.parent()
 
@@ -116,11 +101,6 @@ class Template
   formatContainer: (name, elem) ->
     # remove all content fron a container from the template
     elem.innerHTML = ''
-
-
-  # alias to lists
-  list: (listName) ->
-    @lists[listName]
 
 
   # output the accepted content of the snippet
