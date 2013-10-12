@@ -1,4 +1,0 @@
-class HistoryAction
-
-  constructor: () ->
-    #todo
