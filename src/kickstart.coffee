@@ -52,12 +52,12 @@ kickstart = do ->
       snippetModel.set(editableName, value) if value
 
 
-  getValueForEditable: (editableName, snippetXML, snippet) ->
+  getValueForEditable: (editableName, snippetXML) ->
     child = @descendants(snippetXML, editableName)[0]
     value = @getXmlValue(child)
 
     if !value
-      log.warn("The editable '#{editableName}' of '#{snippet.identifier}' has no content. Display parent HTML instead.")
+      log.warn("The editable '#{editableName}' of '#{@nodeToSnippetName(snippetXML)}' has no content. Display parent HTML instead.")
       value = @getXmlValue(snippetXML)
 
     value
