@@ -197,7 +197,10 @@ describe 'SnippetTree (Data Events)', ->
   describe 'adding data', ->
 
     beforeEach ->
-      @changeData = => @hero.data('geojson', '{"features": []}')
+      @changeData = => @hero.data(
+        'geojson':
+          'features': []
+      )
 
 
     it 'fires dataChanged event', ->
@@ -212,4 +215,5 @@ describe 'SnippetTree (Data Events)', ->
       @expectDataChanged 1, =>
         @changeData()
         @changeData()
+
 

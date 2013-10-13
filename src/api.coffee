@@ -94,6 +94,10 @@ pageReady = ->
   # callback: (snippetModel) ->
   @snippetAdded = chainable(document.snippetTree.snippetAdded, 'add')
 
+  # Raised when the data of a snippet has changed
+  # callback: (snippetModel, changedProperties) ->
+  @snippetDataChanged = chainable(document.snippetTree.snippetDataChanged, 'add')
+
   # Raised when a snippet is being dragged
   # Call to start a drag operation
   @startDrag = $.proxy(page, 'startDrag')

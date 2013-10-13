@@ -44,14 +44,16 @@ describe 'Snippet Serialization', ->
         ]
 
       hero = test.getSnippet('hero')
-      hero.data('center',
-        'zoom': 12
+      hero.data(
+        'center':
+          'zoom': 12
       )
-      hero.data('markers', [
+      hero.data(
+        'markers': [
           'text': 'test'
         ,
           'text': 'secondTest'
-      ])
+        ])
 
       json = hero.toJson()
       expect(json.data).toEqual(expectedValue)
