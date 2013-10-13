@@ -4168,7 +4168,7 @@ var behavior = (function() {
         return;
 
       if(container.childNodes.length > 0)
-        cursor.moveAtEnd(container);
+        cursor.moveAtTextEnd(container);
       else
         cursor.moveAtBeginning(container);
       cursor.setSelection();
@@ -4202,7 +4202,7 @@ var behavior = (function() {
       case 'before':
         previous = block.previous(element);
         if (previous) {
-          cursor.moveAtEnd(previous);
+          cursor.moveAtTextEnd(previous);
           cursor.setSelection();
         }
         break;
@@ -4836,8 +4836,9 @@ var Cursor = (function() {
        * @param DOM node or document fragment
        */
       insertBefore: function(element) {
-        var preceedingElement = element;
+        if (parser.isDocumentFragmentWithoutChildren(element)) return;
 
+        var preceedingElement = element;
         if (element.nodeType === 11) { // DOCUMENT_FRAGMENT_NODE
           var lastIndex = element.childNodes.length - 1;
           preceedingElement = element.childNodes[lastIndex];
@@ -4854,6 +4855,7 @@ var Cursor = (function() {
        * @param DOM node or document fragment
        */
       insertAfter: function(element) {
+        if (parser.isDocumentFragmentWithoutChildren(element)) return;
         this.range.insertNode(element);
       },
 
@@ -4933,6 +4935,10 @@ var Cursor = (function() {
         this.range.selectNodeContents(element);
         this.range.collapse(false);
         if (this.isSelection) return new Cursor(this.host, this.range);
+      },
+
+      moveAtTextEnd: function(element) {
+        return this.moveAtEnd(parser.latestChild(element));
       },
 
       setHost: function(element) {
@@ -5102,10 +5108,10 @@ var dispatcher = (function() {
       var range = selectionWatcher.getFreshRange();
       var cursor = range.forceCursor();
 
-      if (cursor.isAtBeginning()) {
-        notifier('insert', this, 'before', cursor);
-      } else if(cursor.isAtTextEnd()) {
+      if (cursor.isAtTextEnd()) {
         notifier('insert', this, 'after', cursor);
+      } else if(cursor.isAtBeginning()) {
+        notifier('insert', this, 'before', cursor);
       } else {
         notifier('split', this, cursor.before(), cursor.after(), cursor);
       }
@@ -5651,6 +5657,37 @@ var parser = (function() {
       }
 
       return true;
+    },
+
+    /**
+     * Return the deepest last child of a node.
+     *
+     * @method  latestChild
+     * @param  {HTMLElement} container The container to iterate on.
+     * @return {HTMLElement}           THe deepest last child in the container.
+     */
+    latestChild: function(container) {
+      if(container.lastChild)
+        return this.latestChild(container.lastChild);
+      else
+        return container;
+    },
+
+    /**
+     * Checks if a documentFragment has no children.
+     * Fragments without children can cause errors if inserted into ranges.
+     *
+     * @method  isDocumentFragmentWithoutChildren
+     * @param  {HTMLElement} DOM node.
+     * @return {Boolean}
+     */
+    isDocumentFragmentWithoutChildren: function(fragment) {
+      if (fragment &&
+          fragment.nodeType === 11 &&
+          fragment.childNodes.length === 0) {
+        return true;
+      }
+      return false;
     }
   };
 })();

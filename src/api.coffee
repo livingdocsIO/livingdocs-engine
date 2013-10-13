@@ -34,6 +34,7 @@ setupApi = ->
 
   # Json that can be used for saving of the document
   @toJson = $.proxy(document, 'toJson')
+  @toHtml = $.proxy(document, 'toHtml')
   @readableJson = -> words.readableJson( document.toJson() )
 
   # Print the content of the snippetTree in a readable string
@@ -80,12 +81,12 @@ pageReady = ->
   # Events
   # ------
 
-  # Raised when a snippet is focused
+  # Fired when a snippet is focused
   # callback: (snippetView) ->
   @snippetFocused = chainable(page.focus.snippetFocus, 'add')
 
-  # Raised when a snippet is blurred
-  # (always raised before the next focus event)
+  # Fired when a snippet is blurred
+  # (always fire before the next focus event)
   # callback: (snippetView) ->
   @snippetBlurred = chainable(page.focus.snippetBlur, 'add')
 
@@ -94,18 +95,30 @@ pageReady = ->
   @snippetAdded = chainable(document.snippetTree.snippetAdded, 'add')
 
   # Raised when a snippet is being dragged
+  # Call to start a drag operation
   @startDrag = $.proxy(page, 'startDrag')
 
-  # Raised when a user clicks on an editable image
+  # Snippet Drag & Drop events
+  @snippetWillBeDragged = $.proxy(page.snippetWillBeDragged, 'add')
+  @snippetWillBeDragged.remove = $.proxy(page.snippetWillBeDragged, 'remove')
+  @snippetWasDropped = $.proxy(page.snippetWasDropped, 'add')
+  @snippetWasDropped.remove = $.proxy(page.snippetWasDropped, 'remove')
+
+  # Fired when a user clicks on an editable image
   # example callback method:
   # (snippetView, imageName) -> snippetView.model.set(imageName, imageSrc)
   @imageClick = chainable(page.imageClick, 'add')
 
 
+  # Fired when a user click on an editable html element or one of its children
+  # example callback methods:
+  # (snippetView, htmlElementName, event) -> # your code here
+  @htmlElementClick = chainable(page.htmlElementClick, 'add')
+
   # Text Events
   # -----------
 
-  # Raised when editable text is selected
+  # Fired when editable text is selected
   # callback: (snippetView, element, selection) ->
   # @callbackParam snippetView - snippetView instance
   # @callbackParam element - DOM node with contenteditable

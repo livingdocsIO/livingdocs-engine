@@ -2,11 +2,11 @@ class InterfaceInjector
 
   constructor: ({ @snippet, @snippetContainer, @renderer }) ->
     if @snippet
-      assert @snippet.snippetView?.attachedToDom,
+      assert @snippet.snippetView?.isAttachedToDom,
         'snippet is not attached to the DOM'
 
     if @snippetContainer
-      if not @snippetContainer.isRoot && not @snippetContainer.parentSnippet?.snippetView?.attachedToDom
+      if not @snippetContainer.isRoot && not @snippetContainer.parentSnippet?.snippetView?.isAttachedToDom
         log.error('snippetContainer is not attached to the DOM')
 
 

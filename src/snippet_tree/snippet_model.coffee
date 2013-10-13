@@ -14,7 +14,6 @@
 # # @prop parentContainer: parent SnippetContainer
 class SnippetModel
 
-
   constructor: ({ @template, id } = {}) ->
     assert @template, 'cannot instantiate snippet without template reference'
 
@@ -37,11 +36,15 @@ class SnippetModel
           @containers[directive.name] = new SnippetContainer
             name: directive.name
             parentSnippet: this
-        when 'editable', 'image'
+        when 'editable', 'image', 'html'
           @content ||= {}
           @content[directive.name] = undefined
         else
           log.error "Template directive type '#{ directive.type }' not implemented in SnippetModel"
+
+
+  createView: (isReadOnly) ->
+    @template.createView(this, isReadOnly)
 
 
   hasContainers: ->
@@ -50,6 +53,10 @@ class SnippetModel
 
   hasEditables: ->
     @template.directives.count('editable') > 0
+
+
+  hasHtml: ->
+    @template.directives.count('html') > 0
 
 
   hasImages: ->
@@ -75,7 +82,7 @@ class SnippetModel
   append: (containerName, snippetModel) ->
     if arguments.length == 1
       snippetModel = containerName
-      containerName = templateAttr.defaultValues.container
+      containerName = config.directives.container.defaultName
 
     @containers[containerName].append(snippetModel)
     this
@@ -84,7 +91,7 @@ class SnippetModel
   prepend: (containerName, snippetModel) ->
     if arguments.length == 1
       snippetModel = containerName
-      containerName = templateAttr.defaultValues.container
+      containerName = config.directives.container.defaultName
 
     @containers[containerName].prepend(snippetModel)
     this
@@ -118,6 +125,11 @@ class SnippetModel
       @dataValues[name] = value
       if @snippetTree
         @snippetTree.dataChanging(this)
+
+
+  isEmpty: (name) ->
+    value = @get(name)
+    value == undefined || value == ''
 
 
   style: (name, value) ->
@@ -248,13 +260,13 @@ class SnippetModel
       id: @id
       identifier: @identifier
 
-    unless @isEmpty(@content)
-      json.content = @flatCopy(@content)
+    unless jsonHelper.isEmpty(@content)
+      json.content = jsonHelper.flatCopy(@content)
 
-    unless @isEmpty(@styles)
-      json.styles = @flatCopy(@styles)
+    unless jsonHelper.isEmpty(@styles)
+      json.styles = jsonHelper.flatCopy(@styles)
 
-    unless @isEmpty(@dataValues)
+    unless jsonHelper.isEmpty(@dataValues)
       json.data = $.extend(true, {}, @dataValues)
 
     # create an array for every container
@@ -263,24 +275,6 @@ class SnippetModel
       json.containers[name] = []
 
     json
-
-
-  isEmpty: (obj) ->
-    return true unless obj?
-    for name of obj
-      return false if obj.hasOwnProperty(name)
-
-    true
-
-
-  flatCopy: (obj) ->
-    copy = undefined
-
-    for name, value of obj
-      copy ||= {}
-      copy[name] = value
-
-    copy
 
 
 SnippetModel.fromJson = (json, design) ->

@@ -5,10 +5,51 @@ htmlCompare = do ->
   normalizeWhitespace: true
 
 
+  compare: (a, b) ->
+
+    # prepare parameters
+    a = $(a) if typeof a == 'string'
+    b = $(b) if typeof b == 'string'
+
+    a = a[0] if a.jquery
+    b = b[0] if b.jquery
+
+    # start comparing
+    nextInA = @iterateComparables(a)
+    nextInB = @iterateComparables(b)
+
+    equivalent = true
+    while equivalent
+      equivalent = @compareNode( a = nextInA(), b = nextInB() )
+
+    if not a? and not b? then true else false
+
+
+  # compare two nodes
+  # Returns true if they are equivalent.
+  # It returns false if either a or b is undefined.
+  compareNode: (a, b) ->
+    if a? and b?
+      if a.nodeType == b.nodeType
+        switch a.nodeType
+          when 1 then @compareElement(a, b)
+          when 3 then @compareText(a, b)
+          else log.error "HtmlCompare: nodeType #{ a.nodeType } not supported"
+
+
   compareElement: (a, b) ->
     if @compareTag(a, b)
       if @compareAttributes(a, b)
         true
+
+
+  compareText: (a, b) ->
+    if @normalizeWhitespace
+      valA = $.trim(a.textContent).replace(@whitespace, ' ')
+      valB = $.trim(b.textContent).replace(@whitespace, ' ')
+      valA == valB
+    else
+      a.nodeValue == b.nodeValue
 
 
   compareTag: (a, b) ->
@@ -53,49 +94,8 @@ htmlCompare = do ->
     val.split(';').sort().join(';')
 
 
-  # compare two nodes
-  # Returns true if they are equivalent.
-  # It returns false if either a or b is undefined.
-  compareNode: (a, b) ->
-    if a? and b?
-      if a.nodeType == b.nodeType
-        switch a.nodeType
-          when 1 then @compareElement(a, b)
-          when 3 then @compareText(a, b)
-          else log.error "HtmlCompare: nodeType #{ a.nodeType } not supported"
-
-
-  compareText: (a, b) ->
-    if @normalizeWhitespace
-      valA = $.trim(a.textContent).replace(@whitespace, ' ')
-      valB = $.trim(b.textContent).replace(@whitespace, ' ')
-      valA == valB
-    else
-      a.nodeValue == b.nodeValue
-
-
   isEmptyTextNode: (textNode) ->
     @empty.test(textNode.nodeValue) # consider: would .textContent be better?
-
-
-  compare: (a, b) ->
-
-    # prepare parameters
-    a = $(a) if typeof a == 'string'
-    b = $(b) if typeof b == 'string'
-
-    a = a[0] if a.jquery
-    b = b[0] if b.jquery
-
-    # start comparing
-    nextInA = @iterateComparables(a)
-    nextInB = @iterateComparables(b)
-
-    equivalent = true
-    while equivalent
-      equivalent = @compareNode( a = nextInA(), b = nextInB() )
-
-    if not a? and not b? then true else false
 
 
   # true if element node or non-empty text node

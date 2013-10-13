@@ -18,7 +18,7 @@
     {
       "title": "Hero",
       "id": "hero",
-      "html": "<div class=\"hero-unit\"><h1 doc-editable=\"title\">Titel</h1><p doc-editable=\"tagline\">Tagline</p></div>"
+      "html": "<div class=\"hero-unit\"><h1 doc-editable=\"title\">Titel</h1><p doc-editable=\"tagline\" doc-optional>Tagline</p></div>"
     },
     {
       "title": "Image",
@@ -54,6 +54,11 @@
       "title": "Text",
       "id": "text",
       "html": "<p doc-editable=\"text\">Lorem ipsum dolorem. Lorem ipsum dolorem. Lorem ipsum dolorem</p>"
+    },
+    {
+      "title": "Html",
+      "id": "html",
+      "html": "<div doc-html=\"html\">Insert HTML here</div>"
     },
     {
       "title": "Title",

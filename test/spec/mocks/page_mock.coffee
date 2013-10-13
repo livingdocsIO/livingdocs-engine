@@ -1,5 +1,7 @@
 class PageMock
 
+  renderNode: $('<div/>')[0]
+
   focus:
 
     snippetFocus:
@@ -11,3 +13,5 @@ class PageMock
 
   editableController:
     add: ->
+
+  snippetViewWasInserted: ->

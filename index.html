@@ -73,8 +73,9 @@
             preventDefault: true
           });
           $newSnippet.on('mousedown', function(event) {
-            var newSnippet = doc.create('image')
-            doc.startDrag({ snippet: newSnippet, dragDrop: dragDrop })
+            var newSnippet = doc.create('html')
+
+            doc.startDrag({ snippet: newSnippet, dragDrop: dragDrop, event: event })
           });
           $(document.body).append($newSnippet)
 

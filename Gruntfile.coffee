@@ -57,6 +57,7 @@ module.exports = (grunt) ->
             'src/config.coffee'
             'src/utils/*.coffee'
             'src/mixins/*.coffee'
+            'src/rendering_container/*.coffee'
             'src/snippet_tree/*.coffee'
             'src/template/*.coffee'
             'src/!(api|config).coffee'
@@ -70,6 +71,7 @@ module.exports = (grunt) ->
             'src/config.coffee'
             'src/utils/*.coffee'
             'src/mixins/*.coffee'
+            'src/rendering_container/*.coffee'
             'src/snippet_tree/*.coffee'
             'src/template/*.coffee'
             'src/!(api|config).coffee'
@@ -127,13 +129,21 @@ module.exports = (grunt) ->
             src: '**'
             dest: 'dist/vendor/'
         ]
-      lukas:
+      watson:
         files: [
           expand: true,
           cwd: 'dist/',
           src: ['**'],
           dest: '../watson-ui/app/vendor/livingdocs-engine/'
         ]
+      design:
+        files: [
+          expand: true,
+          cwd: 'dist/',
+          src: ['**'],
+          dest: '../livingdocs-design/public/components/livingdocs-engine/'
+        ]
+
     concurrent:
       dev: [
         'watch:src'

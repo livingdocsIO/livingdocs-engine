@@ -1,24 +1,31 @@
-# page
-# ----
-# Defines the API between the DOM and the document
-class Page
+# An InteractivePage is a subclass of Page which allows for manipulation of the
+# rendered SnippetTree.
+class InteractivePage extends Page
 
   LEFT_MOUSE_BUTTON = 1
 
-  constructor: ->
-    @document = window.document
-    @$document = $(@document)
-    @$body = $(@document.body)
+  isReadOnly: false
 
-    @loader = new Loader()
+
+  constructor: (renderNode) ->
+    super(renderNode)
+
     @focus = new Focus()
-    @imageClick = $.Callbacks()
     @editableController = new EditableController(this)
+
+    # events
+    @imageClick = $.Callbacks() # (snippetView, fieldName, event) ->
+    @htmlElementClick = $.Callbacks() # (snippetView, fieldName, event) ->
+    @snippetWillBeDragged = $.Callbacks() # (snippetModel) ->
+    @snippetWasDropped = $.Callbacks() # (snippetModel) ->
 
     @snippetDragDrop = new DragDrop
       longpressDelay: 400
       longpressDistanceLimit: 10
       preventDefault: false
+
+    @focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
+    @focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )
 
     @$document
       .on('click.livingdocs', $.proxy(@click, this))
@@ -36,18 +43,6 @@ class Page
   removeListeners: ->
     @$document.off('.livingdocs')
     @$document.off('.livingdocs-drag')
-
-
-  # @param rootNode (optional) DOM node that should contain the content
-  # @return jQuery object: the root node of the document
-  getDocumentSection: ({ rootNode } = {}) ->
-    if !rootNode
-      $root = $(".#{ docClass.section }").first()
-    else
-      $root = $(rootNode).addClass(".#{ docClass.section }")
-
-    assert $root.length, 'no rootNode found'
-    $root
 
 
   mousedown: (event) ->
@@ -74,7 +69,7 @@ class Page
 
 
   # These events are possibly initialized with a delay in snippetDrag#onStart
-  registerDragStartEvents: (dragDrop, event) ->
+  registerDragMoveEvents: (dragDrop, event) ->
     if event.type == 'touchstart'
       @$document.on 'touchmove.livingdocs-drag', (event) ->
         event.preventDefault()
@@ -89,8 +84,9 @@ class Page
     return unless snippet || snippetView
     snippet = snippetView.model if snippetView
 
+    @registerDragMoveEvents(dragDrop, event)
     @registerDragStopEvents(dragDrop, event)
-    snippetDrag = new SnippetDrag({ snippet: snippet, page: this, registerDragStartEvents: $.proxy(@registerDragStartEvents, this, dragDrop, event)})
+    snippetDrag = new SnippetDrag({ snippet: snippet, page: this })
 
     $snippet = snippetView.$html if snippetView
     dragDrop.mousedown $snippet, event,
@@ -101,6 +97,7 @@ class Page
 
   click: (event) ->
     snippetView = dom.findSnippetView(event.target)
+    nodeContext = dom.findNodeContext(event.target)
 
     # todo: if a user clicked on a margin of a snippet it should
     # still get selected. (if a snippet is found by parentSnippet
@@ -116,8 +113,12 @@ class Page
     if snippetView
       @focus.snippetFocused(snippetView)
 
-      if imageName = dom.getImageName(event.target)
-        @imageClick.fire(snippetView, imageName, event)
+      if nodeContext
+        switch nodeContext.contextAttr
+          when config.directives.image.renderedAttr
+            @imageClick.fire(snippetView, nodeContext.attrName, event)
+          when config.directives.html.renderedAttr
+            @htmlElementClick.fire(snippetView, nodeContext.attrName, event)
     else
       @focus.blur()
 
@@ -131,3 +132,22 @@ class Page
     focusedElement = @getFocusedElement()
     $(focusedElement).blur() if focusedElement
 
+
+  snippetViewWasInserted: (snippetView) ->
+    @initializeEditables(snippetView)
+
+
+  initializeEditables: (snippetView) ->
+    if snippetView.directives.editable
+      editableNodes = for directive in snippetView.directives.editable
+        directive.elem
+
+    @editableController.add(editableNodes)
+
+
+  afterSnippetFocused: (snippetView) ->
+    snippetView.afterFocused()
+
+
+  afterSnippetBlurred: (snippetView) ->
+    snippetView.afterBlurred()

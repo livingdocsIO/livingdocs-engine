@@ -4,7 +4,7 @@ describe 'Title Template', ->
   beforeEach ->
     template = new Template
       id: 'h1'
-      html: """<h1 #{ docAttr.editable }="title"></h1>"""
+      html: """<h1 #{ test.editableAttr }="title"></h1>"""
 
 
   it 'has $template Property', ->
@@ -21,7 +21,7 @@ describe 'Title Template', ->
 
   it 'has stored the html', ->
     expected =
-      "<h1 #{ docAttr.editable }='title' class='#{ docClass.editable }'></h1>"
+      "<h1 #{ test.editableAttr }='title' class='#{ docClass.editable }'></h1>"
     expect( htmlCompare.compare(template.$template, expected) ).toBe(true)
 
 
@@ -37,48 +37,6 @@ describe 'Title Template', ->
     it 'returns a SnippetView instance', ->
       snippetView = template.createView()
       expect(snippetView instanceof SnippetView).toBe(true)
-
-
-
-describe 'Dropdown Template', ->
-
-  template = null
-  beforeEach ->
-    template = new Template
-      id: 'dropdown'
-      html:
-        """
-        <div>
-          <a class='btn btn-primary dropdown-toggle' data-toggle='dropdown' href='#'>
-            <i class='icon-plus icon-white'></i>
-          </a>
-          <ul class='dropdown-menu' #{ docAttr.list }="links">
-            <li>
-              <a href='#' #{ docAttr.editable }="dropdownLink"></a>
-            </li>
-          </ul>
-        </div>
-        """
-
-
-  it 'has stored the html', ->
-    $template = template.$template
-    expect($template.findIn('div').length).toEqual(1)
-    expect($template.findIn('a').length).toEqual(1)
-    expect($template.findIn('i').length).toEqual(1)
-    expect($template.findIn('ul').length).toEqual(1)
-
-    # the <li> element should have been cut out and stored in a list item template
-    expect($template.findIn('li').length).toEqual(0)
-
-
-  it 'has a list called links', ->
-    expect(template.list('links').name).toEqual('links')
-
-
-  it 'returns a snippet', ->
-    snippet = template.createModel()
-    expect(snippet instanceof SnippetModel).toBe(true)
 
 
 describe 'Template.parseIdentifier()', ->
@@ -110,7 +68,7 @@ describe 'Template with default value', ->
   it 'trims the default value', ->
     template = new Template
       identifier: 'bootstrap.title'
-      html: """<h1 #{ docAttr.editable }="title">\n\t your title\t </h1>"""
+      html: """<h1 #{ test.editableAttr }="title">\n\t your title\t </h1>"""
 
     expect(template.defaults['title']).toEqual('your title')
 
@@ -120,7 +78,7 @@ describe 'new Template()', ->
   it 'accepts idenfitier param', ->
     template = new Template
       identifier: 'bootstrap.title'
-      html: """<h1 #{ docAttr.editable }="title"></h1>"""
+      html: """<h1 #{ test.editableAttr }="title"></h1>"""
 
     expect(template.namespace).toEqual('bootstrap')
     expect(template.id).toEqual('title')
@@ -148,9 +106,9 @@ describe 'Subtitle Template', ->
     expect(subtitle.defaults['title']).toEqual('Who\'s your Caddy?')
 
 
-  it 'leaves the default value in the template', ->
+  it 'removes the default value from the template', ->
     subtitle = test.getTemplate('subtitle')
-    expect(subtitle.$template[0].innerHTML).toEqual('Who\'s your Caddy?')
+    expect(subtitle.$template[0].innerHTML).toEqual('')
 
 
 describe 'Container', ->
@@ -169,4 +127,13 @@ describe 'Stuffed Container', ->
     expect($container.html()).toEqual('')
 
 
+describe 'Html Template', ->
+
+  template = null
+  beforeEach ->
+    template = test.getTemplate('html')
+
+  it 'has a html directive', ->
+    directive = template.directives.html[0]
+    expect(directive).toBeDefined()
 

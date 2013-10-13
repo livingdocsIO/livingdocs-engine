@@ -1,4 +1,10 @@
-testDesign =
+testDesign = do ->
+
+  containerAttr = config.directives.container.attr
+  editableAttr = config.directives.editable.attr
+  imageAttr = config.directives.image.attr
+  htmlAttr = config.directives.html.attr
+  optionalAttr = config.directives.optional.attr
 
   config:
     namespace: 'test'
@@ -57,26 +63,26 @@ testDesign =
       html:
         """
           <div>
-            <h1 #{ docAttr.editable }="title"></h1>
-            <p #{ docAttr.editable }="tagline"></p>
+            <h1 #{ editableAttr }="title"></h1>
+            <p #{ editableAttr }="tagline" #{ optionalAttr }></p>
           </div>
         """
     ,
       id: 'title'
       title: 'Title'
-      html: """<h1 #{ docAttr.editable }="title"></h1>"""
+      html: """<h1 #{ editableAttr }="title"></h1>"""
     ,
       id: 'subtitle'
       title: 'Subtitle with a default value'
-      html: """<h2 #{ docAttr.editable }="title">Who's your Caddy?</h2>"""
+      html: """<h2 #{ editableAttr }="title">Who's your Caddy?</h2>"""
     ,
       id: 'text'
       title: 'Paragraph'
-      html: """<p #{ docAttr.editable }="text"></p>"""
+      html: """<p #{ editableAttr }="text"></p>"""
     ,
       id: 'image'
       title: 'Image'
-      html: """<img #{ docAttr.image }="image" src=""/>"""
+      html: """<img #{ imageAttr }="image" src=""/>"""
     ,
       id: 'cover'
       title: 'Cover'
@@ -84,7 +90,7 @@ testDesign =
         """
         <div>
           <h4 doc-editable="title">Titel</h4>
-          <div #{ docAttr.image }="image" style="background-image:url();">
+          <div #{ imageAttr }="image" style="background-image:url();">
             <h3 doc-editable="uppertitle">Oberzeile</h3>
             <h2 doc-editable="maintitle">Titel</h2>
           </div>
@@ -96,8 +102,8 @@ testDesign =
       html:
         """
         <div class="row-fluid">
-          <div class="span8" #{ docAttr.container }="main"></div>
-          <div class="span4" #{ docAttr.container }="sidebar"></div>
+          <div class="span8" #{ containerAttr }="main"></div>
+          <div class="span4" #{ containerAttr }="sidebar"></div>
         </div>
         """
     ,
@@ -106,7 +112,7 @@ testDesign =
       html:
         """
         <div class="container">
-          <div #{ docAttr.container }></div>
+          <div #{ containerAttr }></div>
         </div>
         """
     ,
@@ -115,12 +121,21 @@ testDesign =
       html:
         """
         <div class="stuffed">
-          <div class="container" #{ docAttr.container }="container">
+          <div class="container" #{ containerAttr }="container">
             <!-- Garbage that will be annihilated by livingdocs -->
             <section>
               <notEvenATag>The Tony Blair Witch Project</notEvenATag>
             </section>
           </div>
+        </div>
+        """
+    ,
+      id: 'html'
+      title: 'Freeform html'
+      html:
+        """
+        <div #{ htmlAttr }="html">
+          <span class="html-placeholder">placholder text</text>
         </div>
         """
     ]

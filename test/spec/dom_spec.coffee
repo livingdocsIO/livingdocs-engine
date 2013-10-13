@@ -45,13 +45,58 @@ describe 'DOM method', ->
       expect( dom.findSnippetView($node) ).toEqual(@view)
 
 
+  describe 'findNodeContext() on image snippet', ->
+
+    beforeEach ->
+      @view = test.getTemplate('image').createView()
+      @$html = @view.$html
+
+    it 'finds image node context from DOM node', ->
+      $node = @$html.findIn('img').first()
+      expect( dom.findNodeContext($node) ).toEqual({contextAttr: 'data-doc-image', attrName: 'image'})
+
+
+  describe 'findNodeContext() on cover snippet', ->
+
+    beforeEach ->
+      @view = test.getTemplate('cover').createView()
+      @$html = @view.$html
+
+
+    it 'finds editable node context from DOM node', ->
+      $node = @$html.find('h2').first()
+      expect( dom.findNodeContext($node) ).toEqual({contextAttr: 'data-doc-editable', attrName: 'maintitle'})
+
+
+    it 'finds image node context from DOM node', ->
+      $node = @$html.find('div').first()
+      expect( dom.findNodeContext($node) ).toEqual({contextAttr: 'data-doc-image', attrName: 'image'})
+
+
+  describe 'findNodeContext() on html snippet', ->
+
+    beforeEach ->
+      @view = test.getTemplate('html').createView()
+      @$html = @view.$html
+
+
+    it 'finds html node context from DOM node', ->
+      $node = @$html.findIn('div').first()
+      expect( dom.findNodeContext($node) ).toEqual({contextAttr: 'data-doc-html', attrName: 'html'})
+
+
+    it 'finds html node context from child node', ->
+      $node = @$html.find('.html-placeholder').first()
+      expect( dom.findNodeContext($node) ).toEqual({contextAttr: 'data-doc-html', attrName: 'html'})
+
+
   describe 'findContainer()', ->
 
     beforeEach ->
       @row = test.getTemplate('row').createView()
       @title = test.getTemplate('title').createView()
       @row.model.append('main', @title)
-      @row.append('main', @title.$html)
+      @title.$html.appendTo(@row.getDirectiveElement('main'))
       @$html = @row.$html
 
 
