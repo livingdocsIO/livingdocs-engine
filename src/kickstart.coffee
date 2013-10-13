@@ -19,23 +19,23 @@ kickstart = do ->
       @setChildren(row, xmlElement)
 
 
-  setChildren: (snippetModel, xmlData) ->
-    @populateSnippetContainers(snippetModel, xmlData)
-    @setEditables(snippetModel, xmlData)
+  setChildren: (snippetModel, snippetXML) ->
+    @populateSnippetContainers(snippetModel, snippetXML)
+    @setEditables(snippetModel, snippetXML)
 
 
-  populateSnippetContainers: (snippetModel, xmlData) ->
+  populateSnippetContainers: (snippetModel, snippetXML) ->
     containers = if snippetModel.containers then Object.keys(snippetModel.containers) else []
 
     # add snippets to default container if no other containers exists
     hasOnlyDefault = snippetModel.template.directives.length == 1 && containers.indexOf('default') != -1
-    if hasOnlyDefault && !@descendants(xmlData, 'default').length
-      for child in @descendants(xmlData)
+    if hasOnlyDefault && !@descendants(snippetXML, 'default').length
+      for child in @descendants(snippetXML)
         @appendSnippetToContainer(snippetModel, child, 'default')
 
     else
       for container in containers
-        for editableContainer in @descendants(xmlData, container)
+        for editableContainer in @descendants(snippetXML, container)
           for child in @descendants(editableContainer)
             @appendSnippetToContainer(snippetModel, child, @nodeNameToCamelCase(editableContainer))
 
@@ -46,19 +46,19 @@ kickstart = do ->
     @setChildren(snippet, snippetXML)
 
 
-  setEditables: (snippetModel, xmlData) ->
+  setEditables: (snippetModel, snippetXML) ->
     for editableName of snippetModel.content
-      value = @getValueForEditable(editableName, xmlData, snippetModel)
+      value = @getValueForEditable(editableName, snippetXML, snippetModel)
       snippetModel.set(editableName, value) if value
 
 
-  getValueForEditable: (editableName, xmlData, snippet) ->
-    child = @descendants(xmlData, editableName)[0]
+  getValueForEditable: (editableName, snippetXML, snippet) ->
+    child = @descendants(snippetXML, editableName)[0]
     value = @getXmlValue(child)
 
     if !value
       log.warn("The editable '#{editableName}' of '#{snippet.identifier}' has no content. Display parent HTML instead.")
-      value = @getXmlValue(xmlData)
+      value = @getXmlValue(snippetXML)
 
     value
 
