@@ -30,13 +30,13 @@ kickstart = do ->
     # add snippets to default container if no other containers exists
     hasOnlyDefault = snippetModel.template.directives.length == 1 && containers.indexOf('default') != -1
     if hasOnlyDefault && !@descendants(xmlData, 'default').length
-      for child in $(xmlData).children()
+      for child in @descendants(xmlData)
         @appendSnippetToContainer(snippetModel, child, 'default')
 
     else
       for container in containers
-        for editableContainer in @descendants(xmlData,container)
-          for child in $(editableContainer).children()
+        for editableContainer in @descendants(xmlData, container)
+          for child in @descendants(editableContainer)
             @appendSnippetToContainer(snippetModel, child, @nodeNameToCamelCase(editableContainer))
 
 
@@ -53,8 +53,8 @@ kickstart = do ->
 
 
   getValueForEditable: (editableName, xmlData, snippet) ->
-    child = xmlData.getElementsByTagName(words.snakeCase(editableName))?[0]
-    value = @getXmlValue(child, editableName)
+    child = @descendants(xmlData, editableName)[0]
+    value = @getXmlValue(child)
 
     if !value
       log.warn("The editable '#{editableName}' of '#{snippet.identifier}' has no content. Display parent HTML instead.")
@@ -79,16 +79,14 @@ kickstart = do ->
 
 
   descendants: (xml, tagName) ->
-    children = []
-    for child in $(xml).children()
-      if tagName is child.nodeName then children.push(child)
-
-    children
+    tagLimiter = words.snakeCase(tagName) if tagName
+    $(xml).children(tagLimiter)
 
 
   getXmlValue: (node) ->
-    string = new XMLSerializer().serializeToString(node)
-    start = string.indexOf('>') + 1
-    end = string.lastIndexOf('<')
-    if end > start
-      string.substring(start, end)
+    if node
+      string = new XMLSerializer().serializeToString(node)
+      start = string.indexOf('>') + 1
+      end = string.lastIndexOf('<')
+      if end > start
+        string.substring(start, end)
