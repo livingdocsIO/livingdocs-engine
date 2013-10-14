@@ -89,10 +89,7 @@ do ->
           $elem.slideDown(250)
 
         hide: ($elem) ->
-          if $elem.css('display') == 'block'
-            $elem.slideUp(250)
-          else
-            $elem.hide()
+          $elem.slideUp(250)
 
 
     editable:

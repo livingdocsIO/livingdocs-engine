@@ -7,8 +7,8 @@ class InteractivePage extends Page
   isReadOnly: false
 
 
-  constructor: (renderNode) ->
-    super(renderNode)
+  constructor: ({ renderNode, hostWindow }={}) ->
+    super
 
     @focus = new Focus()
     @editableController = new EditableController(this)

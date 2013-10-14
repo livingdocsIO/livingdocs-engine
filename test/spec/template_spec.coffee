@@ -20,9 +20,9 @@ describe 'Title Template', ->
 
 
   it 'has stored the html', ->
-    expected =
-      "<h1 #{ test.editableAttr }='title' class='#{ docClass.editable }'></h1>"
-    expect( htmlCompare.compare(template.$template, expected) ).toBe(true)
+    expect(template.$template).toEqualHtmlOf """
+      <h1 #{ test.editableAttr }='title' class='#{ docClass.editable }'>
+      </h1>"""
 
 
   describe '#createModel()', ->
