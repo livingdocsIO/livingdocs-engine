@@ -19,6 +19,8 @@ setupApi = ->
   @init = chainable(document, 'init')
   @ready = chainable(document.ready, 'add')
 
+  @createView = $.proxy(document, 'createView')
+
   # Add Templates to the documents
   @getDesign = -> document.design
 

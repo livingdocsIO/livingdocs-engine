@@ -82,6 +82,29 @@ document = do ->
     @design = new Design(design)
 
 
+  createView: (parent=window.document.body) ->
+    createRendererAndResolvePromise = =>
+      page = new Page
+        renderNode: iframe.contentDocument.body
+        hostWindow: iframe.contentWindow
+      renderer = new Renderer
+        renderingContainer: page
+        snippetTree: @snippetTree
+      renderer.render()
+      deferred.resolve
+        iframe: iframe
+        renderer: renderer
+
+    deferred = $.Deferred()
+    $parent = $(parent).first()
+    iframe = $parent[0].ownerDocument.createElement('iframe')
+    iframe.src = 'about:blank'
+    iframe.onload = createRendererAndResolvePromise
+    $parent.append(iframe)
+
+    deferred.promise()
+
+
   eachContainer: (callback) ->
     @snippetTree.eachContainer(callback)
 
