@@ -3,12 +3,20 @@
 # page.
 class Page extends RenderingContainer
 
-  constructor: (renderNode) ->
+  constructor: ({ renderNode, readOnly, hostWindow }={}) ->
     super()
 
-    @document = window.document
-    @$document = $(@document)
-    @$body = $(@document.body)
-    @renderNode = renderNode || $(".#{ docClass.section }")[0]
+    @isReadOnly = readOnly if readOnly?
+    @setWindow(hostWindow)
+
+    renderNode = renderNode || $(".#{ docClass.section }", @$body)
+    @renderNode = renderNode[0] if renderNode.jquery
 
     @loader = new Loader()
+
+
+  setWindow: (hostWindow) ->
+    @window = hostWindow || window
+    @document = @window.document
+    @$document = $(@document)
+    @$body = $(@document.body)

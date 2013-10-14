@@ -77,6 +77,8 @@ class Template
           @formatEditable(directive.name, directive.elem)
         when 'container'
           @formatContainer(directive.name, directive.elem)
+        when 'html'
+          @formatHtml(directive.name, directive.elem)
 
 
   # In the html of the template find and store all DOM nodes
@@ -115,6 +117,12 @@ class Template
 
   formatContainer: (name, elem) ->
     # remove all content fron a container from the template
+    elem.innerHTML = ''
+
+
+  formatHtml: (name, elem) ->
+    defaultValue = words.trim(elem.innerHTML)
+    @defaults[name] = defaultValue if defaultValue
     elem.innerHTML = ''
 
 
