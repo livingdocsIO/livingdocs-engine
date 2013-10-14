@@ -48,15 +48,15 @@ kickstart = do ->
 
   setEditables: (snippetModel, snippetXML) ->
     for editableName of snippetModel.content
-      value = @getValueForEditable(editableName, snippetXML, snippetModel)
+      value = @getValueForEditable(editableName, snippetXML, snippetModel.template.directives.length)
       snippetModel.set(editableName, value) if value
 
 
-  getValueForEditable: (editableName, snippetXML) ->
+  getValueForEditable: (editableName, snippetXML, directivesQuantity) ->
     child = @descendants(snippetXML, editableName)[0]
     value = @getXmlValue(child)
 
-    if !value
+    if !value && directivesQuantity == 1
       log.warn("The editable '#{editableName}' of '#{@nodeToSnippetName(snippetXML)}' has no content. Display parent HTML instead.")
       value = @getXmlValue(snippetXML)
 
