@@ -4,8 +4,7 @@ describe 'SnippetView', ->
 
     beforeEach ->
       @snippetView = test.getTemplate('title').createView()
-      @expected =
-        """
+      @expected = $ """
         <h1 #{ test.editableAttr }="title"
           class="#{ docClass.editable } #{ docClass.snippet }"
             #{ docAttr.template }="test.title"
@@ -18,6 +17,14 @@ describe 'SnippetView', ->
     it 'sets title', ->
       @snippetView.set('title', 'Humble Bundle')
       expect(@snippetView.$html).toEqualHtmlOf(@expected)
+
+
+    describe 'when clearing an existing value', ->
+      it 'clears the html', ->
+        @snippetView.set('title', 'foobar')
+        @snippetView.set('title', undefined)
+        @expected.html('')
+        expect(@snippetView.$html).toEqualHtmlOf(@expected)
 
 
     it 'renders content from the model', ->
@@ -96,8 +103,7 @@ describe 'SnippetView hero', ->
     beforeEach ->
       @snippetView.model.set('tagline', undefined)
       @snippetView.render()
-      @$p = @expected.find('p')
-      @$p.hide()
+      @expected.find('p').hide().html('')
 
 
     it 'is hidden by default', ->
@@ -193,23 +199,27 @@ describe 'SnippetView html', ->
   beforeEach ->
     @snippet = test.getSnippet('html')
     @snippet.set('html', '<section>test</section>')
-    @view = @snippet.template.createView(@snippet)
+    @view = @snippet.createView()
+    # There is additional code by the interaction blocker element in there
+    # which is not nice but hopefully works out just fine.
+    @expected = $ """
+      <div class="#{ docClass.snippet }"
+        #{ docAttr.template }="test.html"
+        #{ test.htmlAttr }="html"
+        style="position: relative; ">
+        <section>test</section>
+        <div class="doc-interaction-blocker" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></div>
+      </div>
+      """
 
 
   describe 'set("html", value)', ->
     it 'adds the html to the snippet', ->
-      expect(@view.$html).toEqualHtmlOf(
+      expect(@view.$html).toEqualHtmlOf(@expected)
 
-        # There is additional code by the interaction blocker element in there
-        # which is not nice but hopefully works out just fine.
-        """
-        <div class="#{ docClass.snippet }"
-          #{ docAttr.template }="test.html"
-          #{ test.htmlAttr }="html"
-          style="position: relative; ">
-          <section>test</section>
-          <div class="doc-interaction-blocker" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></div>
-        </div>
-        """
-      )
-
+    describe 'when clearing an existing value', ->
+      it 'inserts the default value', ->
+        @snippet.set('html', undefined)
+        @view.render()
+        @expected.html(@snippet.template.defaults['html'])
+        expect(@view.$html).toEqualHtmlOf(@expected)

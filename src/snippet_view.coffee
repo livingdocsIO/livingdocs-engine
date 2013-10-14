@@ -128,7 +128,7 @@ class SnippetView
       @template.defaults[name]
 
     $elem.attr(config.html.attr.placeholder, placeholder)
-    $elem.html(value)
+    $elem.html(value || '')
 
 
   focusEditable: (name) ->
@@ -149,8 +149,12 @@ class SnippetView
 
   setHtml: (name, value) ->
     $elem = @directives.$getElem(name)
-    $elem.html(value)
-    @blockInteraction($elem)
+    $elem.html(value || '')
+
+    if value
+      @blockInteraction($elem)
+    else
+      $elem.html(@template.defaults[name])
 
     @directivesToReset ||= {}
     @directivesToReset[name] = name
