@@ -10,7 +10,10 @@ class Page extends RenderingContainer
     @setWindow(hostWindow)
 
     renderNode = renderNode || $(".#{ docClass.section }", @$body)
-    @renderNode = renderNode[0] if renderNode.jquery
+    if renderNode.jquery
+      @renderNode = renderNode[0]
+    else
+      @renderNode = renderNode
 
     @loader = new Loader()
 
