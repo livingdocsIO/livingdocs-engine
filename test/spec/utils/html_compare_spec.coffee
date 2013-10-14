@@ -53,9 +53,21 @@ describe 'HtmlCompare', ->
       expect( compare(a, b) ).toBe(false)
 
 
-    it 'spots a missing attribute', ->
+    it 'spots a missing attribute in the first comparee', ->
+      a = $("<div></div>")[0]
+      b = $("<div id='b'></div>")[0]
+      expect( compare(a, b) ).toBe(false)
+
+
+    it 'spots a missing attribute in the second comparee', ->
       a = $("<div id='a'></div>")[0]
       b = $("<div></div>")[0]
+      expect( compare(a, b) ).toBe(false)
+
+
+    it 'spots a missing attribute with no value', ->
+      a = $("<div></div>")[0]
+      b = $("<div contenteditable></div>")[0]
       expect( compare(a, b) ).toBe(false)
 
 
@@ -73,6 +85,12 @@ describe 'HtmlCompare', ->
 
     it 'considers the same empty attributes equivalent', ->
       a = $("<div contenteditable></div>")[0]
+      b = $("<div contenteditable></div>")[0]
+      expect( compare(a, b) ).toBe(true)
+
+
+    it 'considers an empty attribute equal to one with no value', ->
+      a = $("<div contenteditable=''></div>")[0]
       b = $("<div contenteditable></div>")[0]
       expect( compare(a, b) ).toBe(true)
 
@@ -101,6 +119,12 @@ describe 'HtmlCompare', ->
       a = $("<div class='a b c'></div>")[0]
       b = $("<div class='a c'></div>")[0]
       expect( compare(a, b) ).toBe(false)
+
+
+    it 'treats empty class attribute as not existent', ->
+      a = $("<div></div>")[0]
+      b = $("<div class=''></div>")[0]
+      expect( compare(a, b) ).toBe(true)
 
 
   describe 'style attribute', ->
@@ -139,6 +163,12 @@ describe 'HtmlCompare', ->
       a = $("<div style='display:none; border: 1px solid #000'></div>")[0]
       b = $("<div style='display::none; border: 1px solid #000'></div>")[0]
       expect( compare(a, b) ).toBe(false)
+
+
+    it 'treats empty style attribute as not existent', ->
+      a = $("<div></div>")[0]
+      b = $("<div style=''></div>")[0]
+      expect( compare(a, b) ).toBe(true)
 
 
   describe 'text', ->

@@ -61,17 +61,36 @@ htmlCompare = do ->
 
 
   compareAttributes: (a, b) ->
-    if a.attributes.length == b.attributes.length
-      for attr in a.attributes
-        bValue = b.getAttribute(attr.name)
-        return false if not @compareAttributeValue(attr.name, attr.value, bValue)
+    @compareAttributesWithOther(a, b) &&
+    @compareAttributesWithOther(b, a)
 
-      return true
+
+  compareAttributesWithOther: (a, b) ->
+    for aAttr in a.attributes
+      bValue = b.getAttribute(aAttr.name)
+      return false if not @compareAttributeValue(aAttr.name, aAttr.value, bValue)
+
+      if  @isEmptyAttributeValue(aAttr.value) &&
+          @emptyAttributeCounts(aAttr.name)
+        return false if not b.hasAttribute(aAttr.name)
+
+    return true
+
+
+  emptyAttributeCounts: (attrName) ->
+    switch attrName
+      when 'class', 'style'
+        return false
+      else
+        return true
 
 
   compareAttributeValue: (attrName, aValue, bValue) ->
-    return true if not aValue? and not bValue?
-    return false if not aValue? or not bValue?
+    return true if  @isEmptyAttributeValue(aValue) &&
+                    @isEmptyAttributeValue(bValue)
+
+    return false if @isEmptyAttributeValue(aValue) ||
+                    @isEmptyAttributeValue(bValue)
 
     switch attrName
       when 'class'
@@ -84,6 +103,11 @@ htmlCompare = do ->
         aCleaned == bCleaned
       else
         aValue == bValue
+
+
+  # consider undefined, null and '' as empty
+  isEmptyAttributeValue: (val) ->
+    not val? || val == ''
 
 
   prepareStyleValue: (val) ->
