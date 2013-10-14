@@ -102,26 +102,26 @@ class Renderer
 
   insertSnippetAsSibling: (sibling, model) ->
     method = if sibling == model.previous then 'after' else 'before'
-    snippetView = @snippetViewForSnippet(model)
-    siblingSnippetView = @snippetViewForSnippet(sibling)
-    siblingSnippetView.$html[method](snippetView.$html)
+    @$nodeForSnippet(sibling)[method](@$nodeForSnippet(model))
 
 
   appendSnippetToParentContainer: (model) ->
-    parentContainer = model.parentContainer
-    $snippetViewHtml = @snippetViewForSnippet(model).$html
+    @$nodeForSnippet(model).appendTo(@$nodeForContainer(model.parentContainer))
 
-    container = if parentContainer.isRoot
+
+  $nodeForSnippet: (model) ->
+    @snippetViewForSnippet(model).$html
+
+
+  $nodeForContainer: (container) ->
+    if container.isRoot
       @$root
     else
-      parentSnippetView = @snippetViewForSnippet(parentContainer.parentSnippet)
-      parentSnippetView.getDirectiveElement(parentContainer.name)
-
-    $snippetViewHtml.appendTo(container)
+      parentView = @snippetViewForSnippet(container.parentSnippet)
+      $(parentView.getDirectiveElement(container.name))
 
 
   removeSnippet: (model) ->
-    snippetView = @snippetViewForSnippet(model)
-    snippetView.setAttachedToDom(false)
-    snippetView.$html.detach()
+    @snippetViewForSnippet(model).setAttachedToDom(false)
+    @$nodeForSnippet(model).detach()
 
