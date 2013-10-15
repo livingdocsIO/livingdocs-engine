@@ -142,7 +142,7 @@ class InteractivePage extends Page
       editableNodes = for directive in snippetView.directives.editable
         directive.elem
 
-    @editableController.add(editableNodes)
+      @editableController.add(editableNodes)
 
 
   afterSnippetFocused: (snippetView) ->
