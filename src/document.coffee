@@ -82,6 +82,23 @@ document = do ->
     @design = new Design(design)
 
 
+  createView: (parent=window.document.body) ->
+    iframe = $('<iframe>').appendTo(parent)[0]
+
+    page = new Page
+      renderNode: iframe.contentDocument.body
+      hostWindow: iframe.contentWindow
+
+    renderer = new Renderer
+      renderingContainer: page
+      snippetTree: @snippetTree
+
+    renderer.render()
+
+    iframe: iframe
+    renderer: renderer
+
+
   eachContainer: (callback) ->
     @snippetTree.eachContainer(callback)
 
