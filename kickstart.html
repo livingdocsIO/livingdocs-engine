@@ -23,32 +23,33 @@
 <body>
 
   <!-- document template with content to easily preview and test a design -->
-  <hero>
-    <title>Snippet outside container</title>
-    <tagline>Yep, it works</tagline>
-  </hero>
+  <script id="template" type="text/x-livingdocs-template">
+    <hero>
+      <title>Snippet <small>outside</small> container</title>
+      <tagline>Yep, it works</tagline>
+    </hero>
 
-  <column>
-      <main-and-sidebar>
-        <main>
-          <hero>
-            <title>Houston, we have a problem.</title>
-            <tagline>Test</tagline>
-          </hero>
-        </main>
-        <sidebar>
-          <text>Sharks in a tornado. Sharknado. Simply stunning.</text>
-          <text>Have you ever sucked feet for weed?</text> 
-        </sidebar>
-      </main-and-sidebar>
+    <column>
+        <main-and-sidebar>
+          <main>
+            <hero>
+              <title>Houston, we have a problem.</title>
+              <tagline>Test</tagline>
+            </hero>
+          </main>
+          <sidebar>
+            <text>Sharks in a tornado. Sharknado. Simply stunning.</text>
+            <text>Have you ever sucked feet for weed?</text> 
+          </sidebar>
+        </main-and-sidebar>
 
-      <text>Sharks in a tornado. Sharknado. Simply stunning.</text>
-      <text>Have you ever sucked feet for weed?</text>
-      <text>That pet store's got everything we need. Except for piranhas.</text>
-      <text></text>
-      <text></text>
-  </column>
-
+        <text>Sharks in a tornado. Sharknado. Simply stunning.</text>
+        <text>Have <b>you</b> ever sucked feet for weed?</text>
+        <text>That pet store's got everything we need. Except for piranhas.</text>
+        <text>test</text>
+        <text>test</text>
+    </column>
+  </script>
 
 
   
@@ -58,7 +59,7 @@
     //doc.init({design: design.bootstrap});
     
     // use a jQuery selector as destination
-    doc.kickstart('body', design.bootstrap);
+    doc.kickstart('#template', 'body', design.bootstrap);
 
 
   </script>
