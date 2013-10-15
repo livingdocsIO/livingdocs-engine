@@ -35,3 +35,15 @@ describe "words util", ->
 
     it "converts to snakeCase", ->
       expect(words.snakeCase("snakeCase")).toEqual("snake-case")
+
+
+  describe "camelize", ->
+
+    it "converts to camelCase", ->
+      expect(words.camelize("camel-case")).toEqual("camelCase")
+
+    it "leaves camelCase string untouched", ->
+      expect(words.camelize("camelCase")).toEqual("camelCase")
+
+    it "removes unnecessary dashes", ->
+      expect(words.camelize("camel--case")).toEqual("camelCase")
