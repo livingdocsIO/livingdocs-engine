@@ -39,11 +39,15 @@ kickstart = do ->
   populateSnippetContainers: (snippetModel, snippetXML) ->
     containers = if snippetModel.containers then Object.keys(snippetModel.containers) else []
 
+    directives = snippetModel.template.directives
+    if directives.length == 1 && directives.container
+      hasOnlyOneContainer = true
+      containerDirective = directives.container[0]
+
     # add snippets to default container if no other containers exists
-    hasOnlyDefault = snippetModel.template.directives.length == 1 && containers.indexOf('default') != -1
-    if hasOnlyDefault && !@descendants(snippetXML, 'default').length
+    if hasOnlyOneContainer && !@descendants(snippetXML, containerDirective.name).length
       for child in @descendants(snippetXML)
-        @appendSnippetToContainer(snippetModel, child, 'default')
+        @appendSnippetToContainer(snippetModel, child, containerDirective.name)
 
     else
       for container in containers
