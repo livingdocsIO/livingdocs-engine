@@ -82,6 +82,10 @@ class Renderer
   insertSnippet: (model) ->
     return if @isSnippetAttached(model)
 
+    model.children (childModel) =>
+      if not @isSnippetAttached(childModel)
+        @insertSnippet(childModel)
+
     if @isSnippetAttached(model.previous)
       @insertSnippetAsSibling(model.previous, model)
     else if @isSnippetAttached(model.next)
