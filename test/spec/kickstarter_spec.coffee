@@ -6,8 +6,23 @@ describe 'kickstart', ->
     @text2 = "Testparagraph2"
 
 
+  describe 'parseDocumentTemplate()', ->
+
+    beforeEach ->
+      template = '<text>A</text>'
+      @snippets = kickstart.parseDocumentTemplate(template)
+
+
+    it 'creates a text snippet', ->
+      expect(@snippets[0].template.identifier).toEqual('test.text')
+
+
+    it 'sets the content of the text snippet', ->
+      expect(@snippets[0].get('text')).toEqual('A')
+
+
   describe 'nodeToSnippetName()', ->
-    
+
     it 'returns a valid snippetName', ->
       html = $.parseXML("<stuffed-container><a>Test</a></stuffed-container>").firstChild
       snippetName = kickstart.nodeToSnippetName(html)

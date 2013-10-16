@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>Emmet Documentation</title>
+  <title>Kickstart</title>
 
 
     <link rel="stylesheet" href="test/manual/css/livingdocs.css">
@@ -39,29 +39,28 @@
           </main>
           <sidebar>
             <text>Sharks in a tornado. Sharknado. Simply stunning.</text>
-            <text>Have you ever sucked feet for weed?</text> 
+            <text>Have you ever sucked feet for weed?</text>
           </sidebar>
         </main-and-sidebar>
 
         <text>Sharks in a tornado. Sharknado. Simply stunning.</text>
         <text>Have <b>you</b> ever sucked feet for weed?</text>
-        <text>That pet store's got everything we need. Except for piranhas.</text>
+        <text>That pet store got everything we need. Except for piranhas.</text>
         <text>test</text>
         <text>test</text>
     </column>
   </script>
 
 
-  
-  <!-- script to parse and render the template -->
+
   <script>
-
-    //doc.init({design: design.bootstrap});
-    
-    // use a jQuery selector as destination
-    doc.kickstart('#template', 'body', design.bootstrap);
-
-
+    $(document).ready(function(){
+      doc.kickstart({
+        scriptNode: '#template',
+        destination: 'body',
+        design: design.bootstrap
+      });
+    });
   </script>
 
 </body>

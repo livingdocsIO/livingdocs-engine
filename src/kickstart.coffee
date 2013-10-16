@@ -1,22 +1,34 @@
 kickstart = do ->
 
-  init: (template, destination, design) ->
-    xmlElements = $.parseXML("<root>" + $(template).text() + "</root>").firstChild.children
-    $(destination).html('<div class="doc-section"></div>')
+  init: ({ xmlTemplate, scriptNode, destination, design }) ->
+    if scriptNode
+      xmlTemplate = $(scriptNode).text()
 
+    assert xmlTemplate, 'Please provide parameter "xmlTemplate" or "scriptNode"'
+
+    destinationNode = $(destination)[0]
     if not doc.document.initialized
-      doc.init(design: design)
-      doc.ready =>
-        @addRootSnippets(xmlElements)
+      doc.init(design: design, rootNode: destinationNode)
 
-    else
-      @addRootSnippets(xmlElements)
+    doc.ready =>
+      rootSnippets = @parseDocumentTemplate(xmlTemplate)
+      for snippet in rootSnippets
+        doc.add(snippet)
+
+
+  parseDocumentTemplate: (xmlTemplate) ->
+    root = $.parseXML("<root>" + xmlTemplate + "</root>").firstChild
+    @addRootSnippets($(root).children())
 
 
   addRootSnippets: (xmlElements) ->
+    rootSnippets = []
     for xmlElement, index in xmlElements
-      row = doc.add(@nodeToSnippetName(xmlElement))
-      @setChildren(row, xmlElement)
+      snippetModel = doc.create(@nodeToSnippetName(xmlElement))
+      rootSnippets.push(snippetModel)
+      @setChildren(snippetModel, xmlElement)
+
+    rootSnippets
 
 
   setChildren: (snippetModel, snippetXML) ->
