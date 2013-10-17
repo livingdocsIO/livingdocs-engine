@@ -82,10 +82,6 @@ class Renderer
   insertSnippet: (model) ->
     return if @isSnippetAttached(model)
 
-    model.children (childModel) =>
-      if not @isSnippetAttached(childModel)
-        @insertSnippet(childModel)
-
     if @isSnippetAttached(model.previous)
       @insertSnippetAsSibling(model.previous, model)
     else if @isSnippetAttached(model.next)
@@ -98,10 +94,17 @@ class Renderer
     snippetView = @snippetViewForSnippet(model)
     snippetView.setAttachedToDom(true)
     @renderingContainer.snippetViewWasInserted(snippetView)
+    @attachChildSnippets(model)
 
 
   isSnippetAttached: (model) ->
     model && @snippetViewForSnippet(model).isAttachedToDom
+
+
+  attachChildSnippets: (model) ->
+    model.children (childModel) =>
+      if not @isSnippetAttached(childModel)
+        @insertSnippet(childModel)
 
 
   insertSnippetAsSibling: (sibling, model) ->

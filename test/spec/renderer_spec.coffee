@@ -33,7 +33,7 @@ describe 'Not ReadOnly Renderer', ->
         <section></section>"""
 
 
-describe 'ReadOnly Renderer', ->
+describe 'insertSnippet()', ->
 
   beforeEach ->
     @tree = new SnippetTree()
@@ -42,6 +42,29 @@ describe 'ReadOnly Renderer', ->
 
     @renderer = new Renderer(snippetTree: @tree, renderingContainer: @page)
 
+  it 'insertes the already appended snippets of an inserted snippet', ->
+    container = test.getSnippet('container')
+    title = test.createSnippet('title', 'A')
+    container.append(config.directives.container.defaultName, title)
+    @tree.append(container)
+    expect(@page.renderNode).toEqualHtmlOf """
+      <section>
+        <div class="container">
+          <div>
+            <h1>A</h1>
+          </div>
+        </div>
+      </section>"""
+
+
+describe 'ReadOnly Renderer', ->
+
+  beforeEach ->
+    @tree = new SnippetTree()
+    @page = new Page
+      renderNode: $('<section>')
+
+    @renderer = new Renderer(snippetTree: @tree, renderingContainer: @page)
 
   describe 'with a title', ->
 
