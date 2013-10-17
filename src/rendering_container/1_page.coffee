@@ -3,7 +3,7 @@
 # page.
 class Page extends RenderingContainer
 
-  constructor: ({ renderNode, readOnly, hostWindow }={}) ->
+  constructor: ({ renderNode, readOnly, hostWindow, @design }={}) ->
     super()
 
     @isReadOnly = readOnly if readOnly?
@@ -16,6 +16,7 @@ class Page extends RenderingContainer
       @renderNode = renderNode
 
     @loader = new Loader()
+    @loadAssets()
 
 
   setWindow: (hostWindow) ->
@@ -23,3 +24,7 @@ class Page extends RenderingContainer
     @document = @window.document
     @$document = $(@document)
     @$body = $(@document.body)
+
+
+  loadAssets: ->
+    @loader.css(@design.css) if @design?.css

@@ -49,7 +49,7 @@ document = do ->
     assert not @initialized, 'document is already initialized'
     @initialized = true
 
-    @loadDesign(design)
+    @design = new Design(design)
 
     @snippetTree = if json && @design
       new SnippetTree(content: json, design: @design)
@@ -61,11 +61,7 @@ document = do ->
       @changed.fire()
 
     # Page initialization
-    @page = new InteractivePage(renderNode: rootNode)
-
-    # load design assets into page
-    if @design.css
-      @page.loader.css(@design.css, doBeforeDocumentReady())
+    @page = new InteractivePage(renderNode: rootNode, design: @design)
 
     # render document
     @renderer = new Renderer
@@ -78,15 +74,12 @@ document = do ->
     documentReady()
 
 
-  loadDesign: (design) ->
-    @design = new Design(design)
-
-
   createView: (parent=window.document.body) ->
     createRendererAndResolvePromise = =>
       page = new Page
         renderNode: iframe.contentDocument.body
         hostWindow: iframe.contentWindow
+        design: @design
       renderer = new Renderer
         renderingContainer: page
         snippetTree: @snippetTree
