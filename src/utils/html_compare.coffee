@@ -139,16 +139,27 @@ htmlCompare = do ->
 
   # iterate html nodes
   iterate: (root) ->
-    current = next = root
+    current = undefined
+    terminated = false
+    processed = []
 
-    return ->
-      n = current = next
-      child = next = undefined
-      if current
-        if child = n.firstChild
-          next = child
-        else
-          while (n != root) && !(next = n.nextSibling)
-            n = n.parentNode
+    ->
+      return if terminated
 
+      if !current
+        current = root
+      else if current == root
+        current = current.firstChild
+      else
+        current =
+          current.firstChild ||
+          current.nextSibling ||
+          current.parentNode
+        while processed.indexOf(current) >= 0
+          current = current.nextSibling || current.parentNode
+          if current == root
+            terminated = true
+            return
+
+      processed.push(current)
       current
