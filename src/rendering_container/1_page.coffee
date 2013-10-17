@@ -17,8 +17,8 @@ class Page extends RenderingContainer
 
 
   beforeReady: ->
-    @loader = new Loader()
-    @loader.css(@design.css, @readySemaphore.wait()) if @design?.css
+    @cssLoader = new CssLoader(@window)
+    @cssLoader.load(@design.css, @readySemaphore.wait()) if @design?.css
 
 
   setWindow: (hostWindow) ->
