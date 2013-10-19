@@ -34,6 +34,7 @@ kickstart = do ->
   setChildren: (snippetModel, snippetXML) ->
     @populateSnippetContainers(snippetModel, snippetXML)
     @setEditables(snippetModel, snippetXML)
+    @setEditableStyles(snippetModel, snippetXML)
 
 
   populateSnippetContainers: (snippetModel, snippetXML) ->
@@ -81,6 +82,20 @@ kickstart = do ->
 
   nodeNameToCamelCase: (element) ->
     words.camelize(element.nodeName)
+
+
+  setEditableStyles: (snippetModel, snippetXML) ->
+    styles = $(snippetXML).attr(config.kickstart.attr.styles)
+    if styles
+      styles = styles.split(';')
+      styles.forEach (style) =>
+        style = style.split(':')
+        @setEditableStyle(snippetModel, style[0], style[1])
+
+
+  setEditableStyle: (snippet, name, styleclass) ->
+    if name && styleclass
+      snippet.setStyle(name.trim(), styleclass.trim())
 
 
   # Convert a dom element into a camelCase snippetName
