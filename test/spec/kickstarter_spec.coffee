@@ -69,21 +69,15 @@ describe 'kickstart', ->
 
   describe 'setEditableStyles()', ->
 
-    it 'sets correct style', ->
+    it 'sets style with spaces', ->
       hero = test.getSnippet('hero')
-      template = $.parseXML("<hero doc-styles='Extra Space:extra-space'></hero>").firstChild
+      template = $.parseXML("<hero doc-styles='Extra Space: extra-space'></hero>").firstChild
       kickstart.setEditableStyles(hero, template)
       expect(hero.style('Extra Space')).toEqual('extra-space')
 
     it 'ignores empty styles', ->
       hero = test.getSnippet('hero')
-      template = $.parseXML("<hero doc-styles='foo:'></hero>").firstChild
-      kickstart.setEditableStyles(hero, template)
-      expect(hero.style('Extra Space')).toBeUndefined()
-
-    it 'ignores wrong syntax', ->
-      hero = test.getSnippet('hero')
-      template = $.parseXML("<hero doc-styles='fa;dsf:fsdf:faffas'></hero>").firstChild
+      template = $.parseXML("<hero doc-styles='Extra Space'></hero>").firstChild
       kickstart.setEditableStyles(hero, template)
       expect(hero.style('Extra Space')).toBeUndefined()
 

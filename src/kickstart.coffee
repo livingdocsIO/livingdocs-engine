@@ -87,15 +87,14 @@ kickstart = do ->
   setEditableStyles: (snippetModel, snippetXML) ->
     styles = $(snippetXML).attr(config.kickstart.attr.styles)
     if styles
-      styles = styles.split(';')
-      styles.forEach (style) =>
-        style = style.split(':')
-        @setEditableStyle(snippetModel, style[0], style[1])
+      styles = styles.split(/\s*;\s*/)
+      for style in styles
+        style = style.split(/\s*:\s*/)
+        @setEditableStyle(snippetModel, style[0], style[1]) if style.length > 1
 
 
-  setEditableStyle: (snippet, name, styleclass) ->
-    if name && styleclass
-      snippet.setStyle(name.trim(), styleclass.trim())
+  setEditableStyle: (snippet, name, styleClass) ->
+    snippet.setStyle(name, styleClass)
 
 
   # Convert a dom element into a camelCase snippetName
