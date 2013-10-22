@@ -147,3 +147,21 @@ describe 'ReadOnly Renderer', ->
           </div>
         </section>"""
 
+
+  describe 'with a doc-html directive', ->
+
+    beforeEach ->
+      html = test.createSnippet('html', '<article>html</article>')
+      @tree.append(html)
+
+
+    it 'does not block interaction in readOnly mode', ->
+      expect(@page.renderNode).toEqualHtmlOf """
+        <section>
+          <div>
+            <article>html</article>
+          </div>
+        </section>
+        """
+
+
