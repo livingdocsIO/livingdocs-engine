@@ -151,10 +151,10 @@ class SnippetView
     $elem = @directives.$getElem(name)
     $elem.html(value || '')
 
-    if value
-      @blockInteraction($elem)
-    else
+    if not value
       $elem.html(@template.defaults[name])
+    else if value and not @isReadOnly
+      @blockInteraction($elem)
 
     @directivesToReset ||= {}
     @directivesToReset[name] = name
