@@ -17,7 +17,7 @@ kickstart = do ->
 
 
   parseDocumentTemplate: (xmlTemplate) ->
-    root = $.parseXML("<root>" + xmlTemplate + "</root>").firstChild
+    root = $.parseXML("<root>#{xmlTemplate}</root>").firstChild
     @addRootSnippets($(root).children())
 
 
@@ -38,8 +38,6 @@ kickstart = do ->
 
 
   populateSnippetContainers: (snippetModel, snippetXML) ->
-    containers = if snippetModel.containers then Object.keys(snippetModel.containers) else []
-
     directives = snippetModel.template.directives
     if directives.length == 1 && directives.container
       hasOnlyOneContainer = true
@@ -51,6 +49,7 @@ kickstart = do ->
         @appendSnippetToContainer(snippetModel, child, containerDirective.name)
 
     else
+      containers = if snippetModel.containers then Object.keys(snippetModel.containers) else []
       for container in containers
         for editableContainer in @descendants(snippetXML, container)
           for child in @descendants(editableContainer)
@@ -90,11 +89,7 @@ kickstart = do ->
       styles = styles.split(/\s*;\s*/)
       for style in styles
         style = style.split(/\s*:\s*/)
-        @setEditableStyle(snippetModel, style[0], style[1]) if style.length > 1
-
-
-  setEditableStyle: (snippet, name, styleClass) ->
-    snippet.setStyle(name, styleClass)
+        snippetModel.setStyle(style[0], style[1]) if style.length > 1
 
 
   # Convert a dom element into a camelCase snippetName
@@ -108,8 +103,8 @@ kickstart = do ->
     snippetName
 
 
-  descendants: (xml, tagName) ->
-    tagLimiter = words.snakeCase(tagName) if tagName
+  descendants: (xml, nodeName) ->
+    tagLimiter = words.snakeCase(nodeName) if nodeName
     $(xml).children(tagLimiter)
 
 
