@@ -143,6 +143,13 @@ module.exports = (grunt) ->
           src: ['**'],
           dest: '../livingdocs-design/public/components/livingdocs-engine/'
         ]
+      site:
+        files: [
+          expand: true,
+          cwd: 'dist/',
+          src: ['**'],
+          dest: '../livingdocs-site/public/components/livingdocs-engine/'
+        ]
 
     concurrent:
       dev: [
