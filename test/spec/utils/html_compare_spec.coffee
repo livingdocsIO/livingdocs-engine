@@ -273,3 +273,43 @@ describe 'HtmlCompare', ->
 
       b = "<div id='test'>Here it comes:<div data-doc='true'  class='tablet-full hero'><a href='link'>click here!</a></div></div>"
       expect( compare($(a), $(b)) ).toBe(true)
+
+
+  describe 'whitespace examples', ->
+
+    it 'ignores meaningless whitespace in hierarchical structures', ->
+      a = "<foo><bar><link><meta><title>Test</title></bar><baz><div><p>Foo <em>bar</em> baz</p></div></baz></foo>"
+      b = """
+        <foo>
+          <bar>
+            <link>
+            <meta>
+            <title>Test</title>
+          </bar>
+          <baz>
+            <div>
+              <p>
+                Foo
+                <em>
+                  bar
+                </em>
+                baz
+              </p>
+            </div>
+          </baz>
+        </foo>
+      """
+      expect( compare(a, b) ).toBe(true)
+
+
+    it 'ignores whitespace in a single empty tag', ->
+      a = '<h1 data-doc-editable="title" class="doc-editable"></h1>'
+      b = '<h1 data-doc-editable=\'title\' class=\'doc-editable\'>\n</h1>'
+      expect( compare(a, b) ).toBe(true)
+
+
+  describe 'comparing nodes that have parents', ->
+    it 'does not compare parents of the compared nodes', ->
+      a = $('<div><h1></h1></div>')[0].firstChild
+      b = $('<section><h1></h1></section>')[0].firstChild
+      expect( compare(a, b) ).toBe(true)
