@@ -14,6 +14,9 @@ class RenderingContainer
 
   constructor: ->
     @renderNode = $('<div/>')[0]
+    @readySemaphore = new Semaphore()
+    @beforeReady()
+    @readySemaphore.start()
 
 
   html: ->
@@ -21,3 +24,12 @@ class RenderingContainer
 
 
   snippetViewWasInserted: (snippetView) ->
+
+
+  # This is called before the semaphore is started to give subclasses a chance
+  # to increment the semaphore so it does not fire immediately.
+  beforeReady: ->
+
+
+  ready: (callback) ->
+    @readySemaphore.addCallback(callback)

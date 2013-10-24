@@ -4,10 +4,10 @@
 class Page extends RenderingContainer
 
   constructor: ({ renderNode, readOnly, hostWindow, @design }={}) ->
-    super()
-
     @isReadOnly = readOnly if readOnly?
     @setWindow(hostWindow)
+
+    super()
 
     renderNode = renderNode || $(".#{ docClass.section }", @$body)
     if renderNode.jquery
@@ -15,8 +15,10 @@ class Page extends RenderingContainer
     else
       @renderNode = renderNode
 
+
+  beforeReady: ->
     @loader = new Loader()
-    @loadAssets()
+    @loader.css(@design.css, @readySemaphore.wait()) if @design?.css
 
 
   setWindow: (hostWindow) ->
@@ -24,7 +26,3 @@ class Page extends RenderingContainer
     @document = @window.document
     @$document = $(@document)
     @$body = $(@document.body)
-
-
-  loadAssets: ->
-    @loader.css(@design.css) if @design?.css
