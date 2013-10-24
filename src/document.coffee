@@ -18,23 +18,6 @@
 # Link the SnippetTree with the DomTree.
 document = do ->
 
-  # Private Closure
-  # ---------------
-
-  waitingCalls = 1 # 1 -> init
-
-
-  documentReady = =>
-    waitingCalls -= 1
-    if waitingCalls == 0
-      document.ready.fire()
-
-
-  doBeforeDocumentReady = () ->
-    waitingCalls += 1
-    return documentReady
-
-
   # Document object
   # ---------------
 
@@ -68,10 +51,7 @@ document = do ->
       snippetTree: @snippetTree
       renderingContainer: @page
 
-    @ready.add =>
-      @renderer.render()
-
-    documentReady()
+    @renderer.ready => @ready.fire()
 
 
   createView: (parent=window.document.body) ->
@@ -83,7 +63,6 @@ document = do ->
       renderer = new Renderer
         renderingContainer: page
         snippetTree: @snippetTree
-      renderer.render()
       deferred.resolve
         iframe: iframe
         renderer: renderer

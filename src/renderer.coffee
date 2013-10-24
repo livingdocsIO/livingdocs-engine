@@ -9,6 +9,21 @@ class Renderer
     @setupSnippetTreeListeners()
     @snippetViews = {}
 
+    @readySemaphore = new Semaphore()
+    @renderOncePageReady()
+    @readySemaphore.start()
+
+
+  renderOncePageReady: ->
+    @readySemaphore.increment()
+    @renderingContainer.ready =>
+      @render()
+      @readySemaphore.decrement()
+
+
+  ready: (callback) ->
+    @readySemaphore.addCallback(callback)
+
 
   html: ->
     @render()
