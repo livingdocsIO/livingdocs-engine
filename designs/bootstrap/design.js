@@ -28,7 +28,19 @@
     {
       "title": "Info",
       "id": "info",
-      "html": "<div class=\"alert alert-info\" doc-editable=\"info\">Lorem Ipsum dolorem</div>"
+      "html": "<div class=\"alert\" doc-editable=\"info\">Lorem Ipsum dolorem</div>",
+      "styles": [
+        {
+          "name": "Alert Type",
+          "type": "select",
+          "options": [
+            { "caption": "Info",        "value": "alert-info" },
+            { "caption": "Success",     "value": "alert-success" },
+            { "caption": "Error",       "value": "alert-error" },
+            { "caption": "Warning",     "value": "alert-warning" }
+          ]
+        }
+      ]
     },
     {
       "title": "Large Button",

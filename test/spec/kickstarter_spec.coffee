@@ -67,6 +67,21 @@ describe 'kickstart', ->
       expect(containerTemplate.containers.default.first.get('text')).toEqual(@text1)
 
 
+  describe 'setEditableStyles()', ->
+
+    it 'sets style with spaces', ->
+      hero = test.getSnippet('hero')
+      template = $.parseXML("<hero doc-styles='Extra Space: extra-space'></hero>").firstChild
+      kickstart.setEditableStyles(hero, template)
+      expect(hero.style('Extra Space')).toEqual('extra-space')
+
+    it 'ignores empty styles', ->
+      hero = test.getSnippet('hero')
+      template = $.parseXML("<hero doc-styles='Extra Space'></hero>").firstChild
+      kickstart.setEditableStyles(hero, template)
+      expect(hero.style('Extra Space')).toBeUndefined()
+
+
   describe 'getValueForEditable()', ->
 
     it 'gets string value from the kickstart template', ->

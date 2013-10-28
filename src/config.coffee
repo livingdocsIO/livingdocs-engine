@@ -49,6 +49,11 @@ do ->
         placeholder: 'data-doc-placeholder'
 
 
+    # kickstart config
+    kickstart:
+      attr:
+        styles: 'doc-styles'
+
     # Directive definitions
     #
     # attr: attribute used in templates to define the directive
