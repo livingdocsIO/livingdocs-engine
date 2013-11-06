@@ -25,8 +25,11 @@ class Renderer
     @readySemaphore.addCallback(callback)
 
 
+  isReady: ->
+    @readySemaphore.isReady()
+
+
   html: ->
-    @render()
     @renderingContainer.html()
 
 
@@ -76,8 +79,6 @@ class Renderer
 
 
   render: ->
-    @$root.empty()
-
     @snippetTree.each (model) =>
       @insertSnippet(model)
 
