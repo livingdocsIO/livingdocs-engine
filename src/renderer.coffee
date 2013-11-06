@@ -30,6 +30,7 @@ class Renderer
 
 
   html: ->
+    assert @isReady(), 'Cannot generate html. Renderer is not ready.'
     @renderingContainer.html()
 
 

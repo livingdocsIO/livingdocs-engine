@@ -121,14 +121,10 @@ document = do ->
 
 
   toHtml: ->
-    renderer = new Renderer(
+    new Renderer(
       snippetTree: @snippetTree
       renderingContainer: new RenderingContainer()
-    )
-    if renderer.isReady()
-      renderer.html()
-    else
-      log.error 'document#toHtml: renderer was not ready immediately'
+    ).html()
 
 
   restore: (contentJson, resetFirst = true) ->
