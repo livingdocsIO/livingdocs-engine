@@ -136,6 +136,13 @@ module.exports = (grunt) ->
           src: ['**'],
           dest: '../watson-ui/app/vendor/livingdocs-engine/'
         ]
+      datablog:
+        files: [
+          expand: true,
+          cwd: 'dist/',
+          src: ['**'],
+          dest: '../datablog-ui/app/vendor/livingdocs-engine/'
+        ]
       design:
         files: [
           expand: true,
