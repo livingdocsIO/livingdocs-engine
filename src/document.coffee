@@ -30,8 +30,7 @@ document = do ->
   # *Public API*
   init: ({ design, json, rootNode }={}) ->
     if @initialized
-      return documentReady()
-    #assert not @initialized, 'document is already initialized'
+      return
     @initialized = true
 
     @design = new Design(design)
