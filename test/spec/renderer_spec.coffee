@@ -73,11 +73,18 @@ describe 'ReadOnly Renderer', ->
       @tree.append(@title)
 
 
-    it 'renders the title', ->
+    it 'renders the title into the page', ->
       expect(@page.renderNode).toEqualHtmlOf """
         <section>
           <h1>A</h1>
         </section>"""
+
+
+    describe 'renderer.html()', ->
+
+      it 'returns the documents html', ->
+        expect(@renderer.html()).toEqualHtmlOf """
+          <h1>A</h1>"""
 
 
   describe 'with a hero', ->

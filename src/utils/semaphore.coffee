@@ -39,6 +39,10 @@ class Semaphore
       @callbacks.push(callback)
 
 
+  isReady: ->
+    @wasFired
+
+
   start: ->
     assert not @started,
       "Unable to start Semaphore once started."

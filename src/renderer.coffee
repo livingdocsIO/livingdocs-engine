@@ -25,8 +25,12 @@ class Renderer
     @readySemaphore.addCallback(callback)
 
 
+  isReady: ->
+    @readySemaphore.isReady()
+
+
   html: ->
-    @render()
+    assert @isReady(), 'Cannot generate html. Renderer is not ready.'
     @renderingContainer.html()
 
 
@@ -76,8 +80,6 @@ class Renderer
 
 
   render: ->
-    @$root.empty()
-
     @snippetTree.each (model) =>
       @insertSnippet(model)
 
