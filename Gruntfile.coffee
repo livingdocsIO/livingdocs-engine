@@ -150,6 +150,13 @@ module.exports = (grunt) ->
           src: ['**'],
           dest: '../livingdocs-design/public/components/livingdocs-engine/'
         ]
+      site:
+        files: [
+          expand: true,
+          cwd: 'dist/',
+          src: ['**'],
+          dest: '../livingdocs-site/public/components/livingdocs-engine/'
+        ]
 
     concurrent:
       dev: [
@@ -176,8 +183,7 @@ module.exports = (grunt) ->
   ])
 
   grunt.registerTask('test', [
-    'clean:tmp'
-    'coffee'
+    'coffee:test'
     'karma:unit'
   ])
 

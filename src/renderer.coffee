@@ -9,6 +9,21 @@ class Renderer
     @setupSnippetTreeListeners()
     @snippetViews = {}
 
+    @readySemaphore = new Semaphore()
+    @renderOncePageReady()
+    @readySemaphore.start()
+
+
+  renderOncePageReady: ->
+    @readySemaphore.increment()
+    @renderingContainer.ready =>
+      @render()
+      @readySemaphore.decrement()
+
+
+  ready: (callback) ->
+    @readySemaphore.addCallback(callback)
+
 
   html: ->
     @render()
@@ -94,59 +109,41 @@ class Renderer
     snippetView = @snippetViewForSnippet(model)
     snippetView.setAttachedToDom(true)
     @renderingContainer.snippetViewWasInserted(snippetView)
+    @attachChildSnippets(model)
 
 
   isSnippetAttached: (model) ->
     model && @snippetViewForSnippet(model).isAttachedToDom
 
 
+  attachChildSnippets: (model) ->
+    model.children (childModel) =>
+      if not @isSnippetAttached(childModel)
+        @insertSnippet(childModel)
+
+
   insertSnippetAsSibling: (sibling, model) ->
     method = if sibling == model.previous then 'after' else 'before'
-    snippetView = @snippetViewForSnippet(model)
-    siblingSnippetView = @snippetViewForSnippet(sibling)
-    siblingSnippetView.$html[method](snippetView.$html)
+    @$nodeForSnippet(sibling)[method](@$nodeForSnippet(model))
 
 
   appendSnippetToParentContainer: (model) ->
-    parentContainer = model.parentContainer
-    $snippetViewHtml = @snippetViewForSnippet(model).$html
+    @$nodeForSnippet(model).appendTo(@$nodeForContainer(model.parentContainer))
 
-    container = if parentContainer.isRoot
+
+  $nodeForSnippet: (model) ->
+    @snippetViewForSnippet(model).$html
+
+
+  $nodeForContainer: (container) ->
+    if container.isRoot
       @$root
     else
-      parentSnippetView = @snippetViewForSnippet(parentContainer.parentSnippet)
-      parentSnippetView.getDirectiveElement(parentContainer.name)
-
-    $snippetViewHtml.appendTo(container)
+      parentView = @snippetViewForSnippet(container.parentSnippet)
+      $(parentView.getDirectiveElement(container.name))
 
 
   removeSnippet: (model) ->
-    snippetView = @snippetViewForSnippet(model)
-    snippetView.setAttachedToDom(false)
-    snippetView.$html.detach()
-
-
-  # UI Inserts
-  # ----------
-
-  createInterfaceInjector: (snippetOrContainer) ->
-    if snippetOrContainer instanceof SnippetModel
-      @createSnippetInterfaceInjector(snippetOrContainer)
-    else if snippetOrContainer instanceof SnippetContainer
-      @createSnippetContainerInterfaceInjector(snippetOrContainer)
-
-
-  createSnippetInterfaceInjector: (model) ->
-    if model.uiInjector == undefined
-      model.uiInjector = new InterfaceInjector
-        snippet: model
-        renderer: this
-
-
-  createSnippetContainerInterfaceInjector: (snippetContainer) ->
-    if snippetContainer.uiInjector == undefined
-      snippetContainer.uiInjector = new InterfaceInjector
-        snippetContainer: snippetContainer
-        renderer: this
-
+    @snippetViewForSnippet(model).setAttachedToDom(false)
+    @$nodeForSnippet(model).detach()
 

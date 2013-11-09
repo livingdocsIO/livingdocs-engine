@@ -67,6 +67,6 @@ describe 'DirectiveCompiler', ->
 
     it 'removes the doc-optional directive attribute', ->
       expected = "<div #{ test.editableAttr }='text'></div>"
-      expect(htmlCompare.compare(@directive.elem, expected)).toEqual(true)
+      expect(@directive.elem).toEqualHtmlOf(expected)
 
 

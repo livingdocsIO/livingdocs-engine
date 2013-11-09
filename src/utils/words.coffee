@@ -43,6 +43,10 @@
   readableJson: (obj) ->
     JSON.stringify(obj, null, 2) # "\t"
 
+  camelize: (str) ->
+    $.trim(str).replace(/[-_\s]+(.)?/g, (match, c) ->
+      c.toUpperCase()
+    )
 
   trim: (str) ->
     str.replace(/^\s+|\s+$/g, '')

@@ -5,14 +5,6 @@ test = do ->
   cachedDesign = undefined
 
 
-  # Configuration changes
-  # ---------------------
-
-  # Make sure the animation effects are visible immediately.
-  config.animations.optionals.show = ($elem) -> $elem.show()
-  config.animations.optionals.hide = ($elem) -> $elem.hide()
-
-
   # Test Helpers
   # ------------
 
@@ -31,6 +23,14 @@ test = do ->
 
   getSnippet: (id) ->
     @getTemplate(id).createModel()
+
+
+  # helper to create snippets with one directive easier
+  createSnippet: (id, value) ->
+    snippet = @getSnippet(id)
+    firstDirective = snippet.template.directives[0]
+    snippet.set(firstDirective.name, value)
+    snippet
 
 
   getDesign: () ->

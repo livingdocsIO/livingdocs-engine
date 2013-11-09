@@ -49,6 +49,11 @@ do ->
         placeholder: 'data-doc-placeholder'
 
 
+    # kickstart config
+    kickstart:
+      attr:
+        styles: 'doc-styles'
+
     # Directive definitions
     #
     # attr: attribute used in templates to define the directive
@@ -89,10 +94,7 @@ do ->
           $elem.slideDown(250)
 
         hide: ($elem) ->
-          if $elem.css('display') == 'block'
-            $elem.slideUp(250)
-          else
-            $elem.hide()
+          $elem.slideUp(250)
 
 
     editable:

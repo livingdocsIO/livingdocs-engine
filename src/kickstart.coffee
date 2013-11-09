@@ -1,65 +1,117 @@
 kickstart = do ->
 
-  init: (destination, design) ->
-    domElements = $(destination).children().not('script')
-    $(destination).html('<div class="doc-section"></div>')
-    doc.init(design: design)
+  init: ({ xmlTemplate, scriptNode, destination, design }) ->
+    if scriptNode
+      xmlTemplate = $(scriptNode).text()
+
+    assert xmlTemplate, 'Please provide parameter "xmlTemplate" or "scriptNode"'
+
+    destinationNode = $(destination)[0]
+    if not doc.document.initialized
+      doc.init(design: design, rootNode: destinationNode)
+
     doc.ready =>
-      #add all root snippets, set their editables
-      domElements.each (index, element) =>
-        row = doc.add(@nodeToSnippetName(element))
-        @setChildren(row, element)
+      rootSnippets = @parseDocumentTemplate(xmlTemplate)
+      for snippet in rootSnippets
+        doc.add(snippet)
 
 
-  parseContainers: (snippet, data) ->
-    containers = if snippet.containers then Object.keys(snippet.containers) else []
-    if containers.length == 1 && containers.indexOf('default') != -1 && !$(data).children('default').length
-      for child in $(data).children()
-        @parseSnippets(snippet, 'default', child)
-
-    for editableContainer in $(containers.join(','), data)
-      for child in $(editableContainer).children()
-        @parseSnippets(snippet, editableContainer.localName, child)
+  parseDocumentTemplate: (xmlTemplate) ->
+    root = $.parseXML("<root>#{xmlTemplate}</root>").firstChild
+    @addRootSnippets($(root).children())
 
 
-  parseSnippets: (parentContainer, region, data) ->
-    snippet = doc.create(@nodeToSnippetName(data))
-    parentContainer.append(region, snippet)
-    @setChildren(snippet, data)
+  addRootSnippets: (xmlElements) ->
+    rootSnippets = []
+    for xmlElement, index in xmlElements
+      snippetModel = doc.create(@nodeToSnippetName(xmlElement))
+      rootSnippets.push(snippetModel)
+      @setChildren(snippetModel, xmlElement)
+
+    rootSnippets
 
 
-  setChildren: (snippet, data) ->
-    @parseContainers(snippet, data)
-    @setEditables(snippet, data)
+  setChildren: (snippetModel, snippetXML) ->
+    @populateSnippetContainers(snippetModel, snippetXML)
+    @setEditables(snippetModel, snippetXML)
+    @setEditableStyles(snippetModel, snippetXML)
 
 
-  setEditables: (snippet, data) ->
-    for key of snippet.content
-      directive = snippet.template.directives.get(key)
-      snippet.set(key, null)
-      child = $(key, data).get()[0]
+  populateSnippetContainers: (snippetModel, snippetXML) ->
+    directives = snippetModel.template.directives
+    if directives.length == 1 && directives.container
+      hasOnlyOneContainer = true
+      containerDirective = directives.container[0]
 
-      if key == 'image' && !child
-        child = $('img', data).get()[0]
+    # add snippets to default container if no other containers exists
+    if hasOnlyOneContainer && !@descendants(snippetXML, containerDirective.name).length
+      for child in @descendants(snippetXML)
+        @appendSnippetToContainer(snippetModel, child, containerDirective.name)
 
-      if !child
-        log('The snippet "' + key + '" has no content. Display parent HTML instead.')
-        child = data
+    else
+      containers = if snippetModel.containers then Object.keys(snippetModel.containers) else []
+      for container in containers
+        for editableContainer in @descendants(snippetXML, container)
+          for child in @descendants(editableContainer)
+            @appendSnippetToContainer(snippetModel, child, @nodeNameToCamelCase(editableContainer))
 
-      snippet.set(key, child.innerHTML)
+
+  appendSnippetToContainer: (snippetModel, snippetXML, region) ->
+    snippet = doc.create(@nodeToSnippetName(snippetXML))
+    snippetModel.append(region, snippet)
+    @setChildren(snippet, snippetXML)
+
+
+  setEditables: (snippetModel, snippetXML) ->
+    for editableName of snippetModel.content
+      value = @getValueForEditable(editableName, snippetXML, snippetModel.template.directives.length)
+      snippetModel.set(editableName, value) if value
+
+
+  getValueForEditable: (editableName, snippetXML, directivesQuantity) ->
+    child = @descendants(snippetXML, editableName)[0]
+    value = @getXmlValue(child)
+
+    if !value && directivesQuantity == 1
+      log.warn("The editable '#{editableName}' of '#{@nodeToSnippetName(snippetXML)}' has no content. Display parent HTML instead.")
+      value = @getXmlValue(snippetXML)
+
+    value
+
+
+  nodeNameToCamelCase: (element) ->
+    words.camelize(element.nodeName)
+
+
+  setEditableStyles: (snippetModel, snippetXML) ->
+    styles = $(snippetXML).attr(config.kickstart.attr.styles)
+    if styles
+      styles = styles.split(/\s*;\s*/)
+      for style in styles
+        style = style.split(/\s*:\s*/)
+        snippetModel.setStyle(style[0], style[1]) if style.length > 1
 
 
   # Convert a dom element into a camelCase snippetName
   nodeToSnippetName: (element) ->
-    snippetName = $.camelCase(element.localName)
-    snippet = doc.document.design.get(snippetName)
-
-    # check deprecated HTML elements that automatically convert to new element name.
-    if snippetName == 'img' && !snippet
-      snippetName = 'image'
-      snippet = doc.document.design.get('image')
+    snippetName = @nodeNameToCamelCase(element)
+    snippet = doc.getDesign().get(snippetName)
 
     assert snippet,
       "The Template named '#{snippetName}' does not exist."
 
     snippetName
+
+
+  descendants: (xml, nodeName) ->
+    tagLimiter = words.snakeCase(nodeName) if nodeName
+    $(xml).children(tagLimiter)
+
+
+  getXmlValue: (node) ->
+    if node
+      string = new XMLSerializer().serializeToString(node)
+      start = string.indexOf('>') + 1
+      end = string.lastIndexOf('<')
+      if end > start
+        string.substring(start, end)

@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>Emmet Documentation</title>
+  <title>Kickstart</title>
 
 
     <link rel="stylesheet" href="test/manual/css/livingdocs.css">
@@ -23,44 +23,39 @@
 <body>
 
   <!-- document template with content to easily preview and test a design -->
-  <hero>
-    <title>Snippet outside container</title>
-    <tagline>Yep, it works</tagline>
-  </hero>
-
-  <column>
+  <script id="template" type="text/x-livingdocs-template">
+    <column>
+      <info doc-styles="Alert Type:alert-success">This is a Kickstart example.</info>
       <main-and-sidebar>
         <main>
           <hero>
-            <title>Houston, we have a problem.</title>
-            <tagline>Test</tagline>
+            <title>Sharks in a tornado</title>
+            <tagline>Simply stunning.</tagline>
           </hero>
         </main>
         <sidebar>
           <text>Sharks in a tornado. Sharknado. Simply stunning.</text>
-          <text>Have you ever sucked feet for weed?</text> 
+          <text>Have you ever sucked feet for weed?</text>
         </sidebar>
       </main-and-sidebar>
 
       <text>Sharks in a tornado. Sharknado. Simply stunning.</text>
-      <text>Have you ever sucked feet for weed?</text>
-      <text>That pet store's got everything we need. Except for piranhas.</text>
+      <text>Have <b>you</b> ever sucked feet for weed?</text>
+      <text>That pet store got everything we need. Except for piranhas.</text>
       <text></text>
-      <text></text>
-  </column>
+      <text>test</text>
+    </column>
+  </script>
 
 
-
-  
-  <!-- script to parse and render the template -->
   <script>
-
-    //doc.init({design: design.bootstrap});
-    
-    // use a jQuery selector as destination
-    doc.kickstart('body', design.bootstrap);
-
-
+    $(document).ready(function(){
+      doc.kickstart({
+        scriptNode: '#template',
+        destination: 'body',
+        design: design.bootstrap
+      });
+    });
   </script>
 
 </body>

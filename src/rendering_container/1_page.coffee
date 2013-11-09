@@ -3,12 +3,26 @@
 # page.
 class Page extends RenderingContainer
 
-  constructor: (renderNode) ->
+  constructor: ({ renderNode, readOnly, hostWindow, @design }={}) ->
+    @isReadOnly = readOnly if readOnly?
+    @setWindow(hostWindow)
+
     super()
 
-    @document = window.document
+    renderNode = renderNode || $(".#{ docClass.section }", @$body)
+    if renderNode.jquery
+      @renderNode = renderNode[0]
+    else
+      @renderNode = renderNode
+
+
+  beforeReady: ->
+    @cssLoader = new CssLoader(@window)
+    @cssLoader.load(@design.css, @readySemaphore.wait()) if @design?.css
+
+
+  setWindow: (hostWindow) ->
+    @window = hostWindow || window
+    @document = @window.document
     @$document = $(@document)
     @$body = $(@document.body)
-    @renderNode = renderNode || $(".#{ docClass.section }")[0]
-
-    @loader = new Loader()

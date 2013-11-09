@@ -15,6 +15,16 @@ log = (args...) ->
 
 do ->
 
+  # Custom error type for livingdocs.
+  # We can use this to track the origin of an expection in unit tests.
+  class LivingdocsError extends Error
+
+    constructor: (message) ->
+      super
+      @message = message
+      @thrownByLivingdocs = true
+
+
   # @param level: one of these strings:
   # 'critical', 'error', 'warning', 'info', 'debug'
   notify = (message, level = 'error') ->
@@ -26,7 +36,7 @@ do ->
           log.call(undefined, message)
     else
       if (level == 'critical' or level == 'error')
-        throw new Error(message)
+        throw new LivingdocsError(message)
       else
         log.call(undefined, message)
 

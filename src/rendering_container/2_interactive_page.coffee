@@ -7,8 +7,8 @@ class InteractivePage extends Page
   isReadOnly: false
 
 
-  constructor: (renderNode) ->
-    super(renderNode)
+  constructor: ({ renderNode, hostWindow }={}) ->
+    super
 
     @focus = new Focus()
     @editableController = new EditableController(this)
@@ -142,7 +142,7 @@ class InteractivePage extends Page
       editableNodes = for directive in snippetView.directives.editable
         directive.elem
 
-    @editableController.add(editableNodes)
+      @editableController.add(editableNodes)
 
 
   afterSnippetFocused: (snippetView) ->

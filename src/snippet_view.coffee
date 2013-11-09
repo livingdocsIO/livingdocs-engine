@@ -24,7 +24,7 @@ class SnippetView
     @content(@model.content)
 
     if not @hasFocus()
-      @hideEmptyOptionals()
+      @displayOptionals()
 
     @stripHtmlIfReadOnly()
 
@@ -36,7 +36,18 @@ class SnippetView
     @stripHtmlIfReadOnly()
 
 
+  displayOptionals: ->
+    @directives.each (directive) =>
+      if directive.optional
+        $elem = $(directive.elem)
+        if @model.isEmpty(directive.name)
+          $elem.css('display', 'none')
+        else
+          $elem.css('display', '')
+
+
   # Show all doc-optionals whether they are empty or not.
+  # Use on focus.
   showOptionals: ->
     @directives.each (directive) =>
       if directive.optional
@@ -44,6 +55,7 @@ class SnippetView
 
 
   # Hide all empty doc-optionals
+  # Use on blur.
   hideEmptyOptionals: ->
     @directives.each (directive) =>
       if directive.optional && @model.isEmpty(directive.name)
@@ -116,7 +128,7 @@ class SnippetView
       @template.defaults[name]
 
     $elem.attr(config.html.attr.placeholder, placeholder)
-    $elem.html(value)
+    $elem.html(value || '')
 
 
   focusEditable: (name) ->
@@ -137,8 +149,12 @@ class SnippetView
 
   setHtml: (name, value) ->
     $elem = @directives.$getElem(name)
-    $elem.html(value)
-    @blockInteraction($elem)
+    $elem.html(value || '')
+
+    if not value
+      $elem.html(@template.defaults[name])
+    else if value and not @isReadOnly
+      @blockInteraction($elem)
 
     @directivesToReset ||= {}
     @directivesToReset[name] = name
