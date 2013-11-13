@@ -13,7 +13,7 @@ chainable = chainableProxy(doc)
 setupApi = ->
 
   # kickstart the document
-  @kickstart = chainable(kickstart, 'init')
+  @kickstart = chainable(document, 'kickstart')
 
     # Initialize the document
   @init = chainable(document, 'init')
