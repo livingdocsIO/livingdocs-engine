@@ -19,6 +19,7 @@ class SnippetModel
 
     @initializeDirectives()
     @styles = {}
+    @dataValues = {}
     @id = id || guid.next()
     @identifier = @template.identifier
 
@@ -112,6 +113,27 @@ class SnippetModel
     @content[name]
 
 
+  # can be called with a string or a hash
+  data: (arg) ->
+    if typeof(arg) == 'object'
+      changedDataProperties = []
+      for name, value of arg
+        if @changeData(name, value)
+          changedDataProperties.push(name)
+      if @snippetTree && changedDataProperties.length > 0
+        @snippetTree.dataChanging(this, changedDataProperties)
+    else
+      @dataValues[arg]
+
+
+  changeData: (name, value) ->
+    if !jsonHelper.deepEquals(@dataValues[name], value)
+      @dataValues[name] = value
+      true
+    else
+      false
+
+
   isEmpty: (name) ->
     value = @get(name)
     value == undefined || value == ''
@@ -137,8 +159,12 @@ class SnippetModel
           @snippetTree.htmlChanging(this, 'style', { name, value })
 
 
-  copy: ->
-    log.warn("SnippetModel#copy() is not implemented yet.")
+  copy: (design) ->
+    json = @toJson()
+    json.id = guid.next()
+    SnippetModel.fromJson(json, design)
+
+    #log.warn("SnippetModel#copy() is not implemented yet.")
 
     # serializing/deserializing should work but needs to get some tests first
     # json = @toJson()
@@ -251,6 +277,9 @@ class SnippetModel
     unless jsonHelper.isEmpty(@styles)
       json.styles = jsonHelper.flatCopy(@styles)
 
+    unless jsonHelper.isEmpty(@dataValues)
+      json.data = $.extend(true, {}, @dataValues)
+
     # create an array for every container
     for name of @containers
       json.containers ||= {}
@@ -274,6 +303,8 @@ SnippetModel.fromJson = (json, design) ->
 
   for styleName, value of json.styles
     model.style(styleName, value)
+
+  model.data(json.data) if json.data
 
   for containerName, snippetArray of json.containers
     assert model.containers.hasOwnProperty(containerName),

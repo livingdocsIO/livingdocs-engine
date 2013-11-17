@@ -61,6 +61,7 @@ class SnippetTree
     # content changes
     @snippetContentChanged = $.Callbacks()
     @snippetHtmlChanged = $.Callbacks()
+    @snippetDataChanged = $.Callbacks()
     @snippetSettingsChanged = $.Callbacks()
 
     @changed = $.Callbacks()
@@ -187,6 +188,10 @@ class SnippetTree
     @fireEvent('snippetHtmlChanged', snippet)
 
 
+  dataChanging: (snippet, changedProperties) ->
+    @fireEvent('snippetDataChanged', snippet, changedProperties)
+
+
   # Serialization
   # -------------
 
@@ -231,6 +236,3 @@ class SnippetTree
     @root.snippetTree = this
     @root.each (snippet) =>
       snippet.snippetTree = this
-
-
-

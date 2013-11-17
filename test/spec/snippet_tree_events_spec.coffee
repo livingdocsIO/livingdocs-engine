@@ -181,3 +181,39 @@ describe 'SnippetTree (Html Events)', ->
     it 'does not fire the htmlChanged event', ->
       @expectHtlmChanged 0, =>
         @hero.style('Extra Space', 'gazillion-pixel-whitespace')
+
+
+describe 'SnippetTree (Data Events)', ->
+  beforeEach ->
+    @tree = new SnippetTree()
+    monitor = test.createCallbackMonitor
+    @expectDataChanged = monitor(@tree.snippetDataChanged)
+    @expectChanged = monitor(@tree.changed)
+
+    @hero = test.getSnippet('hero')
+    @tree.append(@hero)
+
+
+  describe 'adding data', ->
+
+    beforeEach ->
+      @changeData = => @hero.data(
+        'geojson':
+          'features': []
+      )
+
+
+    it 'fires dataChanged event', ->
+      @expectDataChanged 1, => @changeData()
+
+
+    it 'fires changed event', ->
+      @expectChanged 1, => @changeData()
+
+
+    it '...twice fires dataChanged event only once', ->
+      @expectDataChanged 1, =>
+        @changeData()
+        @changeData()
+
+

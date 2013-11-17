@@ -152,4 +152,3 @@ describe 'Html snippet', ->
 
     it 'can get the content', ->
       expect(@image.get('html')).toEqual('<section>text</section>')
-
