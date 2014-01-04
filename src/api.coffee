@@ -14,6 +14,7 @@ setupApi = ->
 
   # kickstart the document
   @kickstart = chainable(document, 'kickstart')
+  @Kickstart = Kickstart
 
     # Initialize the document
   @init = chainable(document, 'init')

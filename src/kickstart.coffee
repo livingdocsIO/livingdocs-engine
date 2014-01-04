@@ -1,8 +1,8 @@
 class Kickstart
 
-  constructor: ({ xmlTemplate, scriptNode, destination, design}) ->
+  constructor: ({ xmlTemplate, scriptNode, destination, design} = {}) ->
     if !(this instanceof Kickstart)
-      return new Kickstart({ xmlTemplate, scriptNode, destination, design, readOnly })
+      return new Kickstart({ xmlTemplate, scriptNode, destination, design })
 
     assert scriptNode || xmlTemplate, 'Please provide parameter "xmlTemplate" or "scriptNode"'
 
@@ -114,3 +114,9 @@ class Kickstart
 
   getSnippetTree: ->
     @snippetTree
+
+  toHtml: ->
+    new Renderer(
+      snippetTree: @snippetTree
+      renderingContainer: new RenderingContainer()
+    ).html()

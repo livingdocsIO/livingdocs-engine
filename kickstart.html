@@ -23,7 +23,33 @@
 <body>
 
   <!-- document template with content to easily preview and test a design -->
-  <script id="template" type="text/x-livingdocs-template">
+  <div id="content1"></div>
+  <script id="template1" type="text/x-livingdocs-template">
+    <column>
+      <info doc-styles="Alert Type:alert-success">This is a Kickstart example.</info>
+      <main-and-sidebar>
+        <main>
+          <hero>
+            <title>Sharks in a tornado</title>
+            <tagline>Simply stunning.</tagline>
+          </hero>
+        </main>
+        <sidebar>
+          <text>Sharks in a tornado. Sharknado. Simply stunning.</text>
+          <text>Have you ever sucked feet for weed?</text>
+        </sidebar>
+      </main-and-sidebar>
+
+      <text>Sharks in a tornado. Sharknado. Simply stunning.</text>
+      <text>Have <b>you</b> ever sucked feet for weed?</text>
+      <text>That pet store got everything we need. Except for piranhas.</text>
+      <text></text>
+      <text>test</text>
+    </column>
+  </script>
+
+  <div id="content2"></div>
+  <script id="template2" type="text/x-livingdocs-template">
     <column>
       <info doc-styles="Alert Type:alert-success">This is a Kickstart example.</info>
       <main-and-sidebar>
@@ -51,10 +77,19 @@
   <script>
     $(document).ready(function(){
       doc.kickstart({
-        scriptNode: '#template',
-        destination: 'body',
+        scriptNode: '#template1',
+        destination: '#content1',
         design: design.bootstrap
       });
+    });
+
+    $(document).ready(function(){
+
+      var kickstart = doc.Kickstart({
+        scriptNode: '#template2',
+        design: design.bootstrap
+      }).toHtml()
+      $('#content2').html(kickstart);
     });
   </script>
 
