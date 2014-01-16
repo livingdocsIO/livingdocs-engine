@@ -98,7 +98,10 @@ do ->
 
 
     editable:
-      insertSnippet: 'text'
+      insertSnippet:
+        default: 'text'
+        conditional:
+          listElement: 'listElement'
 
   }
 

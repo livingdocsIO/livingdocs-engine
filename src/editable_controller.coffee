@@ -77,7 +77,11 @@ class EditableController
   insert: (view, editableName, direction, cursor) ->
     if @hasSingleEditable(view)
 
-      snippetName = config.editable.insertSnippet
+      if config.editable.insertSnippet.conditional[view.template.id]?
+        snippetName = config.editable.insertSnippet.conditional[view.template.id]
+      else
+        snippetName = config.editable.insertSnippet.default
+
       template = document.design.get(snippetName)
       copy = template.createModel()
 
