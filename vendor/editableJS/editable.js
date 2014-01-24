@@ -4104,7 +4104,7 @@ var behavior = (function() {
       var br = document.createElement('br');
       cursor.insertBefore(br);
 
-      if(atEnd) {
+      if (atEnd) {
         log('at the end');
 
         var noWidthSpace = document.createTextNode('\u200B');
@@ -4125,9 +4125,9 @@ var behavior = (function() {
       log('Default insert ' + direction + ' behavior');
       var parent = element.parentNode;
       var newElement = element.cloneNode(false);
-      if(newElement.id) newElement.removeAttribute('id');
+      if (newElement.id) newElement.removeAttribute('id');
 
-      switch(direction) {
+      switch (direction) {
       case 'before':
         parent.insertBefore(newElement, element);
         element.focus();
@@ -4153,7 +4153,7 @@ var behavior = (function() {
       log('Default merge ' + direction + ' behavior');
       var container, merger, fragment, chunks, i, newChild, range;
 
-      switch(direction) {
+      switch (direction) {
       case 'before':
         container = block.previous(element);
         merger = element;
@@ -4164,10 +4164,10 @@ var behavior = (function() {
         break;
       }
 
-      if(!(container && merger))
+      if (!(container && merger))
         return;
 
-      if(container.childNodes.length > 0)
+      if (container.childNodes.length > 0)
         cursor.moveAtTextEnd(container);
       else
         cursor.moveAtBeginning(container);
@@ -4175,7 +4175,7 @@ var behavior = (function() {
 
       fragment = document.createDocumentFragment();
       chunks = merger.childNodes;
-      for(i = 0; i < chunks.length; i++) {
+      for (i = 0; i < chunks.length; i++) {
         fragment.appendChild(chunks[i].cloneNode(true));
       }
       newChild = container.appendChild(fragment);
@@ -4198,7 +4198,7 @@ var behavior = (function() {
 
       var next, previous;
 
-      switch(direction) {
+      switch (direction) {
       case 'before':
         previous = block.previous(element);
         if (previous) {
@@ -4224,11 +4224,11 @@ var behavior = (function() {
       log('Default clipboard behavior');
       var pasteHolder, sel;
 
-      if(action !== 'paste') return;
+      if (action !== 'paste') return;
 
       element.setAttribute(config.pastingAttribute, true);
 
-      if(cursor.isSelection) {
+      if (cursor.isSelection) {
         cursor = cursor.deleteContent();
       }
 
@@ -4261,13 +4261,13 @@ var block = (function() {
   return {
     next: function(element) {
       var next = element.nextElementSibling;
-      if(next && next.getAttribute('contenteditable')) return next;
+      if (next && next.getAttribute('contenteditable')) return next;
       return null;
     },
 
     previous: function(element) {
       var previous = element.previousElementSibling;
-      if(previous && previous.getAttribute('contenteditable')) return previous;
+      if (previous && previous.getAttribute('contenteditable')) return previous;
       return null;
     }
   };
@@ -4491,18 +4491,18 @@ var content = (function() {
 
       for (i = 0; i < element.childNodes.length; i++) {
         node = element.childNodes[i];
-        if(!node) continue;
+        if (!node) continue;
 
         // skip empty tags, so they'll get removed
-        if(node.nodeName !== 'BR' && !node.textContent) continue;
+        if (node.nodeName !== 'BR' && !node.textContent) continue;
 
-        if(node.nodeType === 1 && node.nodeName !== 'BR') {
+        if (node.nodeType === 1 && node.nodeName !== 'BR') {
           sibling = node;
-          while((sibling = sibling.nextSibling) !== null) {
-            if(!parser.isSameNode(sibling, node))
+          while ((sibling = sibling.nextSibling) !== null) {
+            if (!parser.isSameNode(sibling, node))
               break;
 
-            for(j = 0; j < sibling.childNodes.length; j++) {
+            for (j = 0; j < sibling.childNodes.length; j++) {
               node.appendChild(sibling.childNodes[j].cloneNode(true));
             }
 
@@ -4541,9 +4541,9 @@ var content = (function() {
     normalizeSpaces: function(element) {
       var nonBreakingSpace = '\u00A0';
 
-      if(!element) return;
+      if (!element) return;
 
-      if(element.nodeType === 3) {
+      if (element.nodeType === 3) {
         element.nodeValue = element.nodeValue.replace(/^(\s)/, nonBreakingSpace).replace(/(\s)$/, nonBreakingSpace);
       }
       else {
@@ -4677,7 +4677,7 @@ var content = (function() {
         $(elem)[0] :
         elem;
 
-      if(this.isWrappable(range)) {
+      if (this.isWrappable(range)) {
         var a = range.surroundContents(elem);
       } else {
         console.log('content.wrap(): can not surround range');
@@ -4755,7 +4755,7 @@ var content = (function() {
             return node.nodeValue.search(charRegexp) >= 0;
           });
 
-          for(var i = 0; i < textNodes.length; i++) {
+          for (var i = 0; i < textNodes.length; i++) {
             var node = textNodes[i];
             node.nodeValue = node.nodeValue.replace(charRegexp, '');
           }
@@ -4828,6 +4828,40 @@ var Cursor = (function() {
           this.host,
           this.range.startContainer,
           this.range.startOffset);
+      },
+
+      getPreviousCharacter: function() {
+        var textRange = new TextRange(this.host, this.range);
+        return textRange.previousCharacter();
+      },
+
+      getNextCharacter: function() {
+        var textRange = new TextRange(this.host, this.range);
+        return textRange.nextCharacter();
+      },
+
+      deletePreviousCharacter: function() {
+        var textRange = new TextRange(this.host, this.range);
+        textRange.expandLeft();
+        this.range.deleteContents();
+      },
+
+      deleteNextCharacter: function() {
+        var textRange = new TextRange(this.host, this.range);
+        textRange.expandRight();
+        this.range.deleteContents();
+      },
+
+      expandLeft: function() {
+        var textRange = new TextRange(this.host, this.range);
+        textRange.expandLeft();
+        return new Selection(this.host, this.range);
+      },
+
+      expandRight: function() {
+        var textRange = new TextRange(this.host, this.range);
+        textRange.expandRight();
+        return new Selection(this.host, this.range);
       },
 
       /**
@@ -4964,13 +4998,13 @@ var Cursor = (function() {
       },
 
       equals: function(cursor) {
-        if(!cursor) return false;
+        if (!cursor) return false;
 
-        if(!cursor.host) return false;
-        if(!cursor.host.isEqualNode(this.host)) return false;
+        if (!cursor.host) return false;
+        if (!cursor.host.isEqualNode(this.host)) return false;
 
-        if(!cursor.range) return false;
-        if(!cursor.range.equals(this.range)) return false;
+        if (!cursor.range) return false;
+        if (!cursor.range.equals(this.range)) return false;
 
         return true;
       }
@@ -5007,10 +5041,10 @@ var dispatcher = (function() {
    */
   var setupElementEvents = function($document, notifier) {
     $document.on('focus.editable', editableSelector, function(event) {
-      if(this.getAttribute(config.pastingAttribute)) return;
+      if (this.getAttribute(config.pastingAttribute)) return;
       notifier('focus', this);
     }).on('blur.editable', editableSelector, function(event) {
-      if(this.getAttribute(config.pastingAttribute)) return;
+      if (this.getAttribute(config.pastingAttribute)) return;
       notifier('blur', this);
     }).on('copy.editable', editableSelector, function(event) {
       log('Copy');
@@ -5094,7 +5128,7 @@ var dispatcher = (function() {
       var range = selectionWatcher.getFreshRange();
       if (range.isCursor) {
         var cursor = range.getCursor();
-        if(cursor.isAtTextEnd()) {
+        if (cursor.isAtTextEnd()) {
           event.preventDefault();
           event.stopPropagation();
           notifier('merge', this, 'after', cursor);
@@ -5110,7 +5144,7 @@ var dispatcher = (function() {
 
       if (cursor.isAtTextEnd()) {
         notifier('insert', this, 'after', cursor);
-      } else if(cursor.isAtBeginning()) {
+      } else if (cursor.isAtBeginning()) {
         notifier('insert', this, 'before', cursor);
       } else {
         notifier('split', this, cursor.before(), cursor.after(), cursor);
@@ -5224,7 +5258,7 @@ var dispatcher = (function() {
       if (eventListeners === undefined) return;
 
       for (var i=0, len=eventListeners.length; i < len; i++) {
-        if(eventListeners[i].apply(
+        if (eventListeners[i].apply(
             Editable,
             Array.prototype.slice.call(arguments).splice(1)
         ) === false)
@@ -5246,7 +5280,7 @@ var dispatcher = (function() {
       listeners = {};
       // TODO check the config.event object to prevent
       // registering invalid handlers
-      for(eventType in config.event) {
+      for (eventType in config.event) {
         this.addListener(eventType, config.event[eventType]);
       }
 
@@ -5341,7 +5375,7 @@ var keyboard = (function() {
     if (eventListeners === undefined) return;
 
     for (var i=0, len=eventListeners.length; i < len; i++) {
-      if(eventListeners[i].apply(
+      if (eventListeners[i].apply(
           context,
           Array.prototype.slice.call(arguments).splice(2)
       ) === false)
@@ -5588,22 +5622,22 @@ var parser = (function() {
       }
     },
 
-    isStartOffset: function (container, offset) {
+    isStartOffset: function(container, offset) {
       if (container.nodeType === 3) {
         return offset === 0;
       } else {
-        if(container.childNodes.length === 0)
+        if (container.childNodes.length === 0)
           return true;
         else
           return container.childNodes[offset] === container.firstChild;
       }
     },
 
-    isEndOffset: function (container, offset) {
+    isEndOffset: function(container, offset) {
       if (container.nodeType === 3) {
         return offset === container.length;
       } else {
-        if(container.childNodes.length === 0)
+        if (container.childNodes.length === 0)
           return true;
         else if (offset > 0)
           return container.childNodes[offset - 1] === container.lastChild;
@@ -5629,7 +5663,7 @@ var parser = (function() {
       }
     },
 
-    isTextEndOffset: function (container, offset) {
+    isTextEndOffset: function(container, offset) {
       if (container.nodeType === 3) {
         var text = string.trimRight(container.nodeValue);
         return offset >= text.length;
@@ -5644,15 +5678,15 @@ var parser = (function() {
     isSameNode: function(target, source) {
       var i, len, attr;
 
-      if(target.nodeType !== source.nodeType)
+      if (target.nodeType !== source.nodeType)
         return false;
 
-      if(target.nodeName !== source.nodeName)
+      if (target.nodeName !== source.nodeName)
         return false;
 
-      for(i = 0, len = target.attributes.length; i < len; i++) {
+      for (i = 0, len = target.attributes.length; i < len; i++) {
         attr = target.attributes[i];
-        if(source.getAttribute(attr.name) !== attr.value)
+        if (source.getAttribute(attr.name) !== attr.value)
           return false;
       }
 
@@ -5667,7 +5701,7 @@ var parser = (function() {
      * @return {HTMLElement}           THe deepest last child in the container.
      */
     latestChild: function(container) {
-      if(container.lastChild)
+      if (container.lastChild)
         return this.latestChild(container.lastChild);
       else
         return container;
@@ -6234,6 +6268,143 @@ var Selection = (function() {
   });
 
   return Selection;
+})();
+
+var TextRange = (function() {
+
+  var TextRange = function(host, range) {
+    this.host = host;
+    this.range = range;
+  };
+
+  TextRange.prototype = (function() {
+    return {
+      nextCharacter: function() {
+        var node = this.range.endContainer;
+        var offset = this.range.endOffset;
+        var pos = this.getNextPosition(node, offset);
+        if (pos) {
+          return pos.textNode.nodeValue[pos.offset - 1];
+        } else {
+          return '';
+        }
+      },
+
+      previousCharacter: function() {
+        var node = this.range.startContainer;
+        var offset = this.range.startOffset;
+        var pos = this.getPreviousPosition(node, offset);
+        if (pos) {
+          return pos.textNode.nodeValue[pos.offset];
+        } else {
+          return '';
+        }
+      },
+
+      expandLeft: function() {
+        var node = this.range.startContainer;
+        var offset = this.range.startOffset;
+        var pos = this.getPreviousPosition(node, offset);
+        if (pos) {
+          this.range.setStart(pos.textNode, pos.offset);
+        }
+      },
+
+      expandRight: function() {
+        var node = this.range.endContainer;
+        var offset = this.range.endOffset;
+        var pos = this.getNextPosition(node, offset);
+        if (pos) {
+          this.range.setEnd(pos.textNode, pos.offset);
+        }
+      },
+
+      getNextPosition: function(node, offset) {
+        if (this.isTextNode(node) && !this.isAtEndOfTextNode(node, offset)) {
+          return { textNode: node, offset: offset + 1 };
+        } else {
+          if (this.isTextNode(node)) {
+            // position after textNode
+            offset = parser.getNodeIndex(node) + 1;
+            node = this.range.endContainer.parentNode;
+          }
+          var next = this.findNextTextNode(node, offset);
+          if (next) {
+            return { textNode: next, offset: 1 };
+          }
+        }
+      },
+
+      getPreviousPosition: function(node, offset) {
+        if (this.isTextNode(node) && !this.isAtBeginningOfTextNode(node, offset)) {
+          return { textNode: node, offset: offset - 1 };
+        } else {
+          if (this.isTextNode(node)) {
+            // position before textNode
+            offset = parser.getNodeIndex(node);
+            node = this.range.endContainer.parentNode;
+          }
+          var prev = this.findPreviousTextNode(node, offset);
+          if (prev) {
+            var secondLastOffset = prev.nodeValue.length - 1;
+            return { textNode: prev, offset: secondLastOffset };
+          }
+        }
+      },
+
+      /**
+       * Find the next TextNode with a length bigger than 0
+       *
+       * Attention: if the container is a textNode
+       * it will be included in the resutls
+      **/
+      findNextTextNode: function(container, offset) {
+        var textNodes = this.getTextNodes(container, offset, 'after');
+        for (var i = 0; i < textNodes.length; i++) {
+          if (!parser.isVoidTextNode(textNodes[i])) {
+            return textNodes[i];
+          }
+        }
+      },
+
+      /**
+       * Find the previous TextNode with a length bigger than 0
+       *
+       * Attention: if the container is a textNode
+       * it will be included in the resutls
+      **/
+      findPreviousTextNode: function(container, offset) {
+        var textNodes = this.getTextNodes(container, offset, 'before');
+        for (var i = textNodes.length - 1; i >= 0; i--) {
+          if (!parser.isVoidTextNode(textNodes[i])) {
+            return textNodes[i];
+          }
+        }
+      },
+
+      getTextNodes: function(container, offset, beforeOrAfter) {
+        var range = rangy.createRange();
+        range.selectNodeContents(this.host);
+        var rangeMethod = beforeOrAfter === 'before' ? 'setEnd' : 'setStart';
+        range[rangeMethod](container, offset);
+        return range.getNodes([3]);
+      },
+
+      isTextNode: function(node) {
+        return node.nodeType === 3;
+      },
+
+      isAtEndOfTextNode: function(textNode, offset) {
+        return offset === textNode.nodeValue.length;
+      },
+
+      isAtBeginningOfTextNode: function(textNode, offset) {
+        return offset === 0;
+      }
+    };
+  })();
+
+  return TextRange;
 })();
 
   window.Editable = Editable;
