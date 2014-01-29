@@ -129,27 +129,6 @@ module.exports = (grunt) ->
             src: '**'
             dest: 'dist/vendor/'
         ]
-      watson:
-        files: [
-          expand: true,
-          cwd: 'dist/',
-          src: ['**'],
-          dest: '../watson-ui/app/vendor/livingdocs-engine/'
-        ]
-      design:
-        files: [
-          expand: true,
-          cwd: 'dist/',
-          src: ['**'],
-          dest: '../livingdocs-design/public/components/livingdocs-engine/'
-        ]
-      site:
-        files: [
-          expand: true,
-          cwd: 'dist/',
-          src: ['**'],
-          dest: '../livingdocs-site/public/components/livingdocs-engine/'
-        ]
 
     concurrent:
       dev: [
