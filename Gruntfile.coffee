@@ -92,17 +92,17 @@ module.exports = (grunt) ->
           output: 'docs/test'
     karma:
       unit_once:
-        configFile: 'karma.conf.js'
+        configFile: 'karma.conf.coffee'
         browsers: ['PhantomJS']
         singleRun: true
       unit:
-        configFile: 'karma.conf.js'
+        configFile: 'karma.conf.coffee'
         browsers: ['PhantomJS']
       browsers:
-        configFile: 'karma.conf.js'
+        configFile: 'karma.conf.coffee'
         browsers: ['Chrome', 'Firefox', 'Safari']
       build:
-        configFile: 'karma.conf.js'
+        configFile: 'karma.conf.coffee'
         browsers: ['Chrome', 'Firefox', 'Safari']
         singleRun: true
     uglify:
