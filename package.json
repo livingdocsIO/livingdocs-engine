@@ -22,7 +22,8 @@
     "grunt-contrib-coffee": "~0.7.0",
     "grunt-docco": "~0.2.0",
     "grunt-concurrent": "~0.3.0",
-    "bump": "~0.2.3"
+    "bump": "~0.2.3",
+    "load-grunt-tasks": "~0.3.0"
   },
   "engines": {
     "node": ">=0.8.0"
