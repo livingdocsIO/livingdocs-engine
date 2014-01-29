@@ -1,6 +1,10 @@
 {
   "name": "livingdocs-engine",
   "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/upfrontIO/livingdocs-engine.git"
+  },
   "dependencies": {},
   "devDependencies": {
     "grunt": "~0.4.1",
