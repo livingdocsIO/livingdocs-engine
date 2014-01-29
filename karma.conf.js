@@ -19,10 +19,10 @@ files = [
   JASMINE_ADAPTER,
 
   // vendor files
-  'vendor/jquery-*.js',
+  'components/jquery/jquery.js',
   'vendor/yepnope/yepnope.1.5.3-min.js',
   'vendor/store/store.js',
-  'vendor/editableJS/editable.js',
+  // editable is mocked in the tests
 
   // source files
   '.tmp/livingdocs_engine_test.js',
