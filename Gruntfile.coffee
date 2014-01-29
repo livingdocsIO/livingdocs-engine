@@ -130,6 +130,13 @@ module.exports = (grunt) ->
             dest: 'dist/vendor/'
         ]
 
+    bump:
+      options:
+        files: ['package.json', 'bower.json']
+        commitFiles: ['package.json', 'bower.json', 'Changelog.md'], # '-a' for all files
+        pushTo: 'origin'
+        push: true
+
     concurrent:
       dev: [
         'watch:src'
@@ -167,5 +174,17 @@ module.exports = (grunt) ->
     'uglify'
     'copy:dependencies'
   ])
+
+  # Release a new version
+  # Only do this on the `master` branch.
+  #
+  # options:
+  # release:patch
+  # release:minor
+  # release:major
+  grunt.registerTask 'release', (type) ->
+    type = if type then type else 'patch'
+    grunt.task.run('bump:' + type)
+
 
   grunt.registerTask('default', ['server'])
