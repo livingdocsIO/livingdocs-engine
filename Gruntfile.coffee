@@ -53,7 +53,7 @@ module.exports = (grunt) ->
           join: true
           sourceMap: true
         files:
-          '.tmp/livingdocs_engine.js': [
+          '.tmp/livingdocs-engine.js': [
             'src/config.coffee'
             'src/utils/*.coffee'
             'src/mixins/*.coffee'
@@ -67,7 +67,7 @@ module.exports = (grunt) ->
         options:
           join: true
         files:
-          '.tmp/livingdocs_engine_test.js': [
+          '.tmp/livingdocs-engine-test.js': [
             'src/config.coffee'
             'src/utils/*.coffee'
             'src/mixins/*.coffee'
@@ -108,15 +108,15 @@ module.exports = (grunt) ->
     uglify:
       dist:
         files:
-          'dist/livingdocs_engine.min.js': [
-            'dist/livingdocs_engine.js'
+          'dist/livingdocs-engine.min.js': [
+            'dist/livingdocs-engine.js'
           ]
     copy:
       dist:
         files: [
           expand: true
           cwd: '.tmp/'
-          src: 'livingdocs_engine.*'
+          src: 'livingdocs-engine.*'
           dest: 'dist/'
         ]
       dependencies:

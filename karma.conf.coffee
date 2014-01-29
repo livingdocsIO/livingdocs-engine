@@ -25,7 +25,7 @@ files = [
   # editable is mocked in the tests
 
   # source files
-  '.tmp/livingdocs_engine_test.js'
+  '.tmp/livingdocs-engine-test.js'
 ]
 
 # list of files to exclude

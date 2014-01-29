@@ -36,7 +36,7 @@ grunt test
 # run tests in Chrome, Firefox and Safari
 grunt karma:browsers
 
-# run tests build livingdocs_engine.js
+# run tests build livingdocs-engine.js
 grunt build
 ```
 
