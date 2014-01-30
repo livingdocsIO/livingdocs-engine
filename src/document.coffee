@@ -31,7 +31,6 @@ document = do ->
   init: ({ design, json, rootNode }={}) ->
     assert not @initialized, 'document is already initialized'
     @initialized = true
-
     @design = new Design(design)
 
     @snippetTree = if json && @design
@@ -145,3 +144,6 @@ document = do ->
 
     template
 
+  kickstart: ({ xmlTemplate, scriptNode, destination, design}) ->
+    json = new Kickstart({xmlTemplate, scriptNode, design}).getSnippetTree().toJson()
+    @init({ design, json, rootNode: destination })

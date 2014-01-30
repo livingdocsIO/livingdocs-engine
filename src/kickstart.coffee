@@ -1,34 +1,26 @@
-kickstart = do ->
+class Kickstart
 
-  init: ({ xmlTemplate, scriptNode, destination, design }) ->
+  constructor: ({ xmlTemplate, scriptNode, destination, design} = {}) ->
+    if !(this instanceof Kickstart)
+      return new Kickstart({ xmlTemplate, scriptNode, destination, design })
+
+    assert scriptNode || xmlTemplate, 'Please provide parameter "xmlTemplate" or "scriptNode"'
+
     if scriptNode
-      xmlTemplate = $(scriptNode).text()
+      xmlTemplate = "<root>" + $(scriptNode).text() + "</root>"
+    
+    @template = $.parseXML(xmlTemplate).firstChild
+    @design = new Design(design)
+    @snippetTree = new SnippetTree()
 
-    assert xmlTemplate, 'Please provide parameter "xmlTemplate" or "scriptNode"'
-
-    destinationNode = $(destination)[0]
-    if not doc.document.initialized
-      doc.init(design: design, rootNode: destinationNode)
-
-    doc.ready =>
-      rootSnippets = @parseDocumentTemplate(xmlTemplate)
-      for snippet in rootSnippets
-        doc.add(snippet)
-
-
-  parseDocumentTemplate: (xmlTemplate) ->
-    root = $.parseXML("<root>#{xmlTemplate}</root>").firstChild
-    @addRootSnippets($(root).children())
+    @addRootSnippets($(@template).children())
 
 
   addRootSnippets: (xmlElements) ->
-    rootSnippets = []
     for xmlElement, index in xmlElements
-      snippetModel = doc.create(@nodeToSnippetName(xmlElement))
-      rootSnippets.push(snippetModel)
+      snippetModel = @createSnippet(xmlElement)
       @setChildren(snippetModel, xmlElement)
-
-    rootSnippets
+      row = @snippetTree.append(snippetModel)
 
 
   setChildren: (snippetModel, snippetXML) ->
@@ -57,7 +49,7 @@ kickstart = do ->
 
 
   appendSnippetToContainer: (snippetModel, snippetXML, region) ->
-    snippet = doc.create(@nodeToSnippetName(snippetXML))
+    snippet = @createSnippet(snippetXML)
     snippetModel.append(region, snippet)
     @setChildren(snippet, snippetXML)
 
@@ -95,12 +87,16 @@ kickstart = do ->
   # Convert a dom element into a camelCase snippetName
   nodeToSnippetName: (element) ->
     snippetName = @nodeNameToCamelCase(element)
-    snippet = doc.getDesign().get(snippetName)
+    snippet = @design.get(snippetName)
 
     assert snippet,
       "The Template named '#{snippetName}' does not exist."
 
     snippetName
+
+
+  createSnippet: (xml) ->
+    @design.get(@nodeToSnippetName(xml)).createModel()
 
 
   descendants: (xml, nodeName) ->
@@ -115,3 +111,12 @@ kickstart = do ->
       end = string.lastIndexOf('<')
       if end > start
         string.substring(start, end)
+
+  getSnippetTree: ->
+    @snippetTree
+
+  toHtml: ->
+    new Renderer(
+      snippetTree: @snippetTree
+      renderingContainer: new RenderingContainer()
+    ).html()
