@@ -123,17 +123,12 @@ module.exports = (grunt) ->
         files: [
             src: 'test/manual/css/livingdocs.css'
             dest: 'dist/css/livingdocs.css'
-          ,
-            expand: true
-            cwd: 'vendor/'
-            src: '**'
-            dest: 'dist/vendor/'
         ]
 
     bump:
       options:
         files: ['package.json', 'bower.json']
-        commitFiles: ['package.json', 'bower.json', 'Changelog.md'], # '-a' for all files
+        commitFiles: ['-a'], # '-a' for all files
         pushTo: 'origin'
         push: true
 

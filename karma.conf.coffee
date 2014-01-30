@@ -18,11 +18,9 @@ files = [
   JASMINE
   JASMINE_ADAPTER
 
-  # vendor files
+  # components
   'components/jquery/jquery.js'
-  'vendor/yepnope/yepnope.1.5.3-min.js'
-  'vendor/store/store.js'
-  # editable is mocked in the tests
+  # editable is mocked in the tests and thus not needed
 
   # source files
   '.tmp/livingdocs-engine-test.js'
