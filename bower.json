@@ -9,9 +9,9 @@
   "private": true,
   "ignore": [
     "**/**",
-    "!dist"
+    "!dist/**/**"
   ],
-  "devDependencies": {
+  "dependencies": {
     "EditableJS": "git@github.com:upfrontIO/Editable.JS.git#~0.1.1",
     "jquery": "~2.1.0"
   }
