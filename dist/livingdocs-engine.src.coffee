@@ -491,28 +491,65 @@ class LimitedLocalstore
 
 # Access to localstorage
 # ----------------------
-# wrapper for [https://github.com/marcuswestin/store.js]()
-localstore = do ->
-  $ = jQuery
+# Simplified version of [https://github.com/marcuswestin/store.js]()
+localstore = ( (win) ->
+
+  available = undefined
+  storageName = 'localStorage'
+  storage = win[storageName]
+
 
   set: (key, value) ->
-    store.set(key, value)
+    return @remove(key) unless value?
+    storage.setItem(key, @serialize(value))
+    value
 
 
   get: (key) ->
-    store.get(key)
+    @deserialize(storage.getItem(key))
 
 
   remove: (key) ->
-    store.remove(key)
+    storage.removeItem(key)
 
 
   clear: ->
-    store.clear()
+    storage.clear()
 
 
-  disbled: ->
-    store.disabled
+  isSupported: ->
+    return available if available?
+    available = @detectLocalstore()
+
+
+  # Internal
+  # --------
+
+  serialize: (value) ->
+    JSON.stringify(value)
+
+
+  deserialize: (value) ->
+    return undefined if typeof value != 'string'
+    try
+      JSON.parse(value)
+    catch error
+      value || undefined
+
+
+  detectLocalstore: ->
+    return false unless win[storageName]?
+    testKey = '__localstore-feature-detection__'
+    try
+      @set(testKey, testKey)
+      retrievedValue = @get(testKey)
+      @remove(testKey)
+      retrievedValue == testKey
+    catch error
+      false
+
+
+)(this)
 
 
 # Log Helper
@@ -2404,7 +2441,6 @@ document = do ->
   init: ({ design, json, rootNode }={}) ->
     assert not @initialized, 'document is already initialized'
     @initialized = true
-
     @design = new Design(design)
 
     @snippetTree = if json && @design
@@ -2518,6 +2554,9 @@ document = do ->
 
     template
 
+  kickstart: ({ xmlTemplate, scriptNode, destination, design}) ->
+    json = new Kickstart({xmlTemplate, scriptNode, design}).getSnippetTree().toJson()
+    @init({ design, json, rootNode: destination })
 
 # DOM helper methods
 # ------------------
@@ -3241,37 +3280,29 @@ class Focus
 
 
 
-kickstart = do ->
+class Kickstart
 
-  init: ({ xmlTemplate, scriptNode, destination, design }) ->
+  constructor: ({ xmlTemplate, scriptNode, destination, design} = {}) ->
+    if !(this instanceof Kickstart)
+      return new Kickstart({ xmlTemplate, scriptNode, destination, design })
+
+    assert scriptNode || xmlTemplate, 'Please provide parameter "xmlTemplate" or "scriptNode"'
+
     if scriptNode
-      xmlTemplate = $(scriptNode).text()
+      xmlTemplate = "<root>" + $(scriptNode).text() + "</root>"
+    
+    @template = $.parseXML(xmlTemplate).firstChild
+    @design = new Design(design)
+    @snippetTree = new SnippetTree()
 
-    assert xmlTemplate, 'Please provide parameter "xmlTemplate" or "scriptNode"'
-
-    destinationNode = $(destination)[0]
-    if not doc.document.initialized
-      doc.init(design: design, rootNode: destinationNode)
-
-    doc.ready =>
-      rootSnippets = @parseDocumentTemplate(xmlTemplate)
-      for snippet in rootSnippets
-        doc.add(snippet)
-
-
-  parseDocumentTemplate: (xmlTemplate) ->
-    root = $.parseXML("<root>#{xmlTemplate}</root>").firstChild
-    @addRootSnippets($(root).children())
+    @addRootSnippets($(@template).children())
 
 
   addRootSnippets: (xmlElements) ->
-    rootSnippets = []
     for xmlElement, index in xmlElements
-      snippetModel = doc.create(@nodeToSnippetName(xmlElement))
-      rootSnippets.push(snippetModel)
+      snippetModel = @createSnippet(xmlElement)
       @setChildren(snippetModel, xmlElement)
-
-    rootSnippets
+      row = @snippetTree.append(snippetModel)
 
 
   setChildren: (snippetModel, snippetXML) ->
@@ -3300,7 +3331,7 @@ kickstart = do ->
 
 
   appendSnippetToContainer: (snippetModel, snippetXML, region) ->
-    snippet = doc.create(@nodeToSnippetName(snippetXML))
+    snippet = @createSnippet(snippetXML)
     snippetModel.append(region, snippet)
     @setChildren(snippet, snippetXML)
 
@@ -3338,12 +3369,16 @@ kickstart = do ->
   # Convert a dom element into a camelCase snippetName
   nodeToSnippetName: (element) ->
     snippetName = @nodeNameToCamelCase(element)
-    snippet = doc.getDesign().get(snippetName)
+    snippet = @design.get(snippetName)
 
     assert snippet,
       "The Template named '#{snippetName}' does not exist."
 
     snippetName
+
+
+  createSnippet: (xml) ->
+    @design.get(@nodeToSnippetName(xml)).createModel()
 
 
   descendants: (xml, nodeName) ->
@@ -3358,6 +3393,15 @@ kickstart = do ->
       end = string.lastIndexOf('<')
       if end > start
         string.substring(start, end)
+
+  getSnippetTree: ->
+    @snippetTree
+
+  toHtml: ->
+    new Renderer(
+      snippetTree: @snippetTree
+      renderingContainer: new RenderingContainer()
+    ).html()
 
 class Renderer
 
@@ -3940,7 +3984,8 @@ chainable = chainableProxy(doc)
 setupApi = ->
 
   # kickstart the document
-  @kickstart = chainable(kickstart, 'init')
+  @kickstart = chainable(document, 'kickstart')
+  @Kickstart = Kickstart
 
     # Initialize the document
   @init = chainable(document, 'init')

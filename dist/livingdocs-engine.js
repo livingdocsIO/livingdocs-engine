@@ -1,5 +1,5 @@
 (function() {
-  var CssLoader, Design, DesignStyle, Directive, DirectiveCollection, DirectiveIterator, DragDrop, EditableController, Focus, InteractivePage, LimitedLocalstore, Page, Renderer, RenderingContainer, Semaphore, SnippetArray, SnippetContainer, SnippetDrag, SnippetModel, SnippetTree, SnippetView, Template, assert, chainable, chainableProxy, directiveCompiler, directiveFinder, document, dom, eventing, guid, htmlCompare, jsonHelper, kickstart, localstore, log, mixins, pageReady, setupApi, stash,
+  var CssLoader, Design, DesignStyle, Directive, DirectiveCollection, DirectiveIterator, DragDrop, EditableController, Focus, InteractivePage, Kickstart, LimitedLocalstore, Page, Renderer, RenderingContainer, Semaphore, SnippetArray, SnippetContainer, SnippetDrag, SnippetModel, SnippetTree, SnippetView, Template, assert, chainable, chainableProxy, directiveCompiler, directiveFinder, document, dom, eventing, guid, htmlCompare, jsonHelper, localstore, log, mixins, pageReady, setupApi, stash,
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -467,27 +467,67 @@
 
   })();
 
-  localstore = (function() {
-    var $;
-    $ = jQuery;
+  localstore = (function(win) {
+    var available, storage, storageName;
+    available = void 0;
+    storageName = 'localStorage';
+    storage = win[storageName];
     return {
       set: function(key, value) {
-        return store.set(key, value);
+        if (value == null) {
+          return this.remove(key);
+        }
+        storage.setItem(key, this.serialize(value));
+        return value;
       },
       get: function(key) {
-        return store.get(key);
+        return this.deserialize(storage.getItem(key));
       },
       remove: function(key) {
-        return store.remove(key);
+        return storage.removeItem(key);
       },
       clear: function() {
-        return store.clear();
+        return storage.clear();
       },
-      disbled: function() {
-        return store.disabled;
+      isSupported: function() {
+        if (available != null) {
+          return available;
+        }
+        return available = this.detectLocalstore();
+      },
+      serialize: function(value) {
+        return JSON.stringify(value);
+      },
+      deserialize: function(value) {
+        var error;
+        if (typeof value !== 'string') {
+          return void 0;
+        }
+        try {
+          return JSON.parse(value);
+        } catch (_error) {
+          error = _error;
+          return value || void 0;
+        }
+      },
+      detectLocalstore: function() {
+        var error, retrievedValue, testKey;
+        if (win[storageName] == null) {
+          return false;
+        }
+        testKey = '__localstore-feature-detection__';
+        try {
+          this.set(testKey, testKey);
+          retrievedValue = this.get(testKey);
+          this.remove(testKey);
+          return retrievedValue === testKey;
+        } catch (_error) {
+          error = _error;
+          return false;
+        }
       }
     };
-  })();
+  })(this);
 
   log = function() {
     var args;
@@ -2643,6 +2683,20 @@
         template = (_ref = this.design) != null ? _ref.get(identifier) : void 0;
         assert(template, "could not find template " + identifier);
         return template;
+      },
+      kickstart: function(_arg) {
+        var design, destination, json, scriptNode, xmlTemplate;
+        xmlTemplate = _arg.xmlTemplate, scriptNode = _arg.scriptNode, destination = _arg.destination, design = _arg.design;
+        json = new Kickstart({
+          xmlTemplate: xmlTemplate,
+          scriptNode: scriptNode,
+          design: design
+        }).getSnippetTree().toJson();
+        return this.init({
+          design: design,
+          json: json,
+          rootNode: destination
+        });
       }
     };
   })();
@@ -3372,174 +3426,190 @@
 
   })();
 
-  kickstart = (function() {
-    return {
-      init: function(_arg) {
-        var design, destination, destinationNode, scriptNode, xmlTemplate,
-          _this = this;
-        xmlTemplate = _arg.xmlTemplate, scriptNode = _arg.scriptNode, destination = _arg.destination, design = _arg.design;
-        if (scriptNode) {
-          xmlTemplate = $(scriptNode).text();
-        }
-        assert(xmlTemplate, 'Please provide parameter "xmlTemplate" or "scriptNode"');
-        destinationNode = $(destination)[0];
-        if (!doc.document.initialized) {
-          doc.init({
-            design: design,
-            rootNode: destinationNode
-          });
-        }
-        return doc.ready(function() {
-          var rootSnippets, snippet, _i, _len, _results;
-          rootSnippets = _this.parseDocumentTemplate(xmlTemplate);
-          _results = [];
-          for (_i = 0, _len = rootSnippets.length; _i < _len; _i++) {
-            snippet = rootSnippets[_i];
-            _results.push(doc.add(snippet));
-          }
-          return _results;
+  Kickstart = (function() {
+    function Kickstart(_arg) {
+      var design, destination, scriptNode, xmlTemplate, _ref;
+      _ref = _arg != null ? _arg : {}, xmlTemplate = _ref.xmlTemplate, scriptNode = _ref.scriptNode, destination = _ref.destination, design = _ref.design;
+      if (!(this instanceof Kickstart)) {
+        return new Kickstart({
+          xmlTemplate: xmlTemplate,
+          scriptNode: scriptNode,
+          destination: destination,
+          design: design
         });
-      },
-      parseDocumentTemplate: function(xmlTemplate) {
-        var root;
-        root = $.parseXML("<root>" + xmlTemplate + "</root>").firstChild;
-        return this.addRootSnippets($(root).children());
-      },
-      addRootSnippets: function(xmlElements) {
-        var index, rootSnippets, snippetModel, xmlElement, _i, _len;
-        rootSnippets = [];
-        for (index = _i = 0, _len = xmlElements.length; _i < _len; index = ++_i) {
-          xmlElement = xmlElements[index];
-          snippetModel = doc.create(this.nodeToSnippetName(xmlElement));
-          rootSnippets.push(snippetModel);
-          this.setChildren(snippetModel, xmlElement);
-        }
-        return rootSnippets;
-      },
-      setChildren: function(snippetModel, snippetXML) {
-        this.populateSnippetContainers(snippetModel, snippetXML);
-        this.setEditables(snippetModel, snippetXML);
-        return this.setEditableStyles(snippetModel, snippetXML);
-      },
-      populateSnippetContainers: function(snippetModel, snippetXML) {
-        var child, container, containerDirective, containers, directives, editableContainer, hasOnlyOneContainer, _i, _j, _len, _len1, _ref, _results, _results1;
-        directives = snippetModel.template.directives;
-        if (directives.length === 1 && directives.container) {
-          hasOnlyOneContainer = true;
-          containerDirective = directives.container[0];
-        }
-        if (hasOnlyOneContainer && !this.descendants(snippetXML, containerDirective.name).length) {
-          _ref = this.descendants(snippetXML);
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            child = _ref[_i];
-            _results.push(this.appendSnippetToContainer(snippetModel, child, containerDirective.name));
-          }
-          return _results;
-        } else {
-          containers = snippetModel.containers ? Object.keys(snippetModel.containers) : [];
-          _results1 = [];
-          for (_j = 0, _len1 = containers.length; _j < _len1; _j++) {
-            container = containers[_j];
-            _results1.push((function() {
-              var _k, _len2, _ref1, _results2;
-              _ref1 = this.descendants(snippetXML, container);
-              _results2 = [];
-              for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
-                editableContainer = _ref1[_k];
-                _results2.push((function() {
-                  var _l, _len3, _ref2, _results3;
-                  _ref2 = this.descendants(editableContainer);
-                  _results3 = [];
-                  for (_l = 0, _len3 = _ref2.length; _l < _len3; _l++) {
-                    child = _ref2[_l];
-                    _results3.push(this.appendSnippetToContainer(snippetModel, child, this.nodeNameToCamelCase(editableContainer)));
-                  }
-                  return _results3;
-                }).call(this));
-              }
-              return _results2;
-            }).call(this));
-          }
-          return _results1;
-        }
-      },
-      appendSnippetToContainer: function(snippetModel, snippetXML, region) {
-        var snippet;
-        snippet = doc.create(this.nodeToSnippetName(snippetXML));
-        snippetModel.append(region, snippet);
-        return this.setChildren(snippet, snippetXML);
-      },
-      setEditables: function(snippetModel, snippetXML) {
-        var editableName, value, _results;
+      }
+      assert(scriptNode || xmlTemplate, 'Please provide parameter "xmlTemplate" or "scriptNode"');
+      if (scriptNode) {
+        xmlTemplate = "<root>" + $(scriptNode).text() + "</root>";
+      }
+      this.template = $.parseXML(xmlTemplate).firstChild;
+      this.design = new Design(design);
+      this.snippetTree = new SnippetTree();
+      this.addRootSnippets($(this.template).children());
+    }
+
+    Kickstart.prototype.addRootSnippets = function(xmlElements) {
+      var index, row, snippetModel, xmlElement, _i, _len, _results;
+      _results = [];
+      for (index = _i = 0, _len = xmlElements.length; _i < _len; index = ++_i) {
+        xmlElement = xmlElements[index];
+        snippetModel = this.createSnippet(xmlElement);
+        this.setChildren(snippetModel, xmlElement);
+        _results.push(row = this.snippetTree.append(snippetModel));
+      }
+      return _results;
+    };
+
+    Kickstart.prototype.setChildren = function(snippetModel, snippetXML) {
+      this.populateSnippetContainers(snippetModel, snippetXML);
+      this.setEditables(snippetModel, snippetXML);
+      return this.setEditableStyles(snippetModel, snippetXML);
+    };
+
+    Kickstart.prototype.populateSnippetContainers = function(snippetModel, snippetXML) {
+      var child, container, containerDirective, containers, directives, editableContainer, hasOnlyOneContainer, _i, _j, _len, _len1, _ref, _results, _results1;
+      directives = snippetModel.template.directives;
+      if (directives.length === 1 && directives.container) {
+        hasOnlyOneContainer = true;
+        containerDirective = directives.container[0];
+      }
+      if (hasOnlyOneContainer && !this.descendants(snippetXML, containerDirective.name).length) {
+        _ref = this.descendants(snippetXML);
         _results = [];
-        for (editableName in snippetModel.content) {
-          value = this.getValueForEditable(editableName, snippetXML, snippetModel.template.directives.length);
-          if (value) {
-            _results.push(snippetModel.set(editableName, value));
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          child = _ref[_i];
+          _results.push(this.appendSnippetToContainer(snippetModel, child, containerDirective.name));
+        }
+        return _results;
+      } else {
+        containers = snippetModel.containers ? Object.keys(snippetModel.containers) : [];
+        _results1 = [];
+        for (_j = 0, _len1 = containers.length; _j < _len1; _j++) {
+          container = containers[_j];
+          _results1.push((function() {
+            var _k, _len2, _ref1, _results2;
+            _ref1 = this.descendants(snippetXML, container);
+            _results2 = [];
+            for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+              editableContainer = _ref1[_k];
+              _results2.push((function() {
+                var _l, _len3, _ref2, _results3;
+                _ref2 = this.descendants(editableContainer);
+                _results3 = [];
+                for (_l = 0, _len3 = _ref2.length; _l < _len3; _l++) {
+                  child = _ref2[_l];
+                  _results3.push(this.appendSnippetToContainer(snippetModel, child, this.nodeNameToCamelCase(editableContainer)));
+                }
+                return _results3;
+              }).call(this));
+            }
+            return _results2;
+          }).call(this));
+        }
+        return _results1;
+      }
+    };
+
+    Kickstart.prototype.appendSnippetToContainer = function(snippetModel, snippetXML, region) {
+      var snippet;
+      snippet = this.createSnippet(snippetXML);
+      snippetModel.append(region, snippet);
+      return this.setChildren(snippet, snippetXML);
+    };
+
+    Kickstart.prototype.setEditables = function(snippetModel, snippetXML) {
+      var editableName, value, _results;
+      _results = [];
+      for (editableName in snippetModel.content) {
+        value = this.getValueForEditable(editableName, snippetXML, snippetModel.template.directives.length);
+        if (value) {
+          _results.push(snippetModel.set(editableName, value));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Kickstart.prototype.getValueForEditable = function(editableName, snippetXML, directivesQuantity) {
+      var child, value;
+      child = this.descendants(snippetXML, editableName)[0];
+      value = this.getXmlValue(child);
+      if (!value && directivesQuantity === 1) {
+        log.warn("The editable '" + editableName + "' of '" + (this.nodeToSnippetName(snippetXML)) + "' has no content. Display parent HTML instead.");
+        value = this.getXmlValue(snippetXML);
+      }
+      return value;
+    };
+
+    Kickstart.prototype.nodeNameToCamelCase = function(element) {
+      return words.camelize(element.nodeName);
+    };
+
+    Kickstart.prototype.setEditableStyles = function(snippetModel, snippetXML) {
+      var style, styles, _i, _len, _results;
+      styles = $(snippetXML).attr(config.kickstart.attr.styles);
+      if (styles) {
+        styles = styles.split(/\s*;\s*/);
+        _results = [];
+        for (_i = 0, _len = styles.length; _i < _len; _i++) {
+          style = styles[_i];
+          style = style.split(/\s*:\s*/);
+          if (style.length > 1) {
+            _results.push(snippetModel.setStyle(style[0], style[1]));
           } else {
             _results.push(void 0);
           }
         }
         return _results;
-      },
-      getValueForEditable: function(editableName, snippetXML, directivesQuantity) {
-        var child, value;
-        child = this.descendants(snippetXML, editableName)[0];
-        value = this.getXmlValue(child);
-        if (!value && directivesQuantity === 1) {
-          log.warn("The editable '" + editableName + "' of '" + (this.nodeToSnippetName(snippetXML)) + "' has no content. Display parent HTML instead.");
-          value = this.getXmlValue(snippetXML);
-        }
-        return value;
-      },
-      nodeNameToCamelCase: function(element) {
-        return words.camelize(element.nodeName);
-      },
-      setEditableStyles: function(snippetModel, snippetXML) {
-        var style, styles, _i, _len, _results;
-        styles = $(snippetXML).attr(config.kickstart.attr.styles);
-        if (styles) {
-          styles = styles.split(/\s*;\s*/);
-          _results = [];
-          for (_i = 0, _len = styles.length; _i < _len; _i++) {
-            style = styles[_i];
-            style = style.split(/\s*:\s*/);
-            if (style.length > 1) {
-              _results.push(snippetModel.setStyle(style[0], style[1]));
-            } else {
-              _results.push(void 0);
-            }
-          }
-          return _results;
-        }
-      },
-      nodeToSnippetName: function(element) {
-        var snippet, snippetName;
-        snippetName = this.nodeNameToCamelCase(element);
-        snippet = doc.getDesign().get(snippetName);
-        assert(snippet, "The Template named '" + snippetName + "' does not exist.");
-        return snippetName;
-      },
-      descendants: function(xml, nodeName) {
-        var tagLimiter;
-        if (nodeName) {
-          tagLimiter = words.snakeCase(nodeName);
-        }
-        return $(xml).children(tagLimiter);
-      },
-      getXmlValue: function(node) {
-        var end, start, string;
-        if (node) {
-          string = new XMLSerializer().serializeToString(node);
-          start = string.indexOf('>') + 1;
-          end = string.lastIndexOf('<');
-          if (end > start) {
-            return string.substring(start, end);
-          }
+      }
+    };
+
+    Kickstart.prototype.nodeToSnippetName = function(element) {
+      var snippet, snippetName;
+      snippetName = this.nodeNameToCamelCase(element);
+      snippet = this.design.get(snippetName);
+      assert(snippet, "The Template named '" + snippetName + "' does not exist.");
+      return snippetName;
+    };
+
+    Kickstart.prototype.createSnippet = function(xml) {
+      return this.design.get(this.nodeToSnippetName(xml)).createModel();
+    };
+
+    Kickstart.prototype.descendants = function(xml, nodeName) {
+      var tagLimiter;
+      if (nodeName) {
+        tagLimiter = words.snakeCase(nodeName);
+      }
+      return $(xml).children(tagLimiter);
+    };
+
+    Kickstart.prototype.getXmlValue = function(node) {
+      var end, start, string;
+      if (node) {
+        string = new XMLSerializer().serializeToString(node);
+        start = string.indexOf('>') + 1;
+        end = string.lastIndexOf('<');
+        if (end > start) {
+          return string.substring(start, end);
         }
       }
     };
+
+    Kickstart.prototype.getSnippetTree = function() {
+      return this.snippetTree;
+    };
+
+    Kickstart.prototype.toHtml = function() {
+      return new Renderer({
+        snippetTree: this.snippetTree,
+        renderingContainer: new RenderingContainer()
+      }).html();
+    };
+
+    return Kickstart;
+
   })();
 
   Renderer = (function() {
@@ -4200,7 +4270,8 @@
   chainable = chainableProxy(doc);
 
   setupApi = function() {
-    this.kickstart = chainable(kickstart, 'init');
+    this.kickstart = chainable(document, 'kickstart');
+    this.Kickstart = Kickstart;
     this.init = chainable(document, 'init');
     this.ready = chainable(document.ready, 'add');
     this.createView = $.proxy(document, 'createView');
