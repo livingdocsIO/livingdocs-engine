@@ -1,24 +1,61 @@
 # Access to localstorage
 # ----------------------
-# wrapper for [https://github.com/marcuswestin/store.js]()
-localstore = do ->
-  $ = jQuery
+# Simplified version of [https://github.com/marcuswestin/store.js]()
+localstore = ( (win) ->
+
+  available = undefined
+  storageName = 'localStorage'
+  storage = win[storageName]
+
 
   set: (key, value) ->
-    store.set(key, value)
+    return @remove(key) unless value?
+    storage.setItem(key, @serialize(value))
+    value
 
 
   get: (key) ->
-    store.get(key)
+    @deserialize(storage.getItem(key))
 
 
   remove: (key) ->
-    store.remove(key)
+    storage.removeItem(key)
 
 
   clear: ->
-    store.clear()
+    storage.clear()
 
 
-  disbled: ->
-    store.disabled
+  isSupported: ->
+    return available if available?
+    available = @detectLocalstore()
+
+
+  # Internal
+  # --------
+
+  serialize: (value) ->
+    JSON.stringify(value)
+
+
+  deserialize: (value) ->
+    return undefined if typeof value != 'string'
+    try
+      JSON.parse(value)
+    catch error
+      value || undefined
+
+
+  detectLocalstore: ->
+    return false unless win[storageName]?
+    testKey = '__localstore-feature-detection__'
+    try
+      store.set(testKey, testKey)
+      retrievedValue = store.get(testKey)
+      store.remove(testKey)
+      retrievedValue == testKey
+    catch error
+      false
+
+
+)(this)
