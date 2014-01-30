@@ -123,11 +123,6 @@ module.exports = (grunt) ->
         files: [
             src: 'test/manual/css/livingdocs.css'
             dest: 'dist/css/livingdocs.css'
-          ,
-            expand: true
-            cwd: 'vendor/'
-            src: '**'
-            dest: 'dist/vendor/'
         ]
 
     bump:
