@@ -20,7 +20,6 @@ files = [
 
   # vendor files
   'components/jquery/jquery.js'
-  'vendor/yepnope/yepnope.1.5.3-min.js'
   'vendor/store/store.js'
   # editable is mocked in the tests
 
