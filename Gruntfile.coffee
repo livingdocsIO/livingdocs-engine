@@ -8,7 +8,7 @@ folderMount = (connect, point) ->
 module.exports = (grunt) ->
 
   # load all grunt tasks
-  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks)
+  require('load-grunt-tasks')(grunt)
 
   grunt.initConfig
     livereload:
@@ -53,7 +53,7 @@ module.exports = (grunt) ->
           join: true
           sourceMap: true
         files:
-          '.tmp/livingdocs_engine.js': [
+          '.tmp/livingdocs-engine.js': [
             'src/config.coffee'
             'src/utils/*.coffee'
             'src/mixins/*.coffee'
@@ -67,7 +67,7 @@ module.exports = (grunt) ->
         options:
           join: true
         files:
-          '.tmp/livingdocs_engine_test.js': [
+          '.tmp/livingdocs-engine-test.js': [
             'src/config.coffee'
             'src/utils/*.coffee'
             'src/mixins/*.coffee'
@@ -92,31 +92,31 @@ module.exports = (grunt) ->
           output: 'docs/test'
     karma:
       unit_once:
-        configFile: 'karma.conf.js'
+        configFile: 'karma.conf.coffee'
         browsers: ['PhantomJS']
         singleRun: true
       unit:
-        configFile: 'karma.conf.js'
+        configFile: 'karma.conf.coffee'
         browsers: ['PhantomJS']
       browsers:
-        configFile: 'karma.conf.js'
+        configFile: 'karma.conf.coffee'
         browsers: ['Chrome', 'Firefox', 'Safari']
       build:
-        configFile: 'karma.conf.js'
+        configFile: 'karma.conf.coffee'
         browsers: ['Chrome', 'Firefox', 'Safari']
         singleRun: true
     uglify:
       dist:
         files:
-          'dist/livingdocs_engine.min.js': [
-            'dist/livingdocs_engine.js'
+          'dist/livingdocs-engine.min.js': [
+            'dist/livingdocs-engine.js'
           ]
     copy:
       dist:
         files: [
           expand: true
           cwd: '.tmp/'
-          src: 'livingdocs_engine.*'
+          src: 'livingdocs-engine.*'
           dest: 'dist/'
         ]
       dependencies:
@@ -129,27 +129,13 @@ module.exports = (grunt) ->
             src: '**'
             dest: 'dist/vendor/'
         ]
-      watson:
-        files: [
-          expand: true,
-          cwd: 'dist/',
-          src: ['**'],
-          dest: '../watson-ui/app/vendor/livingdocs-engine/'
-        ]
-      design:
-        files: [
-          expand: true,
-          cwd: 'dist/',
-          src: ['**'],
-          dest: '../livingdocs-design/public/components/livingdocs-engine/'
-        ]
-      site:
-        files: [
-          expand: true,
-          cwd: 'dist/',
-          src: ['**'],
-          dest: '../livingdocs-site/public/components/livingdocs-engine/'
-        ]
+
+    bump:
+      options:
+        files: ['package.json', 'bower.json']
+        commitFiles: ['package.json', 'bower.json', 'Changelog.md'], # '-a' for all files
+        pushTo: 'origin'
+        push: true
 
     concurrent:
       dev: [
@@ -188,5 +174,17 @@ module.exports = (grunt) ->
     'uglify'
     'copy:dependencies'
   ])
+
+  # Release a new version
+  # Only do this on the `master` branch.
+  #
+  # options:
+  # release:patch
+  # release:minor
+  # release:major
+  grunt.registerTask 'release', (type) ->
+    type = if type then type else 'patch'
+    grunt.task.run('bump:' + type)
+
 
   grunt.registerTask('default', ['server'])
