@@ -50,9 +50,9 @@ localstore = ( (win) ->
     return false unless win[storageName]?
     testKey = '__localstore-feature-detection__'
     try
-      store.set(testKey, testKey)
-      retrievedValue = store.get(testKey)
-      store.remove(testKey)
+      @set(testKey, testKey)
+      retrievedValue = @get(testKey)
+      @remove(testKey)
       retrievedValue == testKey
     catch error
       false
