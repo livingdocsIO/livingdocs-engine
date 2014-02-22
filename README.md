@@ -1,57 +1,50 @@
 # Livingdocs Engine
 
-## Development
 
-Follow the style guidelines defined in [STYLE.md](STYLE.md).
-
-### Organization
+## Organization
 
 All code is wrapped in one function. All coffee files share the same closure.
 
-### Optional Prerequisites
+## Build (and Release)
 
-- [PhantomJS](http://phantomjs.org/)
-
-### Setup
+#### Build
 
 ```bash
-# install PhantomJS with homebrew
-brew install phantomjs
-
-# install node dependencies
-npm install
+# Build into the dist/ folder
+grunt build
 ```
 
-### Grunt Tasks
+#### Release
+1. **Update Changelog**
 
+  List changes and link to merged pull-requests
+
+2. **Update Readme**
+  
+  (if something changed)
+
+3. **Create a release tag and push everything**
+  
+  (Build is done automatically before creating the tag)
+
+  ```bash
+  # Example for a patch release:
+  grunt release:patch
+  ```
+
+## Development
+
+Grunt Tasks:
 ```bash
-# watch and update coffee files
-# livereload on localhost:9000
-# (required for running tests)
+# For manual testing of the engine in the browser
 grunt dev
 
-# run tests with PhantomJS
+# run browser tests
 grunt test
 
 # run tests in Chrome, Firefox and Safari
 grunt karma:browsers
 
-# run tests build livingdocs-engine.js
-grunt build
+# run node tests
+# todo
 ```
-
-## Documentation
-
-- [Docco](http://jashkenas.github.io/docco/)
-
-```bash
-# install Pygments (required by docco)
-sudo easy_install Pygments
-
-# globally install docco
-sudo npm install -g docco
-
-# build documentation
-grunt docco
-```
-

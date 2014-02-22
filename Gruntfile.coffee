@@ -140,12 +140,6 @@ module.exports = (grunt) ->
     'watch'
   ])
 
-  grunt.registerTask('server', [
-    'connect:livereload'
-    'open'
-    'watch:livereload'
-  ])
-
   grunt.registerTask('test', [
     'coffee:test'
     'karma:unit'
@@ -168,7 +162,8 @@ module.exports = (grunt) ->
   # release:minor
   # release:major
   grunt.registerTask 'release', (type) ->
-    type = if type then type else 'patch'
+    type ?= 'patch'
+    grunt.task.run('build')
     grunt.task.run('bump:' + type)
 
 
