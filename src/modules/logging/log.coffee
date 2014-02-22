@@ -3,7 +3,7 @@
 # ----------
 # Default logging helper
 # @params: pass `"trace"` as last parameter to output the call stack
-log = (args...) ->
+module.exports = log = (args...) ->
   if window.console?
     if args.length and args[args.length - 1] == 'trace'
       args.pop()
