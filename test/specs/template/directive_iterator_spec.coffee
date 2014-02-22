@@ -1,3 +1,5 @@
+DirectiveIterator = require('../../../src/template/directive_iterator')
+
 describe 'DirectiveIterator', ->
 
   beforeEach ->
@@ -19,13 +21,13 @@ describe 'DirectiveIterator', ->
     visitedElements = 0
     visitedComments = 0
     while @iterator.next()
-      if @iterator.current.nodeType == Node.ELEMENT_NODE
+      if @iterator.current.nodeType == 1 # Node.ELEMENT_NODE
         visitedElements += 1
-      if @iterator.current.nodeType == Node.COMMENT_NODE
+      if @iterator.current.nodeType == 8 # Node.COMMENT_NODE
         visitedComments += 1
 
-    expect(visitedElements).toEqual(3)
-    expect(visitedComments).toEqual(1)
+    expect(visitedElements).to.equal(3)
+    expect(visitedComments).to.equal(1)
 
 
   it 'domNode.hasAttribute works', ->
@@ -35,7 +37,7 @@ describe 'DirectiveIterator', ->
       if node.nodeType == 1 && node.hasAttribute(test.editableAttr)
         foundEditables += 1
 
-    expect(foundEditables).toEqual(1)
+    expect(foundEditables).to.equal(1)
 
 
   describe '#nextElement()', ->
@@ -43,7 +45,7 @@ describe 'DirectiveIterator', ->
     it 'iterates only over element nodes', ->
       traversedNodes = 0
       while @iterator.nextElement()
-        expect(@iterator.current.nodeType).toEqual(1)
+        expect(@iterator.current.nodeType).to.equal(1)
         traversedNodes += 1
 
-      expect(traversedNodes).toEqual(3)
+      expect(traversedNodes).to.equal(3)
