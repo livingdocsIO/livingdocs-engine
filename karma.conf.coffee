@@ -1,85 +1,59 @@
-# Sample Karma configuration file, that contain pretty much all the available options
-# It's used for running client tests on Travis (http://travis-ci.org/#!/karma-runner/karma)
-# Most of the options can be overriden by cli arguments (see karma --help)
-#
-# For all available config options and default values, see:
-# https://github.com/karma-runner/karma/blob/stable/lib/config.js#L54
+module.exports = (config) ->
+  config.set
+
+    # base path, that will be used to resolve files and exclude
+    basePath: ''
+
+    # testing framework to use (jasmine/mocha/qunit/...)
+    frameworks: ['mocha', 'sinon-chai', 'browserify']
+
+    # list of files / patterns to load in the browser
+    files: [
+      'components/jquery/jquery.js'
+      'test/support/**/*.coffee'
+      'test/specs/**/*.coffee'
+    ],
+
+    # list of files / patterns to exclude
+    exclude: [],
+
+    preprocessors:
+      'test/support/**/*': ['browserify']
+      'test/specs/**/*': ['browserify']
+
+    browserify:
+      extension: ['.coffee']
+      transform: ['coffeeify']
+      noParse: ['jquery']
+
+    # web server port
+    port: 8080
+
+    # level of logging
+    # possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
+    logLevel: config.LOG_INFO
 
 
-# base path, that will be used to resolve files and exclude
-basePath = './'
+    # enable / disable watching file and executing tests whenever any file changes
+    autoWatch: false
 
-# frameworks = ['jasmine'];
 
-# list of files / patterns to load in the browser
-files = [
-  # MOCHA,
-  # MOCHA_ADAPTER,
-  JASMINE
-  JASMINE_ADAPTER
+    # Start these browsers, currently available:
+    # - Chrome
+    # - ChromeCanary
+    # - Firefox
+    # - Opera
+    # - Safari (only Mac)
+    # - PhantomJS
+    # - IE (only Windows)
+    browsers: ['PhantomJS']
 
-  # components
-  'components/jquery/jquery.js'
-  # editable is mocked in the tests and thus not needed
 
-  # source files
-  '.tmp/livingdocs-engine-test.js'
-]
+    # If browser does not capture in given timeout [ms], kill it
+    captureTimeout: 10000
 
-# list of files to exclude
-exclude = []
 
-# use dots reporter, as travis terminal does not support escaping sequences
-# possible values: 'dots', 'progress', 'junit', 'teamcity', 'coverage'
-# CLI --reporters progress
-reporters = ['dots']
+    # Continuous Integration mode
+    # if true, it capture browsers, run tests and exit
+    singleRun: false
 
-# web server port
-# CLI --port 9876
-port = 9876
-
-# cli runner port
-# CLI --runner-port 9100
-runnerPort = 9100
-
-# enable / disable colors in the output (reporters and logs)
-# CLI --colors --no-colors
-colors = true
-
-# level of logging
-# possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-# CLI --log-level debug
-logLevel = LOG_INFO
-
-# enable / disable watching file and executing tests whenever any file changes
-# CLI --auto-watch --no-auto-watch
-autoWatch = true
-
-# Start these browsers, currently available:
-# - Chrome
-# - ChromeCanary
-# - Firefox
-# - Opera
-# - Safari (only Mac)
-# - PhantomJS
-# - IE (only Windows)
-# CLI --browsers Chrome,Firefox,Safari
-browsers = ['Chrome']
-
-# If browser does not capture in given timeout [ms], kill it
-# CLI --capture-timeout 5000
-captureTimeout = 15000
-
-# Auto run tests on start (when browsers are captured) and exit
-# CLI --single-run --no-single-run
-singleRun = false
-
-# report which specs are slower than 500ms
-# CLI --report-slower-than 500
-reportSlowerThan = 500
-
-plugins = [
-  'karma-jasmine'
-  'karma-chrome-launcher'
-  'karma-firefox-launcher'
-]

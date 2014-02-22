@@ -90,6 +90,25 @@ module.exports = (grunt) ->
             'test/spec/*.coffee'
           ]
 
+    browserify:
+      tmp:
+        files:
+          '.tmp/browserify.js' : [
+            'src/browserify.coffee'
+          ]
+        options:
+          extensions: ['.coffee']
+          transform: ['coffeeify']
+          debug: true
+
+    mochaTest:
+      test:
+        options:
+          reporter: 'spec'
+          compilers: 'coffee-script/register'
+          require: './test/node/test_globals.js'
+        src: ['test/specs/**/*.coffee']
+
     karma:
       unit_once:
         configFile: 'karma.conf.coffee'
@@ -97,7 +116,8 @@ module.exports = (grunt) ->
         singleRun: true
       unit:
         configFile: 'karma.conf.coffee'
-        browsers: ['PhantomJS']
+        browsers: ['Chrome']
+        autoWatch: true
       browsers:
         configFile: 'karma.conf.coffee'
         browsers: ['Chrome', 'Firefox', 'Safari']
@@ -141,8 +161,11 @@ module.exports = (grunt) ->
   ])
 
   grunt.registerTask('test', [
-    'coffee:test'
     'karma:unit'
+  ])
+
+  grunt.registerTask('node-test', [
+    'mochaTest'
   ])
 
   grunt.registerTask('build', [

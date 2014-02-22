@@ -45,6 +45,6 @@ grunt test
 # run tests in Chrome, Firefox and Safari
 grunt karma:browsers
 
-# run node tests
-# todo
+# run tests in node environment
+grunt node-test
 ```
