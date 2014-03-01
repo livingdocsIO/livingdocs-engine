@@ -1,4 +1,4 @@
-eventing = do ->
+module.exports = do ->
 
   # Add an event listener to a $.Callbacks object that will
   # remove itself from its $.Callbacks after the first call.
