@@ -25,6 +25,10 @@ module.exports = testHelpers =
     @getDesign().get(id)
 
 
+  getSnippet: (id) ->
+    @getTemplate(id).createModel()
+
+
 # Add properties to testHelpers
 #
 # add a Attr property for every directive

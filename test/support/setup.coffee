@@ -1,10 +1,19 @@
 config = require('../../src/configuration/defaults')
+log = require('../../src/modules/logging/log')
+assert = require('../../src/modules/logging/assert')
 testHelpers = require('./test_helpers')
 testDesign = require('./test_design')
+_ = require('underscore')
 
 
 # Load chai extensions
+require('./chai_helpers')
 require('../../src/modules/html_compare/chai_extensions')
+
+
+# Supress logs
+log.debugDisabled = true
+log.warningsDisabled = true
 
 
 # Export Globals
@@ -14,6 +23,9 @@ require('../../src/modules/html_compare/chai_extensions')
 exportGlobals = (global) ->
   global.test = testHelpers
   global.$ = testHelpers.$
+  global._ = _
+  global.log = log
+  global.assert = assert
   global.config = config
   global.docClass = config.docClass
 
@@ -21,7 +33,6 @@ exportGlobals = (global) ->
 # Exports for node are done in test/node/test_globals
 if window?
   exportGlobals(window)
-
 
 
 # if window?
@@ -52,11 +63,6 @@ if window?
 
 # module.exports = test = do ->
 
-#   # log.debugDisabled = true
-#   # log.warningsDisabled = true
-#   cachedDesign = undefined
-
-
 #   # Test Helpers
 #   # ------------
 
@@ -69,10 +75,6 @@ if window?
 #     `expectedProperty in obj`
 
 
-#   getTemplate: (id) ->
-#     @getDesign().get(id)
-
-
 #   getSnippet: (id) ->
 #     @getTemplate(id).createModel()
 
@@ -83,24 +85,6 @@ if window?
 #     firstDirective = snippet.template.directives[0]
 #     snippet.set(firstDirective.name, value)
 #     snippet
-
-
-#   getDesign: () ->
-#     cachedDesign ||= new Design(testDesign)
-
-
-#   # simple helper to get the length of an object
-#   size: (obj) ->
-#     size = 0
-#     for key of obj
-#       if obj.hasOwnProperty(key)
-#         size += 1
-
-#     size
-
-
-#   createElem: (str) ->
-#     $(str)[0]
 
 
 #   # use this to test serialization and deserialization
