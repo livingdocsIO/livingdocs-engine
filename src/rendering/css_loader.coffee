@@ -1,4 +1,6 @@
-class CssLoader
+Semaphore = require('../modules/semaphore')
+
+module.exports = class CssLoader
 
   constructor: (@window) ->
     @loadedUrls = []

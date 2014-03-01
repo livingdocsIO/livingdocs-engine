@@ -1,3 +1,5 @@
+CssLoader = require('../../../src/rendering/css_loader')
+
 describe 'CssLoader', ->
   beforeEach ->
     @window = document: head: $('<div>')[0]
@@ -13,7 +15,7 @@ describe 'CssLoader', ->
 
 
       it "injects a link tag with that url into the window's document head", ->
-        expect(@window.document.head).toEqualHtmlOf """
+        expect(@window.document.head).to.have.html """
           <div>
             <link rel="stylesheet" type="text/css" href="foo.css">
           </div>
@@ -27,7 +29,7 @@ describe 'CssLoader', ->
 
 
       it "injects a link tag for each url into the window's document head", ->
-        expect(@window.document.head).toEqualHtmlOf """
+        expect(@window.document.head).to.have.html """
           <div>
             <link rel="stylesheet" type="text/css" href="foo.css">
             <link rel="stylesheet" type="text/css" href="bar.css">
@@ -38,7 +40,7 @@ describe 'CssLoader', ->
     it 'does not load a file twice', ->
       @loader.load(['foo.css', 'bar.css', 'foo.css'])
       @loader.load('bar.css')
-      expect(@window.document.head).toEqualHtmlOf """
+      expect(@window.document.head).to.have.html """
         <div>
           <link rel="stylesheet" type="text/css" href="foo.css">
           <link rel="stylesheet" type="text/css" href="bar.css">
