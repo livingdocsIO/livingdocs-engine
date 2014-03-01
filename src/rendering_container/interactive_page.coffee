@@ -1,6 +1,8 @@
+Page = require('./page')
+
 # An InteractivePage is a subclass of Page which allows for manipulation of the
 # rendered SnippetTree.
-class InteractivePage extends Page
+module.exports = class InteractivePage extends Page
 
   LEFT_MOUSE_BUTTON = 1
 

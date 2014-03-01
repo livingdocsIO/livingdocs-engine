@@ -1,3 +1,5 @@
+Semaphore = require('../modules/semaphore')
+
 # A RenderingContainer is used by the Renderer to generate HTML.
 #
 # The Renderer inserts SnippetViews into the RenderingContainer and notifies it
@@ -7,7 +9,7 @@
 # this base class that is intended for displaying to the user. InteractivePage
 # is a subclass of Page which adds interactivity, and thus editability, to the
 # page.
-class RenderingContainer
+module.exports = class RenderingContainer
 
   isReadOnly: true
 
