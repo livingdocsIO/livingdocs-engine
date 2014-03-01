@@ -1,7 +1,19 @@
+log = require('../modules/logging/log')
+assert = require('../modules/logging/assert')
+words = require('../modules/words')
+
+DirectiveIterator = require('./directive_iterator')
+DirectiveCollection = require('./directive_collection')
+directiveCompiler = require('./directive_compiler')
+directiveFinder = require('./directive_finder')
+
+SnippetModel = require('../snippet_tree/snippet_model')
+SnippetView = require('../snippet_view/snippet_view')
+
 # Template
 # --------
 # Parses snippet templates and creates SnippetModels and SnippetViews.
-class Template
+module.exports = class Template
 
 
   constructor: ({ html, @namespace, @id, identifier, title, styles, weight } = {}) ->

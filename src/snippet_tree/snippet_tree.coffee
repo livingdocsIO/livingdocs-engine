@@ -1,3 +1,6 @@
+SnippetContainer = require('./snippet_container')
+SnippetArray = require('./snippet_array')
+
 # SnippetTree
 # -----------
 # Livingdocs equivalent to the DOM tree.
@@ -24,7 +27,7 @@
 # Consider: Have a documentFragment as the rootNode if no rootNode is given
 # maybe this would help simplify some code (since snippets are always
 # attached to the DOM).
-class SnippetTree
+module.exports = class SnippetTree
 
 
   constructor: ({ content, design } = {}) ->

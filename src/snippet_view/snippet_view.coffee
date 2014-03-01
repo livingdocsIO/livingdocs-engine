@@ -1,4 +1,7 @@
-class SnippetView
+config = require('../configuration/defaults')
+DirectiveIterator = require('../template/directive_iterator')
+
+module.exports = class SnippetView
 
   constructor: ({ @model, @$html, @directives, @isReadOnly }) ->
     @template = @model.template
@@ -9,8 +12,8 @@ class SnippetView
       # add attributes and references to the html
       @$html
         .data('snippet', this)
-        .addClass(docClass.snippet)
-        .attr(docAttr.template, @template.identifier)
+        .addClass(config.html.css['snippet'])
+        .attr(config.html.attr['template'], @template.identifier)
 
     @render()
 
@@ -71,12 +74,12 @@ class SnippetView
 
 
   afterFocused: () ->
-    @$html.addClass(docClass.snippetHighlight)
+    @$html.addClass(config.html.css.snippetHighlight)
     @showOptionals()
 
 
   afterBlurred: () ->
-    @$html.removeClass(docClass.snippetHighlight)
+    @$html.removeClass(config.html.css.snippetHighlight)
     @hideEmptyOptionals()
 
 
@@ -87,7 +90,7 @@ class SnippetView
 
 
   hasFocus: ->
-    @$html.hasClass(docClass.snippetHighlight)
+    @$html.hasClass(config.html.css.snippetHighlight)
 
 
   getBoundingClientRect: ->
@@ -236,7 +239,7 @@ class SnippetView
   # focus on a child elemnt through tabbing.
   blockInteraction: ($elem) ->
     @ensureRelativePosition($elem)
-    $blocker = $("<div class='#{ docClass.interactionBlocker }'>")
+    $blocker = $("<div class='#{ config.html.css.interactionBlocker }'>")
       .attr('style', 'position: absolute; top: 0; bottom: 0; left: 0; right: 0;')
     $elem.append($blocker)
 

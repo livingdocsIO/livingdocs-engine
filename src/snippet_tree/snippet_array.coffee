@@ -1,7 +1,7 @@
 # jQuery like results when searching for snippets.
 # `doc("hero")` will return a SnippetArray that works similar to a jQuery object.
 # For extensibility via plugins we expose the prototype of SnippetArray via `doc.fn`.
-class SnippetArray
+module.exports = class SnippetArray
 
 
   # @param snippets: array of snippets
