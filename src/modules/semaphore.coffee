@@ -1,3 +1,5 @@
+assert = require('../modules/logging/assert')
+
 # This class can be used to wait for tasks to finish before firing a series of
 # callbacks. Once start() is called, the callbacks fire as soon as the count
 # reaches 0. Thus, you should increment the count before starting it. When
@@ -23,7 +25,7 @@
 #   # Assuming that semaphore was already fired:
 #   semaphore.addCallback(-> print('this will print immediately'))
 #   # => 'this will print immediately'
-class Semaphore
+module.exports = class Semaphore
 
   constructor: ->
     @count = 0
