@@ -1,4 +1,6 @@
-htmlCompare = do ->
+$ = require('../../../components/jquery/jquery')
+
+module.exports = do ->
 
   empty: /^\s*$/
   whitespace: /\s+/g
