@@ -1,7 +1,7 @@
 Template = require('../../../src/template/template')
 SnippetModel = require('../../../src/snippet_tree/snippet_model')
 SnippetContainer = require('../../../src/snippet_tree/snippet_container')
-SnippetView = require('../../../src/snippet_view/snippet_view')
+SnippetView = require('../../../src/rendering/snippet_view')
 
 describe 'Title Template', ->
 

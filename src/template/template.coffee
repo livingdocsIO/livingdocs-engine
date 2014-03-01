@@ -8,7 +8,7 @@ directiveCompiler = require('./directive_compiler')
 directiveFinder = require('./directive_finder')
 
 SnippetModel = require('../snippet_tree/snippet_model')
-SnippetView = require('../snippet_view/snippet_view')
+SnippetView = require('../rendering/snippet_view')
 
 # Template
 # --------
