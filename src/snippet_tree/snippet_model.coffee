@@ -1,3 +1,8 @@
+SnippetContainer = require('./snippet_container')
+guid = require('../modules/guid')
+log = require('../modules/logging/log')
+assert = require('../modules/logging/assert')
+
 # SnippetModel
 # ------------
 # Each SnippetModel has a template which allows to generate a snippetView
@@ -12,7 +17,7 @@
 # columns
 #
 # # @prop parentContainer: parent SnippetContainer
-class SnippetModel
+module.exports = class SnippetModel
 
   constructor: ({ @template, id } = {}) ->
     assert @template, 'cannot instantiate snippet without template reference'

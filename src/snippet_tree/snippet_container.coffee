@@ -1,3 +1,5 @@
+assert = require('../modules/logging/assert')
+
 # SnippetContainer
 # ----------------
 # A SnippetContainer contains and manages a linked list
@@ -9,7 +11,7 @@
 # @prop first: first snippet in the container
 # @prop last: last snippet in the container
 # @prop parentSnippet: parent SnippetModel
-class SnippetContainer
+module.exports = class SnippetContainer
 
 
   constructor: ({ @parentSnippet, @name, isRoot }) ->
