@@ -1,3 +1,7 @@
+DirectiveCollection = require('../../../src/template/directive_collection')
+Directive = require('../../../src/template/directive')
+directiveFinder = require('../../../src/template/directive_finder')
+
 describe 'DirectiveFinder', ->
 
   beforeEach ->
@@ -9,6 +13,6 @@ describe 'DirectiveFinder', ->
 
   it 'links element with directive', ->
     elem = test.createElem("<div #{ test.editableAttr }='text'></div>")
-    expect(@collection[0].elem).toBeUndefined()
+    expect(@collection[0].elem).to.be.undefined
     directiveFinder.link(elem, @collection)
-    expect(@collection[0].elem).toBe(elem)
+    expect(@collection[0].elem).to.equal(elem)
