@@ -1,32 +1,54 @@
-$ = require('../../components/jquery/jquery')
 config = require('../../src/configuration/defaults')
+testHelpers = require('./test_helpers')
 testDesign = require('./test_design')
 
-module.exports = test =
 
-  createElem: (str) ->
-    $(str)[0]
+# Load chai extensions
+require('../../src/modules/html_compare/chai_extensions')
 
 
 # Export Globals
 # --------------
 #
 # Export globals in a browser environment
+exportGlobals = (global) ->
+  global.test = testHelpers
+  global.$ = testHelpers.$
+  global.config = config
+  global.docClass = config.docClass
+
+
+# Exports for node are done in test/node/test_globals
 if window?
-  window.test = test
-  window.docClass = config.docClass
-
-
-# automatically add properties to test
-do ->
-
-  # add a Attr property for every directive
-  # e.g. test.containerAttr = 'doc-container'
-  for directiveName, obj of config.directives
-    test["#{ directiveName }Attr"] = obj.renderedAttr
+  exportGlobals(window)
 
 
 
+# if window?
+#   window.test = test
+#   window.docClass = config.docClass
+
+
+# Old Jasmine Helpers
+# -------------------
+
+# toThrowLivingdocsError: (expected) ->
+#   notText = if @isNot then ' not' else ''
+
+#   try
+#     @actual.call()
+#   catch error
+#     hasThrown = true
+#     livingdocsError = error.thrownByLivingdocs
+
+#   @message = ->
+#     "Expected#{ notText } to throw a LivingdocsError"
+
+#   hasThrown && livingdocsError
+
+
+# Old Code
+# --------
 
 # module.exports = test = do ->
 

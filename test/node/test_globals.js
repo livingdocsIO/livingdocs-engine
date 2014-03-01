@@ -8,7 +8,11 @@ jsdom = require("jsdom");
 window = jsdom.jsdom().parentWindow;
 
 // Livingdocs Test Helpers
-test = require('../support/test');
+require('../support/setup');
+
+// Setup global variables for tests
+test = require('../support/test_helpers');
+$ = test.$;
 config = require('../../src/configuration/defaults')
 docClass = config.docClass
 
