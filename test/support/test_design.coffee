@@ -9,6 +9,9 @@ optionalAttr = config.directives.optional.attr
 
 module.exports = do ->
 
+  # Configuration
+  # -------------
+
   config:
     namespace: 'test'
 
@@ -54,6 +57,9 @@ module.exports = do ->
         value: 'color--green'
       ]
     ]
+
+  # Snippets
+  # --------
 
   templates: [
       id:   'hero'
