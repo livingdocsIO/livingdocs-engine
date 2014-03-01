@@ -1,4 +1,4 @@
-jsonHelper = do ->
+module.exports = do ->
 
   isEmpty: (obj) ->
     return true unless obj?

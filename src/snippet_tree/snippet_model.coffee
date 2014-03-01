@@ -2,6 +2,7 @@ SnippetContainer = require('./snippet_container')
 guid = require('../modules/guid')
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
+serialization = require('../modules/serialization')
 
 # SnippetModel
 # ------------
@@ -250,11 +251,11 @@ module.exports = class SnippetModel
       id: @id
       identifier: @identifier
 
-    unless jsonHelper.isEmpty(@content)
-      json.content = jsonHelper.flatCopy(@content)
+    unless serialization.isEmpty(@content)
+      json.content = serialization.flatCopy(@content)
 
-    unless jsonHelper.isEmpty(@styles)
-      json.styles = jsonHelper.flatCopy(@styles)
+    unless serialization.isEmpty(@styles)
+      json.styles = serialization.flatCopy(@styles)
 
     # create an array for every container
     for name of @containers

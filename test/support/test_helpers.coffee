@@ -2,6 +2,7 @@ config = require('../../src/configuration/defaults')
 $ = require('../../components/jquery/jquery')
 Design = require('../../src/design/design')
 testDesign = require('./test_design')
+localstore = require('../../src/modules/localstore')
 
 # Local variables
 cachedDesign = undefined
@@ -29,6 +30,16 @@ module.exports = testHelpers =
 
   getSnippet: (id) ->
     @getTemplate(id).createModel()
+
+
+  # use this to test serialization and deserialization
+  # through localstorage
+  localstore: (obj) ->
+    if localstore.isSupported()
+      localstore.set('test', obj)
+      localstore.get('test')
+    else
+      obj
 
 
   # monitor a jQuery.Callbacks object
