@@ -1,4 +1,7 @@
-class DesignStyle
+log = require('../modules/logging/log')
+assert = require('../modules/logging/assert')
+
+module.exports = class DesignStyle
 
   constructor: ({ @name, @type, value, options }) ->
     switch @type

@@ -1,4 +1,9 @@
-class Design
+assert = require('../modules/logging/assert')
+log = require('../modules/logging/log')
+Template = require('../template/template')
+DesignStyle = require('./design_style')
+
+module.exports = class Design
 
   constructor: (design) ->
     templates = design.templates || design.snippets
