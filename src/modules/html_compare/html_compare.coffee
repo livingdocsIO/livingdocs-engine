@@ -1,4 +1,5 @@
 $ = require('../../../components/jquery/jquery')
+log = require('../logging/log')
 
 module.exports = do ->
 
@@ -59,7 +60,7 @@ module.exports = do ->
 
 
   getTag: (node) ->
-    node.namespaceURI + ':' + node.localName
+    node.namespaceURI + ':' + node.nodeName
 
 
   compareAttributes: (a, b) ->

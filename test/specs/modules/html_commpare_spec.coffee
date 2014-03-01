@@ -3,6 +3,15 @@ htmlCompare = require('../../../src/modules/html_compare/html_compare')
 describe 'htmlCompare', ->
   compare = $.proxy(htmlCompare, 'compare')
 
+  describe 'iterateComparables()', ->
+
+    it 'gets the root first', ->
+      div = $("<div></div>")[0]
+      next = htmlCompare.iterateComparables(div)
+      expect(next()).to.equal(div)
+      expect(next()).to.equal(undefined)
+
+
   describe 'single elment', ->
 
     it 'considers the same elements equivalent', ->
