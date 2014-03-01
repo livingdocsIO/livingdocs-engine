@@ -1,7 +1,7 @@
 # String Helpers
 # --------------
 # inspired by [https://github.com/epeli/underscore.string]()
-@words = do ->
+module.exports = do ->
 
 
   # convert 'camelCase' to 'Camel Case'
