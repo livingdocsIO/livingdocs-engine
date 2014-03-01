@@ -1,3 +1,7 @@
+SnippetTree = require('../../../src/snippet_tree/snippet_tree')
+SnippetModel = require('../../../src/snippet_tree/snippet_model')
+SnippetContainer = require('../../../src/snippet_tree/snippet_container')
+
 describe 'SnippetTree', ->
 
   beforeEach ->
@@ -5,7 +9,7 @@ describe 'SnippetTree', ->
 
 
   it 'has a SnippetContainer as root', ->
-    expect(@tree.root instanceof SnippetContainer).toBe(true)
+    expect(@tree.root).to.be.an.instanceof(SnippetContainer)
 
 
   describe 'append()', ->
@@ -13,14 +17,14 @@ describe 'SnippetTree', ->
     it 'sets snippetTree property of the appended snippet', ->
       snippet = test.getSnippet('title')
       @tree.append(snippet)
-      expect(snippet.snippetTree).toEqual(@tree)
+      expect(snippet.snippetTree).to.equal(@tree)
 
 
     it 'appends a snippet to root', ->
       snippet = test.getSnippet('title')
       @tree.append(snippet)
-      expect(@tree.root.first).toEqual(snippet)
-      expect(@tree.root.last).toEqual(snippet)
+      expect(@tree.root.first).to.equal(snippet)
+      expect(@tree.root.last).to.equal(snippet)
 
 
 describe 'SnippetTree with two snippets', ->
@@ -36,20 +40,20 @@ describe 'SnippetTree with two snippets', ->
 
 
   it 'has previous and next properties of snippet set', ->
-    expect(@snippetA.previous).not.toBeDefined()
-    expect(@snippetA.next).toEqual(@snippetB)
+    expect(@snippetA.previous).to.be.undefined
+    expect(@snippetA.next).to.equal(@snippetB)
 
 
   it 'has first and last pointer of root set', ->
-    expect(@tree.root.first).toEqual(@snippetA)
-    expect(@tree.root.last).toEqual(@snippetB)
+    expect(@tree.root.first).to.equal(@snippetA)
+    expect(@tree.root.last).to.equal(@snippetB)
 
 
   it 'has linked snippets correctly', ->
-    expect(@tree.root.first.previous).not.toBeDefined()
-    expect(@tree.root.first.next).toEqual(@snippetB)
-    expect(@tree.root.last.previous).toEqual(@snippetA)
-    expect(@tree.root.last.next).not.toBeDefined()
+    expect(@tree.root.first.previous).to.be.undefined
+    expect(@tree.root.first.next).to.equal(@snippetB)
+    expect(@tree.root.last.previous).to.equal(@snippetA)
+    expect(@tree.root.last.next).to.be.undefined
 
 
   describe 'up()', ->
@@ -57,18 +61,18 @@ describe 'SnippetTree with two snippets', ->
     it 'moves the second snippet up', ->
       @snippetB.up()
 
-      expect(@snippetB.previous).not.toBeDefined()
-      expect(@snippetB.next).toEqual(@snippetA)
+      expect(@snippetB.previous).to.be.undefined
+      expect(@snippetB.next).to.equal(@snippetA)
 
-      expect(@snippetA.previous).toEqual(@snippetB)
-      expect(@snippetA.next).not.toBeDefined()
+      expect(@snippetA.previous).to.equal(@snippetB)
+      expect(@snippetA.next).to.be.undefined
 
 
     it 'updates the first and last pointers of the container', ->
       @snippetB.up()
 
-      expect(@tree.root.first).toEqual(@snippetB)
-      expect(@tree.root.last).toEqual(@snippetA)
+      expect(@tree.root.first).to.equal(@snippetB)
+      expect(@tree.root.last).to.equal(@snippetA)
 
 
   describe 'remove()', ->
@@ -76,36 +80,36 @@ describe 'SnippetTree with two snippets', ->
     it 'removes the second Snippet', ->
       @snippetB.remove()
 
-      expect(@snippetA.previous).not.toBeDefined()
-      expect(@snippetA.next).not.toBeDefined()
+      expect(@snippetA.previous).to.be.undefined
+      expect(@snippetA.next).to.be.undefined
 
-      expect(@tree.root.first).toEqual(@snippetA)
-      expect(@tree.root.last).toEqual(@snippetA)
+      expect(@tree.root.first).to.equal(@snippetA)
+      expect(@tree.root.last).to.equal(@snippetA)
 
-      expect(@snippetB.parentContainer).not.toBeDefined()
-      expect(@snippetB.snippetTree).not.toBeDefined()
-      expect(@snippetB.previous).not.toBeDefined()
-      expect(@snippetB.next).not.toBeDefined()
+      expect(@snippetB.parentContainer).to.be.undefined
+      expect(@snippetB.snippetTree).to.be.undefined
+      expect(@snippetB.previous).to.be.undefined
+      expect(@snippetB.next).to.be.undefined
 
 
   describe 'inserting the second snippet after the first', ->
 
     it 'is ignored', ->
       @snippetA.after(@snippetB)
-      expect(@snippetA.previous).not.toBeDefined()
-      expect(@snippetA.next).toEqual(@snippetB)
-      expect(@snippetB.previous).toEqual(@snippetA)
-      expect(@snippetB.next).not.toBeDefined()
+      expect(@snippetA.previous).to.be.undefined
+      expect(@snippetA.next).to.equal(@snippetB)
+      expect(@snippetB.previous).to.equal(@snippetA)
+      expect(@snippetB.next).to.be.undefined
 
 
   describe 'inserting the first snippet before the second', ->
 
     it 'is ignored', ->
       @snippetB.before(@snippetA)
-      expect(@snippetA.previous).not.toBeDefined()
-      expect(@snippetA.next).toEqual(@snippetB)
-      expect(@snippetB.previous).toEqual(@snippetA)
-      expect(@snippetB.next).not.toBeDefined()
+      expect(@snippetA.previous).to.be.undefined
+      expect(@snippetA.next).to.equal(@snippetB)
+      expect(@snippetB.previous).to.equal(@snippetA)
+      expect(@snippetB.next).to.be.undefined
 
 
 describe 'SnippetTree with a single-column row snippet', ->
@@ -123,20 +127,20 @@ describe 'SnippetTree with a single-column row snippet', ->
       titleSnippet = test.getSnippet('title')
       mainContainer = @container.containers[@defaultName]
       mainContainer.append(titleSnippet)
-      expect(mainContainer.first).toEqual(titleSnippet)
+      expect(mainContainer.first).to.equal(titleSnippet)
 
 
     it 'adds a snippet to the main column via snippet', ->
       titleSnippet = test.getSnippet('title')
       @container.append(titleSnippet)
       mainContainer = @container.containers[@defaultName]
-      expect(mainContainer.first).toEqual(titleSnippet)
+      expect(mainContainer.first).to.equal(titleSnippet)
 
 
     it 'the appended snippet has a parent snippet', ->
       titleSnippet = test.getSnippet('title')
       @container.append(titleSnippet)
-      expect( titleSnippet.getParent() ).toEqual(@container)
+      expect( titleSnippet.getParent() ).to.equal(@container)
 
 
 
@@ -154,7 +158,7 @@ describe 'SnippetTree with a multi-column row snippet', ->
       titleSnippet = test.getSnippet('title')
       mainContainer = @rowSnippet.containers['main']
       mainContainer.append(titleSnippet)
-      expect(mainContainer.first).toEqual(titleSnippet)
+      expect(mainContainer.first).to.equal(titleSnippet)
 
 
     it 'adds a snippet to the main column via snippet', ->
@@ -162,13 +166,13 @@ describe 'SnippetTree with a multi-column row snippet', ->
       @rowSnippet.append('main', titleSnippet)
 
       mainContainer = @rowSnippet.containers['main']
-      expect(mainContainer.first).toEqual(titleSnippet)
+      expect(mainContainer.first).to.equal(titleSnippet)
 
 
     it 'the appended snippet has a parent snippet', ->
       titleSnippet = test.getSnippet('title')
       @rowSnippet.append('main', titleSnippet)
-      expect( titleSnippet.getParent() ).toEqual(@rowSnippet)
+      expect( titleSnippet.getParent() ).to.equal(@rowSnippet)
 
 
   describe 'each()', ->
@@ -177,7 +181,7 @@ describe 'SnippetTree with a multi-column row snippet', ->
       visits = 0
       @tree.each ->
         visits += 1
-      expect(visits).toEqual(1)
+      expect(visits).to.equal(1)
 
 
     it 'visits the row snippet and its children', ->
@@ -194,7 +198,7 @@ describe 'SnippetTree with a multi-column row snippet', ->
         visits += 1
 
       # check that all 6 snippets where visited by each
-      expect(visits).toEqual(6)
+      expect(visits).to.equal(6)
 
 
   describe 'eachContainer()', ->
@@ -204,7 +208,7 @@ describe 'SnippetTree with a multi-column row snippet', ->
       @tree.eachContainer ->
         visits += 1
 
-      expect(visits).toEqual(3)
+      expect(visits).to.equal(3)
 
 
   describe 'all()', ->
@@ -218,8 +222,8 @@ describe 'SnippetTree with a multi-column row snippet', ->
         else if snippetOrContainer instanceof SnippetContainer
           visitedContainers += 1
 
-      expect(visitedSnippets).toEqual(1)
-      expect(visitedContainers).toEqual(3)
+      expect(visitedSnippets).to.equal(1)
+      expect(visitedContainers).to.equal(3)
 
 
 describe 'SnippetTree with three levels', ->
@@ -253,11 +257,11 @@ describe 'SnippetTree with three levels', ->
         visitedSnippets.push(snippet)
 
       # snippets should be traversed in order of appearance
-      expect( visitedSnippets.length).toEqual(4)
-      expect( visitedSnippets[0] == @row).toBe(true)
-      expect( visitedSnippets[1] == @rowInMain).toBe(true)
-      expect( visitedSnippets[2] == @text).toBe(true)
-      expect( visitedSnippets[3] == @title).toBe(true)
+      expect(visitedSnippets.length).to.equal(4)
+      expect(visitedSnippets[0]).to.equal(@row)
+      expect(visitedSnippets[1]).to.equal(@rowInMain)
+      expect(visitedSnippets[2]).to.equal(@text)
+      expect(visitedSnippets[3]).to.equal(@title)
 
 
 describe 'SnippetTree with three snippets', ->
@@ -277,7 +281,7 @@ describe 'SnippetTree with three snippets', ->
     @tree.each (snippet) ->
       visitedSnippets.push(snippet)
 
-    expect( visitedSnippets.length).toEqual(3)
-    expect( visitedSnippets[0] == @snippets[0]).toBe(true)
-    expect( visitedSnippets[1] == @snippets[2]).toBe(true)
-    expect( visitedSnippets[2] == @snippets[1]).toBe(true)
+    expect(visitedSnippets.length).to.equal(3)
+    expect(visitedSnippets[0]).to.equal(@snippets[0])
+    expect(visitedSnippets[1]).to.equal(@snippets[2])
+    expect(visitedSnippets[2]).to.equal(@snippets[1])
