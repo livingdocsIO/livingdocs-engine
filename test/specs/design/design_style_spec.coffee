@@ -1,3 +1,5 @@
+DesignStyle = require('../../../src/design/design_style')
+
 describe 'DesignStyle', ->
 
   describe 'instantion', ->
@@ -8,7 +10,7 @@ describe 'DesignStyle', ->
           name: 'Invalid Style'
           type: 'not-actually-a-type'
 
-      expect(createStyle).toThrow()
+      expect(createStyle).to.throw()
 
 
     it 'should throw an error if no value is provided', ->
@@ -17,7 +19,7 @@ describe 'DesignStyle', ->
           name: 'No Value'
           type: 'option'
 
-      expect(createStyle).toThrow()
+      expect(createStyle).to.throw()
 
 
     it 'should throw an error if no options are provided', ->
@@ -26,7 +28,7 @@ describe 'DesignStyle', ->
           name: 'No Value'
           type: 'select'
 
-      expect(createStyle).toThrow()
+      expect(createStyle).to.throw()
 
 
   describe '"Color" of type "select"', ->
@@ -47,18 +49,19 @@ describe 'DesignStyle', ->
     describe 'validateValue()', ->
 
       it 'validates value "color--blue"', ->
-        expect(@style.validateValue('color--blue')).toBe(true)
+        expect(@style.validateValue('color--blue')).to.be.true
 
 
       it 'does not validate value "ponzi-scheme"', ->
-        expect(@style.validateValue('ponzi-scheme')).toBe(false)
+        expect(@style.validateValue('ponzi-scheme')).to.be.false
 
 
     describe 'otherOptions()', ->
 
       it 'returns all other options', ->
-        others = [{ caption: 'Red', value:'color--red' }]
-        expect(@style.otherOptions('color--blue')).toEqual(others)
+        expect(@style.otherOptions('color--blue')).to.deep.equal [
+          { caption: 'Red', value:'color--red' }
+        ]
 
 
   describe 'of type "option"', ->
@@ -73,13 +76,13 @@ describe 'DesignStyle', ->
     describe 'validateValue()', ->
 
       it 'validates value "todo--code-review"', ->
-        expect(@style.validateValue('todo--code-review')).toBe(true)
+        expect(@style.validateValue('todo--code-review')).to.be.true
 
 
       it 'validates value "" (empty string)', ->
-        expect(@style.validateValue('')).toBe(true)
+        expect(@style.validateValue('')).to.be.true
 
 
       it 'validates value null', ->
-        expect(@style.validateValue(null)).toBe(true)
+        expect(@style.validateValue(null)).to.be.true
 
