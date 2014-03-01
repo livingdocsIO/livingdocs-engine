@@ -1,3 +1,5 @@
+localstore = require('./localstore')
+
 # LimitedLocalstore is a wrapper around localstore that
 # saves only a limited number of entries and discards
 # the oldest ones after that.
@@ -5,7 +7,7 @@
 # You should only ever create one instance by `key`.
 # The limit can change between sessions,
 # it will just discard all entries until the limit is met
-class LimitedLocalstore
+module.exports = class LimitedLocalstore
 
   constructor: (@key, @limit) ->
     @limit ||= 10
