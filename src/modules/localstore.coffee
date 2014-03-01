@@ -1,7 +1,7 @@
 # Access to localstorage
 # ----------------------
 # Simplified version of [https://github.com/marcuswestin/store.js]()
-localstore = ( (win) ->
+module.exports = ( (win) ->
 
   available = undefined
   storageName = 'localStorage'
@@ -58,4 +58,4 @@ localstore = ( (win) ->
       false
 
 
-)(this)
+)(window)
