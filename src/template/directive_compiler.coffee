@@ -1,4 +1,7 @@
-directiveCompiler = do ->
+config = require('../configuration/defaults')
+Directive = require('./directive')
+
+module.exports = do ->
 
   attributePrefix = /^(x-|data-)/
 
@@ -20,7 +23,7 @@ directiveCompiler = do ->
     for attr in elem.attributes
       attributeName = attr.name
       normalizedName = attributeName.replace(attributePrefix, '')
-      if type = templateAttrLookup[normalizedName]
+      if type = config.templateAttrLookup[normalizedName]
         directiveData.push
           attributeName: attributeName
           directive: new Directive
