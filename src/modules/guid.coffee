@@ -1,4 +1,4 @@
-guid = do ->
+module.exports = do ->
 
   idCounter = lastId = undefined
 
