@@ -1,3 +1,6 @@
+require('../../support/stubs/editable_stub')
+EditableController = require('../../../src/interaction/editable_controller')
+
 describe 'editableController', ->
 
   beforeEach ->
@@ -19,4 +22,4 @@ describe 'editableController', ->
         expect.element
 
       Editable.selection.fire(@elem, undefined)
-      expect(foundSnippet.model).toEqual(@title.model)
+      expect(foundSnippet.model).to.equal(@title.model)

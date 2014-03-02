@@ -1,7 +1,9 @@
+dom = require('./dom')
+
 # EditableJS Controller
 # ---------------------
 # Integrate EditableJS into Livingdocs
-class EditableController
+module.exports = class EditableController
 
   constructor: (@page) ->
     # configure editableJS
