@@ -107,7 +107,17 @@ module.exports = (grunt) ->
           reporter: 'spec'
           compilers: 'coffee-script/register'
           require: './test/node/test_globals.js'
-        src: ['test/specs/**/*.coffee']
+        src: [
+          'test/specs/configuration/*.coffee'
+          'test/specs/design/*.coffee'
+          'test/specs/interaction/dom_spec.coffee'
+          'test/specs/kickstart/*.coffee'
+          'test/specs/modules/*.coffee'
+          'test/specs/rendering/*.coffee'
+          'test/specs/serialization/*.coffee'
+          'test/specs/snippet_tree/*.coffee'
+          'test/specs/template/*.coffee'
+        ]
 
     karma:
       unit_once:
