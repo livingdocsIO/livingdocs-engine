@@ -32,6 +32,14 @@ module.exports = testHelpers =
     @getTemplate(id).createModel()
 
 
+  # helper to create snippets with one directive easier
+  createSnippet: (id, value) ->
+    snippet = @getSnippet(id)
+    firstDirective = snippet.template.directives[0]
+    snippet.set(firstDirective.name, value)
+    snippet
+
+
   # use this to test serialization and deserialization
   # through localstorage
   localstore: (obj) ->

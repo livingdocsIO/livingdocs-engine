@@ -1,5 +1,8 @@
-class Renderer
+assert = require('../modules/logging/assert')
+log = require('../modules/logging/log')
+Semaphore = require('../modules/semaphore')
 
+module.exports = class Renderer
 
   constructor: ({ @snippetTree, @renderingContainer }) ->
     assert @snippetTree, 'no snippet tree specified'

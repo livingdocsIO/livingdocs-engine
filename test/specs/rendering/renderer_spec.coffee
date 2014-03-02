@@ -1,3 +1,9 @@
+Renderer = require('../../../src/rendering/renderer')
+SnippetTree = require('../../../src/snippet_tree/snippet_tree')
+Page = require('../../../src/rendering_container/page')
+docAttr = config.html.attr
+docClass = config.html.css
+
 describe 'Not ReadOnly Renderer', ->
 
   beforeEach ->
@@ -17,7 +23,7 @@ describe 'Not ReadOnly Renderer', ->
 
 
     it 'renders the title', ->
-      expect(@page.renderNode).toEqualHtmlOf """
+      expect(@page.renderNode).to.have.html """
         <section>
           <h1
             class="#{ docClass.snippet } #{ docClass.editable }"
@@ -29,7 +35,7 @@ describe 'Not ReadOnly Renderer', ->
 
     it 'can remove the title again', ->
       @title.remove()
-      expect(@page.renderNode).toEqualHtmlOf """
+      expect(@page.renderNode).to.have.html """
         <section></section>"""
 
 
@@ -47,7 +53,7 @@ describe 'insertSnippet()', ->
     title = test.createSnippet('title', 'A')
     container.append(config.directives.container.defaultName, title)
     @tree.append(container)
-    expect(@page.renderNode).toEqualHtmlOf """
+    expect(@page.renderNode).to.have.html """
       <section>
         <div class="container">
           <div>
@@ -74,7 +80,7 @@ describe 'ReadOnly Renderer', ->
 
 
     it 'renders the title into the page', ->
-      expect(@page.renderNode).toEqualHtmlOf """
+      expect(@page.renderNode).to.have.html """
         <section>
           <h1>A</h1>
         </section>"""
@@ -83,7 +89,7 @@ describe 'ReadOnly Renderer', ->
     describe 'renderer.html()', ->
 
       it 'returns the documents html', ->
-        expect(@renderer.html()).toEqualHtmlOf """
+        expect(@renderer.html()).to.have.html """
           <h1>A</h1>"""
 
 
@@ -97,7 +103,7 @@ describe 'ReadOnly Renderer', ->
     describe 'with no content', ->
 
       it 'renders the optional field invisibly', ->
-        expect(@page.renderNode).toEqualHtmlOf """
+        expect(@page.renderNode).to.have.html """
           <section>
             <div>
               <h1></h1>
@@ -111,7 +117,7 @@ describe 'ReadOnly Renderer', ->
       it 'renders the optional field visibly', ->
         @hero.set('title', 'A')
         @hero.set('tagline', 'B')
-        expect(@page.renderNode).toEqualHtmlOf """
+        expect(@page.renderNode).to.have.html """
           <section>
             <div>
               <h1>A</h1>
@@ -137,7 +143,7 @@ describe 'ReadOnly Renderer', ->
 
 
     it 'renders row, title and cover snippet', ->
-      expect(@page.renderNode).toEqualHtmlOf """
+      expect(@page.renderNode).to.have.html """
         <section>
           <div class="row-fluid">
             <div class="span8">
@@ -163,7 +169,7 @@ describe 'ReadOnly Renderer', ->
 
 
     it 'does not block interaction in readOnly mode', ->
-      expect(@page.renderNode).toEqualHtmlOf """
+      expect(@page.renderNode).to.have.html """
         <section>
           <div>
             <article>html</article>
