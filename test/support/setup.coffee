@@ -10,6 +10,9 @@ _ = require('underscore')
 require('./chai_helpers')
 require('../../src/modules/html_compare/chai_extensions')
 
+# Load jquery extensions for easier testing
+require('./jquery_extensions')
+
 
 # Supress logs
 log.debugDisabled = true

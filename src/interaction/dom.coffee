@@ -1,8 +1,10 @@
+config = require('../configuration/defaults')
+
 # DOM helper methods
 # ------------------
 # Methods to parse and update the Dom tree in accordance to
 # the SnippetTree and Livingdocs classes and attributes
-dom = do ->
+module.exports = do ->
   snippetRegex = new RegExp("(?: |^)#{ docClass.snippet }(?: |$)")
   sectionRegex = new RegExp("(?: |^)#{ docClass.section }(?: |$)")
 

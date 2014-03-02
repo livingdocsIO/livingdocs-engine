@@ -1,21 +1,23 @@
+dom = require('../../../src/interaction/dom')
+
 describe 'DOM method', ->
 
   describe 'findSnippetView()', ->
 
     it 'returns undefined when called with undefined', ->
-      expect( dom.findSnippetView(undefined) ).toEqual(undefined)
+      expect( dom.findSnippetView(undefined) ).to.be.undefined
 
 
   describe 'findContainer()', ->
 
     it 'returns empty object when called with undefined', ->
-      expect( dom.findContainer(undefined) ).toEqual({})
+      expect( dom.findContainer(undefined) ).to.deep.equal({})
 
 
   describe 'dropTarget()', ->
 
     it 'returns empty object when called with undefined', ->
-      expect( dom.dropTarget(undefined, {}) ).toEqual({})
+      expect( dom.dropTarget(undefined, {}) ).to.deep.equal({})
 
 
   describe 'findSnippetView() on title snippet', ->
@@ -26,11 +28,11 @@ describe 'DOM method', ->
 
 
     it 'finds snippet from jQuery node', ->
-      expect( dom.findSnippetView(@$html) ).toEqual(@view)
+      expect( dom.findSnippetView(@$html) ).to.equal(@view)
 
 
     it 'finds snippet from DOM node', ->
-      expect( dom.findSnippetView(@$html[0]) ).toEqual(@view)
+      expect( dom.findSnippetView(@$html[0]) ).to.equal(@view)
 
 
   describe 'findSnippetView() on row snippet', ->
@@ -42,7 +44,7 @@ describe 'DOM method', ->
 
     it 'finds row snippet from child node ', ->
       $node = @$html.find('.span8').first()
-      expect( dom.findSnippetView($node) ).toEqual(@view)
+      expect( dom.findSnippetView($node) ).to.equal(@view)
 
 
   describe 'findNodeContext() on image snippet', ->
@@ -53,7 +55,9 @@ describe 'DOM method', ->
 
     it 'finds image node context from DOM node', ->
       $node = @$html.findIn('img').first()
-      expect( dom.findNodeContext($node) ).toEqual({contextAttr: 'data-doc-image', attrName: 'image'})
+      expect( dom.findNodeContext($node) ).to.deep.equal
+        contextAttr: 'data-doc-image'
+        attrName: 'image'
 
 
   describe 'findNodeContext() on cover snippet', ->
@@ -65,12 +69,16 @@ describe 'DOM method', ->
 
     it 'finds editable node context from DOM node', ->
       $node = @$html.find('h2').first()
-      expect( dom.findNodeContext($node) ).toEqual({contextAttr: 'data-doc-editable', attrName: 'maintitle'})
+      expect( dom.findNodeContext($node) ).to.deep.equal
+        contextAttr: 'data-doc-editable'
+        attrName: 'maintitle'
 
 
     it 'finds image node context from DOM node', ->
       $node = @$html.find('div').first()
-      expect( dom.findNodeContext($node) ).toEqual({contextAttr: 'data-doc-image', attrName: 'image'})
+      expect( dom.findNodeContext($node) ).to.deep.equal
+        contextAttr: 'data-doc-image'
+        attrName: 'image'
 
 
   describe 'findNodeContext() on html snippet', ->
@@ -82,12 +90,16 @@ describe 'DOM method', ->
 
     it 'finds html node context from DOM node', ->
       $node = @$html.findIn('div').first()
-      expect( dom.findNodeContext($node) ).toEqual({contextAttr: 'data-doc-html', attrName: 'html'})
+      expect( dom.findNodeContext($node) ).to.deep.equal
+        contextAttr: 'data-doc-html'
+        attrName: 'html'
 
 
     it 'finds html node context from child node', ->
       $node = @$html.find('.html-placeholder').first()
-      expect( dom.findNodeContext($node) ).toEqual({contextAttr: 'data-doc-html', attrName: 'html'})
+      expect( dom.findNodeContext($node) ).to.deep.equal
+        contextAttr: 'data-doc-html'
+        attrName: 'html'
 
 
   describe 'findContainer()', ->
@@ -104,7 +116,7 @@ describe 'DOM method', ->
       elem = @title.$html[0]
       containerElem = @row.directives.get('main').elem
       containerInfo = dom.findContainer(elem)
-      expect(containerInfo.node).toEqual(containerElem)
-      expect(containerInfo.containerName).toEqual('main')
-      expect(containerInfo.snippetView).toEqual(@row)
+      expect(containerInfo.node).to.equal(containerElem)
+      expect(containerInfo.containerName).to.equal('main')
+      expect(containerInfo.snippetView).to.equal(@row)
 
