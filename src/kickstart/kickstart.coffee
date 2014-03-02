@@ -1,19 +1,39 @@
-class Kickstart
+assert = require('../modules/logging/assert')
+log = require('../modules/logging/log')
+words = require('../modules/words')
+
+Design = require('../design/design')
+SnippetTree = require('../snippet_tree/snippet_tree')
+
+DOMParser = require('xmldom').DOMParser
+XMLSerializer = require('xmldom').XMLSerializer
+
+module.exports = class Kickstart
 
   constructor: ({ xmlTemplate, scriptNode, destination, design} = {}) ->
-    if !(this instanceof Kickstart)
+    unless this instanceof Kickstart
       return new Kickstart({ xmlTemplate, scriptNode, destination, design })
 
     assert scriptNode || xmlTemplate, 'Please provide parameter "xmlTemplate" or "scriptNode"'
 
     if scriptNode
       xmlTemplate = "<root>" + $(scriptNode).text() + "</root>"
-    
-    @template = $.parseXML(xmlTemplate).firstChild
+
+    @template = Kickstart.parseXML(xmlTemplate)
     @design = new Design(design)
     @snippetTree = new SnippetTree()
 
     @addRootSnippets($(@template).children())
+
+
+  # Parse XML and return the root node
+  #
+  # On node xmldom is required. In the browser
+  # DOMParser and XMLSerializer are already native objects.
+  @parseXML: (xmlTemplate) ->
+    # xmlDoc = $.parseXML(xmlTemplate)
+    xmlDoc = new DOMParser().parseFromString(xmlTemplate)
+    xmlDoc.firstChild
 
 
   addRootSnippets: (xmlElements) ->
@@ -112,11 +132,15 @@ class Kickstart
       if end > start
         string.substring(start, end)
 
+
   getSnippetTree: ->
     @snippetTree
 
+
   toHtml: ->
-    new Renderer(
+    renderer = new Renderer
       snippetTree: @snippetTree
       renderingContainer: new RenderingContainer()
-    ).html()
+
+    renderer.html()
+

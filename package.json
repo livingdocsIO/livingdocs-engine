@@ -41,7 +41,8 @@
     "karma-sinon-chai": "~0.1.4",
     "karma-browserify": "~0.1.0",
     "jsdom": "~0.10.1",
-    "underscore": "~1.6.0"
+    "underscore": "~1.6.0",
+    "xmldom": "~0.1.19"
   },
   "engines": {
     "node": ">=0.10.0"
