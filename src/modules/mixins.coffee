@@ -5,7 +5,7 @@
 #
 # __Usage:__
 # `class Superhero extends mixins Flying, SuperAngry, Indestructible`
-mixins = (mixins...) ->
+module.exports = (mixins...) ->
 
   # create an empty function
   Mixed = ->

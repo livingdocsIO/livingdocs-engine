@@ -2,7 +2,7 @@
 #
 # Returns a method that works the same as $.proxy() but always returns the chainedObj
 # *its mostly the same code as $.proxy ;)*
-chainableProxy = (chainedObj) ->
+module.exports = (chainedObj) ->
 
   (fn, context) ->
     if typeof context == 'string'

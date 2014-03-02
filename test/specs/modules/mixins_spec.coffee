@@ -1,3 +1,5 @@
+mixins = require('../../../src/modules/mixins')
+
 describe "mixins util", ->
 
   beforeEach ->
@@ -8,8 +10,8 @@ describe "mixins util", ->
 
   it "returns a function with a prototype", ->
     mixinClass = mixins @Indestructible
-    expect( $.isFunction(mixinClass) ).toBe(true)
-    expect( mixinClass::destroy ).toBeDefined
+    expect( $.isFunction(mixinClass) ).to.be.true
+    expect( mixinClass::destroy ).to.exist
 
 
   it "generally works", ->
@@ -21,7 +23,7 @@ describe "mixins util", ->
         @destroy()
 
     rudolf = new Superhero()
-    expect( rudolf ).toBeDefined()
-    expect( rudolf.destroy ).toBeDefined()
-    expect( rudolf.attackWithLaserbeam() ).toEqual("nope")
+    expect( rudolf ).to.exist
+    expect( rudolf.destroy ).to.exist
+    expect( rudolf.attackWithLaserbeam() ).to.equal("nope")
 

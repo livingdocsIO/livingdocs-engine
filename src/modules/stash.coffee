@@ -1,4 +1,9 @@
-stash = do ->
+assert = require('./logging/assert')
+LimitedLocalstore = require('./limited_localstore')
+words = require('./words')
+document = require('../document')
+
+module.exports = do ->
   initialized = false
 
 
