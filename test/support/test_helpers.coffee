@@ -20,6 +20,9 @@ module.exports = testHelpers =
     $(str)[0]
 
 
+  testDesign: testDesign
+
+
   getDesign: () ->
     cachedDesign ||= new Design(testDesign)
 

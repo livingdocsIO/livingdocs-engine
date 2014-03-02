@@ -1,7 +1,6 @@
 Design = require('../../../src/design/design')
 DesignStyle = require('../../../src/design/design_style')
 Template = require('../../../src/template/template')
-testDesign = require('../../support/test_design')
 
 describe 'Design', ->
 
@@ -33,7 +32,7 @@ describe 'Design', ->
 
     beforeEach ->
       @design = new Design
-        templates: testDesign.templates
+        templates: test.testDesign.templates
         config: { namespace: 'test' }
 
 
@@ -69,7 +68,7 @@ describe 'Design', ->
   describe 'groups', ->
 
     beforeEach ->
-      @design = new Design(testDesign)
+      @design = new Design(test.testDesign)
 
 
     it 'are available through #groups', ->
@@ -87,7 +86,7 @@ describe 'Design', ->
   describe 'styles configuration', ->
 
     beforeEach ->
-      @design = new Design(testDesign)
+      @design = new Design(test.testDesign)
 
 
     it 'has global style Color', ->

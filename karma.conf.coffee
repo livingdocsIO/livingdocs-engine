@@ -10,7 +10,7 @@ module.exports = (config) ->
     # list of files / patterns to load in the browser
     files: [
       'components/jquery/jquery.js'
-      'test/support/*.coffee'
+      'test/support/setup.coffee'
       'test/specs/{,*/}*.coffee'
     ],
 
@@ -18,7 +18,7 @@ module.exports = (config) ->
     exclude: [],
 
     preprocessors:
-      'test/support/*.coffee': ['browserify']
+      'test/support/setup.coffee': ['browserify']
       'test/specs/{,*/}*.coffee': ['browserify']
 
     browserify:
