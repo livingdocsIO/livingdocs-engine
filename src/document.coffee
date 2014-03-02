@@ -1,3 +1,12 @@
+Design = require('./design/design')
+SnippetTree = require('./snippet_tree/snippet_tree')
+Kickstart = require('./kickstart/kickstart')
+
+RenderingContainer = require('./rendering_container/rendering_container')
+Page = require('./rendering_container/page')
+InteractivePage = require('./rendering_container/interactive_page')
+Renderer = require('./rendering/renderer')
+
 # Document
 # --------
 # Manage the document and its dependencies.
@@ -16,7 +25,7 @@
 # ### Page:
 # Initialize event listeners.
 # Link the SnippetTree with the DomTree.
-document = do ->
+module.exports = do ->
 
   # Document object
   # ---------------

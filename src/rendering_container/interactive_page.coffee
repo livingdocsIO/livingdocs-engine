@@ -1,4 +1,8 @@
 Page = require('./page')
+Focus = require('../interaction/focus')
+EditableController = require('../interaction/editable_controller')
+DragDrop = require('../interaction/drag_drop')
+SnippetDrag = require('../interaction/snippet_drag')
 
 # An InteractivePage is a subclass of Page which allows for manipulation of the
 # rendered SnippetTree.

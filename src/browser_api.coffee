@@ -1,3 +1,12 @@
+chainableProxy = require('./modules/chainable_proxy')
+words = require('./modules/words')
+stash = require('./modules/stash')
+
+document = require('./document')
+Kickstart = require('./kickstart/kickstart')
+DragDrop = require('./interaction/drag_drop')
+SnippetArray = require('./snippet_tree/snippet_array')
+
 # Public API
 # ----------
 # Since the livingdocs-engine code is contained in its own function closure
@@ -5,7 +14,7 @@
 #
 # `doc()`: primary function interface similar to jquery
 # with snippet selectors and stuff...
-@doc = (search) ->
+window.doc = (search) ->
   document.find(search)
 
 chainable = chainableProxy(doc)

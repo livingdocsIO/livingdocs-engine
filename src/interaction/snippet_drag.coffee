@@ -1,4 +1,4 @@
-class SnippetDrag
+module.exports = class SnippetDrag
 
 
   constructor: ({ snippet, page }) ->
