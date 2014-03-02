@@ -22,7 +22,7 @@
 # @option drag.onDrag: callback( tragTarget, dragObj ), will be called after the node is dropped
 # @option drag.onDragStart: callback( dragObj ), will be called after the drag started
 
-class DragDrop
+module.exports = class DragDrop
 
   constructor: (options) ->
 
