@@ -1,4 +1,5 @@
 config = require('../configuration/defaults')
+docClass = config.html.css
 
 # DOM helper methods
 # ------------------

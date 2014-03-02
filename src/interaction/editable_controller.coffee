@@ -1,4 +1,5 @@
 dom = require('./dom')
+config = require('../configuration/defaults')
 
 # EditableJS Controller
 # ---------------------
@@ -80,7 +81,7 @@ module.exports = class EditableController
     if @hasSingleEditable(view)
 
       snippetName = config.editable.insertSnippet
-      template = document.design.get(snippetName)
+      template = @page.design.get(snippetName)
       copy = template.createModel()
 
       newView = if direction == 'before'

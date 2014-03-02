@@ -1,3 +1,8 @@
+dom = require('./dom')
+config = require('../configuration/defaults')
+docClass = config.html.css
+
+
 # DragDrop
 #
 # to start a drag operation:

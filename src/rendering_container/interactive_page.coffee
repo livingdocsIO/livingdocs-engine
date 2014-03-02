@@ -1,4 +1,6 @@
+config = require('../configuration/defaults')
 Page = require('./page')
+dom = require('../interaction/dom')
 Focus = require('../interaction/focus')
 EditableController = require('../interaction/editable_controller')
 DragDrop = require('../interaction/drag_drop')

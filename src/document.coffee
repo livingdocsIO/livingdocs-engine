@@ -1,3 +1,4 @@
+assert = require('./modules/logging/assert')
 Design = require('./design/design')
 SnippetTree = require('./snippet_tree/snippet_tree')
 Kickstart = require('./kickstart/kickstart')

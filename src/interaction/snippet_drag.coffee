@@ -1,3 +1,7 @@
+dom = require('./dom')
+config = require('../configuration/defaults')
+docClass = config.html.css
+
 module.exports = class SnippetDrag
 
 

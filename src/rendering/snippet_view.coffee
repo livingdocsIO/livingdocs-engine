@@ -1,6 +1,7 @@
 config = require('../configuration/defaults')
 DirectiveIterator = require('../template/directive_iterator')
 eventing = require('../modules/eventing')
+dom = require('../interaction/dom')
 
 module.exports = class SnippetView
 

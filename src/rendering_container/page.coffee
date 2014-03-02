@@ -1,5 +1,6 @@
 RenderingContainer = require('./rendering_container')
 CssLoader = require('./css_loader')
+config = require('../configuration/defaults')
 
 # A Page is a subclass of RenderingContainer which is intended to be shown to
 # the user. It has a Loader which allows you to inject CSS and JS files into the
@@ -12,7 +13,7 @@ module.exports = class Page extends RenderingContainer
 
     super()
 
-    renderNode = renderNode || $(".#{ docClass.section }", @$body)
+    renderNode = renderNode || $(".#{ config.html.css.section }", @$body)
     if renderNode.jquery
       @renderNode = renderNode[0]
     else
