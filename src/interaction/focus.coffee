@@ -1,7 +1,9 @@
+dom = require('./dom')
+
 # Document Focus
 # --------------
 # Manage the snippet or editable that is currently focused
-class Focus
+module.exports = class Focus
 
   constructor: ->
     @editableNode = undefined
