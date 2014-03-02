@@ -117,7 +117,6 @@ module.exports = (grunt) ->
       unit:
         configFile: 'karma.conf.coffee'
         browsers: ['Chrome']
-        autoWatch: true
       browsers:
         configFile: 'karma.conf.coffee'
         browsers: ['Chrome', 'Firefox', 'Safari']

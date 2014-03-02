@@ -10,21 +10,21 @@ module.exports = (config) ->
     # list of files / patterns to load in the browser
     files: [
       'components/jquery/jquery.js'
-      'test/support/**/*.coffee'
-      'test/specs/**/*.coffee'
+      'test/support/*.coffee'
+      'test/specs/{,*/}*.coffee'
     ],
 
     # list of files / patterns to exclude
     exclude: [],
 
     preprocessors:
-      'test/support/**/*': ['browserify']
-      'test/specs/**/*': ['browserify']
+      'test/support/*.coffee': ['browserify']
+      'test/specs/{,*/}*.coffee': ['browserify']
 
     browserify:
       extension: ['.coffee']
       transform: ['coffeeify']
-      noParse: ['jquery']
+      # noParse: ['jquery']
       watch: true
 
     # web server port
@@ -35,7 +35,7 @@ module.exports = (config) ->
     logLevel: config.LOG_INFO
 
     # enable / disable watching file and executing tests whenever any file changes
-    autoWatch: false
+    autoWatch: true
 
     # Start these browsers, currently available:
     # - Chrome
