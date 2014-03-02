@@ -1,4 +1,4 @@
-CssLoader = require('../../../src/rendering/css_loader')
+CssLoader = require('../../../src/rendering_container/css_loader')
 
 describe 'CssLoader', ->
   beforeEach ->
