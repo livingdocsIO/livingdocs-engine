@@ -9,9 +9,8 @@ module.exports = (grunt) ->
       src:
         files: [
           'src/{,*/}*.coffee'
-          'test/spec/{,*/}*.coffee'
         ]
-        tasks: ['coffee']
+        tasks: ['browserify:tmp']
       livereload:
         options:
           livereload: '<%= connect.options.livereload %>'
@@ -54,52 +53,24 @@ module.exports = (grunt) ->
       dist: 'dist'
       tmp: '.tmp'
 
-    coffee:
-      engine:
-        options:
-          join: true
-          sourceMap: true
-        files:
-          '.tmp/livingdocs-engine.js': [
-            'src/config.coffee'
-            'src/utils/*.coffee'
-            'src/mixins/*.coffee'
-            'src/rendering_container/*.coffee'
-            'src/snippet_tree/*.coffee'
-            'src/template/*.coffee'
-            'src/!(api|config).coffee'
-            'src/api.coffee'
-          ]
-
-      test:
-        options:
-          join: true
-        files:
-          '.tmp/livingdocs-engine-test.js': [
-            'src/config.coffee'
-            'src/utils/*.coffee'
-            'src/mixins/*.coffee'
-            'src/rendering_container/*.coffee'
-            'src/snippet_tree/*.coffee'
-            'src/template/*.coffee'
-            'src/!(api|config).coffee'
-            'src/api.coffee'
-            'test/spec/helpers/*.coffee'
-            'test/spec/mocks/*.coffee'
-            'test/spec/utils/*.coffee'
-            'test/spec/*.coffee'
-          ]
-
     browserify:
+      options:
+        extensions: ['.coffee']
+        transform: ['coffeeify']
+        debug: true
+        alias: ['./src/kickstart/browser_xmldom:xmldom']
       tmp:
         files:
-          '.tmp/browserify.js' : [
-            'src/browserify.coffee'
+          '.tmp/livingdocs-engine.js' : [
+            'src/browser_api.coffee'
           ]
+      build:
         options:
-          extensions: ['.coffee']
-          transform: ['coffeeify']
-          debug: true
+          debug: false
+        files:
+          'dist/livingdocs-engine.js' : [
+            'src/browser_api.coffee'
+          ]
 
     mochaTest:
       test:
@@ -141,17 +112,11 @@ module.exports = (grunt) ->
           'dist/livingdocs-engine.min.js': [
             'dist/livingdocs-engine.js'
           ]
+
     copy:
-      dist:
-        files: [
-          expand: true
-          cwd: '.tmp/'
-          src: 'livingdocs-engine.*'
-          dest: 'dist/'
-        ]
       dependencies:
         files: [
-            src: 'test/manual/css/livingdocs.css'
+            src: 'public/assets/css/livingdocs.css'
             dest: 'dist/css/livingdocs.css'
         ]
 
@@ -162,9 +127,13 @@ module.exports = (grunt) ->
         pushTo: 'origin'
         push: true
 
+
+  # Tasks
+  # -----
+
   grunt.registerTask('dev', [
     'clean:tmp'
-    'coffee:engine'
+    'browserify:tmp'
     'connect:livereload'
     'watch'
   ])
@@ -178,10 +147,9 @@ module.exports = (grunt) ->
   ])
 
   grunt.registerTask('build', [
-    'clean'
-    'coffee'
-    'karma:build'
-    'copy:dist'
+    'clean:dist'
+    'browserify:build'
+    # 'karma:build'
     'uglify'
     'copy:dependencies'
   ])
