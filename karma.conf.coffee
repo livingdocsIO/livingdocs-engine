@@ -5,30 +5,21 @@ module.exports = (config) ->
     basePath: ''
 
     # testing framework to use (jasmine/mocha/qunit/...)
-    frameworks: ['mocha', 'sinon-chai', 'browserify']
+    frameworks: ['mocha', 'sinon-chai']
 
     # list of files / patterns to load in the browser
     files: [
       'components/jquery/jquery.js'
-      'test/support/setup.coffee'
-      'test/specs/{,*/}*.coffee'
+      '.tmp/livingdocs-engine-test.js'
     ],
 
     # list of files / patterns to exclude
     exclude: [],
 
-    preprocessors:
-      'test/support/setup.coffee': ['browserify']
-      'test/specs/{,*/}*.coffee': ['browserify']
-
-    browserify:
-      extension: ['.coffee']
-      transform: ['coffeeify']
-      # noParse: ['jquery']
-      watch: true
-
     # web server port
     port: 8080
+
+    reporters: ['dots']
 
     # level of logging
     # possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG

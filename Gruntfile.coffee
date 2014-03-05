@@ -10,16 +10,22 @@ module.exports = (grunt) ->
         files: [
           'src/{,*/}*.coffee'
         ]
-        tasks: ['browserify:tmp']
+        tasks: ['browserify:test', 'browserify:tmp']
       livereload:
         options:
           livereload: '<%= connect.options.livereload %>'
         files: [
           'public/*.html'
-          '.tmp/*.*'
+          '.tmp/livingdocs-engine.js'
         ]
       gruntfile:
         files: ['Gruntfile.coffee']
+      test:
+        files: [
+          'test/support/{,*/}*.coffee'
+          'test/specs/{,*/}*.coffee'
+        ]
+        tasks: ['browserify:test']
 
     connect:
       options:
@@ -63,6 +69,14 @@ module.exports = (grunt) ->
         files:
           '.tmp/livingdocs-engine.js' : [
             'src/browser_api.coffee'
+          ]
+      test:
+        options:
+          debug: false
+        files:
+          '.tmp/livingdocs-engine-test.js' : [
+            'test/support/setup.coffee'
+            'test/specs/{,*/}*.coffee'
           ]
       build:
         options:
@@ -139,6 +153,7 @@ module.exports = (grunt) ->
   ])
 
   grunt.registerTask('test', [
+    'browserify:test'
     'karma:unit'
   ])
 
