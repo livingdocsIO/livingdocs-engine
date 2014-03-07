@@ -203,7 +203,7 @@ module.exports = class SnippetView
     if $elem[0].nodeName == 'IMG'
       $elem.attr('src', value)
     else
-      $elem.attr('style', "background-image:url(#{value})")
+      $elem.css('background-image', "url('#{ value }')")
 
 
   setPlaceholderImage: ($elem) ->
