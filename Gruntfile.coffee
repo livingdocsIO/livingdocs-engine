@@ -80,7 +80,7 @@ module.exports = (grunt) ->
           ]
       build:
         options:
-          debug: false
+          debug: true
         files:
           'dist/livingdocs-engine.js' : [
             'src/browser_api.coffee'
