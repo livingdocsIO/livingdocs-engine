@@ -2,9 +2,6 @@
   "name": "livingdocs-engine",
   "version": "0.1.2",
   "homepage": "https://github.com/upfrontIO/livingdocs-engine",
-  "authors": [
-    "Lukas Peyer<lukas@upfront.io>"
-  ],
   "description": "Livingdocs Engine",
   "private": true,
   "ignore": [

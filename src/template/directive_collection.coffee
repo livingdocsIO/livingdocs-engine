@@ -1,6 +1,10 @@
+assert = require('../modules/logging/assert')
+config = require('../configuration/defaults')
+Directive = require('./directive')
+
 # A list of all directives of a template
 # Every node with an doc- attribute will be stored by its type
-class DirectiveCollection
+module.exports = class DirectiveCollection
 
   constructor: (@all={}) ->
     @length = 0

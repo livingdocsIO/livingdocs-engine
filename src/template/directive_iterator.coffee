@@ -1,3 +1,5 @@
+config = require('../configuration/defaults')
+
 # Directive Iterator
 # ---------------------
 # Code is ported from rangy NodeIterator and adapted for snippet templates
@@ -5,7 +7,7 @@
 #
 # Use to traverse all nodes of a template. The iterator does not go into
 # containers and is safe to use even if there is content in these containers.
-class DirectiveIterator
+module.exports = class DirectiveIterator
 
   constructor: (root) ->
     @root = @_next = root

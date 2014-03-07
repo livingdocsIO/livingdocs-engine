@@ -1,7 +1,21 @@
+log = require('../modules/logging/log')
+assert = require('../modules/logging/assert')
+words = require('../modules/words')
+
+config = require('../configuration/defaults')
+
+DirectiveIterator = require('./directive_iterator')
+DirectiveCollection = require('./directive_collection')
+directiveCompiler = require('./directive_compiler')
+directiveFinder = require('./directive_finder')
+
+SnippetModel = require('../snippet_tree/snippet_model')
+SnippetView = require('../rendering/snippet_view')
+
 # Template
 # --------
 # Parses snippet templates and creates SnippetModels and SnippetViews.
-class Template
+module.exports = class Template
 
 
   constructor: ({ html, @namespace, @id, identifier, title, styles, weight } = {}) ->
@@ -93,7 +107,7 @@ class Template
 
   formatEditable: (name, elem) ->
     $elem = $(elem)
-    $elem.addClass(docClass.editable)
+    $elem.addClass(config.html.css.editable)
 
     defaultValue = words.trim(elem.innerHTML)
     @defaults[name] = defaultValue if defaultValue

@@ -1,95 +1,109 @@
-
-# livereload
-path = require('path')
-lrSnippet = require('grunt-contrib-livereload/lib/utils').livereloadSnippet
-folderMount = (connect, point) ->
-  return connect.static(path.resolve(point))
-
 module.exports = (grunt) ->
 
   # load all grunt tasks
   require('load-grunt-tasks')(grunt)
 
   grunt.initConfig
-    livereload:
-      # Default livereload listening port: 35729
-      # The port is different so it plays well togehter with other projects
-      port: 35739
+
     watch:
-      livereload:
-        files: [
-          '*.html'
-          '.tmp/{,*/}*.js'
-        ]
-        tasks: ['livereload']
       src:
         files: [
           'src/{,*/}*.coffee'
-          'test/spec/{,*/}*.coffee'
         ]
-        tasks: ['coffee']
-    connect:
+        tasks: ['browserify:test', 'browserify:tmp']
       livereload:
         options:
-          port: 9010
-          # Change this to '0.0.0.0' to access the server from outside.
-          hostname: 'localhost'
-          middleware: (connect, options) ->
-            [lrSnippet, folderMount(connect, options.base)]
+          livereload: '<%= connect.options.livereload %>'
+        files: [
+          'public/*.html'
+          '.tmp/livingdocs-engine.js'
+        ]
+      gruntfile:
+        files: ['Gruntfile.coffee']
+      test:
+        files: [
+          'test/support/{,*/}*.coffee'
+          'test/specs/{,*/}*.coffee'
+        ]
+        tasks: ['browserify:test']
+
+    connect:
+      options:
+        port: 9010
+        # Change this to '0.0.0.0' to access the server from outside.
+        hostname: 'localhost'
+        livereload: 35739 # Default livereload listening port: 35729
+      livereload:
+        options:
+          open: true
+          base: [
+            '.tmp'
+            'public'
+            'components'
+          ]
       test:
         options:
           port: 9011
-          middleware: (connect, options) ->
-            [folderMount(connect, options.base)]
+          base: [
+            '.tmp'
+            'public'
+            'test'
+            'components'
+          ]
+
     open:
       server:
         url: 'http://localhost:<%= connect.livereload.options.port %>'
+
     clean:
       dist: 'dist'
       tmp: '.tmp'
-    coffee:
-      engine:
-        options:
-          join: true
-          sourceMap: true
+
+    browserify:
+      options:
+        extensions: ['.coffee']
+        transform: ['coffeeify']
+        debug: true
+        alias: ['./src/kickstart/browser_xmldom:xmldom']
+      tmp:
         files:
-          '.tmp/livingdocs-engine.js': [
-            'src/config.coffee'
-            'src/utils/*.coffee'
-            'src/mixins/*.coffee'
-            'src/rendering_container/*.coffee'
-            'src/snippet_tree/*.coffee'
-            'src/template/*.coffee'
-            'src/!(api|config).coffee'
-            'src/api.coffee'
+          '.tmp/livingdocs-engine.js' : [
+            'src/browser_api.coffee'
           ]
       test:
         options:
-          join: true
+          debug: false
         files:
-          '.tmp/livingdocs-engine-test.js': [
-            'src/config.coffee'
-            'src/utils/*.coffee'
-            'src/mixins/*.coffee'
-            'src/rendering_container/*.coffee'
-            'src/snippet_tree/*.coffee'
-            'src/template/*.coffee'
-            'src/!(api|config).coffee'
-            'src/api.coffee'
-            'test/spec/helpers/*.coffee'
-            'test/spec/mocks/*.coffee'
-            'test/spec/utils/*.coffee'
-            'test/spec/*.coffee'
+          '.tmp/livingdocs-engine-test.js' : [
+            'test/support/setup.coffee'
+            'test/specs/{,*/}*.coffee'
           ]
-    docco:
-      src:
-        src: ['src/**/*.coffee']
+      build:
         options:
-          output: 'docs'
+          debug: true
+        files:
+          'dist/livingdocs-engine.js' : [
+            'src/browser_api.coffee'
+          ]
+
+    mochaTest:
       test:
-        src: ['test/spec/*.coffee']
         options:
-          output: 'docs/test'
+          reporter: 'dot'
+          compilers: 'coffee-script/register'
+          require: './test/node/test_globals.js'
+        src: [
+          'test/specs/configuration/*.coffee'
+          'test/specs/design/*.coffee'
+          'test/specs/interaction/dom_spec.coffee'
+          'test/specs/kickstart/*.coffee'
+          'test/specs/modules/*.coffee'
+          'test/specs/rendering/*.coffee'
+          'test/specs/serialization/*.coffee'
+          'test/specs/snippet_tree/*.coffee'
+          'test/specs/template/*.coffee'
+        ]
+
     karma:
       unit_once:
         configFile: 'karma.conf.coffee'
@@ -97,7 +111,7 @@ module.exports = (grunt) ->
         singleRun: true
       unit:
         configFile: 'karma.conf.coffee'
-        browsers: ['PhantomJS']
+        browsers: ['Chrome']
       browsers:
         configFile: 'karma.conf.coffee'
         browsers: ['Chrome', 'Firefox', 'Safari']
@@ -105,23 +119,18 @@ module.exports = (grunt) ->
         configFile: 'karma.conf.coffee'
         browsers: ['Chrome', 'Firefox', 'Safari']
         singleRun: true
+
     uglify:
       dist:
         files:
           'dist/livingdocs-engine.min.js': [
             'dist/livingdocs-engine.js'
           ]
+
     copy:
-      dist:
-        files: [
-          expand: true
-          cwd: '.tmp/'
-          src: 'livingdocs-engine.*'
-          dest: 'dist/'
-        ]
       dependencies:
         files: [
-            src: 'test/manual/css/livingdocs.css'
+            src: 'public/assets/css/livingdocs.css'
             dest: 'dist/css/livingdocs.css'
         ]
 
@@ -132,40 +141,31 @@ module.exports = (grunt) ->
         pushTo: 'origin'
         push: true
 
-    concurrent:
-      dev: [
-        'watch:src'
-        'server'
-      ]
 
-
-  # livereload does not work with grunt-contrib-watch, so we use regarde instead
-  # https://github.com/gruntjs/grunt-contrib-watch/issues/59
-  grunt.renameTask('regarde', 'watch')
+  # Tasks
+  # -----
 
   grunt.registerTask('dev', [
     'clean:tmp'
-    'coffee'
-    'concurrent:dev'
-  ])
-
-  grunt.registerTask('server', [
-    'livereload-start'
+    'browserify:tmp'
     'connect:livereload'
-    'open'
-    'watch:livereload'
+    'watch'
   ])
 
   grunt.registerTask('test', [
-    'coffee:test'
+    'browserify:test'
     'karma:unit'
   ])
 
+  grunt.registerTask('node-test', [
+    'mochaTest'
+  ])
+
   grunt.registerTask('build', [
-    'clean'
-    'coffee'
+    'clean:dist'
+    'browserify:build'
     'karma:build'
-    'copy:dist'
+    'mochaTest'
     'uglify'
     'copy:dependencies'
   ])
@@ -178,7 +178,8 @@ module.exports = (grunt) ->
   # release:minor
   # release:major
   grunt.registerTask 'release', (type) ->
-    type = if type then type else 'patch'
+    type ?= 'patch'
+    grunt.task.run('build')
     grunt.task.run('bump:' + type)
 
 

@@ -1,4 +1,6 @@
-class Directive
+config = require('../configuration/defaults')
+
+module.exports = class Directive
 
   constructor: ({ name, @type, @elem }) ->
     @name = name || config.directives[@type].defaultName

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    <!-- livingdocs-engine base css -->
+    <link rel="stylesheet" href="/assets/css/livingdocs.css">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <section class="doc-section"></section>
+    </div>
+
+    <!-- dependencies of livingdocs-engine -->
+    <script src="/jquery/jquery.js"></script>
+    <script src="/EditableJS/editable.js"></script>
+
+    <!-- designs for manual testing -->
+    <script src="/designs/bootstrap/design.js"></script>
+
+    <!-- livingdocs-engine. yeah! -->
+    <script src="/livingdocs-engine.js"></script>
+
+    <script>
+
+      $(document).ready(function() {
+
+        // setup document
+        var json = doc.stash.get();
+        doc.init({ design: design.bootstrap, json: json });
+
+        doc.ready(function() {
+
+          if (!json) {
+            var row = doc.add("mainAndSidebar");
+            row.append("main", doc.create("hero"));
+            row.append("main", doc.create("text"));
+            row.append("sidebar", doc.create("title"));
+            var single = doc.add("column");
+            single.append(doc.create("hero"));
+            single.append(doc.create("hero"));
+            single.append(doc.create("hero"));
+          }
+
+          // drag in new hero snippet
+          var $newSnippet = $("<div>drag me</div>").css('cursor', 'move')
+          var dragDrop = new doc.DragDrop({
+            minDistance: 10,
+            preventDefault: true
+          });
+          $newSnippet.on('mousedown', function(event) {
+            var newSnippet = doc.create('html')
+
+            doc.startDrag({ snippet: newSnippet, dragDrop: dragDrop, event: event })
+          });
+          $(document.body).append($newSnippet)
+
+        });
+      });
+    </script>
+
+  </body>
+</html>
