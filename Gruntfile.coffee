@@ -89,7 +89,7 @@ module.exports = (grunt) ->
     mochaTest:
       test:
         options:
-          reporter: 'spec'
+          reporter: 'dot'
           compilers: 'coffee-script/register'
           require: './test/node/test_globals.js'
         src: [
@@ -164,7 +164,8 @@ module.exports = (grunt) ->
   grunt.registerTask('build', [
     'clean:dist'
     'browserify:build'
-    # 'karma:build'
+    'karma:build'
+    'mochaTest'
     'uglify'
     'copy:dependencies'
   ])
