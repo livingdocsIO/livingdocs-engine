@@ -65,11 +65,10 @@ module.exports = class SnippetDrag
       #   dom.maximizeContainerHeight(target.snippetView)
       #   $container = target.snippetView.get$container()
 
-      # @highlighContainer($container) if $container?
-
       return target
     else
       @$dropMarker.hide()
+      @removeContainerHighlight()
       return undefined
 
 
@@ -77,10 +76,13 @@ module.exports = class SnippetDrag
     switch target.target
       when 'snippet'
         @snippetPosition(target)
+        @removeContainerHighlight()
       when 'container'
         @showMarkerAtBeginningOfContainer(target.node)
+        @highlighContainer($(target.node))
       when 'root'
         @showMarkerAtBeginningOfContainer(target.node)
+        @highlighContainer($(target.node))
 
 
   snippetPosition: (target) ->
@@ -177,6 +179,11 @@ module.exports = class SnippetDrag
       @$highlightedContainer.addClass?(config.html.css.containerHighlight)
 
 
+  removeContainerHighlight: ->
+    @$highlightedContainer.removeClass?(config.html.css.containerHighlight)
+    @$highlightedContainer = {}
+
+
   getElemUnderCursor: (top, left) ->
     top = top - @page.$body.scrollTop()
     left = left - @page.$body.scrollLeft()
@@ -221,9 +228,9 @@ module.exports = class SnippetDrag
 
       # undo DOM changes
       @undoMakeSpace()
+      @removeContainerHighlight()
       @page.$body.css('cursor', '')
       @page.editableController.reenableAll()
-      @$highlightedContainer.removeClass?(config.html.css.containerHighlight)
       @$view.removeClass(config.html.css.dragged) if @$view?
       dom.restoreContainerHeight()
 
