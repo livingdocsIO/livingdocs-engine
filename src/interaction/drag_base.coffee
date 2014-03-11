@@ -22,9 +22,16 @@ module.exports = class DragBase
       move:
         distance: 0
 
-    @defaultOptions = $.extend(defaultConfig, options)
-    @options = @defaultOptions
+    @defaultConfig = $.extend(true, defaultConfig, options)
 
+    @startPoint = undefined
+    @dragHandler = undefined
+    @initialized = false
+    @started = false
+
+
+  setOptions: (options) ->
+    @options = $.extend(true, {}, @defaultConfig, options)
     @mode = if options.direct?
       'direct'
     else if options.longpress?
@@ -34,17 +41,12 @@ module.exports = class DragBase
     else
       'longpress'
 
-    @startPoint = undefined
-    @dragHandler = undefined
-    @initialized = false
-    @started = false
-
-
 
   # start a possible drag
   # the drag is only really started if constraints are not violated (longpressDelay and longpressDistanceLimit or minDistance)
-  init: (dragHandler, event) ->
+  init: (dragHandler, event, options) ->
     @reset()
+    @setOptions(options)
     @initialized = true
     @dragHandler = dragHandler
     @startPoint = @getTopLeft(event)

@@ -3,7 +3,6 @@ Page = require('./page')
 dom = require('../interaction/dom')
 Focus = require('../interaction/focus')
 EditableController = require('../interaction/editable_controller')
-DragDrop = require('../interaction/drag_drop')
 DragBase = require('../interaction/drag_base')
 SnippetDrag = require('../interaction/snippet_drag')
 
@@ -27,13 +26,7 @@ module.exports = class InteractivePage extends Page
     @htmlElementClick = $.Callbacks() # (snippetView, fieldName, event) ->
     @snippetWillBeDragged = $.Callbacks() # (snippetModel) ->
     @snippetWasDropped = $.Callbacks() # (snippetModel) ->
-
-    @longpressDrag = new DragBase this,
-      longpress:
-        delay: 400
-        tolerance: 3
-        showIndicator: true
-
+    @dragBase = new DragBase(this)
     @focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
     @focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )
 
@@ -62,11 +55,10 @@ module.exports = class InteractivePage extends Page
 
     @startDrag
       snippetView: snippetView
-      dragDrop: @longpressDrag
       event: event
 
 
-  startDrag: ({ snippetModel, snippetView, dragDrop, event }) ->
+  startDrag: ({ snippetModel, snippetView, event, config }) ->
     return unless snippetModel || snippetView
     snippetModel = snippetView.model if snippetView
 
@@ -75,7 +67,13 @@ module.exports = class InteractivePage extends Page
       snippetView: snippetView
       page: this
 
-    dragDrop.init(snippetDrag, event)
+    config ?=
+      longpress:
+        showIndicator: true
+        delay: 400
+        tolerance: 3
+
+    @dragBase.init(snippetDrag, event, config)
 
 
   click: (event) ->
