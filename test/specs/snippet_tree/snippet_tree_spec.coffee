@@ -233,7 +233,7 @@ describe 'SnippetTree with three levels', ->
     @row = test.getSnippet('row')
     @rowInMain = test.getSnippet('row')
     @title = test.getSnippet('title')
-    @text = test.getSnippet('p')
+    @text = test.getSnippet('paragraph')
 
     @tree.append(@row)
     @row.append('main', @rowInMain)
@@ -270,7 +270,7 @@ describe 'SnippetTree with three snippets', ->
     @tree = new SnippetTree()
     @snippets = []
     for index in [0..2]
-      @snippets[index] = test.getSnippet('p')
+      @snippets[index] = test.getSnippet('paragraph')
       @tree.append(@snippets[index])
 
 

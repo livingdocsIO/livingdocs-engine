@@ -14,7 +14,7 @@ module.exports = do ->
 
   config:
     namespace: 'test'
-    paragraph: 'p'
+    paragraph: 'paragraph'
 
     groups:
       layout:
@@ -86,12 +86,8 @@ module.exports = do ->
       title: 'Subtitle with a default value'
       html: """<h2 #{ editableAttr }="title">Who's your Caddy?</h2>"""
     ,
-      id: 'p'
+      id: 'paragraph'
       title: 'Paragraph'
-      html: """<p #{ editableAttr }="text"></p>"""
-    ,
-      id: 'text'
-      title: 'Text'
       html: """<p #{ editableAttr }="text"></p>"""
     ,
       id: 'image'
