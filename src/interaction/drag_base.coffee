@@ -116,13 +116,13 @@ module.exports = class DragBase
 
   addLongpressIndicator: ({ top, left }) ->
     return unless @options.longpress.showIndicator
-    $indicator = $('<div class="doc-longpress-indicator"><div></div></div>')
+    $indicator = $("<div class=\"#{ config.css.longpressIndicator }\"><div></div></div>")
     $indicator.css(top: top, left: left)
     @page.$body.append($indicator)
 
 
   removeLongpressIndicator: ->
-    @page.$body.find('.doc-longpress-indicator').remove()
+    @page.$body.find(".#{ config.css.longpressIndicator }").remove()
 
 
   # These events are initialized immediately to allow a long-press finish

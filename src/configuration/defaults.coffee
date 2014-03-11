@@ -32,10 +32,14 @@ module.exports = config = do ->
       containerHighlight: 'doc-container-highlight'
 
       # drag & drop
-      draggedPlaceholder: 'doc-dragged-placeholder'
       dragged: 'doc-dragged'
+      draggedPlaceholder: 'doc-dragged-placeholder'
+      draggedPlaceholderCounter: 'doc-drag-counter'
+      dropMarker: 'doc-drop-marker'
       beforeDrop: 'doc-before-drop'
+      noDrop: 'doc-drag-no-drop'
       afterDrop: 'doc-after-drop'
+      longpressIndicator: 'doc-longpress-indicator'
 
       # utility classes
       preventSelection: 'doc-no-selection'
@@ -106,6 +110,8 @@ enrichConfig = ->
   # code and specs more readable.
   @docClass = @html.css
   @docAttr = @html.attr
+  @css = @html.css
+  @attr = @html.attr
   @docDirective = {}
   @templateAttrLookup = {}
 

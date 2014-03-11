@@ -21,7 +21,7 @@ module.exports = class SnippetDrag
     @$placeholder = @createPlaceholder()
 
     # drop marker
-    @$dropMarker = $("<div class='doc-drop-marker'>")
+    @$dropMarker = $("<div class='#{ config.css.dropMarker }'>")
 
     @page.$body
       .append(@$dropMarker)
@@ -56,7 +56,7 @@ module.exports = class SnippetDrag
     @undoMakeSpace()
 
     if target? && target.snippetView?.model != @snippetModel
-      @$placeholder.removeClass('doc-drag-no-drop')
+      @$placeholder.removeClass(config.css.noDrop)
       @markDropPosition(target)
 
       # if target.containerName
@@ -72,9 +72,9 @@ module.exports = class SnippetDrag
       @removeContainerHighlight()
 
       if not target?
-        @$placeholder.addClass('doc-drag-no-drop')
+        @$placeholder.addClass(config.css.noDrop)
       else
-        @$placeholder.removeClass('doc-drag-no-drop')
+        @$placeholder.removeClass(config.css.noDrop)
 
       return undefined
 
@@ -249,8 +249,10 @@ module.exports = class SnippetDrag
   createPlaceholder: ->
     numberOfDraggedElems = 1
     template = """
-      <div class="doc-drag-placeholder-item">
-        <span class="doc-drag-counter">#{ numberOfDraggedElems }</span>
+      <div class="#{ config.css.draggedPlaceholder }">
+        <span class="#{ config.css.draggedPlaceholderCounter }">
+          #{ numberOfDraggedElems }
+        </span>
         Selected Item
       </div>
       """
