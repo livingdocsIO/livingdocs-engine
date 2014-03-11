@@ -118,6 +118,15 @@
   font-weight: bold;
 }
 
+.doc-drag-no-drop {
+  background: #dd0009;
+  opacity: 0.5;
+}
+
+.doc-drag-no-drop .doc-drag-counter {
+  background: #dd0009;
+}
+
 .doc-drop-marker {
   position: absolute;
   border: 1px dashed #09d;
@@ -127,6 +136,7 @@
   /*border-radius: 3px;*/
   opacity: 0.5;
 }
+
 
 
 /**

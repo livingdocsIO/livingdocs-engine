@@ -56,6 +56,7 @@ module.exports = class SnippetDrag
     @undoMakeSpace()
 
     if target? && target.snippetView?.model != @snippetModel
+      @$placeholder.removeClass('doc-drag-no-drop')
       @markDropPosition(target)
 
       # if target.containerName
@@ -69,6 +70,12 @@ module.exports = class SnippetDrag
     else
       @$dropMarker.hide()
       @removeContainerHighlight()
+
+      if not target?
+        @$placeholder.addClass('doc-drag-no-drop')
+      else
+        @$placeholder.removeClass('doc-drag-no-drop')
+
       return undefined
 
 
