@@ -214,6 +214,7 @@ module.exports = class SnippetView
       width = $elem.outerWidth()
       height = $elem.outerHeight()
     value = "http://placehold.it/#{width}x#{height}/BEF56F/B2E668"
+    $elem.addClass('image-empty')
     @setImageAttribute($elem, value)
 
 
