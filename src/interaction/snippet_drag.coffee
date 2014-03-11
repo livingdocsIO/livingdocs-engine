@@ -6,7 +6,7 @@ module.exports = class SnippetDrag
   wiggleSpace = 0
   startAndEndOffset = 0
 
-  constructor: ({ @snippetModel, snippetView, @page }) ->
+  constructor: ({ @snippetModel, snippetView }) ->
     @$view = snippetView.$html if snippetView
     @$highlightedContainer = {}
 

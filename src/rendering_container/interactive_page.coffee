@@ -65,7 +65,6 @@ module.exports = class InteractivePage extends Page
     snippetDrag = new SnippetDrag
       snippetModel: snippetModel
       snippetView: snippetView
-      page: this
 
     config ?=
       longpress:

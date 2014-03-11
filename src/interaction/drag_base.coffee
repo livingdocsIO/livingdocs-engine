@@ -42,13 +42,18 @@ module.exports = class DragBase
       'longpress'
 
 
+  setDragHandler: (dragHandler) ->
+    @dragHandler = dragHandler
+    @dragHandler.page = @page
+
+
   # start a possible drag
   # the drag is only really started if constraints are not violated (longpressDelay and longpressDistanceLimit or minDistance)
   init: (dragHandler, event, options) ->
     @reset()
-    @setOptions(options)
     @initialized = true
-    @dragHandler = dragHandler
+    @setOptions(options)
+    @setDragHandler(dragHandler)
     @startPoint = @getTopLeft(event)
 
     @addStopListeners(event)
