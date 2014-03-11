@@ -13,7 +13,7 @@ module.exports = class Page extends RenderingContainer
 
     super()
 
-    renderNode = renderNode || $(".#{ config.html.css.section }", @$body)
+    renderNode ?= $(".#{ config.html.css.section }", @$body)
     if renderNode.jquery
       @renderNode = renderNode[0]
     else

@@ -14,6 +14,7 @@ module.exports = do ->
 
   config:
     namespace: 'test'
+    paragraph: 'text'
 
     groups:
       layout:

@@ -119,7 +119,7 @@ describe 'kickstart', ->
 
     it 'returns correct amount of children', ->
       template = Kickstart.parseXML """
-        <title><b>test</b><b>test</b>text <p></p></title>
+        <title><b>test</b><b>test</b>text <text></text></title>
         """
       expect(@kickstart.descendants(template, 'b').length).to.equal(2)
 
