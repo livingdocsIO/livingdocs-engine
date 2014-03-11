@@ -3,7 +3,7 @@ log = require('../../src/modules/logging/log')
 assert = require('../../src/modules/logging/assert')
 testHelpers = require('./test_helpers')
 testDesign = require('./test_design')
-documentFactory = require('./factories/document_factory')
+InstanceInjector = require('./factories/instance_injector')
 _ = require('underscore')
 
 
@@ -33,7 +33,7 @@ exportGlobals = (global) ->
   global.assert = assert
   global.config = config
   global.docClass = config.docClass
-  global.documentFactory = documentFactory
+  global.getInstances = InstanceInjector.get
 
 
 # Exports for node are done in test/node/test_globals

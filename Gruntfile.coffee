@@ -101,6 +101,7 @@ module.exports = (grunt) ->
           'test/specs/rendering/*.coffee'
           'test/specs/serialization/*.coffee'
           'test/specs/snippet_tree/*.coffee'
+          'test/specs/support/*.coffee'
           'test/specs/template/*.coffee'
         ]
 
