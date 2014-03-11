@@ -29,7 +29,7 @@ describe 'Design', ->
 
 
     it 'has the default paragraph element', ->
-      expect(@design.paragraphElement).to.equal('text')
+      expect(@design.paragraphSnippet).to.equal('text')
 
 
   describe 'with a template and paragraph element', ->
@@ -45,7 +45,7 @@ describe 'Design', ->
 
 
     it 'has a paragraph element', ->
-      expect(@design.paragraphElement).to.equal('p')
+      expect(@design.paragraphSnippet).to.equal('p')
 
 
     describe 'get()', ->

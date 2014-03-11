@@ -11,7 +11,7 @@ module.exports = class Design
     groups = design.config.groups || design.groups
 
     @namespace = config?.namespace || 'livingdocs-templates'
-    @paragraphElement = config?.paragraph || 'text'
+    @paragraphSnippet = config?.paragraph || 'text'
     @css = config.css
     @js = config.js
     @fonts = config.fonts
