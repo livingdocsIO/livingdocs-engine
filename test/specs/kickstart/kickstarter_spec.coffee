@@ -5,7 +5,7 @@ describe 'kickstart', ->
 
   beforeEach ->
     @kickstart = new Kickstart
-      xmlTemplate: '<root><paragraph>fasdf</paragraph></root>',
+      xmlTemplate: '<root><text>fasdf</text></root>',
       design: testDesign
 
     @text1 = "Testparagraph1"
@@ -24,13 +24,13 @@ describe 'kickstart', ->
 
     it 'populates a snippet', ->
       row = test.getSnippet('row')
-      data = Kickstart.parseXML("<paragraph><paragraph>#{@text1}</paragraph></paragraph>")
+      data = Kickstart.parseXML("<text><text>#{@text1}</text></text>")
       @kickstart.appendSnippetToContainer(row, data,  'main')
       expect(row.containers.main.first.get('text')).to.equal(@text1)
 
     it 'populates a snippet without editable', ->
       row = test.getSnippet('row')
-      data = Kickstart.parseXML("<paragraph>#{@text1}</paragraph>")
+      data = Kickstart.parseXML("<text>#{@text1}</text>")
       @kickstart.appendSnippetToContainer(row, data,  'main')
       expect(row.containers.main.first.get('text')).to.equal(@text1)
 
@@ -41,8 +41,8 @@ describe 'kickstart', ->
       row = test.getSnippet('row')
       template = Kickstart.parseXML """
         <div>
-          <main><paragraph>#{@text1}</paragraph></main>
-          <sidebar><paragraph>#{@text2}</paragraph></sidebar>
+          <main><text>#{@text1}</text></main>
+          <sidebar><text>#{@text2}</text></sidebar>
         </div>
       """
       @kickstart.populateSnippetContainers(row, template)
@@ -58,7 +58,7 @@ describe 'kickstart', ->
 
     it 'uses default container if only one exists', ->
       containerTemplate = test.getSnippet('container')
-      template = Kickstart.parseXML("<container><paragraph>#{@text1}</paragraph></container>")
+      template = Kickstart.parseXML("<container><text>#{@text1}</text></container>")
       @kickstart.populateSnippetContainers(containerTemplate, template)
       expect(containerTemplate.containers.default.first.get('text')).to.equal(@text1)
 
@@ -119,7 +119,7 @@ describe 'kickstart', ->
 
     it 'returns correct amount of children', ->
       template = Kickstart.parseXML """
-        <title><b>test</b><b>test</b>text <paragraph></paragraph></title>
+        <title><b>test</b><b>test</b>text <text></text></title>
         """
       expect(@kickstart.descendants(template, 'b').length).to.equal(2)
 
