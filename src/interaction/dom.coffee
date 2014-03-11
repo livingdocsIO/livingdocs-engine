@@ -139,7 +139,7 @@ module.exports = do ->
 
     target: 'container'
     node: node
-    snippetView: @getSnippetView(node)
+    snippetView: @findSnippetView(node)
     containerName: containerName
 
 
