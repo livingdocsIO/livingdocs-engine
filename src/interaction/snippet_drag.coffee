@@ -24,8 +24,8 @@ module.exports = class SnippetDrag
     @$dropMarker = $("<div class='doc-drop-marker'>")
 
     @page.$body
-      .append(@$placeholder)
       .append(@$dropMarker)
+      .append(@$placeholder)
       .css('cursor', 'pointer')
 
     # mark dragged snippet
