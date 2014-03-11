@@ -95,10 +95,6 @@ module.exports = config = do ->
         $elem.slideUp(250)
 
 
-  editable:
-    insertSnippet: 'text'
-
-
 # Enrich the configuration
 # ------------------------
 #
