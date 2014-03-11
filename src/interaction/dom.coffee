@@ -100,8 +100,11 @@ module.exports = do ->
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
       # above container
       if node.hasAttribute(containerAttr)
-        closestSnippet = @getClosestSnippet(node, { top, left })
-        return @getTargetInContainer(closestSnippet, node)
+        closestSnippetData = @getClosestSnippet(node, { top, left })
+        if closestSnippetData?
+          return @getClosestSnippetTarget(closestSnippetData)
+        else
+          return @getContainerTarget(node)
 
       # above snippet
       else if snippetRegex.test(node.className)
@@ -109,36 +112,43 @@ module.exports = do ->
 
       # above root container
       else if sectionRegex.test(node.className)
-        snippetTree = $(node).data('snippetTree')
-        return obj =
-          target: 'root'
-          node: node
-          snippetTree: snippetTree
+        closestSnippetData = @getClosestSnippet(node, { top, left })
+        if closestSnippetData?
+          return @getClosestSnippetTarget(closestSnippetData)
+        else
+          return @getRootTarget(node)
 
       node = node.parentNode
 
 
-  getTargetInContainer: (closestSnippetData, node) ->
-    if closestSnippetData?
-      snippetView = @getSnippetView(closestSnippetData.$elem[0])
-
-      target: 'snippet'
-      snippetView: snippetView
-      position: closestSnippetData.position
-    else
-      containerAttr = config.directives.container.renderedAttr
-      containerName = node.getAttribute(containerAttr)
-
-      target: 'container'
-      node: node
-      snippetView: @getSnippetView(node)
-      containerName: containerName
-
-
-  getSnippetTarget: (elem, topLeft) ->
+  getSnippetTarget: (elem, { top, left, position }) ->
     target: 'snippet'
     snippetView: @getSnippetView(elem)
-    position: @getPositionOnSnippet(elem, topLeft)
+    position: position || @getPositionOnSnippet(elem, { top, left })
+
+
+  getClosestSnippetTarget: (closestSnippetData) ->
+    elem = closestSnippetData.$elem[0]
+    position = closestSnippetData.position
+    @getSnippetTarget(elem, { position })
+
+
+  getContainerTarget: (node) ->
+    containerAttr = config.directives.container.renderedAttr
+    containerName = node.getAttribute(containerAttr)
+
+    target: 'container'
+    node: node
+    snippetView: @getSnippetView(node)
+    containerName: containerName
+
+
+  getRootTarget: (node) ->
+    snippetTree = $(node).data('snippetTree')
+
+    target: 'root'
+    node: node
+    snippetTree: snippetTree
 
 
   # Figure out if we should insert before or after a snippet
