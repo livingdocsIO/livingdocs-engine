@@ -28,16 +28,24 @@ describe 'Design', ->
       expect(@design.namespace).to.equal('test')
 
 
-  describe 'with a template', ->
+    it 'has the default paragraph element', ->
+      expect(@design.paragraphElement).to.equal('text')
+
+
+  describe 'with a template and paragraph element', ->
 
     beforeEach ->
       @design = new Design
         templates: test.testDesign.templates
-        config: { namespace: 'test' }
+        config: { namespace: 'test', paragraph: 'p' }
 
 
     it 'stores the template as Template', ->
       expect(@design.templates[0]).to.be.an.instanceof(Template)
+
+
+    it 'has a paragraph element', ->
+      expect(@design.paragraphElement).to.equal('p')
 
 
     describe 'get()', ->

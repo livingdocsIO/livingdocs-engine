@@ -144,7 +144,7 @@ describe 'Deserialization', ->
             identifier : 'test.title'
             content : { 'title' : 'Do you feel lucky?' }
           ,
-            identifier : 'test.text'
+            identifier : 'test.p'
             content : { 'text' : 'Well, do ya punk?' }
           ]
           sidebar : []

@@ -80,7 +80,7 @@ module.exports = class EditableController
   insert: (view, editableName, direction, cursor) ->
     if @hasSingleEditable(view)
 
-      snippetName = config.editable.insertSnippet
+      snippetName = @page.design.paragraphElement
       template = @page.design.get(snippetName)
       copy = template.createModel()
 
