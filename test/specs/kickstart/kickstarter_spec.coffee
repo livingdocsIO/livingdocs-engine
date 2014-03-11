@@ -28,6 +28,7 @@ describe 'kickstart', ->
       @kickstart.appendSnippetToContainer(row, data,  'main')
       expect(row.containers.main.first.get('text')).to.equal(@text1)
 
+
     it 'populates a snippet without editable', ->
       row = test.getSnippet('row')
       data = Kickstart.parseXML("<text>#{@text1}</text>")
@@ -49,12 +50,14 @@ describe 'kickstart', ->
       expect(row.containers.main.first.get('text')).to.equal(@text1)
       expect(row.containers.sidebar.first.get('text')).to.equal(@text2)
 
+
     it 'ignores empty containers', ->
       row = test.getSnippet('row')
       template = Kickstart.parseXML("<main-and-sidebar><main></main></main-and-sidebar>")
       @kickstart.populateSnippetContainers(row, template)
       expect(row.containers.main.first).to.be.undefined
       expect(row.containers.sidebar.first).to.be.undefined
+
 
     it 'uses default container if only one exists', ->
       containerTemplate = test.getSnippet('container')
@@ -70,6 +73,7 @@ describe 'kickstart', ->
       template = Kickstart.parseXML("<hero doc-styles='Extra Space: extra-space'></hero>")
       @kickstart.setEditableStyles(hero, template)
       expect(hero.style('Extra Space')).to.equal('extra-space')
+
 
     it 'ignores empty styles', ->
       hero = test.getSnippet('hero')
@@ -106,6 +110,7 @@ describe 'kickstart', ->
         </hero>
         """
 
+
     it 'sets multiple editables', ->
       @a.set('title', @text1)
       @a.set('tagline', @text2)
@@ -114,18 +119,18 @@ describe 'kickstart', ->
       expect(@a.get('tagline')).to.equal(@b.get('tagline'))
 
 
-
   describe 'descendant()', ->
 
-    it 'returns correct amount of children', ->
+    it 'returns the correct <b> tag count', ->
       template = Kickstart.parseXML """
-        <title><b>test</b><b>test</b>text <text></text></title>
+        <title><b>test</b><b>test</b></title>
         """
       expect(@kickstart.descendants(template, 'b').length).to.equal(2)
 
-    it 'returns true', ->
+
+    it 'returns correct <b> tag count if other tags are present', ->
       template = Kickstart.parseXML """
-        <title><b>test</b><b>test</b></title>
+        <title><b>test</b><b>test</b>text <text></text></title>
         """
       expect(@kickstart.descendants(template, 'b').length).to.equal(2)
 
@@ -138,18 +143,22 @@ describe 'kickstart', ->
       value = @kickstart.getXmlValue(template)
       expect(value).to.equal(expected)
 
+
     it 'gets html string of a node', ->
       expected = '<div>example <b>html</b> <h1>in <a>a</a> xml node</h1></div>'
       template = Kickstart.parseXML("<test>#{expected}</test>")
       value = @kickstart.getXmlValue(template)
       expect(value).to.equal(expected)
 
+
     it 'ignores empty tag', ->
       template = Kickstart.parseXML("<test></test>")
       value = @kickstart.getXmlValue(template)
       expect(value).to.be.undefined
 
+
     it 'ignores self closing tag', ->
       template = Kickstart.parseXML("<test/>")
       value = @kickstart.getXmlValue(template)
       expect(value).to.be.undefined
+
