@@ -6,6 +6,7 @@ dom = require('../interaction/dom')
 module.exports = class SnippetView
 
   constructor: ({ @model, @$html, @directives, @isReadOnly }) ->
+    @$elem = @$html
     @template = @model.template
     @isAttachedToDom = false
     @wasAttachedToDom = $.Callbacks();

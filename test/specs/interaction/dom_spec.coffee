@@ -16,8 +16,8 @@ describe 'DOM method', ->
 
   describe 'dropTarget()', ->
 
-    it 'returns empty object when called with undefined', ->
-      expect( dom.dropTarget(undefined, {}) ).to.deep.equal({})
+    it 'returns undefined object when called with undefined', ->
+      expect( dom.dropTarget(undefined, {}) ).to.be.undefined
 
 
   describe 'findSnippetView() on title snippet', ->

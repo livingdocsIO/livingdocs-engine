@@ -3,6 +3,9 @@ config = require('../configuration/defaults')
 
 module.exports = class SnippetDrag
 
+  wiggleSpace = 0
+  startAndEndOffset = 0
+
   constructor: ({ @snippetModel, snippetView, @page }) ->
     @$view = snippetView.$html if snippetView
     @$highlightedContainer = {}
@@ -46,33 +49,125 @@ module.exports = class SnippetDrag
   findDropTarget: ({ top, left, event }) ->
     elem = @getElemUnderCursor(top, left)
 
-    # find the element below the cursor
-    if elem?
-      target = dom.dropTarget(elem, { top, left })
+    # return the same as last time if the cursor is above the dropMarker
+    return @target if elem == @$dropMarker[0]
 
-    if @isValidTarget(target)
+    target = dom.dropTarget(elem, { top, left }) if elem?
+    @undoMakeSpace()
 
-      if target.containerName
-        dom.maximizeContainerHeight(target.parent)
-        $container = $(target.node)
-      else if target.snippetView
-        dom.maximizeContainerHeight(target.snippetView)
-        $container = target.snippetView.get$container()
+    if target? && target.snippetView?.model != @snippetModel
+      @markDropPosition(target)
 
-      @highlighContainer($container) if $container?
+      # if target.containerName
+      #   dom.maximizeContainerHeight(target.parent)
+      #   $container = $(target.node)
+      # else if target.snippetView
+      #   dom.maximizeContainerHeight(target.snippetView)
+      #   $container = target.snippetView.get$container()
 
-      # show drop target
-      coords = target.coords
-      if coords?
-        @$dropMarker
-          .css({ left:"#{ coords.left }px", top:"#{ coords.top - 5}px", width:"#{ coords.width }px" })
-          .show()
+      # @highlighContainer($container) if $container?
 
       return target
     else
       @$dropMarker.hide()
       return undefined
 
+
+  markDropPosition: (target) ->
+    switch target.target
+      when 'snippet'
+        @snippetPosition(target)
+      when 'container'
+        @showMarkerAtBeginningOfContainer(target.node)
+      when 'root'
+        @showMarkerAtBeginningOfContainer(target.node)
+
+
+  snippetPosition: (target) ->
+    if target.position == 'before'
+      before = target.snippetView.prev()
+
+      if before?
+        # if before.model == @snippetModel
+        #   target.position = 'after'
+        #   return @snippetPosition(target)
+
+        @showMarkerBetweenSnippets(before, target.snippetView)
+      else
+        @showMarkerAtBeginningOfContainer(target.snippetView.$elem[0].parentNode)
+    else
+      next = target.snippetView.next()
+      if next?
+        # if next.model == @snippetModel
+        #   target.position = 'before'
+        #   return @snippetPosition(target)
+
+        @showMarkerBetweenSnippets(target.snippetView, next)
+      else
+        @showMarkerAtEndOfContainer(target.snippetView.$elem[0].parentNode)
+
+
+  showMarkerBetweenSnippets: (viewA, viewB) ->
+    boxA = dom.getBoundingClientRect(viewA.$elem[0])
+    boxB = dom.getBoundingClientRect(viewB.$elem[0])
+
+    halfGap = if boxB.top > boxA.bottom
+      (boxB.top - boxA.bottom) / 2
+    else
+      0
+
+    @showMarker
+      left: boxA.left
+      top: boxA.bottom + halfGap
+      width: boxA.width
+
+
+  showMarkerAtBeginningOfContainer: (elem) ->
+    return unless elem?
+
+    @makeSpace(elem.firstChild, 'top')
+    box = dom.getBoundingClientRect(elem)
+    @showMarker
+      left: box.left
+      top: box.top + startAndEndOffset
+      width: box.width
+
+
+  showMarkerAtEndOfContainer: (elem) ->
+    return unless elem?
+
+    @makeSpace(elem.lastChild, 'bottom')
+    box = dom.getBoundingClientRect(elem)
+    @showMarker
+      left: box.left
+      top: box.bottom - startAndEndOffset
+      width: box.width
+
+
+  showMarker: ({ top, left, width }) ->
+    @$dropMarker
+      .css
+        left:  "#{ left }px"
+        top:   "#{ top }px"
+        width: "#{ width }px"
+      .show()
+
+
+  makeSpace: (node, position) ->
+    return unless node? && wiggleSpace
+    $node = $(node)
+    @lastTransform = $node
+
+    if position == 'top'
+      $node.css(transform: "translate(0, #{ wiggleSpace }px)")
+    else
+      $node.css(transform: "translate(0, -#{ wiggleSpace }px)")
+
+
+  undoMakeSpace: (node) ->
+    if @lastTransform?
+      @lastTransform.css(transform: '')
+      @lastTransform = undefined
 
 
   highlighContainer: ($container) ->
@@ -90,15 +185,6 @@ module.exports = class SnippetDrag
     elem = @page.document.elementFromPoint(left, top)
     @$placeholder.show()
     elem
-
-
-  isValidTarget: (target) ->
-    if target?.snippetView? && target.snippetView.model != @snippetModel
-      return true
-    else if target?.containerName
-      return true
-
-    false
 
 
   # Called by DragBase
@@ -127,6 +213,7 @@ module.exports = class SnippetDrag
     if @started
 
       # undo DOM changes
+      @undoMakeSpace()
       @page.$body.css('cursor', '')
       @page.editableController.reenableAll()
       @$highlightedContainer.removeClass?(config.html.css.containerHighlight)
