@@ -198,13 +198,20 @@ module.exports = class SnippetDrag
 
   # Move the snippet after a successful drop
   moveToTarget: (target) ->
-    if snippetView = target.snippetView
-      if target.position == 'before'
-        snippetView.model.before(@snippetModel)
-      else
-        snippetView.model.after(@snippetModel)
-    else if target.containerName
-      target.parent.model.append(target.containerName, @snippetModel)
+    switch target.target
+      when 'snippet'
+        snippetView = target.snippetView
+        if target.position == 'before'
+          snippetView.model.before(@snippetModel)
+        else
+          snippetView.model.after(@snippetModel)
+      when 'container'
+        snippetModel = target.snippetView.model
+        snippetModel.append(target.containerName, @snippetModel)
+      when 'root'
+        snippetTree = target.snippetTree
+        snippetTree.prepend(@snippetModel)
+
 
 
   # Called by DragBase

@@ -109,9 +109,11 @@ module.exports = do ->
 
       # above root container
       else if sectionRegex.test(node.className)
+        snippetTree = $(node).data('snippetTree')
         return obj =
           target: 'root'
           node: node
+          snippetTree: snippetTree
 
       node = node.parentNode
 

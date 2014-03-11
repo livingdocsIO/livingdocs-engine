@@ -53,7 +53,10 @@ module.exports = do ->
       @changed.fire()
 
     # Page initialization
-    @page = new InteractivePage(renderNode: rootNode, design: @design)
+    @page = new InteractivePage
+      renderNode: rootNode
+      design: @design
+      snippetTree: @snippetTree
 
     # render document
     @renderer = new Renderer
