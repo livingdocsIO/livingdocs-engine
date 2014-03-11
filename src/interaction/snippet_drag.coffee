@@ -88,9 +88,9 @@ module.exports = class SnippetDrag
       before = target.snippetView.prev()
 
       if before?
-        # if before.model == @snippetModel
-        #   target.position = 'after'
-        #   return @snippetPosition(target)
+        if before.model == @snippetModel
+          target.position = 'after'
+          return @snippetPosition(target)
 
         @showMarkerBetweenSnippets(before, target.snippetView)
       else
@@ -98,9 +98,9 @@ module.exports = class SnippetDrag
     else
       next = target.snippetView.next()
       if next?
-        # if next.model == @snippetModel
-        #   target.position = 'before'
-        #   return @snippetPosition(target)
+        if next.model == @snippetModel
+          target.position = 'before'
+          return @snippetPosition(target)
 
         @showMarkerBetweenSnippets(target.snippetView, next)
       else
