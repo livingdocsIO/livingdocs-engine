@@ -3,6 +3,8 @@
 #### Features:
 
 - Improved Drag and Drop [#89](https://github.com/upfrontIO/livingdocs-engine/pull/89)
+- Add a css class on images that contain the placeholder, i.e., are empty
+- Read the default paragraph snippet (gets repeated on pressing Enter) from the design's configuration
 
 #### Architecture Changes:
 
@@ -10,7 +12,7 @@
 
 #### Bugfixes:
 
-- Unescaped background-url [#88](https://github.com/upfrontIO/livingdocs-engine/pull/88)  
+- Unescaped background-url [#88](https://github.com/upfrontIO/livingdocs-engine/pull/88)
   (The fix only works in the browser. See commit 34b4b078c021350 for details)
 
 
