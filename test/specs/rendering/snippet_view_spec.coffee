@@ -178,6 +178,20 @@ describe 'SnippetView image', ->
           #{ docAttr.template }="test.image">"""
 
 
+    it 'remove the empty image css class when the image is set', ->
+      placeholderUrl = 'http://placehold.it/0x0/BEF56F/B2E668'
+      imageUrl = 'http://www.bla.com'
+      @view.wasAttachedToDom.fireWith(@view.$html)
+      @view.set('image', imageUrl)
+
+      expect(@view.$html).to.have.html """
+        <img src="#{ imageUrl }"
+          #{ test.imageAttr }="image"
+          class="#{ docClass.snippet }"
+          #{ docAttr.template }="test.image">"""
+
+
+
 describe 'SnippetView background image', ->
 
   beforeEach ->
