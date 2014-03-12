@@ -194,6 +194,7 @@ module.exports = class SnippetView
     if value
       @cancelDelayed(name)
       @setImageAttribute($elem, value)
+      $elem.removeClass(config.html.css.emptyImage)
     else
       setPlaceholder = $.proxy(@setPlaceholderImage, this, $elem)
       @delayUntilAttached(name, setPlaceholder)
@@ -225,6 +226,7 @@ module.exports = class SnippetView
       width = $elem.outerWidth()
       height = $elem.outerHeight()
     value = "http://placehold.it/#{width}x#{height}/BEF56F/B2E668"
+    $elem.addClass(config.html.css.emptyImage)
     @setImageAttribute($elem, value)
 
 
