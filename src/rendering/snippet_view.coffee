@@ -219,6 +219,7 @@ module.exports = class SnippetView
 
 
   setPlaceholderImage: ($elem) ->
+    $elem.addClass(config.html.css.emptyImage)
     if $elem[0].nodeName == 'IMG'
       width = $elem.width()
       height = $elem.height()
@@ -226,7 +227,6 @@ module.exports = class SnippetView
       width = $elem.outerWidth()
       height = $elem.outerHeight()
     value = "http://placehold.it/#{width}x#{height}/BEF56F/B2E668"
-    $elem.addClass(config.html.css.emptyImage)
     @setImageAttribute($elem, value)
 
 
