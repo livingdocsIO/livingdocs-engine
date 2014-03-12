@@ -6,6 +6,7 @@ module.exports = do ->
   empty: /^\s*$/
   whitespace: /\s+/g
   normalizeWhitespace: true
+  ignoreStyleUrlQuotes: true
 
 
   compare: (a, b) ->
@@ -118,7 +119,21 @@ module.exports = do ->
       .replace(/\s*:\s*/g, ':') # ignore whitespaces around colons
       .replace(/\s*;\s*/g, ';') # ignore whitespaces around semi-colons
       .replace(/;$/g, '') # remove the last semicolon
+
+    val = @unifiyUrlStyles(val)
     val.split(';').sort().join(';')
+
+
+  # Treat all these url() variations as the same:
+  # url(http://asset.com/1)
+  # url('http://asset.com/1')
+  # url("http://asset.com/1")
+  # url(&quot;http://asset.com/1&quot;)
+  unifiyUrlStyles: (style) ->
+    return style unless @ignoreStyleUrlQuotes
+
+    styleUrl = new RegExp(/url\((['"]|&quot;)?(.*?)(['"]|&quot;)?\)/)
+    style.replace(styleUrl, "url($2)")
 
 
   isEmptyTextNode: (textNode) ->

@@ -284,3 +284,39 @@ describe 'htmlCompare', ->
 
       b = "<div id='test'>Here it comes:<div data-doc='true'  class='tablet-full hero'><a href='link'>click here!</a></div></div>"
       expect( compare($(a), $(b)) ).to.be.true
+
+
+  describe 'url() in styles', ->
+    afterEach ->
+      htmlCompare.ignoreStyleUrlQuotes = true
+
+    it 'compares two identical urls in single quotes', ->
+      a = $("<div style='background-image:url(\'http://asset.com/1\')'></div>")
+      b = $("<div style='background-image:url(\'http://asset.com/1\')'></div>")
+      expect( compare(a, b) ).to.be.true
+
+
+    it 'compares to an url with double quotes', ->
+      a = $("<div style='background-image:url(http://asset.com/1)'></div>")
+      b = $("<div style='background-image:url(\"http://asset.com/1\")'></div>")
+      expect( compare(a, b) ).to.be.true
+
+
+    it 'compares to an url with single quotes', ->
+      a = $("<div style='background-image:url(http://asset.com/1)'></div>")
+      b = $("<div style=\"background-image:url('http://asset.com/1')\"></div>")
+      expect( compare(a, b) ).to.be.true
+
+
+    it 'compares to an url with escaped quotes', ->
+      a = $("<div style='background-image:url(http://asset.com/1)'></div>")
+      b = $("<div style='background-image:url(&quot;http://asset.com/1&quot;)'></div>")
+      expect( compare(a, b) ).to.be.true
+
+
+    it 'does not compares to an url with double quotes when #ignoreStyleUrlQuotes is off', ->
+      htmlCompare.ignoreStyleUrlQuotes = false
+      a = $("<div style='background-image:url(http://asset.com/1)'></div>")
+      b = $("<div style='background-image:url(\"http://asset.com/1\")'></div>")
+      expect( compare(a, b) ).to.be.false
+
