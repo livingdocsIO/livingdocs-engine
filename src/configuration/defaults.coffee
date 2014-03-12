@@ -25,7 +25,7 @@ module.exports = config = do ->
       snippet: 'doc-snippet'
       editable: 'doc-editable'
       interface: 'doc-ui'
-      emptyImage: 'image-empty'
+      emptyImage: 'doc-image-empty'
 
       # highlight classes
       snippetHighlight: 'doc-snippet-highlight'

@@ -162,7 +162,7 @@ describe 'SnippetView image', ->
       expect(@view.$html).to.have.html """
         <img src="#{ placeholderUrl }"
           #{ test.imageAttr }="image"
-          class="#{ docClass.snippet } image-empty"
+          class="#{ docClass.snippet } doc-image-empty"
           #{ docAttr.template }="test.image">"""
 
 
