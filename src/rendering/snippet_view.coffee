@@ -1,4 +1,6 @@
 config = require('../configuration/defaults')
+css = config.css
+attr = config.attr
 DirectiveIterator = require('../template/directive_iterator')
 eventing = require('../modules/eventing')
 dom = require('../interaction/dom')
@@ -15,8 +17,8 @@ module.exports = class SnippetView
       # add attributes and references to the html
       @$html
         .data('snippet', this)
-        .addClass(config.html.css['snippet'])
-        .attr(config.html.attr['template'], @template.identifier)
+        .addClass(css.snippet)
+        .attr(attr.template, @template.identifier)
 
     @render()
 
@@ -77,12 +79,12 @@ module.exports = class SnippetView
 
 
   afterFocused: () ->
-    @$html.addClass(config.html.css.snippetHighlight)
+    @$html.addClass(css.snippetHighlight)
     @showOptionals()
 
 
   afterBlurred: () ->
-    @$html.removeClass(config.html.css.snippetHighlight)
+    @$html.removeClass(css.snippetHighlight)
     @hideEmptyOptionals()
 
 
@@ -93,7 +95,7 @@ module.exports = class SnippetView
 
 
   hasFocus: ->
-    @$html.hasClass(config.html.css.snippetHighlight)
+    @$html.hasClass(css.snippetHighlight)
 
 
   getBoundingClientRect: ->
@@ -133,19 +135,19 @@ module.exports = class SnippetView
     else
       @template.defaults[name]
 
-    $elem.attr(config.html.attr.placeholder, placeholder)
+    $elem.attr(attr.placeholder, placeholder)
     $elem.html(value || '')
 
 
   focusEditable: (name) ->
     $elem = @directives.$getElem(name)
-    $elem.attr(config.html.attr.placeholder, config.zeroWidthCharacter)
+    $elem.attr(attr.placeholder, config.zeroWidthCharacter)
 
 
   blurEditable: (name) ->
     $elem = @directives.$getElem(name)
     if @model.isEmpty(name)
-      $elem.attr(config.html.attr.placeholder, @template.defaults[name])
+      $elem.attr(attr.placeholder, @template.defaults[name])
 
 
   getHtml: (name) ->
@@ -195,7 +197,7 @@ module.exports = class SnippetView
     if value
       @cancelDelayed(name)
       @setImageAttribute($elem, value)
-      $elem.removeClass(config.html.css.emptyImage)
+      $elem.removeClass(config.css.emptyImage)
     else
       setPlaceholder = $.proxy(@setPlaceholderImage, this, $elem)
       @delayUntilAttached(name, setPlaceholder)
@@ -220,7 +222,7 @@ module.exports = class SnippetView
 
 
   setPlaceholderImage: ($elem) ->
-    $elem.addClass(config.html.css.emptyImage)
+    $elem.addClass(config.css.emptyImage)
     if $elem[0].nodeName == 'IMG'
       width = $elem.width()
       height = $elem.height()
@@ -255,7 +257,7 @@ module.exports = class SnippetView
   # focus on a child elemnt through tabbing.
   blockInteraction: ($elem) ->
     @ensureRelativePosition($elem)
-    $blocker = $("<div class='#{ config.html.css.interactionBlocker }'>")
+    $blocker = $("<div class='#{ css.interactionBlocker }'>")
       .attr('style', 'position: absolute; top: 0; bottom: 0; left: 0; right: 0;')
     $elem.append($blocker)
 

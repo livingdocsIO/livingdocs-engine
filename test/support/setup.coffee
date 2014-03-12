@@ -32,7 +32,6 @@ exportGlobals = (global) ->
   global.log = log
   global.assert = assert
   global.config = config
-  global.docClass = config.docClass
   global.getInstances = InstanceInjector.get
 
 

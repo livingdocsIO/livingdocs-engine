@@ -1,8 +1,8 @@
 Renderer = require('../../../src/rendering/renderer')
 SnippetTree = require('../../../src/snippet_tree/snippet_tree')
 Page = require('../../../src/rendering_container/page')
-docAttr = config.html.attr
-docClass = config.html.css
+attr = config.attr
+css = config.css
 
 describe 'Not ReadOnly Renderer', ->
 
@@ -26,8 +26,8 @@ describe 'Not ReadOnly Renderer', ->
       expect(@page.renderNode).to.have.html """
         <section>
           <h1
-            class="#{ docClass.snippet } #{ docClass.editable }"
-            #{ docAttr.template }="test.title"
+            class="#{ css.snippet } #{ css.editable }"
+            #{ attr.template }="test.title"
             #{ test.editableAttr }="title"
             #{ test.emptyPlaceholderAttr }>A</h1>
         </section>"""

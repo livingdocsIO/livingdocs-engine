@@ -1,13 +1,13 @@
 config = require('../configuration/defaults')
-docClass = config.html.css
+css = config.css
 
 # DOM helper methods
 # ------------------
 # Methods to parse and update the Dom tree in accordance to
 # the SnippetTree and Livingdocs classes and attributes
 module.exports = do ->
-  snippetRegex = new RegExp("(?: |^)#{ docClass.snippet }(?: |$)")
-  sectionRegex = new RegExp("(?: |^)#{ docClass.section }(?: |$)")
+  snippetRegex = new RegExp("(?: |^)#{ css.snippet }(?: |$)")
+  sectionRegex = new RegExp("(?: |^)#{ css.section }(?: |$)")
 
   # Find the snippet this node is contained within.
   # Snippets are marked by a class at the moment.
@@ -167,7 +167,7 @@ module.exports = do ->
 
   # Get the closest snippet in a container for a top left position
   getClosestSnippet: (container, { top, left }) ->
-    $snippets = $(container).find(".#{ docClass.snippet }")
+    $snippets = $(container).find(".#{ css.snippet }")
     closest = undefined
     closestSnippet = undefined
 
@@ -197,20 +197,20 @@ module.exports = do ->
     if view.template.containerCount > 1
       for name, elem of view.containers
         $elem = $(elem)
-        continue if $elem.hasClass(docClass.maximizedContainer)
+        continue if $elem.hasClass(css.maximizedContainer)
         $parent = $elem.parent()
         parentHeight = $parent.height()
         outer = $elem.outerHeight(true) - $elem.height()
         $elem.height(parentHeight - outer)
-        $elem.addClass(docClass.maximizedContainer)
+        $elem.addClass(css.maximizedContainer)
 
 
   # remove all css style height declarations added by
   # maximizeContainerHeight()
   restoreContainerHeight: () ->
-    $(".#{ docClass.maximizedContainer }")
+    $(".#{ css.maximizedContainer }")
       .css('height', '')
-      .removeClass(docClass.maximizedContainer)
+      .removeClass(css.maximizedContainer)
 
 
   getElementNode: (node) ->

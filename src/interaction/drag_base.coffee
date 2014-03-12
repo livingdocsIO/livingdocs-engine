@@ -86,7 +86,7 @@ module.exports = class DragBase
     @started = true
 
     # prevent text-selections while dragging
-    @page.$body.addClass(config.html.css.preventSelection)
+    @page.$body.addClass(config.css.preventSelection)
     @dragHandler.start(topLeft)
 
 
@@ -98,7 +98,7 @@ module.exports = class DragBase
   reset: ->
     if @started
       @started = false
-      @page.$body.removeClass(config.html.css.preventSelection)
+      @page.$body.removeClass(config.css.preventSelection)
 
 
     if @initialized

@@ -12,47 +12,46 @@ module.exports = config = do ->
 
   attributePrefix: 'data'
 
-  # Here you find everything that can end up in the html
+  # In css and attr you find everything that can end up in the html
   # the engine spits out or works with.
-  html:
 
-    # css classes injected by the engine
-    css:
-      # document classes
-      section: 'doc-section'
+  # css classes injected by the engine
+  css:
+    # document classes
+    section: 'doc-section'
 
-      # snippet classes
-      snippet: 'doc-snippet'
-      editable: 'doc-editable'
-      interface: 'doc-ui'
-      emptyImage: 'doc-image-empty'
+    # snippet classes
+    snippet: 'doc-snippet'
+    editable: 'doc-editable'
+    emptyImage: 'doc-image-empty'
+    interface: 'doc-ui'
 
-      # highlight classes
-      snippetHighlight: 'doc-snippet-highlight'
-      containerHighlight: 'doc-container-highlight'
+    # highlight classes
+    snippetHighlight: 'doc-snippet-highlight'
+    containerHighlight: 'doc-container-highlight'
 
-      # drag & drop
-      dragged: 'doc-dragged'
-      draggedPlaceholder: 'doc-dragged-placeholder'
-      draggedPlaceholderCounter: 'doc-drag-counter'
-      dropMarker: 'doc-drop-marker'
-      beforeDrop: 'doc-before-drop'
-      noDrop: 'doc-drag-no-drop'
-      afterDrop: 'doc-after-drop'
-      longpressIndicator: 'doc-longpress-indicator'
+    # drag & drop
+    dragged: 'doc-dragged'
+    draggedPlaceholder: 'doc-dragged-placeholder'
+    draggedPlaceholderCounter: 'doc-drag-counter'
+    dropMarker: 'doc-drop-marker'
+    beforeDrop: 'doc-before-drop'
+    noDrop: 'doc-drag-no-drop'
+    afterDrop: 'doc-after-drop'
+    longpressIndicator: 'doc-longpress-indicator'
 
-      # utility classes
-      preventSelection: 'doc-no-selection'
-      maximizedContainer: 'doc-js-maximized-container'
-      interactionBlocker: 'doc-interaction-blocker'
+    # utility classes
+    preventSelection: 'doc-no-selection'
+    maximizedContainer: 'doc-js-maximized-container'
+    interactionBlocker: 'doc-interaction-blocker'
 
-    # attributes injected by the engine
-    attr:
-      template: 'data-doc-template'
-      placeholder: 'data-doc-placeholder'
+  # attributes injected by the engine
+  attr:
+    template: 'data-doc-template'
+    placeholder: 'data-doc-placeholder'
 
 
-  # kickstart config
+  # Kickstart config
   kickstart:
     attr:
       styles: 'doc-styles'
@@ -108,10 +107,6 @@ enrichConfig = ->
 
   # Shorthands for stuff that is used all over the place to make
   # code and specs more readable.
-  @docClass = @html.css
-  @docAttr = @html.attr
-  @css = @html.css
-  @attr = @html.attr
   @docDirective = {}
   @templateAttrLookup = {}
 
@@ -121,7 +116,6 @@ enrichConfig = ->
     # (prepend directive attributes with the configured prefix)
     prefix = "#{ @attributePrefix }-" if @attributePrefix
     value.renderedAttr = "#{ prefix || '' }#{ value.attr }"
-
 
     @docDirective[name] = value.renderedAttr
     @templateAttrLookup[value.attr] = name

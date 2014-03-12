@@ -14,7 +14,7 @@ module.exports = testHelpers =
   $: $
   jQuery: $
 
-  emptyPlaceholderAttr: "#{ config.html.attr.placeholder }='#{ config.zeroWidthCharacter }'"
+  emptyPlaceholderAttr: "#{ config.attr.placeholder }='#{ config.zeroWidthCharacter }'"
 
   createElem: (str) ->
     $(str)[0]

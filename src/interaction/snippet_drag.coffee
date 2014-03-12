@@ -1,5 +1,6 @@
 dom = require('./dom')
 config = require('../configuration/defaults')
+css = config.css
 
 module.exports = class SnippetDrag
 
@@ -21,7 +22,7 @@ module.exports = class SnippetDrag
     @$placeholder = @createPlaceholder()
 
     # drop marker
-    @$dropMarker = $("<div class='#{ config.css.dropMarker }'>")
+    @$dropMarker = $("<div class='#{ css.dropMarker }'>")
 
     @page.$body
       .append(@$dropMarker)
@@ -29,7 +30,7 @@ module.exports = class SnippetDrag
       .css('cursor', 'pointer')
 
     # mark dragged snippet
-    @$view.addClass(config.html.css.dragged) if @$view?
+    @$view.addClass(css.dragged) if @$view?
 
     # position the placeholder
     @move({ top, left })
@@ -56,7 +57,7 @@ module.exports = class SnippetDrag
     @undoMakeSpace()
 
     if target? && target.snippetView?.model != @snippetModel
-      @$placeholder.removeClass(config.css.noDrop)
+      @$placeholder.removeClass(css.noDrop)
       @markDropPosition(target)
 
       # if target.containerName
@@ -72,9 +73,9 @@ module.exports = class SnippetDrag
       @removeContainerHighlight()
 
       if not target?
-        @$placeholder.addClass(config.css.noDrop)
+        @$placeholder.addClass(css.noDrop)
       else
-        @$placeholder.removeClass(config.css.noDrop)
+        @$placeholder.removeClass(css.noDrop)
 
       return undefined
 
@@ -181,13 +182,13 @@ module.exports = class SnippetDrag
 
   highlighContainer: ($container) ->
     if $container[0] != @$highlightedContainer[0]
-      @$highlightedContainer.removeClass?(config.html.css.containerHighlight)
+      @$highlightedContainer.removeClass?(css.containerHighlight)
       @$highlightedContainer = $container
-      @$highlightedContainer.addClass?(config.html.css.containerHighlight)
+      @$highlightedContainer.addClass?(css.containerHighlight)
 
 
   removeContainerHighlight: ->
-    @$highlightedContainer.removeClass?(config.html.css.containerHighlight)
+    @$highlightedContainer.removeClass?(css.containerHighlight)
     @$highlightedContainer = {}
 
 
@@ -238,7 +239,7 @@ module.exports = class SnippetDrag
       @removeContainerHighlight()
       @page.$body.css('cursor', '')
       @page.editableController.reenableAll()
-      @$view.removeClass(config.html.css.dragged) if @$view?
+      @$view.removeClass(css.dragged) if @$view?
       dom.restoreContainerHeight()
 
       # remove elements
@@ -249,8 +250,8 @@ module.exports = class SnippetDrag
   createPlaceholder: ->
     numberOfDraggedElems = 1
     template = """
-      <div class="#{ config.css.draggedPlaceholder }">
-        <span class="#{ config.css.draggedPlaceholderCounter }">
+      <div class="#{ css.draggedPlaceholder }">
+        <span class="#{ css.draggedPlaceholderCounter }">
           #{ numberOfDraggedElems }
         </span>
         Selected Item
