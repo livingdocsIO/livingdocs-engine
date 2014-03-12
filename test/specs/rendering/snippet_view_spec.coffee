@@ -1,5 +1,5 @@
-docClass = config.html.css
-docAttr = config.html.attr
+css = config.css
+attr = config.attr
 
 describe 'SnippetView', ->
 
@@ -9,8 +9,8 @@ describe 'SnippetView', ->
       @snippetView = test.getTemplate('title').createView()
       @expected = $ """
         <h1 #{ test.editableAttr }="title"
-          class="#{ docClass.editable } #{ docClass.snippet }"
-            #{ docAttr.template }="test.title"
+          class="#{ css.editable } #{ css.snippet }"
+            #{ attr.template }="test.title"
             #{ test.emptyPlaceholderAttr }>
           Humble Bundle
         </h1>
@@ -48,8 +48,8 @@ describe 'SnippetView title set style', ->
     @title.style('Color', 'color--blue')
     @$expected = $ """
       <h1 #{ test.editableAttr }="title"
-          class="#{ docClass.editable } #{ docClass.snippet }"
-          #{ docAttr.template }="test.title">
+          class="#{ css.editable } #{ css.snippet }"
+          #{ attr.template }="test.title">
       </h1>"""
 
   it 'sets "Color" style to "color--blue"', ->
@@ -74,13 +74,13 @@ describe 'SnippetView hero', ->
     template = test.getTemplate('hero')
     @snippetView = template.createView(snippet)
     @expected = $ """
-      <div  class="#{ docClass.snippet }"
-            #{ docAttr.template }="test.hero">
+      <div  class="#{ css.snippet }"
+            #{ attr.template }="test.hero">
         <h1 #{ test.editableAttr }="title"
-            class="#{ docClass.editable }"
+            class="#{ css.editable }"
             #{ test.emptyPlaceholderAttr }>Humble Bundle 2</h1>
         <p  #{ test.editableAttr }="tagline"
-            class="#{ docClass.editable }"
+            class="#{ css.editable }"
             #{ test.emptyPlaceholderAttr }>Get it now!</p>
       </div>"""
 
@@ -136,8 +136,8 @@ describe 'SnippetView image', ->
     expect(@snippetView.$html).to.have.html """
       <img src="http://www.lolcats.com/images/1.jpg"
         #{ test.imageAttr }="image"
-        class="#{ docClass.snippet }"
-        #{ docAttr.template }="test.image">"""
+        class="#{ css.snippet }"
+        #{ attr.template }="test.image">"""
 
 
   describe 'delayed placeholder insertion', ->
@@ -151,8 +151,8 @@ describe 'SnippetView image', ->
       expect(@view.$html).to.have.html """
         <img src=""
           #{ test.imageAttr }="image"
-          class="#{ docClass.snippet }"
-          #{ docAttr.template }="test.image">"""
+          class="#{ css.snippet }"
+          #{ attr.template }="test.image">"""
 
 
     it 'inserts placeholder when view is attached', ->
@@ -162,8 +162,8 @@ describe 'SnippetView image', ->
       expect(@view.$html).to.have.html """
         <img src="#{ placeholderUrl }"
           #{ test.imageAttr }="image"
-          class="#{ docClass.snippet } doc-image-empty"
-          #{ docAttr.template }="test.image">"""
+          class="#{ css.snippet } doc-image-empty"
+          #{ attr.template }="test.image">"""
 
 
     it 'does not re-insert placeholders if value is set later on', ->
@@ -174,8 +174,8 @@ describe 'SnippetView image', ->
       expect(@view.$html).to.have.html """
         <img src="#{ imageUrl }"
           #{ test.imageAttr }="image"
-          class="#{ docClass.snippet }"
-          #{ docAttr.template }="test.image">"""
+          class="#{ css.snippet }"
+          #{ attr.template }="test.image">"""
 
 
     it 'remove the empty image css class when the image is set', ->
@@ -187,8 +187,8 @@ describe 'SnippetView image', ->
       expect(@view.$html).to.have.html """
         <img src="#{ imageUrl }"
           #{ test.imageAttr }="image"
-          class="#{ docClass.snippet }"
-          #{ docAttr.template }="test.image">"""
+          class="#{ css.snippet }"
+          #{ attr.template }="test.image">"""
 
 
 
@@ -203,14 +203,14 @@ describe 'SnippetView background image', ->
     snippetView = @coverSnippet.template.createView(@coverSnippet)
 
     expect(snippetView.$html).to.have.html """
-      <div class="#{ docClass.snippet }" #{ docAttr.template }="test.cover">
-        <h4 #{ test.editableAttr }="title" class="#{ docClass.editable }"
-          #{ docAttr.placeholder }="Titel"></h4>
+      <div class="#{ css.snippet }" #{ attr.template }="test.cover">
+        <h4 #{ test.editableAttr }="title" class="#{ css.editable }"
+          #{ attr.placeholder }="Titel"></h4>
         <div #{ test.imageAttr }="image" style="background-image:url(http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg);">
-          <h3 #{ test.editableAttr }="uppertitle" class="#{ docClass.editable }"
-            #{ docAttr.placeholder }="Oberzeile"></h3>
-          <h2 #{ test.editableAttr }="maintitle" class="#{ docClass.editable }"
-            #{ docAttr.placeholder }="Titel"></h2>
+          <h3 #{ test.editableAttr }="uppertitle" class="#{ css.editable }"
+            #{ attr.placeholder }="Oberzeile"></h3>
+          <h2 #{ test.editableAttr }="maintitle" class="#{ css.editable }"
+            #{ attr.placeholder }="Titel"></h2>
         </div>
       </div>"""
 
@@ -224,8 +224,8 @@ describe 'SnippetView html', ->
     # There is additional code by the interaction blocker element in there
     # which is not nice but hopefully works out just fine.
     @expected = $ """
-      <div class="#{ docClass.snippet }"
-        #{ docAttr.template }="test.html"
+      <div class="#{ css.snippet }"
+        #{ attr.template }="test.html"
         #{ test.htmlAttr }="html"
         style="position: relative; ">
         <section>test</section>

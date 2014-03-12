@@ -1,101 +1,262 @@
 dom = require('./dom')
 config = require('../configuration/defaults')
-docClass = config.html.css
+css = config.css
 
 module.exports = class SnippetDrag
 
+  wiggleSpace = 0
+  startAndEndOffset = 0
 
-  constructor: ({ snippet, page }) ->
-    @snippet = snippet
-    @page = page
+  constructor: ({ @snippetModel, snippetView }) ->
+    @$view = snippetView.$html if snippetView
     @$highlightedContainer = {}
-    @onStart = $.proxy(@onStart, this)
-    @onDrag = $.proxy(@onDrag, this)
-    @onDrop = $.proxy(@onDrop, this)
-    @classAdded = []
 
 
-  onStart: () ->
-    @page.snippetWillBeDragged.fire(@snippet)
-
-    @$insertPreview = $("<div class='doc-drag-preview'>")
-    @page.$body
-      .append(@$insertPreview)
-      .css('cursor', 'pointer')
-
+  # Called by DragBase
+  start: ({ top, left }) ->
+    @started = true
     @page.editableController.disableAll()
     @page.blurFocusedElement()
 
-    #todo get all valid containers
+    # placeholder below cursor
+    @$placeholder = @createPlaceholder()
+
+    # drop marker
+    @$dropMarker = $("<div class='#{ css.dropMarker }'>")
+
+    @page.$body
+      .append(@$dropMarker)
+      .append(@$placeholder)
+      .css('cursor', 'pointer')
+
+    # mark dragged snippet
+    @$view.addClass(css.dragged) if @$view?
+
+    # position the placeholder
+    @move({ top, left })
 
 
-  # remeve classes added while dragging from tracked elements
-  removeCssClasses: ->
-    for $html in @classAdded
-      $html
-        .removeClass(docClass.afterDrop)
-        .removeClass(docClass.beforeDrop)
-    @classAdded = []
+  # Called by DragBase
+  move: ({ top, left }) ->
+    left = 2 if left < 2
+    top = 2 if top < 2
+
+    @$placeholder.css(top: "#{ top }px", left: "#{ left }px")
+    @target = @findDropTarget({ top, left, event })
+
+    # @scrollIntoView(top, event)
 
 
-  isValidTarget: (target) ->
-    if target.snippetView && target.snippetView.model != @snippet
-      return true
-    else if target.containerName
-      return true
+  findDropTarget: ({ top, left, event }) ->
+    elem = @getElemUnderCursor(top, left)
 
-    false
+    # return the same as last time if the cursor is above the dropMarker
+    return @target if elem == @$dropMarker[0]
 
+    target = dom.dropTarget(elem, { top, left }) if elem?
+    @undoMakeSpace()
 
-  onDrag: (target, drag, cursor) ->
-    if not @isValidTarget(target)
-      $container = target = {}
+    if target? && target.snippetView?.model != @snippetModel
+      @$placeholder.removeClass(css.noDrop)
+      @markDropPosition(target)
 
-    if target.containerName
-      dom.maximizeContainerHeight(target.parent)
-      $container = $(target.node)
-    else if target.snippetView
-      dom.maximizeContainerHeight(target.snippetView)
-      $container = target.snippetView.get$container()
-      $container.addClass(docClass.containerHighlight)
+      # if target.containerName
+      #   dom.maximizeContainerHeight(target.parent)
+      #   $container = $(target.node)
+      # else if target.snippetView
+      #   dom.maximizeContainerHeight(target.snippetView)
+      #   $container = target.snippetView.get$container()
+
+      return target
     else
-      $container = target = {}
+      @$dropMarker.hide()
+      @removeContainerHighlight()
 
-    # highlighting
+      if not target?
+        @$placeholder.addClass(css.noDrop)
+      else
+        @$placeholder.removeClass(css.noDrop)
+
+      return undefined
+
+
+  markDropPosition: (target) ->
+    switch target.target
+      when 'snippet'
+        @snippetPosition(target)
+        @removeContainerHighlight()
+      when 'container'
+        @showMarkerAtBeginningOfContainer(target.node)
+        @highlighContainer($(target.node))
+      when 'root'
+        @showMarkerAtBeginningOfContainer(target.node)
+        @highlighContainer($(target.node))
+
+
+  snippetPosition: (target) ->
+    if target.position == 'before'
+      before = target.snippetView.prev()
+
+      if before?
+        if before.model == @snippetModel
+          target.position = 'after'
+          return @snippetPosition(target)
+
+        @showMarkerBetweenSnippets(before, target.snippetView)
+      else
+        @showMarkerAtBeginningOfContainer(target.snippetView.$elem[0].parentNode)
+    else
+      next = target.snippetView.next()
+      if next?
+        if next.model == @snippetModel
+          target.position = 'before'
+          return @snippetPosition(target)
+
+        @showMarkerBetweenSnippets(target.snippetView, next)
+      else
+        @showMarkerAtEndOfContainer(target.snippetView.$elem[0].parentNode)
+
+
+  showMarkerBetweenSnippets: (viewA, viewB) ->
+    boxA = dom.getBoundingClientRect(viewA.$elem[0])
+    boxB = dom.getBoundingClientRect(viewB.$elem[0])
+
+    halfGap = if boxB.top > boxA.bottom
+      (boxB.top - boxA.bottom) / 2
+    else
+      0
+
+    @showMarker
+      left: boxA.left
+      top: boxA.bottom + halfGap
+      width: boxA.width
+
+
+  showMarkerAtBeginningOfContainer: (elem) ->
+    return unless elem?
+
+    @makeSpace(elem.firstChild, 'top')
+    box = dom.getBoundingClientRect(elem)
+    @showMarker
+      left: box.left
+      top: box.top + startAndEndOffset
+      width: box.width
+
+
+  showMarkerAtEndOfContainer: (elem) ->
+    return unless elem?
+
+    @makeSpace(elem.lastChild, 'bottom')
+    box = dom.getBoundingClientRect(elem)
+    @showMarker
+      left: box.left
+      top: box.bottom - startAndEndOffset
+      width: box.width
+
+
+  showMarker: ({ top, left, width }) ->
+    @$dropMarker
+      .css
+        left:  "#{ left }px"
+        top:   "#{ top }px"
+        width: "#{ width }px"
+      .show()
+
+
+  makeSpace: (node, position) ->
+    return unless node? && wiggleSpace
+    $node = $(node)
+    @lastTransform = $node
+
+    if position == 'top'
+      $node.css(transform: "translate(0, #{ wiggleSpace }px)")
+    else
+      $node.css(transform: "translate(0, -#{ wiggleSpace }px)")
+
+
+  undoMakeSpace: (node) ->
+    if @lastTransform?
+      @lastTransform.css(transform: '')
+      @lastTransform = undefined
+
+
+  highlighContainer: ($container) ->
     if $container[0] != @$highlightedContainer[0]
-      @$highlightedContainer.removeClass?(docClass.containerHighlight)
+      @$highlightedContainer.removeClass?(css.containerHighlight)
       @$highlightedContainer = $container
-      @$highlightedContainer.addClass?(docClass.containerHighlight)
-
-    # show drop target
-    if target.coords
-      coords = target.coords
-      @$insertPreview
-        .css({ left:"#{ coords.left }px", top:"#{ coords.top - 5}px", width:"#{ coords.width }px" })
-        .show()
-    else
-      @$insertPreview.hide()
+      @$highlightedContainer.addClass?(css.containerHighlight)
 
 
-  onDrop: (drag) ->
-    # @removeCssClasses()
-    @page.$body.css('cursor', '')
-    @page.editableController.reenableAll()
-    @$insertPreview.remove()
-    @$highlightedContainer.removeClass?(docClass.containerHighlight)
-    dom.restoreContainerHeight()
-    target = drag.target
+  removeContainerHighlight: ->
+    @$highlightedContainer.removeClass?(css.containerHighlight)
+    @$highlightedContainer = {}
 
-    if target and @isValidTarget(target)
-      if snippetView = target.snippetView
-        if target.position == 'before'
-          snippetView.model.before(@snippet)
-        else
-          snippetView.model.after(@snippet)
-      else if target.containerName
-        target.parent.model.append(target.containerName, @snippet)
 
-      @page.snippetWasDropped.fire(@snippet)
+  getElemUnderCursor: (top, left) ->
+    top = top - @page.$body.scrollTop()
+    left = left - @page.$body.scrollLeft()
+
+    @$placeholder.hide()
+    elem = @page.document.elementFromPoint(left, top)
+    @$placeholder.show()
+    elem
+
+
+  # Called by DragBase
+  drop: ->
+    if @target?
+      @moveToTarget(@target)
+      @page.snippetWasDropped.fire(@snippetModel)
     else
       #consider: maybe add a 'drop failed' effect
 
+
+  # Move the snippet after a successful drop
+  moveToTarget: (target) ->
+    switch target.target
+      when 'snippet'
+        snippetView = target.snippetView
+        if target.position == 'before'
+          snippetView.model.before(@snippetModel)
+        else
+          snippetView.model.after(@snippetModel)
+      when 'container'
+        snippetModel = target.snippetView.model
+        snippetModel.append(target.containerName, @snippetModel)
+      when 'root'
+        snippetTree = target.snippetTree
+        snippetTree.prepend(@snippetModel)
+
+
+
+  # Called by DragBase
+  # Reset is always called after a drag ended.
+  reset: ->
+    if @started
+
+      # undo DOM changes
+      @undoMakeSpace()
+      @removeContainerHighlight()
+      @page.$body.css('cursor', '')
+      @page.editableController.reenableAll()
+      @$view.removeClass(css.dragged) if @$view?
+      dom.restoreContainerHeight()
+
+      # remove elements
+      @$placeholder.remove()
+      @$dropMarker.remove()
+
+
+  createPlaceholder: ->
+    numberOfDraggedElems = 1
+    template = """
+      <div class="#{ css.draggedPlaceholder }">
+        <span class="#{ css.draggedPlaceholderCounter }">
+          #{ numberOfDraggedElems }
+        </span>
+        Selected Item
+      </div>
+      """
+
+    $placeholder = $(template)
+      .css(position: "absolute")

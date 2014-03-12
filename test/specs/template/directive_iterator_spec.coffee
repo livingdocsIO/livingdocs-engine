@@ -1,15 +1,16 @@
 DirectiveIterator = require('../../../src/template/directive_iterator')
+css = config.css
 
 describe 'DirectiveIterator', ->
 
   beforeEach ->
     @html = test.createElem """
-      <div class="#{ docClass.snippet }">
+      <div class="#{ css.snippet }">
         <!-- Adding a comment node so we have another nodeType in play -->
         <h1 #{ test.editableAttr }="title"></h1>
         <div #{ test.containerAttr }="children">
           <!-- This should not be traversed -->
-          <h1 class="#{ docClass.snippet }" #{ test.editableAttr }="title"></h1>
+          <h1 class="#{ css.snippet }" #{ test.editableAttr }="title"></h1>
         </div>
       </div>
       """

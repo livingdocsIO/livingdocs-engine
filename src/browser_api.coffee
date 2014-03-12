@@ -4,7 +4,6 @@ stash = require('./modules/stash')
 
 document = require('./document')
 Kickstart = require('./kickstart/kickstart')
-DragDrop = require('./interaction/drag_drop')
 SnippetArray = require('./snippet_tree/snippet_array')
 
 # Public API
@@ -56,7 +55,6 @@ setupApi = ->
   @document = document
 
   @changed = chainable(document.changed, 'add')
-  @DragDrop = DragDrop
 
   # Stash
   # -----

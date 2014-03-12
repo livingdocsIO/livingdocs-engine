@@ -7,17 +7,20 @@ config = require('../configuration/defaults')
 # page.
 module.exports = class Page extends RenderingContainer
 
-  constructor: ({ renderNode, readOnly, hostWindow, @design }={}) ->
+  constructor: ({ renderNode, readOnly, hostWindow, @design, @snippetTree }={}) ->
     @isReadOnly = readOnly if readOnly?
     @setWindow(hostWindow)
 
     super()
 
-    renderNode ?= $(".#{ config.html.css.section }", @$body)
+    renderNode ?= $(".#{ config.css.section }", @$body)
     if renderNode.jquery
       @renderNode = renderNode[0]
     else
       @renderNode = renderNode
+
+    # store reference to snippetTree
+    $(@renderNode).data('snippetTree', @snippetTree)
 
 
   beforeReady: ->

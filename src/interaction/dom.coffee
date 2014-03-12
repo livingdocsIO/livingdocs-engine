@@ -1,13 +1,13 @@
 config = require('../configuration/defaults')
-docClass = config.html.css
+css = config.css
 
 # DOM helper methods
 # ------------------
 # Methods to parse and update the Dom tree in accordance to
 # the SnippetTree and Livingdocs classes and attributes
 module.exports = do ->
-  snippetRegex = new RegExp("(?: |^)#{ docClass.snippet }(?: |$)")
-  sectionRegex = new RegExp("(?: |^)#{ docClass.section }(?: |$)")
+  snippetRegex = new RegExp("(?: |^)#{ css.snippet }(?: |$)")
+  sectionRegex = new RegExp("(?: |^)#{ css.section }(?: |$)")
 
   # Find the snippet this node is contained within.
   # Snippets are marked by a class at the moment.
@@ -93,65 +93,83 @@ module.exports = do ->
       return editableName
 
 
-
   dropTarget: (node, { top, left }) ->
     node = @getElementNode(node)
     containerAttr = config.directives.container.renderedAttr
 
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
+      # above container
       if node.hasAttribute(containerAttr)
-        containerName = node.getAttribute(containerAttr)
-        if not sectionRegex.test(node.className)
-          insertSnippet = @getPositionInContainer($(node), { top, left })
-          if insertSnippet
-            coords = @getInsertPosition(insertSnippet.$elem[0], insertSnippet.position)
-            return { snippetView: insertSnippet.snippetView, position: insertSnippet.position, coords }
-          else
-            view = @findSnippetView(node)
-            return { containerName: containerName, parent: view, node: node }
+        closestSnippetData = @getClosestSnippet(node, { top, left })
+        if closestSnippetData?
+          return @getClosestSnippetTarget(closestSnippetData)
+        else
+          return @getContainerTarget(node)
 
+      # above snippet
       else if snippetRegex.test(node.className)
-        pos = @getPositionInSnippet($(node), { top, left })
-        view = @getSnippetView(node)
-        coords = @getInsertPosition(node, pos.position)
-        return { snippetView: view, position: pos.position, coords }
+        return @getSnippetTarget(node, { top, left })
 
+      # above root container
       else if sectionRegex.test(node.className)
-        return { root: true }
+        closestSnippetData = @getClosestSnippet(node, { top, left })
+        if closestSnippetData?
+          return @getClosestSnippetTarget(closestSnippetData)
+        else
+          return @getRootTarget(node)
 
       node = node.parentNode
 
-    {}
+
+  getSnippetTarget: (elem, { top, left, position }) ->
+    target: 'snippet'
+    snippetView: @getSnippetView(elem)
+    position: position || @getPositionOnSnippet(elem, { top, left })
 
 
-  getInsertPosition: (elem, position) ->
-    rect = @getBoundingClientRect(elem)
-    if position == 'before'
-      { top: rect.top, left: rect.left, width: rect.width }
-    else
-      { top: rect.bottom, left: rect.left, width: rect.width }
+  getClosestSnippetTarget: (closestSnippetData) ->
+    elem = closestSnippetData.$elem[0]
+    position = closestSnippetData.position
+    @getSnippetTarget(elem, { position })
 
 
-  # figure out if we should insert before or after snippet
-  # based on the cursor position
-  getPositionInSnippet: ($elem, { top, left }) ->
+  getContainerTarget: (node) ->
+    containerAttr = config.directives.container.renderedAttr
+    containerName = node.getAttribute(containerAttr)
+
+    target: 'container'
+    node: node
+    snippetView: @findSnippetView(node)
+    containerName: containerName
+
+
+  getRootTarget: (node) ->
+    snippetTree = $(node).data('snippetTree')
+
+    target: 'root'
+    node: node
+    snippetTree: snippetTree
+
+
+  # Figure out if we should insert before or after a snippet
+  # based on the cursor position.
+  getPositionOnSnippet: (elem, { top, left }) ->
+    $elem = $(elem)
     elemTop = $elem.offset().top
     elemHeight = $elem.outerHeight()
     elemBottom = elemTop + elemHeight
 
     if @distance(top, elemTop) < @distance(top, elemBottom)
-      { position: 'before' }
+      'before'
     else
-      { position: 'after' }
+      'after'
 
 
-  # figure out if the user wanted to insert between snippets
-  # instead of appending to the container
-  # (this can be the case if the drop occurs on a margin)
-  getPositionInContainer: ($container, { top, left }) ->
-    $snippets = $container.find(".#{ docClass.snippet }")
+  # Get the closest snippet in a container for a top left position
+  getClosestSnippet: (container, { top, left }) ->
+    $snippets = $(container).find(".#{ css.snippet }")
     closest = undefined
-    insertSnippet = undefined
+    closestSnippet = undefined
 
     $snippets.each (index, elem) =>
       $elem = $(elem)
@@ -159,17 +177,14 @@ module.exports = do ->
       elemHeight = $elem.outerHeight()
       elemBottom = elemTop + elemHeight
 
-      if not closest or @distance(top, elemTop) < closest
+      if not closest? || @distance(top, elemTop) < closest
         closest = @distance(top, elemTop)
-        insertSnippet = { $elem, position: 'before'}
-      if not closest or @distance(top, elemBottom) < closest
+        closestSnippet = { $elem, position: 'before'}
+      if not closest? || @distance(top, elemBottom) < closest
         closest = @distance(top, elemBottom)
-        insertSnippet = { $elem, position: 'after'}
+        closestSnippet = { $elem, position: 'after'}
 
-      if insertSnippet
-        insertSnippet.snippetView = @getSnippetView(insertSnippet.$elem[0])
-
-    insertSnippet
+    closestSnippet
 
 
   distance: (a, b) ->
@@ -182,20 +197,20 @@ module.exports = do ->
     if view.template.containerCount > 1
       for name, elem of view.containers
         $elem = $(elem)
-        continue if $elem.hasClass(docClass.maximizedContainer)
+        continue if $elem.hasClass(css.maximizedContainer)
         $parent = $elem.parent()
         parentHeight = $parent.height()
         outer = $elem.outerHeight(true) - $elem.height()
         $elem.height(parentHeight - outer)
-        $elem.addClass(docClass.maximizedContainer)
+        $elem.addClass(css.maximizedContainer)
 
 
   # remove all css style height declarations added by
   # maximizeContainerHeight()
   restoreContainerHeight: () ->
-    $(".#{ docClass.maximizedContainer }")
+    $(".#{ css.maximizedContainer }")
       .css('height', '')
-      .removeClass(docClass.maximizedContainer)
+      .removeClass(css.maximizedContainer)
 
 
   getElementNode: (node) ->
@@ -213,6 +228,8 @@ module.exports = do ->
     $(node).data('snippet')
 
 
+  # GetBoundingClientRect with top and left relative to the document
+  # (ideal for absolute positioned elements)
   getBoundingClientRect: (node) ->
     coords = node.getBoundingClientRect()
 

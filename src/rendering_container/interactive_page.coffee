@@ -3,7 +3,7 @@ Page = require('./page')
 dom = require('../interaction/dom')
 Focus = require('../interaction/focus')
 EditableController = require('../interaction/editable_controller')
-DragDrop = require('../interaction/drag_drop')
+DragBase = require('../interaction/drag_base')
 SnippetDrag = require('../interaction/snippet_drag')
 
 # An InteractivePage is a subclass of Page which allows for manipulation of the
@@ -26,12 +26,7 @@ module.exports = class InteractivePage extends Page
     @htmlElementClick = $.Callbacks() # (snippetView, fieldName, event) ->
     @snippetWillBeDragged = $.Callbacks() # (snippetModel) ->
     @snippetWasDropped = $.Callbacks() # (snippetModel) ->
-
-    @snippetDragDrop = new DragDrop
-      longpressDelay: 400
-      longpressDistanceLimit: 10
-      preventDefault: false
-
+    @dragBase = new DragBase(this)
     @focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
     @focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )
 
@@ -56,51 +51,28 @@ module.exports = class InteractivePage extends Page
   mousedown: (event) ->
     return if event.which != LEFT_MOUSE_BUTTON && event.type == 'mousedown' # only respond to left mouse button
     snippetView = dom.findSnippetView(event.target)
+    return unless snippetView
 
-    if snippetView
-      @startDrag
-        snippetView: snippetView
-        dragDrop: @snippetDragDrop
-        event: event
-
-
-  # These events are initialized immediately to allow a long-press finish
-  registerDragStopEvents: (dragDrop, event) ->
-    eventNames =
-      if event.type == 'touchstart'
-        'touchend.livingdocs-drag touchcancel.livingdocs-drag touchleave.livingdocs-drag'
-      else
-        'mouseup.livingdocs-drag'
-    @$document.on eventNames, =>
-      dragDrop.drop()
-      @$document.off('.livingdocs-drag')
+    @startDrag
+      snippetView: snippetView
+      event: event
 
 
-  # These events are possibly initialized with a delay in snippetDrag#onStart
-  registerDragMoveEvents: (dragDrop, event) ->
-    if event.type == 'touchstart'
-      @$document.on 'touchmove.livingdocs-drag', (event) ->
-        event.preventDefault()
-        dragDrop.move(event.originalEvent.changedTouches[0].pageX, event.originalEvent.changedTouches[0].pageY, event)
+  startDrag: ({ snippetModel, snippetView, event, config }) ->
+    return unless snippetModel || snippetView
+    snippetModel = snippetView.model if snippetView
 
-    else # all other input devices behave like a mouse
-      @$document.on 'mousemove.livingdocs-drag', (event) ->
-        dragDrop.move(event.pageX, event.pageY, event)
+    snippetDrag = new SnippetDrag
+      snippetModel: snippetModel
+      snippetView: snippetView
 
+    config ?=
+      longpress:
+        showIndicator: true
+        delay: 400
+        tolerance: 3
 
-  startDrag: ({ snippet, snippetView, dragDrop, event }) ->
-    return unless snippet || snippetView
-    snippet = snippetView.model if snippetView
-
-    @registerDragMoveEvents(dragDrop, event)
-    @registerDragStopEvents(dragDrop, event)
-    snippetDrag = new SnippetDrag({ snippet: snippet, page: this })
-
-    $snippet = snippetView.$html if snippetView
-    dragDrop.mousedown $snippet, event,
-      onDragStart: snippetDrag.onStart
-      onDrag: snippetDrag.onDrag
-      onDrop: snippetDrag.onDrop
+    @dragBase.init(snippetDrag, event, config)
 
 
   click: (event) ->

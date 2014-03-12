@@ -1,12 +1,17 @@
 # v?.?.?
 
+#### Features:
+
+- Improved Drag and Drop [#89](https://github.com/upfrontIO/livingdocs-engine/pull/89)
+
 #### Architecture Changes:
 
 - Port to CommonJS [#87](https://github.com/upfrontIO/livingdocs-engine/pull/87)
 
 #### Bugfixes:
 
-- Unescaped background-url [#88](https://github.com/upfrontIO/livingdocs-engine/pull/88)
+- Unescaped background-url [#88](https://github.com/upfrontIO/livingdocs-engine/pull/88)  
+  (The fix only works in the browser. See commit 34b4b078c021350 for details)
 
 
 # v0.1.2 (2014-01-30)

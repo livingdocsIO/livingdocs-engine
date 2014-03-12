@@ -107,7 +107,7 @@ module.exports = class Template
 
   formatEditable: (name, elem) ->
     $elem = $(elem)
-    $elem.addClass(config.html.css.editable)
+    $elem.addClass(config.css.editable)
 
     defaultValue = words.trim(elem.innerHTML)
     @defaults[name] = defaultValue if defaultValue

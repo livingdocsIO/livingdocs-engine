@@ -20,7 +20,5 @@ $ = test.$;
 _ = require('underscore')
 
 config = require('../../src/configuration/defaults')
-docClass = config.docClass
 getInstances = require('../support/factories/instance_injector').get
-
 

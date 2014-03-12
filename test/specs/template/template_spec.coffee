@@ -2,6 +2,7 @@ Template = require('../../../src/template/template')
 SnippetModel = require('../../../src/snippet_tree/snippet_model')
 SnippetContainer = require('../../../src/snippet_tree/snippet_container')
 SnippetView = require('../../../src/rendering/snippet_view')
+css = config.css
 
 describe 'Title Template', ->
 
@@ -26,7 +27,7 @@ describe 'Title Template', ->
 
   it 'has stored the html', ->
     expect(template.$template).to.have.same.html """
-      <h1 #{ test.editableAttr }='title' class='#{ docClass.editable }'>
+      <h1 #{ test.editableAttr }='title' class='#{ css.editable }'>
       </h1>"""
 
 
