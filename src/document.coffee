@@ -7,6 +7,7 @@ RenderingContainer = require('./rendering_container/rendering_container')
 Page = require('./rendering_container/page')
 InteractivePage = require('./rendering_container/interactive_page')
 Renderer = require('./rendering/renderer')
+View = require('./rendering/view')
 
 # Document
 # --------
@@ -67,26 +68,8 @@ module.exports = do ->
 
 
   createView: (parent=window.document.body) ->
-    createRendererAndResolvePromise = =>
-      page = new Page
-        renderNode: iframe.contentDocument.body
-        hostWindow: iframe.contentWindow
-        design: @design
-      renderer = new Renderer
-        renderingContainer: page
-        snippetTree: @snippetTree
-      deferred.resolve
-        iframe: iframe
-        renderer: renderer
-
-    deferred = $.Deferred()
-    $parent = $(parent).first()
-    iframe = $parent[0].ownerDocument.createElement('iframe')
-    iframe.src = 'about:blank'
-    iframe.onload = createRendererAndResolvePromise
-    $parent.append(iframe)
-
-    deferred.promise()
+    view = new View(@snippetTree, parent)
+    view.create(readOnly: true)
 
 
   eachContainer: (callback) ->
