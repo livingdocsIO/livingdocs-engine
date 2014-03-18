@@ -14,6 +14,9 @@
       <section class="doc-section"></section>
     </div>
 
+    <div class="preview" style="position: absolute; top: 0; right: 0; width: 320px; height: 100%;">
+    <div>
+
     <!-- dependencies of livingdocs-engine -->
     <script src="/jquery/jquery.js"></script>
     <script src="/EditableJS/editable.js"></script>
@@ -61,6 +64,8 @@
 
           });
           $(document.body).append($newSnippet)
+
+          doc.createView($('.preview')[0])
 
         });
       });
