@@ -3,8 +3,8 @@
 #### Features:
 
 - Improved Drag and Drop [#89](https://github.com/upfrontIO/livingdocs-engine/pull/89)
-- Add a css class on images that contain the placeholder, i.e., are empty
-- Read the default paragraph snippet (gets repeated on pressing Enter) from the design's configuration
+- Add a css class on images that contain the placeholder, i.e., are empty [#91](https://github.com/upfrontIO/livingdocs-engine/pull/91)
+- Read the default paragraph snippet (gets repeated on pressing Enter) from the design's configuration [#90](https://github.com/upfrontIO/livingdocs-engine/pull/90)
 
 #### Architecture Changes:
 
