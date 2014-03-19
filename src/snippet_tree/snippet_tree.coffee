@@ -32,28 +32,50 @@ SnippetModel = require('./snippet_model')
 module.exports = class SnippetTree
 
 
-  constructor: ({ content, design } = {}) ->
+  constructor: ({ content, @design } = {}) ->
     @root = new SnippetContainer(isRoot: true)
 
     # initialize content before we set the snippet tree to the root
     # otherwise all the events will be triggered while building the tree
-    if content? and design?
-      @fromJson(content, design)
+    if content? and @design?
+      @fromJson(content, @design)
 
     @root.snippetTree = this
     @initializeEvents()
 
 
-  # insert snippet at the beginning
+  # Insert a snippet at the beginning.
+  # @param: snippetModel instance or snippet name e.g. 'title'
   prepend: (snippet) ->
-    @root.prepend(snippet)
+    snippet = @getSnippet(snippet)
+    @root.prepend(snippet) if snippet?
     this
 
 
-  # insert snippet at the end
+  # Insert snippet at the end.
+  # @param: snippetModel instance or snippet name e.g. 'title'
   append: (snippet) ->
-    @root.append(snippet)
+    snippet = @getSnippet(snippet)
+    @root.append(snippet) if snippet?
     this
+
+
+  getSnippet: (snippetName) ->
+    if jQuery.type(snippetName) == 'string'
+      @createModel(snippetName)
+    else
+      snippetName
+
+
+  createModel: (identifier) ->
+    template = @getTemplate(identifier)
+    template.createModel() if template
+
+
+  getTemplate: (identifier) ->
+    template = @design.get(identifier)
+    assert template, "Could not find template #{ identifier }"
+    template
 
 
   initializeEvents: () ->

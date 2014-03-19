@@ -78,19 +78,13 @@ module.exports = do ->
 
   # *Public API*
   add: (input) ->
-    if jQuery.type(input) == 'string'
-      snippet = @createModel(input)
-    else
-      snippet = input
-
-    @snippetTree.append(snippet) if snippet
+    @snippetTree.append(snippet)
     snippet
 
 
   # *Public API*
   createModel: (identifier) ->
-    template = @getTemplate(identifier)
-    template.createModel() if template
+    @snippetTree.createModel(identifier)
 
 
   # find all instances of a certain Template
@@ -132,13 +126,6 @@ module.exports = do ->
     @renderer.clear()
     @snippetTree.detach()
 
-
-  getTemplate: (identifier) ->
-    template = @design?.get(identifier)
-
-    assert template, "could not find template #{ identifier }"
-
-    template
 
   kickstart: ({ xmlTemplate, scriptNode, destination, design}) ->
     json = new Kickstart({xmlTemplate, scriptNode, design}).getSnippetTree().toJson()
