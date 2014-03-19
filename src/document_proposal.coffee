@@ -53,3 +53,11 @@ module.exports = class Document extends EventEmitter
       renderingContainer: new RenderingContainer()
     ).html()
 
+
+  serialize: ->
+    data = @snippetTree.toJson()
+    data['design'] = @design.namespace
+    data
+
+
+
