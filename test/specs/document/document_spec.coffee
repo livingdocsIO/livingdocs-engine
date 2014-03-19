@@ -26,6 +26,15 @@ describe 'document', ->
       @snippetTree.append(snippet)
 
 
+  describe 'createView()', ->
+
+
+    it 'creates a readOnly iframe view', (done) ->
+      @doc.createView().then ({ iframe, renderer }) ->
+        expect(renderer.renderingContainer.isReadOnly).to.be.true
+        done()
+
+
   describe 'serialize()', ->
     beforeEach ->
       { @snippetTree } = getInstances('snippetTree')
@@ -35,7 +44,8 @@ describe 'document', ->
     it 'serializes an empty document', ->
       expect(@doc.serialize()).to.deep.equal
         content: []
-        design: 'test'
+        design:
+          name: 'test'
 
 
     it 'serializes a minimal document', ->
