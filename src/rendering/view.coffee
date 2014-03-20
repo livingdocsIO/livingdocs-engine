@@ -6,8 +6,15 @@ module.exports = class View
 
   constructor: (@snippetTree, @parent) ->
     @parent ?= window.document.body
+    @isInteractive = false
 
 
+  # Available Options:
+  # ReadOnly view: (default if nothing is specified)
+  # create(readOnly: true)
+  #
+  # Ineractive view:
+  # create(interactive: true)
   create: (options) ->
     @createIFrame(@parent).then (iframe) =>
       renderer = @createIFrameRenderer(iframe, options)
@@ -34,6 +41,7 @@ module.exports = class View
       design: @snippetTree.design
 
     container = if interactive?
+      @isInteractive = true
       new InteractivePage(params)
     else
       new Page(params)
