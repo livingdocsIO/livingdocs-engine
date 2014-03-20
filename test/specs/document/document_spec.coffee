@@ -1,4 +1,4 @@
-Document = require('../../../src/document_proposal')
+Document = require('../../../src/document')
 
 describe 'document', ->
 

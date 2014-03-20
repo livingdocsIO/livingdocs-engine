@@ -5,20 +5,6 @@ module.exports = do ->
 
   designs: {}
 
-  add: (design) ->
-    name = design.namespace
-    @designs[name] = design
-
-
-  has: (name) ->
-    @designs[name]?
-
-
-  get: (name) ->
-    assert @has(name), "Error: design '#{ name }' is not loaded."
-    @designs[name]
-
-
   # Can load a design synchronously if you include the
   # design.js file before livingdocs.
   # doc.design.load(designs['yourDesign'])
@@ -36,6 +22,20 @@ module.exports = do ->
       designConfig = name
       design = new Design(designConfig)
       @add(design)
+
+
+  add: (design) ->
+    name = design.namespace
+    @designs[name] = design
+
+
+  has: (name) ->
+    @designs[name]?
+
+
+  get: (name) ->
+    assert @has(name), "Error: design '#{ name }' is not loaded."
+    @designs[name]
 
 
   resetCache: ->

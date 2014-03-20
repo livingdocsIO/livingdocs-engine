@@ -1,4 +1,4 @@
-require('../../../src/browser_api_proposal')
+require('../../../src/browser_api')
 
 describe 'Browser API', ->
   afterEach ->
