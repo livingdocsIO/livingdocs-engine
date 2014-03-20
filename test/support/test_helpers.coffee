@@ -38,7 +38,7 @@ module.exports = testHelpers =
   createSnippetTree: (contentArray) ->
     { @snippetTree } = getInstances('snippetTree')
 
-    if not jQuery.isArray(contentArray)
+    if not $.isArray(contentArray)
       contentArray = [contentArray]
 
     for entry in contentArray
