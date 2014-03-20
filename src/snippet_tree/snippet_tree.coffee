@@ -221,38 +221,42 @@ module.exports = class SnippetTree
     words.readableJson(@toJson())
 
 
-  # returns a JSON representation of the whole tree
-  toJson: ->
-    json = {}
-    json['content'] = []
+  # Returns a serialized representation of the whole tree
+  # that can be sent to the server as JSON.
+  serialize: ->
+    data = {}
+    data['content'] = []
 
-    snippetToJson = (snippet, level, containerArray) ->
-      snippetJson = snippet.toJson()
-      containerArray.push snippetJson
+    snippetToData = (snippet, level, containerArray) ->
+      snippetData = snippet.toJson()
+      containerArray.push snippetData
+      snippetData
 
-      snippetJson
-
-    walker = (snippet, level, jsonObj) ->
-      snippetJson = snippetToJson(snippet, level, jsonObj)
+    walker = (snippet, level, dataObj) ->
+      snippetData = snippetToData(snippet, level, dataObj)
 
       # traverse children
       for name, snippetContainer of snippet.containers
-        containerArray = snippetJson.containers[snippetContainer.name] = []
+        containerArray = snippetData.containers[snippetContainer.name] = []
         walker(snippetContainer.first, level + 1, containerArray) if snippetContainer.first
 
       # traverse siblings
-      walker(snippet.next, level, jsonObj) if snippet.next
+      walker(snippet.next, level, dataObj) if snippet.next
 
-    walker(@root.first, 0, json['content']) if @root.first
+    walker(@root.first, 0, data['content']) if @root.first
 
-    json
+    data
 
 
-  fromJson: (json, design) ->
+  toJson: ->
+    @serialize()
+
+
+  fromJson: (data, design) ->
     @root.snippetTree = undefined
-    if json.content
-      for snippetJson in json.content
-        snippet = SnippetModel.fromJson(snippetJson, design)
+    if data.content
+      for snippetData in data.content
+        snippet = SnippetModel.fromJson(snippetData, design)
         @root.append(snippet)
 
     @root.snippetTree = this
