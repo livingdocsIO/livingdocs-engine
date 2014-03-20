@@ -102,6 +102,11 @@ module.exports = class SnippetTree
     @root.eachContainer(callback)
 
 
+  # Get the first snippet
+  first: ->
+    @root.first
+
+
   # Traverse all containers and snippets
   all: (callback) ->
     @root.all(callback)

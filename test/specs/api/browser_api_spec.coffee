@@ -1,39 +1,27 @@
-require('../../../src/browser_api')
+require('../../../src/browser_api_proposal')
 
-describe 'Public API', ->
+describe 'Browser API', ->
 
-  it 'defines the global variable doc', ->
-    expect(window.doc).to.exist
+  describe 'Global variable', ->
 
-
-  it 'global variable doc is a function', ->
-    expect( $.isFunction(window.doc) ).to.be.true
+    it 'defines the global variable doc', ->
+      expect(window.doc).to.exist
 
 
-  describe 'init()', ->
+  describe 'design', ->
 
-    it 'is defined', ->
-      expect( window.doc.init ).to.exist
-
-
-    # currently doc.init() can only be done once
-    # so this is not really unit testable
-    it 'loads an empty document', ->
-      node = $('<div>')[0]
-      doc.init(design: test.testDesign, json: undefined, rootNode: node)
-      expect( doc.toJson().content ).to.deep.equal([])
+    it 'loads a design snchronously', ->
+      expect(doc.design.has('test')).to.be.false
+      doc.design.load(test.designJson)
+      expect(doc.design.has('test')).to.be.true
 
 
-  describe 'toJson()', ->
-
-    it 'is defined', ->
-      expect( window.doc.toJson ).to.exist
 
 
-  it 'define ready', ->
-    expect( $.isFunction(window.doc.ready)).to.be.true
 
 
-  it 'define changed', ->
-    expect( $.isFunction(window.doc.changed)).to.be.true
+
+
+
+
 
