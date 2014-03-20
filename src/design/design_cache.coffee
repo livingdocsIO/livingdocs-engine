@@ -19,7 +19,16 @@ module.exports = do ->
     @designs[name]
 
 
-  # @param: design name as string or a designConfiguration object.
+  # Can load a design synchronously if you include the
+  # design.js file before livingdocs.
+  # doc.design.load(designs['yourDesign'])
+  #
+  # Will be extended to load designs remotely from a server:
+  # Load from the default source:
+  # doc.design.load('ghibli')
+  #
+  # Load from a custom server:
+  # doc.design.load('http://yourserver.io/designs/ghibli/design.json')
   load: (name) ->
     if typeof name == 'string'
       assert false, 'Load design by name is not implemented yet.'

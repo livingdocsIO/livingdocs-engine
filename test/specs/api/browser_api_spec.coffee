@@ -32,11 +32,3 @@ describe 'Browser API', ->
       firstSnippet = document.snippetTree.first()
       expect(firstSnippet.get('title')).to.equal('It Works')
 
-
-
-
-
-
-
-
-
