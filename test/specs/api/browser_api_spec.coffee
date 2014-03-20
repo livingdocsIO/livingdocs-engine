@@ -1,6 +1,9 @@
 require('../../../src/browser_api_proposal')
 
 describe 'Browser API', ->
+  afterEach ->
+    doc.design.resetCache()
+
 
   describe 'Global variable', ->
 
@@ -16,6 +19,18 @@ describe 'Browser API', ->
       expect(doc.design.has('test')).to.be.true
 
 
+  describe 'new', ->
+    beforeEach ->
+      @snippetTree = test.createSnippetTree
+        title: { title: 'It Works' }
+      @data = @snippetTree.serialize()
+
+
+    it 'creates a new document', ->
+      doc.design.load(test.designJson)
+      document = doc.new(data: @data)
+      firstSnippet = document.snippetTree.first()
+      expect(firstSnippet.get('title')).to.equal('It Works')
 
 
 

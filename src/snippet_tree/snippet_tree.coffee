@@ -33,12 +33,12 @@ module.exports = class SnippetTree
 
 
   constructor: ({ content, @design } = {}) ->
+    assert @design?, "Error instantiating SnippetTree: design param is misssing."
     @root = new SnippetContainer(isRoot: true)
 
     # initialize content before we set the snippet tree to the root
     # otherwise all the events will be triggered while building the tree
-    if content? and @design?
-      @fromJson(content, @design)
+    @fromJson(content, @design) if content?
 
     @root.snippetTree = this
     @initializeEvents()
@@ -231,6 +231,7 @@ module.exports = class SnippetTree
   serialize: ->
     data = {}
     data['content'] = []
+    data['design'] = { name: @design.namespace }
 
     snippetToData = (snippet, level, containerArray) ->
       snippetData = snippet.toJson()

@@ -28,3 +28,7 @@ module.exports = do ->
       design = new Design(designConfig)
       @add(design)
 
+
+  resetCache: ->
+    @designs = {}
+

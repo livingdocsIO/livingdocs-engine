@@ -24,7 +24,8 @@ module.exports = doc = do ->
   #    # view is ready
   new: ({ data, design }) ->
     snippetTree = if data?
-      designName = data.design
+      designName = data.design?.name
+      assert designName?, 'Error creating document: No design is specified.'
       design = @design.get(designName)
       new SnippetTree(content: data, design: design)
     else

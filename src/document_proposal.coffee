@@ -56,9 +56,7 @@ module.exports = class Document extends EventEmitter
 
 
   serialize: ->
-    data = @snippetTree.toJson()
-    data['design'] = name: @design.namespace
-    data
+    @snippetTree.serialize()
 
 
   # Debug
