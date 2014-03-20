@@ -7,19 +7,19 @@ css = config.css
 describe 'Not ReadOnly Renderer', ->
 
   beforeEach ->
-    @tree = new SnippetTree()
+    { @snippetTree } = getInstances('snippetTree')
     @page = new Page
       renderNode: $('<section>')
       readOnly: false
 
-    @renderer = new Renderer(snippetTree: @tree, renderingContainer: @page)
+    @renderer = new Renderer(snippetTree: @snippetTree, renderingContainer: @page)
 
 
   describe 'with a single title snippet', ->
 
     beforeEach ->
       @title = test.createSnippet('title', 'A')
-      @tree.append(@title)
+      @snippetTree.append(@title)
 
 
     it 'renders the title', ->
@@ -40,19 +40,14 @@ describe 'Not ReadOnly Renderer', ->
 
 
 describe 'insertSnippet()', ->
-
   beforeEach ->
-    @tree = new SnippetTree()
-    @page = new Page
-      renderNode: $('<section>')
-
-    @renderer = new Renderer(snippetTree: @tree, renderingContainer: @page)
+    { @snippetTree, @page, @renderer } = getInstances('page', 'renderer')
 
   it 'insertes the already appended snippets of an inserted snippet', ->
     container = test.getSnippet('container')
     title = test.createSnippet('title', 'A')
     container.append(config.directives.container.defaultName, title)
-    @tree.append(container)
+    @snippetTree.append(container)
     expect(@page.renderNode).to.have.html """
       <section>
         <div class="container">
@@ -64,19 +59,15 @@ describe 'insertSnippet()', ->
 
 
 describe 'ReadOnly Renderer', ->
-
   beforeEach ->
-    @tree = new SnippetTree()
-    @page = new Page
-      renderNode: $('<section>')
+    { @snippetTree, @page, @renderer } = getInstances('page', 'renderer')
 
-    @renderer = new Renderer(snippetTree: @tree, renderingContainer: @page)
 
   describe 'with a title', ->
 
     beforeEach ->
       @title = test.createSnippet('title', 'A')
-      @tree.append(@title)
+      @snippetTree.append(@title)
 
 
     it 'renders the title into the page', ->
@@ -97,7 +88,7 @@ describe 'ReadOnly Renderer', ->
 
     beforeEach ->
       @hero = test.createSnippet('hero')
-      @tree.append(@hero)
+      @snippetTree.append(@hero)
 
 
     describe 'with no content', ->
@@ -130,7 +121,7 @@ describe 'ReadOnly Renderer', ->
 
     beforeEach ->
       row = test.getSnippet('row')
-      @tree.append(row)
+      @snippetTree.append(row)
       @title = test.getSnippet('title')
       @title.set('title', 'Title')
       row.append('main', @title)
@@ -165,7 +156,7 @@ describe 'ReadOnly Renderer', ->
 
     beforeEach ->
       html = test.createSnippet('html', '<article>html</article>')
-      @tree.append(html)
+      @snippetTree.append(html)
 
 
     it 'does not block interaction in readOnly mode', ->

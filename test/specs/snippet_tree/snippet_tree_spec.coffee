@@ -5,38 +5,38 @@ SnippetContainer = require('../../../src/snippet_tree/snippet_container')
 describe 'SnippetTree', ->
 
   beforeEach ->
-    @tree = new SnippetTree()
+    { @snippetTree } = getInstances('snippetTree')
 
 
   it 'has a SnippetContainer as root', ->
-    expect(@tree.root).to.be.an.instanceof(SnippetContainer)
+    expect(@snippetTree.root).to.be.an.instanceof(SnippetContainer)
 
 
   describe 'append()', ->
 
     it 'sets snippetTree property of the appended snippet', ->
       snippet = test.getSnippet('title')
-      @tree.append(snippet)
-      expect(snippet.snippetTree).to.equal(@tree)
+      @snippetTree.append(snippet)
+      expect(snippet.snippetTree).to.equal(@snippetTree)
 
 
     it 'appends a snippet to root', ->
       snippet = test.getSnippet('title')
-      @tree.append(snippet)
-      expect(@tree.root.first).to.equal(snippet)
-      expect(@tree.root.last).to.equal(snippet)
+      @snippetTree.append(snippet)
+      expect(@snippetTree.first()).to.equal(snippet)
+      expect(@snippetTree.root.last).to.equal(snippet)
 
 
 describe 'SnippetTree with two snippets', ->
 
   beforeEach ->
-    @tree = new SnippetTree()
-
-    @snippetA = test.getSnippet('title')
-    @tree.append(@snippetA)
-
-    @snippetB = test.getSnippet('title')
-    @tree.append(@snippetB)
+    @snippetTree = test.createSnippetTree [
+      title: undefined
+    ,
+      title: undefined
+    ]
+    @snippetA = @snippetTree.first()
+    @snippetB = @snippetA.next
 
 
   it 'has previous and next properties of snippet set', ->
@@ -45,15 +45,15 @@ describe 'SnippetTree with two snippets', ->
 
 
   it 'has first and last pointer of root set', ->
-    expect(@tree.root.first).to.equal(@snippetA)
-    expect(@tree.root.last).to.equal(@snippetB)
+    expect(@snippetTree.first()).to.equal(@snippetA)
+    expect(@snippetTree.root.last).to.equal(@snippetB)
 
 
   it 'has linked snippets correctly', ->
-    expect(@tree.root.first.previous).to.be.undefined
-    expect(@tree.root.first.next).to.equal(@snippetB)
-    expect(@tree.root.last.previous).to.equal(@snippetA)
-    expect(@tree.root.last.next).to.be.undefined
+    expect(@snippetTree.first().previous).to.be.undefined
+    expect(@snippetTree.first().next).to.equal(@snippetB)
+    expect(@snippetTree.root.last.previous).to.equal(@snippetA)
+    expect(@snippetTree.root.last.next).to.be.undefined
 
 
   describe 'up()', ->
@@ -71,8 +71,8 @@ describe 'SnippetTree with two snippets', ->
     it 'updates the first and last pointers of the container', ->
       @snippetB.up()
 
-      expect(@tree.root.first).to.equal(@snippetB)
-      expect(@tree.root.last).to.equal(@snippetA)
+      expect(@snippetTree.first()).to.equal(@snippetB)
+      expect(@snippetTree.root.last).to.equal(@snippetA)
 
 
   describe 'remove()', ->
@@ -83,8 +83,8 @@ describe 'SnippetTree with two snippets', ->
       expect(@snippetA.previous).to.be.undefined
       expect(@snippetA.next).to.be.undefined
 
-      expect(@tree.root.first).to.equal(@snippetA)
-      expect(@tree.root.last).to.equal(@snippetA)
+      expect(@snippetTree.first()).to.equal(@snippetA)
+      expect(@snippetTree.root.last).to.equal(@snippetA)
 
       expect(@snippetB.parentContainer).to.be.undefined
       expect(@snippetB.snippetTree).to.be.undefined
@@ -115,10 +115,10 @@ describe 'SnippetTree with two snippets', ->
 describe 'SnippetTree with a single-column row snippet', ->
 
   beforeEach ->
-    @tree = new SnippetTree()
+    { @snippetTree } = getInstances('snippetTree')
     @container = test.getSnippet('container')
     @defaultName = config.directives.container.defaultName
-    @tree.append(@container)
+    @snippetTree.append(@container)
 
 
   describe 'append()', ->
@@ -147,9 +147,9 @@ describe 'SnippetTree with a single-column row snippet', ->
 describe 'SnippetTree with a multi-column row snippet', ->
 
   beforeEach ->
-    @tree = new SnippetTree()
+    { @snippetTree } = getInstances('snippetTree')
     @rowSnippet = test.getSnippet('row')
-    @tree.append(@rowSnippet)
+    @snippetTree.append(@rowSnippet)
 
 
   describe 'append()', ->
@@ -179,7 +179,7 @@ describe 'SnippetTree with a multi-column row snippet', ->
 
     it 'visits the row snippet', ->
       visits = 0
-      @tree.each ->
+      @snippetTree.each ->
         visits += 1
       expect(visits).to.equal(1)
 
@@ -194,7 +194,7 @@ describe 'SnippetTree with a multi-column row snippet', ->
         @rowSnippet.append('sidebar', test.getSnippet('title'))
 
       visits = 0
-      @tree.each ->
+      @snippetTree.each ->
         visits += 1
 
       # check that all 6 snippets where visited by each
@@ -205,7 +205,7 @@ describe 'SnippetTree with a multi-column row snippet', ->
 
     it 'visits all containers', ->
       visits = 0
-      @tree.eachContainer ->
+      @snippetTree.eachContainer ->
         visits += 1
 
       expect(visits).to.equal(3)
@@ -216,7 +216,7 @@ describe 'SnippetTree with a multi-column row snippet', ->
     it 'visits all snippets and containers', ->
       visitedSnippets = 0
       visitedContainers = 0
-      @tree.all (snippetOrContainer) ->
+      @snippetTree.all (snippetOrContainer) ->
         if snippetOrContainer instanceof SnippetModel
           visitedSnippets += 1
         else if snippetOrContainer instanceof SnippetContainer
@@ -229,13 +229,13 @@ describe 'SnippetTree with a multi-column row snippet', ->
 describe 'SnippetTree with three levels', ->
 
   beforeEach ->
-    @tree = new SnippetTree()
+    { @snippetTree } = getInstances('snippetTree')
     @row = test.getSnippet('row')
     @rowInMain = test.getSnippet('row')
     @title = test.getSnippet('title')
     @text = test.getSnippet('text')
 
-    @tree.append(@row)
+    @snippetTree.append(@row)
     @row.append('main', @rowInMain)
     @row.append('main', @title)
     @rowInMain.append('sidebar', @text)
@@ -253,7 +253,7 @@ describe 'SnippetTree with three levels', ->
 
     it 'visits all containers in the right order', ->
       visitedSnippets = []
-      @tree.each (snippet) ->
+      @snippetTree.each (snippet) ->
         visitedSnippets.push(snippet)
 
       # snippets should be traversed in order of appearance
@@ -267,18 +267,18 @@ describe 'SnippetTree with three levels', ->
 describe 'SnippetTree with three snippets', ->
 
   beforeEach ->
-    @tree = new SnippetTree()
+    { @snippetTree } = getInstances('snippetTree')
     @snippets = []
     for index in [0..2]
       @snippets[index] = test.getSnippet('text')
-      @tree.append(@snippets[index])
+      @snippetTree.append(@snippets[index])
 
 
   # regression test for https://github.com/upfrontIO/livingdocs-engine/issues/13
   it 'moving the last snippet one up does not currupt the snippet tree', ->
     @snippets[2].up()
     visitedSnippets = []
-    @tree.each (snippet) ->
+    @snippetTree.each (snippet) ->
       visitedSnippets.push(snippet)
 
     expect(visitedSnippets.length).to.equal(3)

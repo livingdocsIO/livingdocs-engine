@@ -61,7 +61,7 @@ module.exports = class SnippetTree
 
 
   getSnippet: (snippetName) ->
-    if jQuery.type(snippetName) == 'string'
+    if typeof snippetName == 'string'
       @createModel(snippetName)
     else
       snippetName

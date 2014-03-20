@@ -61,5 +61,5 @@ module.exports = class InstanceInjector
 
 
   createRenderNode: ->
-    $('<div>')
+    $('<section>')
 
