@@ -1,12 +1,12 @@
 Kickstart = require('../../../src/kickstart/kickstart')
-testDesign = require('../../support/test_design')
+designJson = require('../../support/test_design_json')
 
 describe 'kickstart', ->
 
   beforeEach ->
     @kickstart = new Kickstart
       xmlTemplate: '<root><text>fasdf</text></root>',
-      design: testDesign
+      design: designJson
 
     @text1 = "Testparagraph1"
     @text2 = "Testparagraph2"

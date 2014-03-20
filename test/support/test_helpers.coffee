@@ -1,7 +1,7 @@
 config = require('../../src/configuration/defaults')
 $ = require('../../components/jquery/jquery')
 Design = require('../../src/design/design')
-testDesign = require('./test_design')
+designJson = require('./test_design_json')
 localstore = require('../../src/modules/localstore')
 
 # Local variables
@@ -20,11 +20,11 @@ module.exports = testHelpers =
     $(str)[0]
 
 
-  testDesign: testDesign
+  designJson: designJson
 
 
   getDesign: () ->
-    cachedDesign ||= new Design(testDesign)
+    cachedDesign ||= new Design(designJson)
 
 
   getTemplate: (id) ->
