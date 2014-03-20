@@ -35,6 +35,18 @@ module.exports = testHelpers =
     @getTemplate(id).createModel()
 
 
+  createSnippetTree: (contentData) ->
+    { @snippetTree } = getInstances('snippetTree')
+
+    for key, content of contentData
+      model = @getSnippet(key)
+      for field, value of content
+        model.set(field, value)
+      @snippetTree.append(model)
+
+    @snippetTree
+
+
   # helper to create snippets with one directive easier
   createSnippet: (id, value) ->
     snippet = @getSnippet(id)
