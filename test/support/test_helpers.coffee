@@ -35,14 +35,18 @@ module.exports = testHelpers =
     @getTemplate(id).createModel()
 
 
-  createSnippetTree: (contentData) ->
+  createSnippetTree: (contentArray) ->
     { @snippetTree } = getInstances('snippetTree')
 
-    for key, content of contentData
-      model = @getSnippet(key)
-      for field, value of content
-        model.set(field, value)
-      @snippetTree.append(model)
+    if not jQuery.isArray(contentArray)
+      contentArray = [contentArray]
+
+    for entry in contentArray
+      for key, content of entry
+        model = @getSnippet(key)
+        for field, value of content
+          model.set(field, value)
+        @snippetTree.append(model)
 
     @snippetTree
 
