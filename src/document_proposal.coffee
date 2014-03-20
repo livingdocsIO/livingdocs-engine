@@ -3,6 +3,7 @@ RenderingContainer = require('./rendering_container/rendering_container')
 Page = require('./rendering_container/page')
 InteractivePage = require('./rendering_container/interactive_page')
 Renderer = require('./rendering/renderer')
+View = require('./rendering/view')
 EventEmitter = require('wolfy87-eventemitter')
 
 module.exports = class Document extends EventEmitter
