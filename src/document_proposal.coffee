@@ -59,6 +59,16 @@ module.exports = class Document extends EventEmitter
     @snippetTree.serialize()
 
 
+  toJson: (prettify) ->
+    data = @serialize()
+    if prettify?
+      replacer = null
+      space = 2
+      JSON.stringify(data, replacer, space)
+    else
+      JSON.stringify(data)
+
+
   # Debug
   # -----
 

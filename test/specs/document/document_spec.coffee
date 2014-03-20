@@ -73,3 +73,18 @@ describe 'document', ->
       expect(@doc.toHtml()).to.have.same.html """
         <h1>It Works</h1>"""
 
+
+  describe 'toJson()', ->
+    beforeEach ->
+      { @snippetTree } = getInstances('snippetTree')
+      @doc = new Document({ @snippetTree })
+
+
+    it 'renders an empty document', ->
+      expect(@doc.toJson()).to.equal(
+        '{"content":[],"design":{"name":"test"}}')
+
+
+    it 'renders an empty document with prettify', ->
+      expect(@doc.toJson('prettify')).to.contain('\n  ')
+
