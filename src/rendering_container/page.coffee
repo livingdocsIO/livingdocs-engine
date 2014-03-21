@@ -27,6 +27,9 @@ module.exports = class Page extends RenderingContainer
     @cssLoader = new CssLoader(@window)
     @cssLoader.load(@design.css, @readySemaphore.wait()) if @design?.css
 
+    if config.livingdocsCssFile?
+      @cssLoader.load(config.livingdocsCssFile, @readySemaphore.wait())
+
 
   setWindow: (hostWindow) ->
     @window = hostWindow || window

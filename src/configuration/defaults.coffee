@@ -2,6 +2,7 @@
 # -------------
 module.exports = config = do ->
 
+  livingdocsCssFile: '/assets/css/livingdocs.css'
   wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?"
 
   # string containng only a <br> followed by whitespaces
