@@ -7,12 +7,14 @@
     <meta name="viewport" content="width=device-width">
 
     <!-- livingdocs-engine base css -->
+    <link rel="stylesheet" href="/assets/css/normalize.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/assets/css/livingdocs.css">
   </head>
   <body>
-    <div class="container-fluid">
-      <section class="doc-section"></section>
-    </div>
+    <!-- <div class="container-fluid"></div> -->
+    <section class="doc-section"></section>
+
 
     <div class="preview" style="position: absolute; top: 0; right: 0; width: 320px; height: 100%;">
     <div>
@@ -32,42 +34,53 @@
       $(document).ready(function() {
 
         // setup document
-        var json = doc.stash.get();
-        doc.init({ design: design.bootstrap, json: json });
-
-        doc.ready(function() {
-
-          if (!json) {
-            var row = doc.add("mainAndSidebar");
-            row.append("main", doc.create("hero"));
-            row.append("main", doc.create("text"));
-            row.append("sidebar", doc.create("title"));
-            var single = doc.add("column");
-            single.append(doc.create("hero"));
-            single.append(doc.create("hero"));
-            single.append(doc.create("hero"));
-          }
-
-          // drag in new hero snippet
-          var $newSnippet = $("<div>drag me</div>").css('cursor', 'move')
-          $newSnippet.on('mousedown', function(event) {
-            var newSnippet = doc.create('html')
-
-            doc.startDrag({
-              snippetModel: newSnippet,
-              event: event,
-              config: {
-                preventDefault: true,
-                direct: true
-              }
-            });
-
-          });
-          $(document.body).append($newSnippet)
-
-          doc.createView($('.preview')[0])
-
+        docs.design.load(design.bootstrap);
+        var document = docs.new({
+          design: 'bootstrap'
         });
+
+        document.model.append('mainAndSidebar');
+        var snippet = document.model.createSnippet('hero')
+        document.model.first().append('main', snippet);
+        viewReady = document.createView('.doc-section', { interactive: true });
+
+        // // OLD WAY OF DOING THINGS
+        // // var json = doc.stash.get();
+        // // doc.init({ design: design.bootstrap, json: json });
+
+        // doc.ready(function() {
+
+        //   if (!json) {
+        //     var row = doc.add("mainAndSidebar");
+        //     row.append("main", doc.create("hero"));
+        //     row.append("main", doc.create("text"));
+        //     row.append("sidebar", doc.create("title"));
+        //     var single = doc.add("column");
+        //     single.append(doc.create("hero"));
+        //     single.append(doc.create("hero"));
+        //     single.append(doc.create("hero"));
+        //   }
+
+        //   // drag in new hero snippet
+        //   var $newSnippet = $("<div>drag me</div>").css('cursor', 'move')
+        //   $newSnippet.on('mousedown', function(event) {
+        //     var newSnippet = doc.create('html')
+
+        //     doc.startDrag({
+        //       snippetModel: newSnippet,
+        //       event: event,
+        //       config: {
+        //         preventDefault: true,
+        //         direct: true
+        //       }
+        //     });
+
+        //   });
+        //   $(document.body).append($newSnippet)
+
+        //   doc.createView($('.preview')[0])
+
+        // });
       });
     </script>
 

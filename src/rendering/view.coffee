@@ -28,6 +28,7 @@ module.exports = class View
 
     iframe = parent.ownerDocument.createElement('iframe')
     iframe.src = 'about:blank'
+    iframe.setAttribute('frameBorder', '0')
     iframe.onload = -> deferred.resolve(iframe)
 
     parent.appendChild(iframe)

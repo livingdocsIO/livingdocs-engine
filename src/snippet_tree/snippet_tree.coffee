@@ -72,6 +72,10 @@ module.exports = class SnippetTree
     template.createModel() if template
 
 
+  createSnippet: ->
+    @createModel.apply(this, arguments)
+
+
   getTemplate: (identifier) ->
     template = @design.get(identifier)
     assert template, "Could not find template #{ identifier }"

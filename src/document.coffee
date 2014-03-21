@@ -32,7 +32,9 @@ module.exports = class Document extends EventEmitter
   createView: (parent, options) ->
     parent ?= window.document.body
     options ?= readOnly: true
-    view = new View(@snippetTree, parent)
+
+    $parent = $(parent).first()
+    view = new View(@snippetTree, $parent[0])
     promise = view.create(options)
 
     if view.isInteractive?
