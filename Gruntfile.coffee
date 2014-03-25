@@ -162,6 +162,13 @@ module.exports = (grunt) ->
     'mochaTest'
   ])
 
+  grunt.registerTask('devbuild', [
+    'clean:dist'
+    'browserify:build'
+    'uglify'
+    'copy:dependencies'
+  ])
+
   grunt.registerTask('build', [
     'clean:dist'
     'browserify:build'
