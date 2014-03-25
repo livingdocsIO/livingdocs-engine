@@ -79,9 +79,12 @@ describe 'ReadOnly Renderer', ->
 
     describe 'renderer.html()', ->
 
-      it 'returns the documents html', ->
-        expect(@renderer.html()).to.have.html """
-          <h1>A</h1>"""
+      it 'returns the documents html', (done) ->
+        @renderer.ready =>
+          expect(@renderer.html()).to.have.html """
+            <h1>A</h1>
+          """
+          done()
 
 
   describe 'with a hero', ->

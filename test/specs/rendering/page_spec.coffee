@@ -19,7 +19,6 @@ describe 'Page', ->
 
   describe 'ready()', ->
 
-    it 'calls the callback as soon as the assets are loaded', ->
-      callbackCalled = false
-      new Page().ready(-> callbackCalled = true)
-      expect(callbackCalled).to.be.ok
+    it 'calls the callback as soon as the assets are loaded', (done) ->
+      new Page().ready ->
+        done()
