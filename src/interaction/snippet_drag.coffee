@@ -37,7 +37,7 @@ module.exports = class SnippetDrag
 
 
   # Called by DragBase
-  move: ({ top, left }) ->
+  move: ({ top, left }, event) ->
     left = 2 if left < 2
     top = 2 if top < 2
 
