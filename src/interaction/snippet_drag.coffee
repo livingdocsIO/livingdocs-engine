@@ -42,12 +42,12 @@ module.exports = class SnippetDrag
     top = 2 if top < 2
 
     @$placeholder.css(top: "#{ top }px", left: "#{ left }px")
-    @target = @findDropTarget({ top, left, event })
+    @target = @findDropTarget({ top, left }, event)
 
     # @scrollIntoView(top, event)
 
 
-  findDropTarget: ({ top, left, event }) ->
+  findDropTarget: ({ top, left }, event) ->
     elem = @getElemUnderCursor(top, left)
 
     # return the same as last time if the cursor is above the dropMarker
