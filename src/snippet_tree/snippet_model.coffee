@@ -1,3 +1,4 @@
+config = require('../configuration/defaults')
 SnippetContainer = require('./snippet_container')
 guid = require('../modules/guid')
 log = require('../modules/logging/log')
