@@ -37,7 +37,7 @@ module.exports = class Document extends EventEmitter
     view = new View(@snippetTree, $parent[0])
     promise = view.create(options)
 
-    if view.isInteractive?
+    if view.isInteractive
       @setInteractiveView(view)
 
     promise
