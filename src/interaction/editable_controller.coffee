@@ -7,14 +7,13 @@ config = require('../configuration/defaults')
 module.exports = class EditableController
 
   constructor: (@page) ->
-    # configure editableJS
-    Editable.init
-      log: false
+    # Initialize EditableJS
+    @editable = new Editable(window: @page.window);
 
     @editableAttr = config.directives.editable.renderedAttr
     @selection = $.Callbacks()
 
-    Editable
+    @editable
       .focus(@withContext(@focus))
       .blur(@withContext(@blur))
       .insert(@withContext(@insert))
@@ -27,7 +26,7 @@ module.exports = class EditableController
   # Register DOM nodes with EditableJS.
   # After that Editable will fire events for that node.
   add: (nodes) ->
-    Editable.add(nodes)
+    @editable.add(nodes)
 
 
   disableAll: ->
@@ -110,7 +109,7 @@ module.exports = class EditableController
 
         mergedView.focus()
         elem = mergedView.getDirectiveElement(editableName)
-        cursor = Editable.createCursor(elem, if direction == 'before' then 'end' else 'beginning')
+        cursor = @editable.createCursor(elem, if direction == 'before' then 'end' else 'beginning')
         cursor[ if direction == 'before' then 'insertAfter' else 'insertBefore' ](frag)
 
         # Make sure the model of the mergedView is up to date
