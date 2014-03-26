@@ -6,6 +6,7 @@ describe 'editableController', ->
   beforeEach ->
     { @renderer, @snippetTree } = getInstances('page', 'renderer')
     @editableController = new EditableController(@renderer.renderingContainer)
+    @editable = @editableController.editable
 
 
   describe 'selection event', ->
@@ -22,14 +23,14 @@ describe 'editableController', ->
         foundSnippet = snippet
         expect.element
 
-      Editable.selection.fire(@elem, undefined)
+      @editable.selection.fire(@elem, undefined)
       expect(foundSnippet.model).to.equal(@title.model)
 
 
   describe 'enter event', ->
 
     beforeEach ->
-      @title = test.createSnippet('title', 'A') #test.getTemplate('title').createView()
+      @title = test.createSnippet('title', 'A')
       @snippetTree.append(@title)
 
 
