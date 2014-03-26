@@ -40,5 +40,12 @@ describe 'editableController', ->
 
 
     it 'inserts the default paragraph element', ->
+      expect(@snippetTree.design.paragraphSnippet).to.equal('text')
       @editableController.insert(@title.createView())
       expect(@renderer.snippetTree.toJson().content[1].identifier).to.equal('test.text')
+
+
+    it 'inserts the paragraph snippet defined by the design', ->
+      @snippetTree.design.paragraphSnippet = 'title'
+      @editableController.insert(@title.createView())
+      expect(@renderer.snippetTree.toJson().content[1].identifier).to.equal('test.title')
