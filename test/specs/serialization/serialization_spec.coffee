@@ -31,6 +31,34 @@ describe 'Snippet Serialization', ->
         'Extra Space': 'extra-space'
         'Color': 'color--blue'
 
+  describe 'of data', ->
+
+    it 'saves all data', ->
+      expectedValue =
+        'center':
+          'zoom': 12
+        'markers': [
+          'text': 'test'
+        ,
+          'text': 'secondTest'
+        ]
+
+      hero = test.getSnippet('hero')
+      hero.data(
+        'center':
+          'zoom': 12
+      )
+
+      hero.data(
+        'markers': [
+          'text': 'test'
+        ,
+          'text': 'secondTest'
+        ])
+
+      json = hero.toJson()
+      expect(json.data).to.deep.equal(expectedValue)
+
 
 describe 'SnippetTree Serialization', ->
 
@@ -132,6 +160,31 @@ describe 'Deserialization', ->
     it 'returns a snippet with its styles', ->
       snippet = SnippetModel.fromJson(@json, @design)
       expect(snippet.style('Color')).to.be.undefined
+
+
+  describe 'of a snippet with data', ->
+
+    beforeEach ->
+      @json = test.localstore
+        identifier: 'test.hero'
+        data:
+          'center':
+            'zoom': 12
+          'markers': [
+            'text': 'test'
+          ,
+            'text': 'test2'
+          ]
+
+
+    it 'returns a snippet with its center data', ->
+      snippet = SnippetModel.fromJson(@json, @design)
+      expect(snippet.data('center')).to.deep.equal({'zoom': 12})
+
+
+    it 'returns a snippet with its markers data', ->
+      snippet = SnippetModel.fromJson(@json, @design)
+      expect(snippet.data('markers')).to.deep.equal([{'text': 'test'}, {'text': 'test2'}])
 
 
   describe 'of a snippet with children', ->

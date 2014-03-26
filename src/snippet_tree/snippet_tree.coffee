@@ -67,6 +67,7 @@ module.exports = class SnippetTree
     @snippetContentChanged = $.Callbacks()
     @snippetHtmlChanged = $.Callbacks()
     @snippetSettingsChanged = $.Callbacks()
+    @snippetDataChanged = $.Callbacks()
 
     @changed = $.Callbacks()
 
@@ -190,6 +191,10 @@ module.exports = class SnippetTree
 
   htmlChanging: (snippet) ->
     @fireEvent('snippetHtmlChanged', snippet)
+
+
+  dataChanging: (snippet, changedProperties) ->
+    @fireEvent('snippetDataChanged', snippet, changedProperties)
 
 
   # Serialization
