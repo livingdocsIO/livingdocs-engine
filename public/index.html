@@ -13,11 +13,9 @@
   </head>
   <body>
     <!-- <div class="container-fluid"></div> -->
+    <nav class="doc-toolbar"></nav>
     <section class="doc-section"></section>
-
-
-    <div class="preview" style="position: absolute; top: 0; right: 0; width: 320px; height: 100%;">
-    <div>
+    <div class="doc-preview"><div>
 
     <!-- dependencies of livingdocs-engine -->
     <script src="/jquery/jquery.js"></script>
@@ -33,54 +31,55 @@
 
       $(document).ready(function() {
 
-        // setup document
+        // var json = doc.stash.get();
+
+        // Setup the design and the document
         docs.design.load(design.bootstrap);
         var document = docs.new({
           design: 'bootstrap'
         });
 
-        document.model.append('mainAndSidebar');
-        var snippet = document.model.createSnippet('hero')
-        document.model.first().append('main', snippet);
+        // Add some content
+        addDefaultContent(document);
+
+        // Create Views
         viewReady = document.createView('.doc-section', { interactive: true });
+        previewReady = document.createView('.doc-preview');
 
-        // // OLD WAY OF DOING THINGS
-        // // var json = doc.stash.get();
-        // // doc.init({ design: design.bootstrap, json: json });
+        // Create Snippets
+        var $toolbar = $('.doc-toolbar');
+        for (var i = 0; i < document.design.templates.length; i++) {
+          var template = document.design.templates[i];
+          $entry = $('<div class="toolbar-entry">');
+          $entry.html(template.title);
+          $toolbar.append($entry);
+          draggableSnippet(document, template.id, $entry);
+        }
 
-        // doc.ready(function() {
 
-        //   if (!json) {
-        //     var row = doc.add("mainAndSidebar");
-        //     row.append("main", doc.create("hero"));
-        //     row.append("main", doc.create("text"));
-        //     row.append("sidebar", doc.create("title"));
-        //     var single = doc.add("column");
-        //     single.append(doc.create("hero"));
-        //     single.append(doc.create("hero"));
-        //     single.append(doc.create("hero"));
-        //   }
+        function draggableSnippet (document, id, $elem) {
+          $elem.on('mousedown', function(event) {
+            var newSnippet = document.model.createModel(id);
 
-        //   // drag in new hero snippet
-        //   var $newSnippet = $("<div>drag me</div>").css('cursor', 'move')
-        //   $newSnippet.on('mousedown', function(event) {
-        //     var newSnippet = doc.create('html')
+            document.startDrag({
+              snippetModel: newSnippet,
+              event: event,
+              config: {
+                preventDefault: true,
+                direct: true
+              }
+            });
+          });
+        }
 
-        //     doc.startDrag({
-        //       snippetModel: newSnippet,
-        //       event: event,
-        //       config: {
-        //         preventDefault: true,
-        //         direct: true
-        //       }
-        //     });
 
-        //   });
-        //   $(document.body).append($newSnippet)
-
-        //   doc.createView($('.preview')[0])
-
-        // });
+        function addDefaultContent (document) {
+          document.model.append('mainAndSidebar');
+          var snippet = document.model.createSnippet('hero');
+          document.model.first().append('main', snippet);
+          var text = document.model.createSnippet('text');
+          snippet.after(text);
+        }
       });
     </script>
 
