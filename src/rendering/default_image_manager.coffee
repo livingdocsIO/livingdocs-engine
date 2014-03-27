@@ -22,5 +22,9 @@ module.exports = class DefaultImageManager
       uri
 
 
+  isBase64: (value) ->
+    value.indexOf('data:image') == 0
+
+
   isImgTag: ($elem) ->
     $elem[0].nodeName.toLowerCase() == 'img'

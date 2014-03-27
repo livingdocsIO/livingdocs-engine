@@ -9,7 +9,8 @@ module.exports = class RescritImageManager extends DefaultImageManager
 
 
   set: ($elem, value) ->
-    if $elem[0].nodeName.toLowerCase() == 'img'
+    return @setBase64($elem, value) if @isBase64(value)
+
     $elem.addClass('resrc')
     if @isImgTag($elem)
       $elem.removeAttr('src')
@@ -17,3 +18,10 @@ module.exports = class RescritImageManager extends DefaultImageManager
     else
       $elem.css('background-image', "url(#{RescritImageManager.resrcitUrl}#{ @escapeCssUri(value) })")
 
+
+  # Set src directly, don't add resrc class
+  setBase64: ($elem, value) ->
+    if @isImgTag($elem)
+      $elem.attr('src', value)
+    else
+      $elem.css('background-image', "url(#{ @escapeCssUri(value) })")

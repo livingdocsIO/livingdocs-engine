@@ -1,4 +1,5 @@
 ResrcitImageManager = require('../../../src/rendering/resrcit_image_manager')
+TestImage = require('../../support/test_base64_image')
 
 describe 'ResrcitImageManager', ->
 
@@ -36,3 +37,17 @@ describe 'ResrcitImageManager', ->
       $elem = $('<div></div>')
       @imageManager.set($elem, 'http://www.lolcats.com/images/u/13/39/tastegood.jpg')
       expect($elem).to.have.class('resrc')
+
+
+  describe 'setting a base 64 image representation', ->
+
+    it 'adds a base64 string to the src of an img tag', ->
+      $elem = $('<img>')
+      @imageManager.set($elem, TestImage)
+      expect($elem).to.have.attr('src', TestImage)
+
+
+    it 'adds a base64 string to the background-image tag', ->
+      $elem = $('<div></div>')
+      @imageManager.set($elem, TestImage)
+      expect($elem).to.have.css('background-image', "url(#{TestImage})")
