@@ -34,8 +34,8 @@
         // var json = doc.stash.get();
 
         // Setup the design and the document
-        docs.design.load(design.bootstrap);
-        var document = docs.new({
+        doc.design.load(design.bootstrap);
+        var document = doc.new({
           design: 'bootstrap'
         });
 
@@ -61,7 +61,7 @@
           $elem.on('mousedown', function(event) {
             var newSnippet = document.model.createModel(id);
 
-            document.startDrag({
+            doc.startDrag({
               snippetModel: newSnippet,
               event: event,
               config: {

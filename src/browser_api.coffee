@@ -4,8 +4,8 @@ Document = require('./document')
 SnippetTree = require('./snippet_tree/snippet_tree')
 Design = require('./design/design')
 designCache = require('./design/design_cache')
+module.exports = doc = do ->
 
-module.exports = docs = do ->
 
   # Instantiation process:
   # async or sync -> get design (include js for synchronous loading)
@@ -50,4 +50,4 @@ module.exports = docs = do ->
 
 
 # Export global variable
-window.docs = docs
+window.doc = doc
