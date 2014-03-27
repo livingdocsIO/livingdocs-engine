@@ -35,18 +35,23 @@ module.exports = class View
     deferred.promise()
 
 
-  createIFrameRenderer: (iframe, { interactive, readOnly }={}) ->
+  createIFrameRenderer: (iframe, options) ->
     params =
       renderNode: iframe.contentDocument.body
       hostWindow: iframe.contentWindow
       design: @snippetTree.design
 
-    container = if interactive?
+    @page = @createPage(params, options)
+    renderer = new Renderer
+      renderingContainer: @page
+      snippetTree: @snippetTree
+
+
+  createPage: (params, { interactive, readOnly }={}) ->
+    if interactive?
       @isInteractive = true
       new InteractivePage(params)
     else
       new Page(params)
 
-    renderer = new Renderer
-      renderingContainer: container
-      snippetTree: @snippetTree
+
