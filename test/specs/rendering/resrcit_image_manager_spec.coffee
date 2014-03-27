@@ -20,6 +20,12 @@ describe 'ResrcitImageManager', ->
       expect($elem).to.have.class('resrc')
 
 
+    it 'removes the src attribute on an image tag that already has one', ->
+      $elem = $('<img src="http://www.lolcats.com/images/u/12/43/lolcatsdotcomlikemyself.jpg">')
+      @imageManager.set($elem, 'http://www.lolcats.com/images/u/13/39/tastegood.jpg')
+      expect($elem).not.to.have.attr('src')
+
+
     it 'adds the correct background-image on a div', ->
       $elem = $('<div></div>')
       @imageManager.set($elem, 'http://www.lolcats.com/images/u/13/39/tastegood.jpg')
