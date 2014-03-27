@@ -4,7 +4,11 @@ Document = require('./document')
 SnippetTree = require('./snippet_tree/snippet_tree')
 Design = require('./design/design')
 designCache = require('./design/design_cache')
+EditorPage = require('./rendering_container/editor_page')
+
 module.exports = doc = do ->
+
+  editorPage = new EditorPage()
 
 
   # Instantiation process:
@@ -47,6 +51,9 @@ module.exports = doc = do ->
 
   # See designCache.load for examples how to load your design.
   design: designCache
+
+  # Start drag & drop
+  startDrag: $.proxy(editorPage, 'startDrag')
 
 
 # Export global variable
