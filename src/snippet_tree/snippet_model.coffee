@@ -133,12 +133,12 @@ module.exports = class SnippetModel
       @dataValues[arg]
 
 
-   changeData: (name, value) ->
-     if !serialization.deepEquals(@dataValues[name], value)
-       @dataValues[name] = value
-       true
-     else
-       false
+  changeData: (name, value) ->
+    if !serialization.deepEquals(@dataValues[name], value)
+      @dataValues[name] = value
+      true
+    else
+      false
 
 
   isEmpty: (name) ->

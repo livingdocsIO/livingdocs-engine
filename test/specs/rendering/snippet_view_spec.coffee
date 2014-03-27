@@ -1,3 +1,5 @@
+ImageManager = require('../../../src/rendering/image_manager')
+
 css = config.css
 attr = config.attr
 
@@ -127,17 +129,36 @@ describe 'SnippetView image', ->
 
   beforeEach ->
     @snippet = test.getSnippet('image')
+    @defaultImageManager = ImageManager.getDefaultImageManager()
+    @resrcitImageManager = ImageManager.getResrcitImageManager()
+    @setOnDefault = sinon.spy(@defaultImageManager, 'set')
+    @setOnResrcit = sinon.spy(@resrcitImageManager, 'set')
 
 
-  it 'renders the image src', ->
-    @snippet.set('image', 'http://www.lolcats.com/images/1.jpg')
-    @snippetView = @snippet.template.createView(@snippet)
+  afterEach ->
+    @defaultImageManager.set.restore()
+    @resrcitImageManager.set.restore()
 
-    expect(@snippetView.$html).to.have.html """
-      <img src="http://www.lolcats.com/images/1.jpg"
-        #{ test.imageAttr }="image"
-        class="#{ css.snippet }"
-        #{ attr.template }="test.image">"""
+
+  describe 'without an image service', ->
+
+    it 'calls the default image manager', ->
+      @snippet.set('image', 'http://www.lolcats.com/images/1.jpg')
+      @snippetView = @snippet.template.createView(@snippet)
+      expect(@setOnDefault).to.have.been.calledOnce
+
+
+  describe 'with the resrc.it service', ->
+
+    beforeEach ->
+      @snippet.data 'imageService':
+        'image': 'resrc.it'
+
+
+    it 'calls the resrcit image manager', ->
+      @snippet.set('image', 'http://www.lolcats.com/images/1.jpg')
+      @snippetView = @snippet.template.createView(@snippet)
+      expect(@setOnResrcit).to.have.been.calledOnce
 
 
   describe 'delayed placeholder insertion', ->
@@ -191,30 +212,6 @@ describe 'SnippetView image', ->
           #{ attr.template }="test.image">"""
 
 
-
-describe 'SnippetView background image', ->
-
-  beforeEach ->
-    @coverSnippet = test.getSnippet('cover')
-
-
-  it 'renders the background image', ->
-    @coverSnippet.set('image', 'http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg')
-    snippetView = @coverSnippet.template.createView(@coverSnippet)
-
-    expect(snippetView.$html).to.have.html """
-      <div class="#{ css.snippet }" #{ attr.template }="test.cover">
-        <h4 #{ test.editableAttr }="title" class="#{ css.editable }"
-          #{ attr.placeholder }="Titel"></h4>
-        <div #{ test.imageAttr }="image" style="background-image:url(http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg);">
-          <h3 #{ test.editableAttr }="uppertitle" class="#{ css.editable }"
-            #{ attr.placeholder }="Oberzeile"></h3>
-          <h2 #{ test.editableAttr }="maintitle" class="#{ css.editable }"
-            #{ attr.placeholder }="Titel"></h2>
-        </div>
-      </div>"""
-
-
 describe 'SnippetView html', ->
 
   beforeEach ->
@@ -244,19 +241,4 @@ describe 'SnippetView html', ->
         @view.render()
         @expected.html(@snippet.template.defaults['html'])
         expect(@view.$html).to.have.html(@expected)
-
-
-  describe 'escapeCssUri()', ->
-
-    it 'escapes an uri with paranthesis', ->
-      escapedUri = @view.escapeCssUri('http://test.com/1')
-
-      $elem = $('<div>')
-      $elem.css('background-image', "url(#{ escapedUri })")
-
-      # Firefox always returns the url in double quotes
-      attr = $elem[0].getAttribute('style')
-      attr = attr.replace(/"/g, '')
-
-      expect(attr).to.equal('background-image: url(http://test.com/1);')
 

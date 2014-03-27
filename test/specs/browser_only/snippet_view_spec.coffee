@@ -1,13 +1,15 @@
-describe 'Browser only: SnippetView', ->
+DefaultImageManager = require('../../../src/rendering/default_image_manager')
+
+describe 'Browser only: DefaultImageManager', ->
+
+  beforeEach ->
+    @imageManager = new DefaultImageManager()
+
 
   describe 'escapeCssUri()', ->
-    beforeEach ->
-      @snippet = test.getSnippet('html')
-      @view = @snippet.template.createView(@snippet)
-
 
     it 'escapes an uri with paranthesis', ->
-      escapedUri = @view.escapeCssUri('http://test.com/(1)')
+      escapedUri = @imageManager.escapeCssUri('http://test.com/(1)')
 
       $elem = $('<div>')
       $elem.css('background-image', "url(#{ escapedUri })")
