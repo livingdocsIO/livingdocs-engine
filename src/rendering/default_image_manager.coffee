@@ -5,7 +5,7 @@ module.exports = class DefaultImageManager
 
 
   set: ($elem, value) ->
-    if $elem[0].nodeName == 'IMG'
+    if $elem[0].nodeName.toLowerCase() == 'img'
       $elem.attr('src', value)
     else
       $elem.css('background-image', "url(#{ @escapeCssUri(value) })")
