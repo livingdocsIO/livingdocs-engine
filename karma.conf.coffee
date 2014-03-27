@@ -10,6 +10,7 @@ module.exports = (config) ->
     # list of files / patterns to load in the browser
     files: [
       'components/jquery/jquery.js'
+      'components/chai-jquery/chai-jquery.js'
       '.tmp/livingdocs-engine-test.js'
     ],
 
@@ -39,7 +40,7 @@ module.exports = (config) ->
     browsers: ['PhantomJS']
 
     # If browser does not capture in given timeout [ms], kill it
-    captureTimeout: 10000
+    captureTimeout: 20000
 
     # Continuous Integration mode
     # if true, it capture browsers, run tests and exit
