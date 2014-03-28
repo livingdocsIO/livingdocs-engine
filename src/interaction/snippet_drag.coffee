@@ -14,7 +14,7 @@ module.exports = class SnippetDrag
 
 
   # Called by DragBase
-  start: ({ top, left }) ->
+  start: ({ top, left }, event) ->
     @started = true
     @page.editableController.disableAll()
     @page.blurFocusedElement()
@@ -36,7 +36,7 @@ module.exports = class SnippetDrag
     @$view.addClass(css.dragged) if @$view?
 
     # position the placeholder
-    @move({ top, left })
+    @move({ top, left }, event)
 
 
   # Called by DragBase
@@ -50,14 +50,21 @@ module.exports = class SnippetDrag
     # @scrollIntoView(top, event)
 
 
-  findDropTarget: ({ top, left }, event) ->
-    elem = @getElemUnderCursor(top, left)
+  findDropTarget: ({ top, left, event }) ->
+    eventPosition =
+      clientX: event.clientX
+      clientY: event.clientY
+      pageX: event.pageX
+      pageY: event.pageY
+
+    { eventPosition, elem } = @getElemUnderCursor(eventPosition)
     return undefined unless elem?
 
     # return the same as last time if the cursor is above the dropMarker
     return @target if elem == @$dropMarker[0]
 
-    target = dom.dropTarget(elem, { top, left }) if elem?
+    coords = { left: eventPosition.pageX, top: eventPosition.pageY }
+    target = dom.dropTarget(elem, coords) if elem?
     @undoMakeSpace()
 
     if target? && target.snippetView?.model != @snippetModel
@@ -204,32 +211,36 @@ module.exports = class SnippetDrag
     @$highlightedContainer = {}
 
 
-  getElemUnderCursor: (top, left) ->
-    top = top - @page.$body.scrollTop()
-    left = left - @page.$body.scrollLeft()
-
+  # pageX, pageY: absolute positions (relative to the document)
+  # clientX, clientY: fixed positions (relative to the viewport)
+  getElemUnderCursor: (eventPosition) ->
     elem = undefined
     @unblock =>
-      elem = @page.document.elementFromPoint(left, top)
+      { clientX, clientY } = eventPosition
+      elem = @page.document.elementFromPoint(clientX, clientY)
       if elem?.nodeName == 'IFRAME'
-        elem = @findElemInIframe(elem, top, left)
+        { eventPosition, elem } = @findElemInIframe(elem, eventPosition)
         @elemWindow = @iframeBox.window
       else
         @iframeBox = undefined
         @elemWindow = @page.window
 
-    elem
+    { eventPosition, elem }
 
 
-  findElemInIframe: (iframeElem, top, left) ->
-    # take iframe offset into account
-    @iframeBox = box = dom.getBoundingClientRect(iframeElem)
-    top -= box.top
-    left -= box.left
-
+  findElemInIframe: (iframeElem, eventPosition) ->
+    @iframeBox = box = iframeElem.getBoundingClientRect()
     @iframeBox.window = iframeElem.contentWindow
     document = iframeElem.contentDocument
-    document.elementFromPoint(left, top)
+    $body = $(document.body)
+
+    eventPosition.clientX -= box.left
+    eventPosition.clientY -= box.top
+    eventPosition.pageX = eventPosition.clientX + $body.scrollLeft()
+    eventPosition.pageY = eventPosition.clientY + $body.scrollTop()
+    elem = document.elementFromPoint(eventPosition.clientX, eventPosition.clientY)
+
+    { eventPosition, elem }
 
 
   # Remove elements under the cursor which could interfere

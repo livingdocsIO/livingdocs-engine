@@ -63,32 +63,32 @@ module.exports = class DragBase
       @addLongpressIndicator(@startPoint)
       @timeout = setTimeout =>
           @removeLongpressIndicator()
-          @start(@startPoint)
+          @start(@startPoint, event)
         , @options.longpress.delay
     else if @mode == 'direct'
-      @start(@startPoint)
+      @start(@startPoint, event)
 
     # prevent browser Drag & Drop
     event.preventDefault() if @options.preventDefault
 
 
-  move: (topLeft) ->
+  move: (topLeft, event) ->
     if @mode == 'longpress'
       if @distance(topLeft, @startPoint) > @options.longpress.tolerance
         @reset()
     else if @mode == 'move'
       if @distance(topLeft, @startPoint) > @options.move.distance
-        @start(topLeft)
+        @start(topLeft, event)
 
 
   # start the drag process
-  start: (topLeft) ->
+  start: (topLeft, event) ->
     @started = true
 
     # prevent text-selections while dragging
     @addBlocker()
     @page.$body.addClass(config.css.preventSelection)
-    @dragHandler.start(topLeft)
+    @dragHandler.start(topLeft, event)
 
 
   drop: ->
@@ -158,14 +158,14 @@ module.exports = class DragBase
         if @started
           @dragHandler.move(@getTopLeft(event), event)
         else
-          @move(@getTopLeft(event))
+          @move(@getTopLeft(event), event)
 
     else # all other input devices behave like a mouse
       @page.$document.on 'mousemove.livingdocs-drag', (event) =>
         if @started
           @dragHandler.move(@getTopLeft(event), event)
         else
-          @move(@getTopLeft(event))
+          @move(@getTopLeft(event), event)
 
 
   # Get Top Left relative to the document (absolute)
