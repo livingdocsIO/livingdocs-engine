@@ -222,7 +222,7 @@ module.exports = class SnippetDrag
   # clientX, clientY: fixed positions (relative to the viewport)
   getElemUnderCursor: (eventPosition) ->
     elem = undefined
-    @unblock =>
+    @unblockElementFromPoint =>
       { clientX, clientY } = eventPosition
       elem = @page.document.elementFromPoint(clientX, clientY)
       if elem?.nodeName == 'IFRAME'
@@ -250,7 +250,7 @@ module.exports = class SnippetDrag
 
   # Remove elements under the cursor which could interfere
   # with document.elementFromPoint()
-  unblock: (callback) ->
+  unblockElementFromPoint: (callback) ->
 
     # Pointer Events are a lot faster since the browser does not need
     # to repaint the whole screen. IE 9 and 10 do not support them.
