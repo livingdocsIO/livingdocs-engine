@@ -1,4 +1,5 @@
 config = require('../configuration/defaults')
+dom = require('../interaction/dom')
 
 module.exports = class Directive
 
@@ -22,3 +23,7 @@ module.exports = class Directive
     newDirective = new Directive(name: @name, type: @type)
     newDirective.optional = @optional
     newDirective
+
+
+  getAbsoluteBoundingClientRect: ->
+    dom.getBoundingClientRect(@elem)
