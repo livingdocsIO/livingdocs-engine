@@ -1,6 +1,5 @@
 {
   "name": "EditableJS",
-  "version": "0.1.1",
   "homepage": "https://github.com/upfrontIO/Editable.JS",
   "authors": [
     "Matteo Agosti<matteo@upfront.io>",
@@ -13,14 +12,14 @@
     "!editable.js",
     "!editable.min.js"
   ],
-  "_release": "0.1.1",
+  "_release": "02fa994f18",
   "_resolution": {
-    "type": "version",
-    "tag": "v0.1.1",
-    "commit": "cfca903d554f5ef6b6f100d42619ca02554fa60f"
+    "type": "branch",
+    "branch": "class-api",
+    "commit": "02fa994f187c84c6da039579f56eb18660306bef"
   },
   "_source": "git@github.com:upfrontIO/Editable.JS.git",
-  "_target": "~0.1.1",
+  "_target": "class-api",
   "_originalSource": "git@github.com:upfrontIO/Editable.JS.git",
   "_direct": true
 }
