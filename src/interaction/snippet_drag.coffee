@@ -14,7 +14,7 @@ module.exports = class SnippetDrag
 
 
   # Called by DragBase
-  start: ({ top, left }, event) ->
+  start: (eventPosition) ->
     @started = true
     @page.editableController.disableAll()
     @page.blurFocusedElement()
@@ -35,27 +35,21 @@ module.exports = class SnippetDrag
     @$view.addClass(css.dragged) if @$view?
 
     # position the placeholder
-    @move({ top, left }, event)
+    @move(eventPosition)
 
 
   # Called by DragBase
-  move: ({ top, left }, event) ->
-    left = 2 if left < 2
-    top = 2 if top < 2
 
-    @$placeholder.css(top: "#{ top }px", left: "#{ left }px")
-    @target = @findDropTarget({ top, left }, event)
+  move: (eventPosition) ->
+    @$placeholder.css
+      left: "#{ eventPosition.pageX }px"
+      top: "#{ eventPosition.pageY }px"
 
+    @target = @findDropTarget(eventPosition)
     # @scrollIntoView(top, event)
 
 
-  findDropTarget: ({ top, left, event }) ->
-    eventPosition =
-      clientX: event.clientX
-      clientY: event.clientY
-      pageX: event.pageX
-      pageY: event.pageY
-
+  findDropTarget: (eventPosition) ->
     { eventPosition, elem } = @getElemUnderCursor(eventPosition)
     return undefined unless elem?
 
