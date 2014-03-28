@@ -158,7 +158,7 @@ module.exports = class SnippetDrag
       width: box.width
 
 
-  showMarker: ({ top, left, width }) ->
+  showMarker: ({ left, top, width }) ->
     if @iframeBox?
       # translate to relative to iframe viewport
       $body = $(@iframeBox.window.document.body)
@@ -173,13 +173,20 @@ module.exports = class SnippetDrag
       # top += $(document.body).scrollTop()
       # left += $(document.body).scrollLeft()
 
+      # With position fixed we don't need to take scrolling into account
+      # in an iframe scenario
+      @$dropMarker.css(position: 'fixed')
+    else
+      # If we're not in an iframe left and top are already
+      # the absolute coordinates
+      @$dropMarker.css(position: 'absolute')
+
     @$dropMarker
-      .css
-        position: 'fixed'
-        left:  "#{ left }px"
-        top:   "#{ top }px"
-        width: "#{ width }px"
-      .show()
+    .css
+      left:  "#{ left }px"
+      top:   "#{ top }px"
+      width: "#{ width }px"
+    .show()
 
 
   makeSpace: (node, position) ->
