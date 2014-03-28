@@ -250,6 +250,6 @@ module.exports = do ->
 
   getScrollPosition: (win) ->
     # code from mdn: https://developer.mozilla.org/en-US/docs/Web/API/window.scrollX
-    scrollX: if (win.pageXOffset != undefined) then win.pageXOffset else (document.documentElement || win.document.body.parentNode || win.document.body).scrollLeft
-    scrollY: if (win.pageYOffset != undefined) then win.pageYOffset else (document.documentElement || win.document.body.parentNode || win.document.body).scrollTop
+    scrollX: if (win.pageXOffset != undefined) then win.pageXOffset else (win.document.documentElement || win.document.body.parentNode || win.document.body).scrollLeft
+    scrollY: if (win.pageYOffset != undefined) then win.pageYOffset else (win.document.documentElement || win.document.body.parentNode || win.document.body).scrollTop
 
