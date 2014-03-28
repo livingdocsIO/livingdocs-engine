@@ -9,7 +9,6 @@ module.exports = class Renderer
     assert @renderingContainer, 'no rendering container specified'
 
     @$root = $(@renderingContainer.renderNode)
-    @setupSnippetTreeListeners()
     @$wrapperHtml = $wrapper
     @snippetViews = {}
 
@@ -33,6 +32,7 @@ module.exports = class Renderer
     @renderingContainer.ready =>
       @setRoot()
       @render()
+      @setupSnippetTreeListeners()
       @readySemaphore.decrement()
 
 
