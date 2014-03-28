@@ -232,13 +232,10 @@ module.exports = do ->
   # (ideal for absolute positioned elements)
   getAbsoluteBoundingClientRect: (node) ->
     win = node.ownerDocument.defaultView
-    coords = node.getBoundingClientRect()
-
-    # code from mdn: https://developer.mozilla.org/en-US/docs/Web/API/window.scrollX
-    scrollX = if (win.pageXOffset != undefined) then win.pageXOffset else (document.documentElement || win.document.body.parentNode || win.document.body).scrollLeft
-    scrollY = if (win.pageYOffset != undefined) then win.pageYOffset else (document.documentElement || win.document.body.parentNode || win.document.body).scrollTop
+    { scrollX, scrollY } = @getScrollPosition(win)
 
     # translate into absolute positions
+    coords = node.getBoundingClientRect()
     coords =
       top: coords.top + scrollY
       bottom: coords.bottom + scrollY
@@ -250,4 +247,9 @@ module.exports = do ->
 
     coords
 
+
+  getScrollPosition: (win) ->
+    # code from mdn: https://developer.mozilla.org/en-US/docs/Web/API/window.scrollX
+    scrollX: if (win.pageXOffset != undefined) then win.pageXOffset else (document.documentElement || win.document.body.parentNode || win.document.body).scrollLeft
+    scrollY: if (win.pageYOffset != undefined) then win.pageYOffset else (document.documentElement || win.document.body.parentNode || win.document.body).scrollTop
 
