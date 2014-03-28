@@ -230,8 +230,8 @@ module.exports = do ->
 
   # GetAbsoluteBoundingClientRect with top and left relative to the document
   # (ideal for absolute positioned elements)
-  getAbsoluteBoundingClientRect: (node, win) ->
-    win ?= window
+  getAbsoluteBoundingClientRect: (node) ->
+    win = node.ownerDocument.defaultView
     coords = node.getBoundingClientRect()
 
     # code from mdn: https://developer.mozilla.org/en-US/docs/Web/API/window.scrollX

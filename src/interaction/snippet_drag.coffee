@@ -18,7 +18,6 @@ module.exports = class SnippetDrag
     @started = true
     @page.editableController.disableAll()
     @page.blurFocusedElement()
-    @elemWindow = @page.window
 
     # placeholder below cursor
     @$placeholder = @createPlaceholder().css('pointer-events': 'none')
@@ -129,8 +128,8 @@ module.exports = class SnippetDrag
 
 
   showMarkerBetweenSnippets: (viewA, viewB) ->
-    boxA = dom.getAbsoluteBoundingClientRect(viewA.$elem[0], @elemWindow)
-    boxB = dom.getAbsoluteBoundingClientRect(viewB.$elem[0], @elemWindow)
+    boxA = dom.getAbsoluteBoundingClientRect(viewA.$elem[0])
+    boxB = dom.getAbsoluteBoundingClientRect(viewB.$elem[0])
 
     halfGap = if boxB.top > boxA.bottom
       (boxB.top - boxA.bottom) / 2
@@ -147,7 +146,7 @@ module.exports = class SnippetDrag
     return unless elem?
 
     @makeSpace(elem.firstChild, 'top')
-    box = dom.getAbsoluteBoundingClientRect(elem, @elemWindow)
+    box = dom.getAbsoluteBoundingClientRect(elem)
     @showMarker
       left: box.left
       top: box.top + startAndEndOffset
@@ -158,7 +157,7 @@ module.exports = class SnippetDrag
     return unless elem?
 
     @makeSpace(elem.lastChild, 'bottom')
-    box = dom.getAbsoluteBoundingClientRect(elem, @elemWindow)
+    box = dom.getAbsoluteBoundingClientRect(elem)
     @showMarker
       left: box.left
       top: box.bottom - startAndEndOffset
@@ -220,10 +219,8 @@ module.exports = class SnippetDrag
       elem = @page.document.elementFromPoint(clientX, clientY)
       if elem?.nodeName == 'IFRAME'
         { eventPosition, elem } = @findElemInIframe(elem, eventPosition)
-        @elemWindow = @iframeBox.window
       else
         @iframeBox = undefined
-        @elemWindow = @page.window
 
     { eventPosition, elem }
 
