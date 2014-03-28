@@ -86,6 +86,7 @@ module.exports = class DragBase
     @started = true
 
     # prevent text-selections while dragging
+    @addBlocker()
     @page.$body.addClass(config.css.preventSelection)
     @dragHandler.start(topLeft)
 
@@ -112,6 +113,18 @@ module.exports = class DragBase
 
       @page.$document.off('.livingdocs-drag')
       @removeLongpressIndicator()
+      @removeBlocker()
+
+
+  addBlocker: ->
+    $blocker = $("<div class='dragBlocker'>")
+      .attr('style', 'position: absolute; top: 0; bottom: 0; left: 0; right: 0;')
+    @page.$body.append($blocker)
+
+
+  removeBlocker: ->
+    @page.$body.find('.dragBlocker').remove()
+
 
 
   addLongpressIndicator: ({ top, left }) ->
