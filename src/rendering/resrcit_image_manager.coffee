@@ -13,7 +13,7 @@ module.exports = class RescritImageManager extends DefaultImageManager
 
     $elem.addClass('resrc')
     if @isImgTag($elem)
-      $elem.removeAttr('src')
+      @resetBase64($elem) if $elem.attr('src') && @isBase64($elem.attr('src'))
       $elem.attr('data-src', "#{RescritImageManager.resrcitUrl}#{value}")
     else
       $elem.css('background-image', "url(#{RescritImageManager.resrcitUrl}#{ @escapeCssUri(value) })")
@@ -25,3 +25,7 @@ module.exports = class RescritImageManager extends DefaultImageManager
       $elem.attr('src', value)
     else
       $elem.css('background-image', "url(#{ @escapeCssUri(value) })")
+
+
+  resetBase64: ($elem) ->
+    $elem.removeAttr('src')

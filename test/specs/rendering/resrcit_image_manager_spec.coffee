@@ -21,10 +21,18 @@ describe 'ResrcitImageManager', ->
       expect($elem).to.have.class('resrc')
 
 
-    it 'removes the src attribute on an image tag that already has one', ->
-      $elem = $('<img src="http://www.lolcats.com/images/u/12/43/lolcatsdotcomlikemyself.jpg">')
+    # happens when uploading image and recalculating
+    it 'removes the src attribute on an image tag that already has a base64 src data url', ->
+      $elem = $("<img src='#{TestImage}'>")
       @imageManager.set($elem, 'http://www.lolcats.com/images/u/13/39/tastegood.jpg')
       expect($elem).not.to.have.attr('src')
+
+
+    # happen e.g. when changing the caption -> should not recalc the image
+    it 'does not remove the src attribute on an image tag that has a url', ->
+      $elem = $('<img src="http://www.lolcats.com/images/u/12/43/lolcatsdotcomlikemyself.jpg">')
+      @imageManager.set($elem, 'http://www.lolcats.com/images/u/12/43/lolcatsdotcomlikemyself.jpg')
+      expect($elem).to.have.attr('src', 'http://www.lolcats.com/images/u/12/43/lolcatsdotcomlikemyself.jpg')
 
 
     it 'adds the correct background-image on a div', ->
