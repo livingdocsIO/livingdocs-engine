@@ -228,9 +228,9 @@ module.exports = do ->
     $(node).data('snippet')
 
 
-  # GetBoundingClientRect with top and left relative to the document
+  # GetAbsoluteBoundingClientRect with top and left relative to the document
   # (ideal for absolute positioned elements)
-  getBoundingClientRect: (node, win) ->
+  getAbsoluteBoundingClientRect: (node, win) ->
     win ?= window
     coords = node.getBoundingClientRect()
 

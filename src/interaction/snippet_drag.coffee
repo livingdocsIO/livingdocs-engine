@@ -122,8 +122,8 @@ module.exports = class SnippetDrag
 
 
   showMarkerBetweenSnippets: (viewA, viewB) ->
-    boxA = dom.getBoundingClientRect(viewA.$elem[0], @elemWindow)
-    boxB = dom.getBoundingClientRect(viewB.$elem[0], @elemWindow)
+    boxA = dom.getAbsoluteBoundingClientRect(viewA.$elem[0], @elemWindow)
+    boxB = dom.getAbsoluteBoundingClientRect(viewB.$elem[0], @elemWindow)
 
     halfGap = if boxB.top > boxA.bottom
       (boxB.top - boxA.bottom) / 2
@@ -140,7 +140,7 @@ module.exports = class SnippetDrag
     return unless elem?
 
     @makeSpace(elem.firstChild, 'top')
-    box = dom.getBoundingClientRect(elem, @elemWindow)
+    box = dom.getAbsoluteBoundingClientRect(elem, @elemWindow)
     @showMarker
       left: box.left
       top: box.top + startAndEndOffset
@@ -151,7 +151,7 @@ module.exports = class SnippetDrag
     return unless elem?
 
     @makeSpace(elem.lastChild, 'bottom')
-    box = dom.getBoundingClientRect(elem, @elemWindow)
+    box = dom.getAbsoluteBoundingClientRect(elem, @elemWindow)
     @showMarker
       left: box.left
       top: box.bottom - startAndEndOffset
