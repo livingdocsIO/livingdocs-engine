@@ -1,4 +1,5 @@
 dom = require('./dom')
+isSupported = require('../modules/feature_detection/is_supported')
 config = require('../configuration/defaults')
 css = config.css
 
@@ -17,9 +18,11 @@ module.exports = class SnippetDrag
     @started = true
     @page.editableController.disableAll()
     @page.blurFocusedElement()
+    @elemWindow = @page.window
 
     # placeholder below cursor
-    @$placeholder = @createPlaceholder()
+    @$placeholder = @createPlaceholder().css('pointer-events': 'none')
+    @$dragBlocker = @page.$body.find('.dragBlocker')
 
     # drop marker
     @$dropMarker = $("<div class='#{ css.dropMarker }'>")
@@ -49,6 +52,7 @@ module.exports = class SnippetDrag
 
   findDropTarget: ({ top, left }, event) ->
     elem = @getElemUnderCursor(top, left)
+    return undefined unless elem?
 
     # return the same as last time if the cursor is above the dropMarker
     return @target if elem == @$dropMarker[0]
@@ -118,8 +122,8 @@ module.exports = class SnippetDrag
 
 
   showMarkerBetweenSnippets: (viewA, viewB) ->
-    boxA = dom.getBoundingClientRect(viewA.$elem[0])
-    boxB = dom.getBoundingClientRect(viewB.$elem[0])
+    boxA = dom.getBoundingClientRect(viewA.$elem[0], @elemWindow)
+    boxB = dom.getBoundingClientRect(viewB.$elem[0], @elemWindow)
 
     halfGap = if boxB.top > boxA.bottom
       (boxB.top - boxA.bottom) / 2
@@ -136,7 +140,7 @@ module.exports = class SnippetDrag
     return unless elem?
 
     @makeSpace(elem.firstChild, 'top')
-    box = dom.getBoundingClientRect(elem)
+    box = dom.getBoundingClientRect(elem, @elemWindow)
     @showMarker
       left: box.left
       top: box.top + startAndEndOffset
@@ -147,7 +151,7 @@ module.exports = class SnippetDrag
     return unless elem?
 
     @makeSpace(elem.lastChild, 'bottom')
-    box = dom.getBoundingClientRect(elem)
+    box = dom.getBoundingClientRect(elem, @elemWindow)
     @showMarker
       left: box.left
       top: box.bottom - startAndEndOffset
@@ -155,6 +159,14 @@ module.exports = class SnippetDrag
 
 
   showMarker: ({ top, left, width }) ->
+    if @iframeBox?
+      left += @iframeBox.left
+      top += @iframeBox.top
+
+      $body = $(@iframeBox.window.document.body)
+      top -= $body.scrollTop()
+      left -= $body.scrollLeft()
+
     @$dropMarker
       .css
         left:  "#{ left }px"
@@ -164,7 +176,7 @@ module.exports = class SnippetDrag
 
 
   makeSpace: (node, position) ->
-    return unless node? && wiggleSpace
+    return unless wiggleSpace && node?
     $node = $(node)
     @lastTransform = $node
 
@@ -196,10 +208,46 @@ module.exports = class SnippetDrag
     top = top - @page.$body.scrollTop()
     left = left - @page.$body.scrollLeft()
 
-    @$placeholder.hide()
-    elem = @page.document.elementFromPoint(left, top)
-    @$placeholder.show()
+    elem = undefined
+    @unblock =>
+      elem = @page.document.elementFromPoint(left, top)
+      if elem?.nodeName == 'IFRAME'
+        elem = @findElemInIframe(elem, top, left)
+        @elemWindow = @iframeBox.window
+      else
+        @iframeBox = undefined
+        @elemWindow = @page.window
+
     elem
+
+
+  findElemInIframe: (iframeElem, top, left) ->
+    # take iframe offset into account
+    @iframeBox = box = dom.getBoundingClientRect(iframeElem)
+    top -= box.top
+    left -= box.left
+
+    @iframeBox.window = iframeElem.contentWindow
+    document = iframeElem.contentDocument
+    document.elementFromPoint(left, top)
+
+
+  # Remove elements under the cursor which could interfere
+  # with document.elementFromPoint()
+  unblock: (callback) ->
+
+    # Pointer Events are a lot faster since the browser does not need
+    # to repaint the whole screen. IE 9 and 10 do not support them.
+    if isSupported('htmlPointerEvents')
+      @$dragBlocker.css('pointer-events': 'none')
+      callback()
+      @$dragBlocker.css('pointer-events': 'auto')
+    else
+      @$dragBlocker.hide()
+      @$placeholder.hide()
+      callback()
+      @$dragBlocker.show()
+      @$placeholder.show()
 
 
   # Called by DragBase
