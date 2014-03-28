@@ -14,8 +14,16 @@
   <body>
     <!-- <div class="container-fluid"></div> -->
     <nav class="doc-toolbar"></nav>
-    <section class="doc-section"></section>
-    <div class="doc-preview"><div>
+    <section class="editor-section">
+      <div class="container-fluid doc-insert"></div>
+    </section>
+    <div class="editor-preview">
+
+      <!-- All these child nodes will be transferred into the iframe -->
+      <h3>Preview:</h3>
+      <div class="container-fluid doc-insert"></div>
+
+    </div>
 
     <!-- dependencies of livingdocs-engine -->
     <script src="/jquery/jquery.js"></script>
@@ -43,8 +51,8 @@
         addDefaultContent(document);
 
         // Create Views
-        viewReady = document.createView('.doc-section', { interactive: true });
-        previewReady = document.createView('.doc-preview');
+        viewReady = document.createView('.editor-section', { interactive: true });
+        previewReady = document.createView('.editor-preview');
 
         // Create Snippets
         var $toolbar = $('.doc-toolbar');

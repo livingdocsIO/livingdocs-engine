@@ -15,8 +15,11 @@ module.exports = class View
   #
   # Ineractive view:
   # create(interactive: true)
+  #
+  # Wrapper: (DOM node that has to contain a node with class '.doc-insert')
+  # create( $wrapper: $('<section class="container doc-insert">') )
   create: (options) ->
-    @createIFrame(@parent).then (iframe) =>
+    @createIFrame(@parent).then (iframe, renderNode) =>
       renderer = @createIFrameRenderer(iframe, options)
 
       iframe: iframe
@@ -45,6 +48,7 @@ module.exports = class View
     renderer = new Renderer
       renderingContainer: @page
       snippetTree: @snippetTree
+      $wrapper: options.$wrapper
 
 
   createPage: (params, { interactive, readOnly }={}) ->
@@ -53,5 +57,4 @@ module.exports = class View
       new InteractivePage(params)
     else
       new Page(params)
-
 

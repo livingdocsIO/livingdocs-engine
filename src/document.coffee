@@ -34,6 +34,10 @@ module.exports = class Document extends EventEmitter
     options ?= readOnly: true
 
     $parent = $(parent).first()
+
+    options.$wrapper = @findWrapper($parent)
+    $parent.html('') # empty container
+
     view = new View(@snippetTree, $parent[0])
     promise = view.create(options)
 
@@ -41,6 +45,20 @@ module.exports = class Document extends EventEmitter
       @setInteractiveView(view)
 
     promise
+
+
+  # A view sometimes has to be wrapped in a container.
+  #
+  # Example:
+  # Here the document is rendered into $('.doc-insert')
+  # <div class="doc-section">
+  #   <section class="container doc-insert"></section>
+  # </div>
+  findWrapper: ($parent) ->
+    if $parent.find('.doc-insert').length == 1
+      $wrapper = $($parent.html())
+
+    $wrapper
 
 
   setInteractiveView: (view) ->

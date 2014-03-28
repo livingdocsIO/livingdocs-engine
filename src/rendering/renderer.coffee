@@ -4,12 +4,13 @@ Semaphore = require('../modules/semaphore')
 
 module.exports = class Renderer
 
-  constructor: ({ @snippetTree, @renderingContainer }) ->
+  constructor: ({ @snippetTree, @renderingContainer, $wrapper }) ->
     assert @snippetTree, 'no snippet tree specified'
     assert @renderingContainer, 'no rendering container specified'
 
     @$root = $(@renderingContainer.renderNode)
     @setupSnippetTreeListeners()
+    @$wrapperHtml = $wrapper
     @snippetViews = {}
 
     @readySemaphore = new Semaphore()
@@ -17,9 +18,20 @@ module.exports = class Renderer
     @readySemaphore.start()
 
 
+  setRoot: () ->
+    if @$wrapperHtml?.length && @$wrapperHtml.jquery
+      $insert = @$wrapperHtml.find('.doc-insert').add( @$wrapperHtml.filter('.doc-insert') )
+      return unless $insert.length
+
+      @$wrapper = @$root
+      @$wrapper.append(@$wrapperHtml)
+      @$root = $insert
+
+
   renderOncePageReady: ->
     @readySemaphore.increment()
     @renderingContainer.ready =>
+      @setRoot()
       @render()
       @readySemaphore.decrement()
 
