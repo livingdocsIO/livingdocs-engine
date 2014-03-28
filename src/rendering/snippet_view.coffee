@@ -30,7 +30,7 @@ module.exports = class SnippetView
 
 
   updateContent: ->
-    @content(@model.content)
+    @content(@model.content, @model.sessionValues)
 
     if not @hasFocus()
       @displayOptionals()
@@ -103,9 +103,12 @@ module.exports = class SnippetView
     dom.getBoundingClientRect(@$html[0])
 
 
-  content: (content) ->
+  content: (content, sessionContent) ->
     for name, value of content
-      @set(name, value)
+      if sessionContent[name]? && ( !value? || value == '' )
+        @set(name, sessionContent[name])
+      else
+        @set(name, value)
 
 
   set: (name, value) ->

@@ -1,3 +1,5 @@
+TestImage = require('../../support/test_base64_image')
+
 describe 'Title Snippet', ->
 
   beforeEach ->
@@ -83,6 +85,18 @@ describe 'Image snippet', ->
 
   it 'has one image', ->
     expect(@image.content).to.have.ownProperty('image')
+
+
+  it 'sets a base64 image as volatile', ->
+    @image.set('image', TestImage, true)
+    expect(@image.sessionValues.image).to.equal(TestImage)
+
+
+  it 'resets a volatile base64 image once the url is set', ->
+    @image.set('image', TestImage, true)
+    @image.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
+    expect(@image.sessionValues.image).to.be.undefined
+    expect(@image.content.image).to.equal('http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
 
 
 describe 'Hero SnippetModel#style', ->

@@ -1,5 +1,6 @@
 SnippetTree = require('../../../src/snippet_tree/snippet_tree')
 SnippetModel = require('../../../src/snippet_tree/snippet_model')
+TestImage = require('../../support/test_base64_image')
 
 describe 'Snippet Serialization', ->
 
@@ -58,6 +59,17 @@ describe 'Snippet Serialization', ->
 
       json = hero.toJson()
       expect(json.data).to.deep.equal(expectedValue)
+
+
+  describe 'of sessionValues', ->
+
+    it 'does not save a session value', ->
+      cover = test.getSnippet('cover')
+      cover.set('image', TestImage, true)
+      json = cover.toJson()
+      expect(json.sessionValues).to.be.undefined
+      expect(json.content.image).to.be.undefined
+
 
 
 describe 'SnippetTree Serialization', ->

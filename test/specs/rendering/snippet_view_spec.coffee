@@ -1,4 +1,5 @@
 ImageManager = require('../../../src/rendering/image_manager')
+TestImage = require('../../support/test_base64_image')
 
 css = config.css
 attr = config.attr
@@ -241,4 +242,29 @@ describe 'SnippetView html', ->
         @view.render()
         @expected.html(@snippet.template.defaults['html'])
         expect(@view.$html).to.have.html(@expected)
+
+
+describe 'using volatile values', ->
+
+  beforeEach ->
+    @snippet = test.getSnippet('image')
+    @snippet.set('image', TestImage, true)
+    @view = @snippet.createView()
+
+
+  it 'uses a temporary base64 value if there is no image set', ->
+    @view.render()
+    expect(@view.$html).to.have.attr('src', TestImage)
+
+
+  it 'uses a temporary base64 value if the image src is empty string', ->
+    @snippet.set('image', '')
+    @view.render()
+    expect(@view.$html).to.have.attr('src', TestImage)
+
+
+  it 'uses the image content if it is set', ->
+    @snippet.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
+    @view.render()
+    expect(@view.$html).to.have.attr('src', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
 

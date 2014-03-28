@@ -1,4 +1,5 @@
 SnippetTree = require('../../../src/snippet_tree/snippet_tree')
+TestImage = require('../../support/test_base64_image')
 
 # SnippetTree Events
 # ------------------
@@ -141,6 +142,17 @@ describe 'SnippetTree (Content Events)', ->
     beforeEach ->
       @changeSnippetContent = =>
         @coverSnippet.set('image', 'http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg')
+
+
+    it 'fires snippetContentChanged event', ->
+      @expectContentChanged 1, => @changeSnippetContent()
+
+
+  describe 'changing the img src to a volatile base64 string', ->
+
+    beforeEach ->
+      @changeSnippetContent = =>
+        @imageSnippet.set('image', TestImage, true)
 
 
     it 'fires snippetContentChanged event', ->
