@@ -2,7 +2,13 @@
 # -------------
 module.exports = config = do ->
 
+  # Load css and js resources in pages and interactive pages
+  loadResources: true
+
+  # Setup paths to load resources dynamically
+  designPath: '/designs'
   livingdocsCssFile: '/assets/css/livingdocs.css'
+
   wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?"
 
   # string containng only a <br> followed by whitespaces

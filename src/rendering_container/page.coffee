@@ -37,7 +37,15 @@ module.exports = class Page extends RenderingContainer
 
 
   beforePageReady: =>
-    @cssLoader.load(@design.css, @readySemaphore.wait()) if @design?.css
+    if @design? && config.loadResources
+      designPath = "#{ config.designPath }/#{ @design.namespace }"
+      cssLocation = if @design.css?
+        @design.css
+      else
+        '/css/style.css'
+
+      path = "#{ designPath }#{ cssLocation }"
+      @cssLoader.load(path, @readySemaphore.wait())
 
 
   setWindow: (hostWindow) ->

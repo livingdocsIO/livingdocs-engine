@@ -19,6 +19,9 @@ require('./jquery_extensions')
 log.debugDisabled = true
 log.warningsDisabled = true
 
+# prevent
+config.loadResources = false
+
 
 # Export Globals
 # --------------
