@@ -1,6 +1,7 @@
 assert = require('../modules/logging/assert')
 log = require('../modules/logging/log')
 Semaphore = require('../modules/semaphore')
+config = require('../configuration/defaults')
 
 module.exports = class Renderer
 
@@ -19,7 +20,8 @@ module.exports = class Renderer
 
   setRoot: () ->
     if @$wrapperHtml?.length && @$wrapperHtml.jquery
-      $insert = @$wrapperHtml.find('.doc-insert').add( @$wrapperHtml.filter('.doc-insert') )
+      selector = ".#{ config.css.section }"
+      $insert = @$wrapperHtml.find(selector).add( @$wrapperHtml.filter(selector) )
       return unless $insert.length
 
       @$wrapper = @$root

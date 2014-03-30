@@ -184,20 +184,20 @@ describe 'Renderer', ->
         renderingContainer: @page
         $wrapper: $ """
           <div>
-            <section class="doc-insert">
+            <section class="#{ css.section }">
             </section>
           </div>"""
 
 
     it 'appends the wrapper', (done) ->
       @renderer.ready =>
-        expect(@page.renderNode).to.have.html '
+        expect(@page.renderNode).to.have.html """
           <section>
             <div>
-              <section class="doc-insert"></section>
+              <section class="#{ css.section }"></section>
             </div>
           </section>
-          '
+          """
         done()
 
 
@@ -206,14 +206,14 @@ describe 'Renderer', ->
       @snippetTree.append(title)
 
       @renderer.ready =>
-        expect(@page.renderNode).to.have.html '
+        expect(@page.renderNode).to.have.html """
           <section>
             <div>
-              <section class="doc-insert">
+              <section class="#{ css.section }">
                 <h1>ABC</h1>
               </section>
             </div>
           </section>
-          '
+          """
         done()
 

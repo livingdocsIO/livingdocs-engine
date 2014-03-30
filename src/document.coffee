@@ -5,6 +5,7 @@ InteractivePage = require('./rendering_container/interactive_page')
 Renderer = require('./rendering/renderer')
 View = require('./rendering/view')
 EventEmitter = require('wolfy87-eventemitter')
+config = require('./configuration/defaults')
 
 module.exports = class Document extends EventEmitter
 
@@ -50,12 +51,12 @@ module.exports = class Document extends EventEmitter
   # A view sometimes has to be wrapped in a container.
   #
   # Example:
-  # Here the document is rendered into $('.doc-insert')
-  # <div class="doc-section">
-  #   <section class="container doc-insert"></section>
+  # Here the document is rendered into $('.doc-section')
+  # <div class="iframe-container">
+  #   <section class="container doc-section"></section>
   # </div>
   findWrapper: ($parent) ->
-    if $parent.find('.doc-insert').length == 1
+    if $parent.find(".#{ config.css.section }").length == 1
       $wrapper = $($parent.html())
 
     $wrapper

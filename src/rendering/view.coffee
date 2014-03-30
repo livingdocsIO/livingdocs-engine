@@ -16,8 +16,8 @@ module.exports = class View
   # Ineractive view:
   # create(interactive: true)
   #
-  # Wrapper: (DOM node that has to contain a node with class '.doc-insert')
-  # create( $wrapper: $('<section class="container doc-insert">') )
+  # Wrapper: (DOM node that has to contain a node with class '.doc-section')
+  # create( $wrapper: $('<section class="container doc-section">') )
   create: (options) ->
     @createIFrame(@parent).then (iframe, renderNode) =>
       renderer = @createIFrameRenderer(iframe, options)
