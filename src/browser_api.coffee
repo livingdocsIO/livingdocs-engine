@@ -1,5 +1,6 @@
 assert = require('./modules/logging/assert')
 
+config = require('./configuration/defaults')
 Document = require('./document')
 SnippetTree = require('./snippet_tree/snippet_tree')
 Design = require('./design/design')
@@ -54,6 +55,10 @@ module.exports = doc = do ->
 
   # Start drag & drop
   startDrag: $.proxy(editorPage, 'startDrag')
+
+
+  config: (userConfig) ->
+    $.extend(true, config, userConfig)
 
 
 # Export global variable
