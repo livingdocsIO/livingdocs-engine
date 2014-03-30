@@ -30,11 +30,11 @@ module.exports = class EditableController
 
 
   disableAll: ->
-    $('[contenteditable]').attr('contenteditable', 'false')
+    @editable.disable()
 
 
   reenableAll: ->
-    $('[contenteditable]').attr('contenteditable', 'true')
+    @editable.enable()
 
 
   # Get view and editableName from the DOM element passed by EditableJS
