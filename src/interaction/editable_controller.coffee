@@ -30,11 +30,11 @@ module.exports = class EditableController
 
 
   disableAll: ->
-    @editable.disable()
+    @editable.suspend()
 
 
   reenableAll: ->
-    @editable.enable()
+    @editable.continue()
 
 
   # Get view and editableName from the DOM element passed by EditableJS
