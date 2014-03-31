@@ -188,7 +188,7 @@ module.exports = do ->
 
 
   distance: (a, b) ->
-    if a > b then a-b else b-a
+    if a > b then a - b else b - a
 
 
   # force all containers of a snippet to be as high as they can be
@@ -228,16 +228,14 @@ module.exports = do ->
     $(node).data('snippet')
 
 
-  # GetBoundingClientRect with top and left relative to the document
+  # GetAbsoluteBoundingClientRect with top and left relative to the document
   # (ideal for absolute positioned elements)
-  getBoundingClientRect: (node) ->
-    coords = node.getBoundingClientRect()
-
-    # code from mdn: https://developer.mozilla.org/en-US/docs/Web/API/window.scrollX
-    scrollX = if (window.pageXOffset != undefined) then window.pageXOffset else (document.documentElement || window.document.body.parentNode || window.document.body).scrollLeft
-    scrollY = if (window.pageYOffset != undefined) then window.pageYOffset else (document.documentElement || window.document.body.parentNode || window.document.body).scrollTop
+  getAbsoluteBoundingClientRect: (node) ->
+    win = node.ownerDocument.defaultView
+    { scrollX, scrollY } = @getScrollPosition(win)
 
     # translate into absolute positions
+    coords = node.getBoundingClientRect()
     coords =
       top: coords.top + scrollY
       bottom: coords.bottom + scrollY
@@ -249,4 +247,9 @@ module.exports = do ->
 
     coords
 
+
+  getScrollPosition: (win) ->
+    # code from mdn: https://developer.mozilla.org/en-US/docs/Web/API/window.scrollX
+    scrollX: if (win.pageXOffset != undefined) then win.pageXOffset else (win.document.documentElement || win.document.body.parentNode || win.document.body).scrollLeft
+    scrollY: if (win.pageYOffset != undefined) then win.pageYOffset else (win.document.documentElement || win.document.body.parentNode || win.document.body).scrollTop
 

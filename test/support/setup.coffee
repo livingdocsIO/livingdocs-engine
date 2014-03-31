@@ -2,7 +2,6 @@ config = require('../../src/configuration/defaults')
 log = require('../../src/modules/logging/log')
 assert = require('../../src/modules/logging/assert')
 testHelpers = require('./test_helpers')
-testDesign = require('./test_design')
 InstanceInjector = require('./factories/instance_injector')
 _ = require('underscore')
 
@@ -19,6 +18,9 @@ require('./jquery_extensions')
 # Supress logs
 log.debugDisabled = true
 log.warningsDisabled = true
+
+# prevent
+config.loadResources = false
 
 
 # Export Globals

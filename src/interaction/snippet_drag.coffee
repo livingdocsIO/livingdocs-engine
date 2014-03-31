@@ -1,4 +1,5 @@
 dom = require('./dom')
+isSupported = require('../modules/feature_detection/is_supported')
 config = require('../configuration/defaults')
 css = config.css
 
@@ -13,13 +14,14 @@ module.exports = class SnippetDrag
 
 
   # Called by DragBase
-  start: ({ top, left }) ->
+  start: (eventPosition) ->
     @started = true
     @page.editableController.disableAll()
     @page.blurFocusedElement()
 
     # placeholder below cursor
-    @$placeholder = @createPlaceholder()
+    @$placeholder = @createPlaceholder().css('pointer-events': 'none')
+    @$dragBlocker = @page.$body.find('.dragBlocker')
 
     # drop marker
     @$dropMarker = $("<div class='#{ css.dropMarker }'>")
@@ -33,27 +35,29 @@ module.exports = class SnippetDrag
     @$view.addClass(css.dragged) if @$view?
 
     # position the placeholder
-    @move({ top, left })
+    @move(eventPosition)
 
 
   # Called by DragBase
-  move: ({ top, left }, event) ->
-    left = 2 if left < 2
-    top = 2 if top < 2
 
-    @$placeholder.css(top: "#{ top }px", left: "#{ left }px")
-    @target = @findDropTarget({ top, left }, event)
+  move: (eventPosition) ->
+    @$placeholder.css
+      left: "#{ eventPosition.pageX }px"
+      top: "#{ eventPosition.pageY }px"
 
+    @target = @findDropTarget(eventPosition)
     # @scrollIntoView(top, event)
 
 
-  findDropTarget: ({ top, left }, event) ->
-    elem = @getElemUnderCursor(top, left)
+  findDropTarget: (eventPosition) ->
+    { eventPosition, elem } = @getElemUnderCursor(eventPosition)
+    return undefined unless elem?
 
     # return the same as last time if the cursor is above the dropMarker
     return @target if elem == @$dropMarker[0]
 
-    target = dom.dropTarget(elem, { top, left }) if elem?
+    coords = { left: eventPosition.pageX, top: eventPosition.pageY }
+    target = dom.dropTarget(elem, coords) if elem?
     @undoMakeSpace()
 
     if target? && target.snippetView?.model != @snippetModel
@@ -118,8 +122,8 @@ module.exports = class SnippetDrag
 
 
   showMarkerBetweenSnippets: (viewA, viewB) ->
-    boxA = dom.getBoundingClientRect(viewA.$elem[0])
-    boxB = dom.getBoundingClientRect(viewB.$elem[0])
+    boxA = dom.getAbsoluteBoundingClientRect(viewA.$elem[0])
+    boxB = dom.getAbsoluteBoundingClientRect(viewB.$elem[0])
 
     halfGap = if boxB.top > boxA.bottom
       (boxB.top - boxA.bottom) / 2
@@ -136,7 +140,7 @@ module.exports = class SnippetDrag
     return unless elem?
 
     @makeSpace(elem.firstChild, 'top')
-    box = dom.getBoundingClientRect(elem)
+    box = dom.getAbsoluteBoundingClientRect(elem)
     @showMarker
       left: box.left
       top: box.top + startAndEndOffset
@@ -147,24 +151,46 @@ module.exports = class SnippetDrag
     return unless elem?
 
     @makeSpace(elem.lastChild, 'bottom')
-    box = dom.getBoundingClientRect(elem)
+    box = dom.getAbsoluteBoundingClientRect(elem)
     @showMarker
       left: box.left
       top: box.bottom - startAndEndOffset
       width: box.width
 
 
-  showMarker: ({ top, left, width }) ->
+  showMarker: ({ left, top, width }) ->
+    if @iframeBox?
+      # translate to relative to iframe viewport
+      $body = $(@iframeBox.window.document.body)
+      top -= $body.scrollTop()
+      left -= $body.scrollLeft()
+
+      # translate to relative to viewport (fixed positioning)
+      left += @iframeBox.left
+      top += @iframeBox.top
+
+      # translate to relative to document (absolute positioning)
+      # top += $(document.body).scrollTop()
+      # left += $(document.body).scrollLeft()
+
+      # With position fixed we don't need to take scrolling into account
+      # in an iframe scenario
+      @$dropMarker.css(position: 'fixed')
+    else
+      # If we're not in an iframe left and top are already
+      # the absolute coordinates
+      @$dropMarker.css(position: 'absolute')
+
     @$dropMarker
-      .css
-        left:  "#{ left }px"
-        top:   "#{ top }px"
-        width: "#{ width }px"
-      .show()
+    .css
+      left:  "#{ left }px"
+      top:   "#{ top }px"
+      width: "#{ width }px"
+    .show()
 
 
   makeSpace: (node, position) ->
-    return unless node? && wiggleSpace
+    return unless wiggleSpace && node?
     $node = $(node)
     @lastTransform = $node
 
@@ -192,14 +218,52 @@ module.exports = class SnippetDrag
     @$highlightedContainer = {}
 
 
-  getElemUnderCursor: (top, left) ->
-    top = top - @page.$body.scrollTop()
-    left = left - @page.$body.scrollLeft()
+  # pageX, pageY: absolute positions (relative to the document)
+  # clientX, clientY: fixed positions (relative to the viewport)
+  getElemUnderCursor: (eventPosition) ->
+    elem = undefined
+    @unblockElementFromPoint =>
+      { clientX, clientY } = eventPosition
+      elem = @page.document.elementFromPoint(clientX, clientY)
+      if elem?.nodeName == 'IFRAME'
+        { eventPosition, elem } = @findElemInIframe(elem, eventPosition)
+      else
+        @iframeBox = undefined
 
-    @$placeholder.hide()
-    elem = @page.document.elementFromPoint(left, top)
-    @$placeholder.show()
-    elem
+    { eventPosition, elem }
+
+
+  findElemInIframe: (iframeElem, eventPosition) ->
+    @iframeBox = box = iframeElem.getBoundingClientRect()
+    @iframeBox.window = iframeElem.contentWindow
+    document = iframeElem.contentDocument
+    $body = $(document.body)
+
+    eventPosition.clientX -= box.left
+    eventPosition.clientY -= box.top
+    eventPosition.pageX = eventPosition.clientX + $body.scrollLeft()
+    eventPosition.pageY = eventPosition.clientY + $body.scrollTop()
+    elem = document.elementFromPoint(eventPosition.clientX, eventPosition.clientY)
+
+    { eventPosition, elem }
+
+
+  # Remove elements under the cursor which could interfere
+  # with document.elementFromPoint()
+  unblockElementFromPoint: (callback) ->
+
+    # Pointer Events are a lot faster since the browser does not need
+    # to repaint the whole screen. IE 9 and 10 do not support them.
+    if isSupported('htmlPointerEvents')
+      @$dragBlocker.css('pointer-events': 'none')
+      callback()
+      @$dragBlocker.css('pointer-events': 'auto')
+    else
+      @$dragBlocker.hide()
+      @$placeholder.hide()
+      callback()
+      @$dragBlocker.show()
+      @$placeholder.show()
 
 
   # Called by DragBase

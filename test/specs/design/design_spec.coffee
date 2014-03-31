@@ -36,7 +36,7 @@ describe 'Design', ->
 
     beforeEach ->
       @design = new Design
-        templates: test.testDesign.templates
+        templates: test.designJson.templates
         config: { namespace: 'test', paragraph: 'p' }
 
 
@@ -76,7 +76,7 @@ describe 'Design', ->
   describe 'groups', ->
 
     beforeEach ->
-      @design = new Design(test.testDesign)
+      @design = new Design(test.designJson)
 
 
     it 'are available through #groups', ->
@@ -94,7 +94,7 @@ describe 'Design', ->
   describe 'styles configuration', ->
 
     beforeEach ->
-      @design = new Design(test.testDesign)
+      @design = new Design(test.designJson)
 
 
     it 'has global style Color', ->

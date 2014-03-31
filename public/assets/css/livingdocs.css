@@ -155,7 +155,12 @@
 
 @-webkit-keyframes ring {
   20% { -webkit-transform: scale(3.5); border: 3px solid rgba(0, 0, 0, 0); }
-  100% { border: 3px solid rgba(0, 0, 0, 0.2); }
+  100% { border: 3px solid rgba(0, 153, 221, 0.6); }
+}
+
+@-webkit-keyframes inner-ring {
+  20% { border: 1px solid rgba(0, 153, 221, 0); }
+  100% { border: 1px solid rgba(0, 153, 221, 0.8); -webkit-transform: scale(0.3); }
 }
 
 .doc-longpress-indicator {
@@ -166,14 +171,9 @@
   height: 2px;
   pointer-events: none;
   border-radius: 10px;
-  border: 3px solid rgba(0, 0, 0, 0);
+  border: 3px solid rgba(0, 153, 221, 0);
   -webkit-animation: ring 0.4s ease-in;
 
-}
-
-@-webkit-keyframes inner-ring {
-  20% { border: 1px solid rgba(0, 0, 0, 0); }
-  100% { border: 1px solid rgba(0, 0, 0, 0.3); -webkit-transform: scale(0.3); }
 }
 
 .doc-longpress-indicator div {
@@ -184,7 +184,7 @@
   width: 16px;
   height: 16px;
   border-radius: 10px;
-  border: 1px solid rgba(0, 0, 0, 0);
+  border: 1px solid rgba(0, 153, 221, 0);
   -webkit-animation: inner-ring 0.4s ease-in;
 }
 

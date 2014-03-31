@@ -4,6 +4,7 @@ guid = require('../modules/guid')
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
 serialization = require('../modules/serialization')
+config = require('../configuration/defaults')
 
 # SnippetModel
 # ------------

@@ -21,7 +21,7 @@ module.exports = class Kickstart
 
     @template = Kickstart.parseXML(xmlTemplate)
     @design = new Design(design)
-    @snippetTree = new SnippetTree()
+    @snippetTree = new SnippetTree(design: @design)
 
     @addRootSnippets($(@template).children())
 
