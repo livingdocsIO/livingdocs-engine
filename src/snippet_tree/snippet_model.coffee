@@ -1,3 +1,4 @@
+deepEqual = require('deep-equal')
 config = require('../configuration/defaults')
 SnippetContainer = require('./snippet_container')
 guid = require('../modules/guid')
@@ -146,7 +147,7 @@ module.exports = class SnippetModel
 
 
   changeData: (name, value) ->
-    if !serialization.deepEquals(@dataValues[name], value)
+    if deepEqual(@dataValues[name], value) == false
       @dataValues[name] = value
       true
     else

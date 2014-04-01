@@ -16,9 +16,3 @@ module.exports = do ->
       copy[name] = value
 
     copy
-
-
-  # very primitive implementation that does NOT work when contents come
-  # in a different order, e.g. {a: 1, b: 2} != {b: 2, a: 1}
-  deepEquals: (o1, o2) ->
-    JSON.stringify(o1) == JSON.stringify(o2)
