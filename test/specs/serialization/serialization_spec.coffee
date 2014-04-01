@@ -61,13 +61,13 @@ describe 'Snippet Serialization', ->
       expect(json.data).to.deep.equal(expectedValue)
 
 
-  describe 'of sessionValues', ->
+  describe 'of temporaryContent', ->
 
     it 'does not save a session value', ->
       cover = test.getSnippet('cover')
       cover.set('image', TestImage, true)
       json = cover.toJson()
-      expect(json.sessionValues).to.be.undefined
+      expect(json.temporaryContent).to.be.undefined
       expect(json.content.image).to.be.undefined
 
 

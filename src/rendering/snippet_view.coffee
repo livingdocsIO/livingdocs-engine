@@ -30,7 +30,7 @@ module.exports = class SnippetView
 
 
   updateContent: ->
-    @content(@model.content, @model.sessionValues)
+    @content(@model.content, @model.temporaryContent)
 
     if not @hasFocus()
       @displayOptionals()

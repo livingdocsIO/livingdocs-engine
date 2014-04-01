@@ -29,7 +29,7 @@ module.exports = class SnippetModel
     @initializeDirectives()
     @styles = {}
     @dataValues = {}
-    @sessionValues = {}
+    @temporaryContent = {}
     @id = id || guid.next()
     @identifier = @template.identifier
 
@@ -108,7 +108,7 @@ module.exports = class SnippetModel
 
 
   resetVolatileValue: (name) ->
-    delete @sessionValues[name]
+    delete @temporaryContent[name]
 
 
   set: (name, value, volatile=false) ->
@@ -116,9 +116,9 @@ module.exports = class SnippetModel
       "set error: #{ @identifier } has no content named #{ name }"
 
     if volatile
-      storageContainer = @sessionValues
+      storageContainer = @temporaryContent
     else
-      @resetVolatileValue(name) # as soon as we get real content, reset the sessionContent
+      @resetVolatileValue(name) # as soon as we get real content, reset the temporaryContent
       storageContainer = @content
 
     if storageContainer[name] != value
