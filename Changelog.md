@@ -5,6 +5,8 @@
 - Improved Drag and Drop [#89](https://github.com/upfrontIO/livingdocs-engine/pull/89)
 - Add a css class on images that contain the placeholder, i.e., are empty [#91](https://github.com/upfrontIO/livingdocs-engine/pull/91)
 - Read the default paragraph snippet (gets repeated on pressing Enter) from the design's configuration [#90](https://github.com/upfrontIO/livingdocs-engine/pull/90)
+- Add a data property to the snippetModel to persist structured JSON data (https://github.com/upfrontIO/livingdocs-engine/commit/6524654aabacf05b04e7bbbecc40f205fa01cc86)
+- Support resrc.it image service URL creation (https://github.com/upfrontIO/livingdocs-engine/pull/94)
 
 #### Architecture Changes:
 
