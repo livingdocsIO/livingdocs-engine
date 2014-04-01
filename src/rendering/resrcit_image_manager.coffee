@@ -1,4 +1,6 @@
 DefaultImageManager = require('./default_image_manager')
+assert = require('../modules/logging/assert')
+
 module.exports = class RescritImageManager extends DefaultImageManager
 
   @resrcitUrl: 'http://trial.resrc.it/'
@@ -11,9 +13,11 @@ module.exports = class RescritImageManager extends DefaultImageManager
   set: ($elem, value) ->
     return @setBase64($elem, value) if @isBase64(value)
 
+    assert value? && value != '', 'Src value for an image has to be defined'
+
     $elem.addClass('resrc')
     if @isImgTag($elem)
-      @resetBase64($elem) if $elem.attr('src') && @isBase64($elem.attr('src'))
+      @resetSrcAttribute($elem) if $elem.attr('src') && @isBase64($elem.attr('src'))
       $elem.attr('data-src', "#{RescritImageManager.resrcitUrl}#{value}")
     else
       $elem.css('background-image', "url(#{RescritImageManager.resrcitUrl}#{ @escapeCssUri(value) })")
@@ -27,5 +31,5 @@ module.exports = class RescritImageManager extends DefaultImageManager
       $elem.css('background-image', "url(#{ @escapeCssUri(value) })")
 
 
-  resetBase64: ($elem) ->
+  resetSrcAttribute: ($elem) ->
     $elem.removeAttr('src')
