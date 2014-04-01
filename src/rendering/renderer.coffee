@@ -1,15 +1,16 @@
 assert = require('../modules/logging/assert')
 log = require('../modules/logging/log')
 Semaphore = require('../modules/semaphore')
+config = require('../configuration/defaults')
 
 module.exports = class Renderer
 
-  constructor: ({ @snippetTree, @renderingContainer }) ->
+  constructor: ({ @snippetTree, @renderingContainer, $wrapper }) ->
     assert @snippetTree, 'no snippet tree specified'
     assert @renderingContainer, 'no rendering container specified'
 
     @$root = $(@renderingContainer.renderNode)
-    @setupSnippetTreeListeners()
+    @$wrapperHtml = $wrapper
     @snippetViews = {}
 
     @readySemaphore = new Semaphore()
@@ -17,10 +18,23 @@ module.exports = class Renderer
     @readySemaphore.start()
 
 
+  setRoot: () ->
+    if @$wrapperHtml?.length && @$wrapperHtml.jquery
+      selector = ".#{ config.css.section }"
+      $insert = @$wrapperHtml.find(selector).add( @$wrapperHtml.filter(selector) )
+      return unless $insert.length
+
+      @$wrapper = @$root
+      @$wrapper.append(@$wrapperHtml)
+      @$root = $insert
+
+
   renderOncePageReady: ->
     @readySemaphore.increment()
     @renderingContainer.ready =>
+      @setRoot()
       @render()
+      @setupSnippetTreeListeners()
       @readySemaphore.decrement()
 
 

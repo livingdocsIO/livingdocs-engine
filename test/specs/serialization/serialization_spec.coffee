@@ -75,7 +75,8 @@ describe 'Snippet Serialization', ->
 describe 'SnippetTree Serialization', ->
 
   beforeEach ->
-    @tree = new SnippetTree()
+    { snippetTree } = getInstances('snippetTree')
+    @tree = snippetTree
 
 
   it 'saves an empty SnippetTree', ->
@@ -259,8 +260,8 @@ describe 'Deserialization', ->
 describe 'Serialize and Deserialize', ->
 
   beforeEach ->
-    @design = test.getDesign()
-    @before = new SnippetTree()
+    { @design, snippetTree } = getInstances('snippetTree')
+    @before = snippetTree
     @row = test.getSnippet('row')
     @title = test.getSnippet('title')
     @title.set('title', 'What we have here is a failure to communicate')

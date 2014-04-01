@@ -13,19 +13,39 @@ module.exports = class Page extends RenderingContainer
 
     super()
 
+    @setRenderNode(renderNode)
+    # store reference to snippetTree
+    $(@renderNode).data('snippetTree', @snippetTree)
+    @cssLoader = new CssLoader(@window)
+    @beforePageReady()
+
+
+  setRenderNode: (renderNode) ->
     renderNode ?= $(".#{ config.css.section }", @$body)
     if renderNode.jquery
       @renderNode = renderNode[0]
     else
       @renderNode = renderNode
 
-    # store reference to snippetTree
-    $(@renderNode).data('snippetTree', @snippetTree)
-
 
   beforeReady: ->
-    @cssLoader = new CssLoader(@window)
-    @cssLoader.load(@design.css, @readySemaphore.wait()) if @design?.css
+    # always initialize a page asynchronously
+    @readySemaphore.wait()
+    setTimeout =>
+      @readySemaphore.decrement()
+    , 0
+
+
+  beforePageReady: =>
+    if @design? && config.loadResources
+      designPath = "#{ config.designPath }/#{ @design.namespace }"
+      cssLocation = if @design.css?
+        @design.css
+      else
+        '/css/style.css'
+
+      path = "#{ designPath }#{ cssLocation }"
+      @cssLoader.load(path, @readySemaphore.wait())
 
 
   setWindow: (hostWindow) ->

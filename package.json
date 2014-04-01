@@ -5,7 +5,9 @@
     "type": "git",
     "url": "git://github.com/upfrontIO/livingdocs-engine.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "wolfy87-eventemitter": "~4.2.6"
+  },
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-contrib-copy": "~0.5.0",

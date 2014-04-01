@@ -29,12 +29,18 @@ module.exports = class InteractivePage extends Page
     @dragBase = new DragBase(this)
     @focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
     @focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )
+    @beforeInteractivePageReady()
 
     @$document
       .on('click.livingdocs', $.proxy(@click, this))
       .on('mousedown.livingdocs', $.proxy(@mousedown, this))
       .on('touchstart.livingdocs', $.proxy(@mousedown, this))
       .on('dragstart', $.proxy(@browserDragStart, this))
+
+
+  beforeInteractivePageReady: ->
+    if config.livingdocsCssFile?
+      @cssLoader.load(config.livingdocsCssFile, @readySemaphore.wait())
 
 
   # prevent the browser Drag&Drop from interfering

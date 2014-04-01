@@ -9,12 +9,12 @@ describe 'SnippetTree (Layout Events) ->', ->
 
 
   beforeEach ->
-    @tree = new SnippetTree()
+    { @snippetTree } = getInstances('snippetTree')
     monitor = test.createCallbackMonitor
-    @expectSnippetAdded = monitor(@tree.snippetAdded)
-    @expectSnippetRemoved = monitor(@tree.snippetRemoved)
-    @expectSnippetMoved = monitor(@tree.snippetMoved)
-    @expectChanged = monitor(@tree.changed)
+    @expectSnippetAdded = monitor(@snippetTree.snippetAdded)
+    @expectSnippetRemoved = monitor(@snippetTree.snippetRemoved)
+    @expectSnippetMoved = monitor(@snippetTree.snippetMoved)
+    @expectChanged = monitor(@snippetTree.changed)
 
 
   describe 'appending a snippet', ->
@@ -23,7 +23,7 @@ describe 'SnippetTree (Layout Events) ->', ->
     beforeEach ->
       @appendSnippet = =>
         snippet = test.getSnippet('title')
-        @tree.append(snippet)
+        @snippetTree.append(snippet)
 
 
     it 'fires snippetAdded event', ->
@@ -43,7 +43,7 @@ describe 'SnippetTree (Layout Events) ->', ->
     beforeEach ->
       @snippetA = test.getSnippet('title')
       @snippetB = test.getSnippet('title')
-      @tree.append(@snippetA).append(@snippetB)
+      @snippetTree.append(@snippetA).append(@snippetB)
 
 
     describe 'removing a snippet', ->
@@ -98,17 +98,17 @@ describe 'SnippetTree (Layout Events) ->', ->
 describe 'SnippetTree (Content Events)', ->
 
   beforeEach ->
-    @tree = new SnippetTree()
+    { @snippetTree } = getInstances('snippetTree')
     monitor = test.createCallbackMonitor
-    @expectContentChanged = monitor(@tree.snippetContentChanged)
-    @expectChanged = monitor(@tree.changed)
+    @expectContentChanged = monitor(@snippetTree.snippetContentChanged)
+    @expectChanged = monitor(@snippetTree.changed)
 
     @snippetA = test.getSnippet('title')
     @imageSnippet = test.getSnippet('image')
     @coverSnippet = test.getSnippet('cover')
-    @tree.append(@snippetA)
-    @tree.append(@imageSnippet)
-    @tree.append(@coverSnippet)
+    @snippetTree.append(@snippetA)
+    @snippetTree.append(@imageSnippet)
+    @snippetTree.append(@coverSnippet)
 
 
   describe 'changing the title content', ->
@@ -162,13 +162,13 @@ describe 'SnippetTree (Content Events)', ->
 describe 'SnippetTree (Html Events)', ->
 
   beforeEach ->
-    @tree = new SnippetTree()
+    { @snippetTree } = getInstances('snippetTree')
     monitor = test.createCallbackMonitor
-    @expectHtlmChanged = monitor(@tree.snippetHtmlChanged)
-    @expectChanged = monitor(@tree.changed)
+    @expectHtlmChanged = monitor(@snippetTree.snippetHtmlChanged)
+    @expectChanged = monitor(@snippetTree.changed)
 
     @hero = test.getSnippet('hero')
-    @tree.append(@hero)
+    @snippetTree.append(@hero)
 
 
   describe 'adding a style', ->
@@ -200,13 +200,13 @@ describe 'SnippetTree (Html Events)', ->
   describe 'SnippetTree (Data Events)', ->
 
     beforeEach ->
-      @tree = new SnippetTree()
+      { @snippetTree } = getInstances('snippetTree')
       monitor = test.createCallbackMonitor
-      @expectDataChanged = monitor(@tree.snippetDataChanged)
-      @expectChanged = monitor(@tree.changed)
+      @expectDataChanged = monitor(@snippetTree.snippetDataChanged)
+      @expectChanged = monitor(@snippetTree.changed)
 
       @hero = test.getSnippet('hero')
-      @tree.append(@hero)
+      @snippetTree.append(@hero)
 
 
     describe 'adding data', ->

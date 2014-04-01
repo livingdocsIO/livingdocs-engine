@@ -26,4 +26,8 @@ module.exports = class Directive
 
 
   getAbsoluteBoundingClientRect: ->
-    dom.getBoundingClientRect(@elem)
+    dom.getAbsoluteBoundingClientRect(@elem)
+
+
+  getBoundingClientRect: ->
+    @elem.getBoundingClientRect()

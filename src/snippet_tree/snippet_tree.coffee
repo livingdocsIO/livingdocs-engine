@@ -32,28 +32,54 @@ SnippetModel = require('./snippet_model')
 module.exports = class SnippetTree
 
 
-  constructor: ({ content, design } = {}) ->
+  constructor: ({ content, @design } = {}) ->
+    assert @design?, "Error instantiating SnippetTree: design param is misssing."
     @root = new SnippetContainer(isRoot: true)
 
     # initialize content before we set the snippet tree to the root
     # otherwise all the events will be triggered while building the tree
-    if content? and design?
-      @fromJson(content, design)
+    @fromJson(content, @design) if content?
 
     @root.snippetTree = this
     @initializeEvents()
 
 
-  # insert snippet at the beginning
+  # Insert a snippet at the beginning.
+  # @param: snippetModel instance or snippet name e.g. 'title'
   prepend: (snippet) ->
-    @root.prepend(snippet)
+    snippet = @getSnippet(snippet)
+    @root.prepend(snippet) if snippet?
     this
 
 
-  # insert snippet at the end
+  # Insert snippet at the end.
+  # @param: snippetModel instance or snippet name e.g. 'title'
   append: (snippet) ->
-    @root.append(snippet)
+    snippet = @getSnippet(snippet)
+    @root.append(snippet) if snippet?
     this
+
+
+  getSnippet: (snippetName) ->
+    if typeof snippetName == 'string'
+      @createModel(snippetName)
+    else
+      snippetName
+
+
+  createModel: (identifier) ->
+    template = @getTemplate(identifier)
+    template.createModel() if template
+
+
+  createSnippet: ->
+    @createModel.apply(this, arguments)
+
+
+  getTemplate: (identifier) ->
+    template = @design.get(identifier)
+    assert template, "Could not find template #{ identifier }"
+    template
 
 
   initializeEvents: () ->
@@ -79,6 +105,11 @@ module.exports = class SnippetTree
 
   eachContainer: (callback) ->
     @root.eachContainer(callback)
+
+
+  # Get the first snippet
+  first: ->
+    @root.first
 
 
   # Traverse all containers and snippets
@@ -204,38 +235,43 @@ module.exports = class SnippetTree
     words.readableJson(@toJson())
 
 
-  # returns a JSON representation of the whole tree
-  toJson: ->
-    json = {}
-    json['content'] = []
+  # Returns a serialized representation of the whole tree
+  # that can be sent to the server as JSON.
+  serialize: ->
+    data = {}
+    data['content'] = []
+    data['design'] = { name: @design.namespace }
 
-    snippetToJson = (snippet, level, containerArray) ->
-      snippetJson = snippet.toJson()
-      containerArray.push snippetJson
+    snippetToData = (snippet, level, containerArray) ->
+      snippetData = snippet.toJson()
+      containerArray.push snippetData
+      snippetData
 
-      snippetJson
-
-    walker = (snippet, level, jsonObj) ->
-      snippetJson = snippetToJson(snippet, level, jsonObj)
+    walker = (snippet, level, dataObj) ->
+      snippetData = snippetToData(snippet, level, dataObj)
 
       # traverse children
       for name, snippetContainer of snippet.containers
-        containerArray = snippetJson.containers[snippetContainer.name] = []
+        containerArray = snippetData.containers[snippetContainer.name] = []
         walker(snippetContainer.first, level + 1, containerArray) if snippetContainer.first
 
       # traverse siblings
-      walker(snippet.next, level, jsonObj) if snippet.next
+      walker(snippet.next, level, dataObj) if snippet.next
 
-    walker(@root.first, 0, json['content']) if @root.first
+    walker(@root.first, 0, data['content']) if @root.first
 
-    json
+    data
 
 
-  fromJson: (json, design) ->
+  toJson: ->
+    @serialize()
+
+
+  fromJson: (data, design) ->
     @root.snippetTree = undefined
-    if json.content
-      for snippetJson in json.content
-        snippet = SnippetModel.fromJson(snippetJson, design)
+    if data.content
+      for snippetData in data.content
+        snippet = SnippetModel.fromJson(snippetData, design)
         @root.append(snippet)
 
     @root.snippetTree = this

@@ -8,6 +8,8 @@ describe 'DragBase', ->
     @event =
       pageX: 200
       pageY: 50
+      clientX: 200
+      clientY: 50
       preventDefault: ->
       stopPropagation: ->
       target: @$dragged[0]
@@ -38,14 +40,15 @@ describe 'DragBase', ->
       @drag.init(@dragHandler, @event, @config)
       stub = sinon.stub @dragHandler, 'reset', (args) ->
         done()
-      @drag.move(top: 50, left: 204)
+
+      @drag.move({ pageX: 204, pageY: 50 })
 
 
     it 'starts after delay', (done) ->
       @drag.init(@dragHandler, @event, @config)
       stub = sinon.stub @dragHandler, 'start', (args) ->
-        expect(args.top).to.equal(50)
-        expect(args.left).to.equal(200)
+        expect(args.pageX).to.equal(200)
+        expect(args.pageY).to.equal(50)
         done()
 
 

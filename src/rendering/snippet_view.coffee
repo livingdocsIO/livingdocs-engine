@@ -100,7 +100,11 @@ module.exports = class SnippetView
 
 
   getBoundingClientRect: ->
-    dom.getBoundingClientRect(@$html[0])
+    @$html[0].getBoundingClientRect()
+
+
+  getAbsoluteBoundingClientRect: ->
+    dom.getAbsoluteBoundingClientRect(@$html[0])
 
 
   content: (content, sessionContent) ->
