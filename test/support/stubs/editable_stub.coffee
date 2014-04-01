@@ -7,23 +7,25 @@ chainable = (func) ->
 
 # create a property on the obj that represents
 # $.Callbacks.add. The callback can be fired with obj.property.fire(...)
-chainableListener = (obj, funcName) ->
+chainableListener = () ->
   callbacks = $.Callbacks()
-  obj[funcName] = chainable(callbacks.add)
-  obj[funcName].fire = callbacks.fire
+  func = chainable(callbacks.add)
+  func.fire = callbacks.fire
+  func
 
 
-# Stub EditableJS
-window.Editable = do ->
+class Editable
 
-  init: ->
-    chainableListener(this, 'focus')
-    chainableListener(this, 'blur')
-    chainableListener(this, 'insert')
-    chainableListener(this, 'merge')
-    chainableListener(this, 'split')
-    chainableListener(this, 'selection')
-    chainableListener(this, 'newline')
+  constructor: ->
 
-    @add = ->
-    @remove = ->
+  focus: chainableListener()
+  blur: chainableListener()
+  insert: chainableListener()
+  merge: chainableListener()
+  split: chainableListener()
+  selection: chainableListener()
+  newline: chainableListener()
+
+window.Editable = Editable
+
+

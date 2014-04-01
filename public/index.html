@@ -7,11 +7,22 @@
     <meta name="viewport" content="width=device-width">
 
     <!-- livingdocs-engine base css -->
+    <link rel="stylesheet" href="/assets/css/normalize.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/assets/css/livingdocs.css">
   </head>
   <body>
-    <div class="container-fluid">
-      <section class="doc-section"></section>
+    <!-- <div class="container-fluid"></div> -->
+    <nav class="doc-toolbar"></nav>
+    <section class="editor-section">
+      <div class="container-fluid doc-section"></div>
+    </section>
+    <div class="editor-preview">
+
+      <!-- All these child nodes will be transferred into the iframe -->
+      <h3>Preview:</h3>
+      <div class="container-fluid doc-section"></div>
+
     </div>
 
     <!-- dependencies of livingdocs-engine -->
@@ -28,27 +39,35 @@
 
       $(document).ready(function() {
 
-        // setup document
-        var json = doc.stash.get();
-        doc.init({ design: design.bootstrap, json: json });
+        // var json = doc.stash.get();
 
-        doc.ready(function() {
+        // Setup the design and the document
+        doc.design.load(design.bootstrap);
+        var document = doc.new({
+          design: 'bootstrap'
+        });
 
-          if (!json) {
-            var row = doc.add("mainAndSidebar");
-            row.append("main", doc.create("hero"));
-            row.append("main", doc.create("text"));
-            row.append("sidebar", doc.create("title"));
-            var single = doc.add("column");
-            single.append(doc.create("hero"));
-            single.append(doc.create("hero"));
-            single.append(doc.create("hero"));
-          }
+        // Add some content
+        addDefaultContent(document);
 
-          // drag in new hero snippet
-          var $newSnippet = $("<div>drag me</div>").css('cursor', 'move')
-          $newSnippet.on('mousedown', function(event) {
-            var newSnippet = doc.create('html')
+        // Create Views
+        viewReady = document.createView('.editor-section', { interactive: true });
+        previewReady = document.createView('.editor-preview');
+
+        // Create Snippets
+        var $toolbar = $('.doc-toolbar');
+        for (var i = 0; i < document.design.templates.length; i++) {
+          var template = document.design.templates[i];
+          $entry = $('<div class="toolbar-entry">');
+          $entry.html(template.title);
+          $toolbar.append($entry);
+          draggableSnippet(document, template.id, $entry);
+        }
+
+
+        function draggableSnippet (document, id, $elem) {
+          $elem.on('mousedown', function(event) {
+            var newSnippet = document.model.createModel(id);
 
             doc.startDrag({
               snippetModel: newSnippet,
@@ -58,11 +77,17 @@
                 direct: true
               }
             });
-
           });
-          $(document.body).append($newSnippet)
+        }
 
-        });
+
+        function addDefaultContent (document) {
+          document.model.append('mainAndSidebar');
+          var snippet = document.model.createSnippet('hero');
+          document.model.first().append('main', snippet);
+          var text = document.model.createSnippet('text');
+          snippet.after(text);
+        }
       });
     </script>
 

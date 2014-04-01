@@ -82,7 +82,7 @@
     "namespace": "bootstrap",
     "version": 1,
     "css": [
-      "/designs/bootstrap/css/style.css"
+      "/css/style.css"
     ],
     "groups": {
       "layout": {

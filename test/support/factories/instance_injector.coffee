@@ -32,7 +32,7 @@ module.exports = class InstanceInjector
           design: @create('design')
 
       when 'design'
-        new Design(test.testDesign)
+        new Design(test.designJson)
 
       when 'renderingContainer', 'page', 'interactivePage'
         @createContainer(name)
@@ -61,5 +61,5 @@ module.exports = class InstanceInjector
 
 
   createRenderNode: ->
-    $('<div>')
+    $('<section>')
 

@@ -6,6 +6,7 @@ describe 'editableController', ->
   beforeEach ->
     { @renderer, @snippetTree } = getInstances('page', 'renderer')
     @editableController = new EditableController(@renderer.renderingContainer)
+    @editable = @editableController.editable
 
 
   describe 'selection event', ->
@@ -22,14 +23,14 @@ describe 'editableController', ->
         foundSnippet = snippet
         expect.element
 
-      Editable.selection.fire(@elem, undefined)
+      @editable.selection.fire(@elem, undefined)
       expect(foundSnippet.model).to.equal(@title.model)
 
 
   describe 'enter event', ->
 
     beforeEach ->
-      @title = test.createSnippet('title', 'A') #test.getTemplate('title').createView()
+      @title = test.createSnippet('title', 'A')
       @snippetTree.append(@title)
 
 
@@ -39,5 +40,12 @@ describe 'editableController', ->
 
 
     it 'inserts the default paragraph element', ->
+      expect(@snippetTree.design.paragraphSnippet).to.equal('text')
       @editableController.insert(@title.createView())
       expect(@renderer.snippetTree.toJson().content[1].identifier).to.equal('test.text')
+
+
+    it 'inserts the paragraph snippet defined by the design', ->
+      @snippetTree.design.paragraphSnippet = 'title'
+      @editableController.insert(@title.createView())
+      expect(@renderer.snippetTree.toJson().content[1].identifier).to.equal('test.title')

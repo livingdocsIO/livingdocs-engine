@@ -1,5 +1,6 @@
 SnippetTree = require('../../../src/snippet_tree/snippet_tree')
 SnippetModel = require('../../../src/snippet_tree/snippet_model')
+TestImage = require('../../support/test_base64_image')
 
 describe 'Snippet Serialization', ->
 
@@ -31,11 +32,51 @@ describe 'Snippet Serialization', ->
         'Extra Space': 'extra-space'
         'Color': 'color--blue'
 
+  describe 'of data', ->
+
+    it 'saves all data', ->
+      expectedValue =
+        'center':
+          'zoom': 12
+        'markers': [
+          'text': 'test'
+        ,
+          'text': 'secondTest'
+        ]
+
+      hero = test.getSnippet('hero')
+      hero.data(
+        'center':
+          'zoom': 12
+      )
+
+      hero.data(
+        'markers': [
+          'text': 'test'
+        ,
+          'text': 'secondTest'
+        ])
+
+      json = hero.toJson()
+      expect(json.data).to.deep.equal(expectedValue)
+
+
+  describe 'of temporaryContent', ->
+
+    it 'does not save a session value', ->
+      cover = test.getSnippet('cover')
+      cover.set('image', TestImage, true)
+      json = cover.toJson()
+      expect(json.temporaryContent).to.be.undefined
+      expect(json.content.image).to.be.undefined
+
+
 
 describe 'SnippetTree Serialization', ->
 
   beforeEach ->
-    @tree = new SnippetTree()
+    { snippetTree } = getInstances('snippetTree')
+    @tree = snippetTree
 
 
   it 'saves an empty SnippetTree', ->
@@ -134,6 +175,31 @@ describe 'Deserialization', ->
       expect(snippet.style('Color')).to.be.undefined
 
 
+  describe 'of a snippet with data', ->
+
+    beforeEach ->
+      @json = test.localstore
+        identifier: 'test.hero'
+        data:
+          'center':
+            'zoom': 12
+          'markers': [
+            'text': 'test'
+          ,
+            'text': 'test2'
+          ]
+
+
+    it 'returns a snippet with its center data', ->
+      snippet = SnippetModel.fromJson(@json, @design)
+      expect(snippet.data('center')).to.deep.equal({'zoom': 12})
+
+
+    it 'returns a snippet with its markers data', ->
+      snippet = SnippetModel.fromJson(@json, @design)
+      expect(snippet.data('markers')).to.deep.equal([{'text': 'test'}, {'text': 'test2'}])
+
+
   describe 'of a snippet with children', ->
 
     beforeEach ->
@@ -194,8 +260,8 @@ describe 'Deserialization', ->
 describe 'Serialize and Deserialize', ->
 
   beforeEach ->
-    @design = test.getDesign()
-    @before = new SnippetTree()
+    { @design, snippetTree } = getInstances('snippetTree')
+    @before = snippetTree
     @row = test.getSnippet('row')
     @title = test.getSnippet('title')
     @title.set('title', 'What we have here is a failure to communicate')

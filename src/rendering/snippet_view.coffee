@@ -4,6 +4,7 @@ attr = config.attr
 DirectiveIterator = require('../template/directive_iterator')
 eventing = require('../modules/eventing')
 dom = require('../interaction/dom')
+ImageManager = require('./image_manager')
 
 module.exports = class SnippetView
 
@@ -29,7 +30,7 @@ module.exports = class SnippetView
 
 
   updateContent: ->
-    @content(@model.content)
+    @content(@model.content, @model.temporaryContent)
 
     if not @hasFocus()
       @displayOptionals()
@@ -99,12 +100,19 @@ module.exports = class SnippetView
 
 
   getBoundingClientRect: ->
-    dom.getBoundingClientRect(@$html[0])
+    @$html[0].getBoundingClientRect()
 
 
-  content: (content) ->
+  getAbsoluteBoundingClientRect: ->
+    dom.getAbsoluteBoundingClientRect(@$html[0])
+
+
+  content: (content, sessionContent) ->
     for name, value of content
-      @set(name, value)
+      if sessionContent[name]? && ( !value? || value == '' )
+        @set(name, sessionContent[name])
+      else
+        @set(name, value)
 
 
   set: (name, value) ->
@@ -196,29 +204,12 @@ module.exports = class SnippetView
 
     if value
       @cancelDelayed(name)
-      @setImageAttribute($elem, value)
+      imageService = @model.data('imageService')[name] if @model.data('imageService')
+      ImageManager.set($elem, value, imageService)
       $elem.removeClass(config.css.emptyImage)
     else
       setPlaceholder = $.proxy(@setPlaceholderImage, this, $elem)
       @delayUntilAttached(name, setPlaceholder)
-
-
-  setImageAttribute: ($elem, value) ->
-    if $elem[0].nodeName == 'IMG'
-      $elem.attr('src', value)
-    else
-      $elem.css('background-image', "url(#{ @escapeCssUri(value) })")
-
-
-  # Escape the URI in case invalid characters like '(' or ')' are present.
-  # The escaping only happens if it is needed since this does not work in node.
-  # When the URI is escaped in node the background-image is not written to the
-  # style attribute.
-  escapeCssUri: (uri) ->
-    if /[()]/.test(uri)
-      "'#{ uri }'"
-    else
-      uri
 
 
   setPlaceholderImage: ($elem) ->
@@ -230,7 +221,8 @@ module.exports = class SnippetView
       width = $elem.outerWidth()
       height = $elem.outerHeight()
     value = "http://placehold.it/#{width}x#{height}/BEF56F/B2E668"
-    @setImageAttribute($elem, value)
+    imageService = @model.data('imageService')[name] if @model.data('imageService')
+    ImageManager.set($elem, value, imageService)
 
 
   style: (name, className) ->

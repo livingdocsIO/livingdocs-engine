@@ -1,9 +1,11 @@
+deepEqual = require('deep-equal')
 config = require('../configuration/defaults')
 SnippetContainer = require('./snippet_container')
 guid = require('../modules/guid')
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
 serialization = require('../modules/serialization')
+config = require('../configuration/defaults')
 
 # SnippetModel
 # ------------
@@ -26,6 +28,8 @@ module.exports = class SnippetModel
 
     @initializeDirectives()
     @styles = {}
+    @dataValues = {}
+    @temporaryContent = {}
     @id = id || guid.next()
     @identifier = @template.identifier
 
@@ -103,12 +107,22 @@ module.exports = class SnippetModel
     this
 
 
-  set: (name, value) ->
+  resetVolatileValue: (name) ->
+    delete @temporaryContent[name]
+
+
+  set: (name, value, volatile=false) ->
     assert @content?.hasOwnProperty(name),
       "set error: #{ @identifier } has no content named #{ name }"
 
-    if @content[name] != value
-      @content[name] = value
+    if volatile
+      storageContainer = @temporaryContent
+    else
+      @resetVolatileValue(name) # as soon as we get real content, reset the temporaryContent
+      storageContainer = @content
+
+    if storageContainer[name] != value
+      storageContainer[name] = value
       @snippetTree.contentChanging(this, name) if @snippetTree
 
 
@@ -117,6 +131,27 @@ module.exports = class SnippetModel
       "get error: #{ @identifier } has no content named #{ name }"
 
     @content[name]
+
+
+  # can be called with a string or a hash
+  data: (arg) ->
+    if typeof(arg) == 'object'
+      changedDataProperties = []
+      for name, value of arg
+        if @changeData(name, value)
+          changedDataProperties.push(name)
+      if @snippetTree && changedDataProperties.length > 0
+        @snippetTree.dataChanging(this, changedDataProperties)
+    else
+      @dataValues[arg]
+
+
+  changeData: (name, value) ->
+    if deepEqual(@dataValues[name], value) == false
+      @dataValues[name] = value
+      true
+    else
+      false
 
 
   isEmpty: (name) ->
@@ -258,6 +293,9 @@ module.exports = class SnippetModel
     unless serialization.isEmpty(@styles)
       json.styles = serialization.flatCopy(@styles)
 
+    unless serialization.isEmpty(@dataValues)
+      json.data = $.extend(true, {}, @dataValues)
+
     # create an array for every container
     for name of @containers
       json.containers ||= {}
@@ -281,6 +319,8 @@ SnippetModel.fromJson = (json, design) ->
 
   for styleName, value of json.styles
     model.style(styleName, value)
+
+  model.data(json.data) if json.data
 
   for containerName, snippetArray of json.containers
     assert model.containers.hasOwnProperty(containerName),

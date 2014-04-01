@@ -54,7 +54,7 @@ module.exports = class DragBase
     @initialized = true
     @setOptions(options)
     @setDragHandler(dragHandler)
-    @startPoint = @getTopLeft(event)
+    @startPoint = @getEventPosition(event)
 
     @addStopListeners(event)
     @addMoveListeners(event)
@@ -63,31 +63,34 @@ module.exports = class DragBase
       @addLongpressIndicator(@startPoint)
       @timeout = setTimeout =>
           @removeLongpressIndicator()
-          @start(@startPoint)
+          @start(event)
         , @options.longpress.delay
     else if @mode == 'direct'
-      @start(@startPoint)
+      @start(event)
 
     # prevent browser Drag & Drop
     event.preventDefault() if @options.preventDefault
 
 
-  move: (topLeft) ->
+  move: (event) ->
+    eventPosition = @getEventPosition(event)
     if @mode == 'longpress'
-      if @distance(topLeft, @startPoint) > @options.longpress.tolerance
+      if @distance(eventPosition, @startPoint) > @options.longpress.tolerance
         @reset()
     else if @mode == 'move'
-      if @distance(topLeft, @startPoint) > @options.move.distance
-        @start(topLeft)
+      if @distance(eventPosition, @startPoint) > @options.move.distance
+        @start(event)
 
 
   # start the drag process
-  start: (topLeft) ->
+  start: (event) ->
+    eventPosition = @getEventPosition(event)
     @started = true
 
     # prevent text-selections while dragging
+    @addBlocker()
     @page.$body.addClass(config.css.preventSelection)
-    @dragHandler.start(topLeft)
+    @dragHandler.start(eventPosition)
 
 
   drop: ->
@@ -112,12 +115,24 @@ module.exports = class DragBase
 
       @page.$document.off('.livingdocs-drag')
       @removeLongpressIndicator()
+      @removeBlocker()
 
 
-  addLongpressIndicator: ({ top, left }) ->
+  addBlocker: ->
+    $blocker = $("<div class='dragBlocker'>")
+      .attr('style', 'position: absolute; top: 0; bottom: 0; left: 0; right: 0;')
+    @page.$body.append($blocker)
+
+
+  removeBlocker: ->
+    @page.$body.find('.dragBlocker').remove()
+
+
+
+  addLongpressIndicator: ({ pageX, pageY }) ->
     return unless @options.longpress.showIndicator
     $indicator = $("<div class=\"#{ config.css.longpressIndicator }\"><div></div></div>")
-    $indicator.css(top: top, left: left)
+    $indicator.css(left: pageX, top: pageY)
     @page.$body.append($indicator)
 
 
@@ -143,43 +158,33 @@ module.exports = class DragBase
       @page.$document.on 'touchmove.livingdocs-drag', (event) =>
         event.preventDefault()
         if @started
-          @dragHandler.move(@getTopLeft(event), event)
+          @dragHandler.move(@getEventPosition(event))
         else
-          @move(@getTopLeft(event))
+          @move(event)
 
     else # all other input devices behave like a mouse
       @page.$document.on 'mousemove.livingdocs-drag', (event) =>
         if @started
-          @dragHandler.move(@getTopLeft(event), event)
+          @dragHandler.move(@getEventPosition(event))
         else
-          @move(@getTopLeft(event))
+          @move(event)
 
 
-  # Get Top Left relative to the document (absolute)
-  getTopLeft: (event) ->
+  getEventPosition: (event) ->
     if event.type == 'touchstart' || event.type == 'touchmove'
-      'top': event.originalEvent.changedTouches[0].pageY
-      'left': event.originalEvent.changedTouches[0].pageX
-    else
-      'top': event.pageY
-      'left': event.pageX
+      event = event.originalEvent.changedTouches[0]
 
-
-  # Get Top Left relative to the viewport (fixed)
-  getTopLeftFixed: (event) ->
-    if event.type == 'touchstart' || event.type == 'touchmove'
-      'top': event.originalEvent.changedTouches[0].clientY
-      'left': event.originalEvent.changedTouches[0].clientX
-    else
-      'top': event.clientY
-      'left': event.clientX
+    clientX: event.clientX
+    clientY: event.clientY
+    pageX: event.pageX
+    pageY: event.pageY
 
 
   distance: (pointA, pointB) ->
     return undefined if !pointA || !pointB
 
-    distX = pointA.left - pointB.left
-    distY = pointA.top - pointB.top
+    distX = pointA.pageX - pointB.pageX
+    distY = pointA.pageY - pointB.pageY
     Math.sqrt( (distX * distX) + (distY * distY) )
 
 

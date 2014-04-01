@@ -1,39 +1,41 @@
 require('../../../src/browser_api')
 
-describe 'Public API', ->
-
-  it 'defines the global variable doc', ->
-    expect(window.doc).to.exist
-
-
-  it 'global variable doc is a function', ->
-    expect( $.isFunction(window.doc) ).to.be.true
+describe 'Browser API', ->
+  afterEach ->
+    doc.design.resetCache()
 
 
-  describe 'init()', ->
+  describe 'Global variable', ->
 
-    it 'is defined', ->
-      expect( window.doc.init ).to.exist
-
-
-    # currently doc.init() can only be done once
-    # so this is not really unit testable
-    it 'loads an empty document', ->
-      node = $('<div>')[0]
-      doc.init(design: test.testDesign, json: undefined, rootNode: node)
-      expect( doc.toJson().content ).to.deep.equal([])
+    it 'defines the global variable doc', ->
+      expect(window.doc).to.exist
 
 
-  describe 'toJson()', ->
+  describe 'design', ->
 
-    it 'is defined', ->
-      expect( window.doc.toJson ).to.exist
-
-
-  it 'define ready', ->
-    expect( $.isFunction(window.doc.ready)).to.be.true
+    it 'loads a design snchronously', ->
+      expect(doc.design.has('test')).to.be.false
+      doc.design.load(test.designJson)
+      expect(doc.design.has('test')).to.be.true
 
 
-  it 'define changed', ->
-    expect( $.isFunction(window.doc.changed)).to.be.true
+  describe 'new', ->
+    beforeEach ->
+      @snippetTree = test.createSnippetTree
+        title: { title: 'It Works' }
+      @data = @snippetTree.serialize()
+
+
+    it 'creates a new empty document', ->
+      doc.design.load(test.designJson)
+      document = doc.new(design: 'test')
+      firstSnippet = document.snippetTree.first()
+      expect(firstSnippet).to.be.undefined
+
+
+    it 'creates a new document from data', ->
+      doc.design.load(test.designJson)
+      document = doc.new(data: @data)
+      firstSnippet = document.snippetTree.first()
+      expect(firstSnippet.get('title')).to.equal('It Works')
 
