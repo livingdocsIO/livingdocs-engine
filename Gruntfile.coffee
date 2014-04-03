@@ -11,10 +11,16 @@ module.exports = (grunt) ->
           'src/**/*.coffee'
         ]
         tasks: ['browserify:test', 'browserify:tmp']
+      styles:
+        files: [
+          'styles/*'
+        ]
+        tasks: ['autoprefixer:styles']
       livereload:
         options:
           livereload: '<%= connect.options.livereload %>'
         files: [
+          'public/assets/css/*.css'
           'public/*.html'
           '.tmp/livingdocs-engine.js'
         ]
@@ -128,12 +134,15 @@ module.exports = (grunt) ->
             'dist/livingdocs-engine.js'
           ]
 
-    copy:
-      dependencies:
-        files: [
-            src: 'public/assets/css/livingdocs.css'
-            dest: 'dist/css/livingdocs.css'
-        ]
+    autoprefixer:
+      styles:
+        expand: true
+        flatten: true
+        src: 'styles/*.css'
+        dest: 'public/assets/css/'
+      dist:
+        src: 'styles/livingdocs.css'
+        dest: 'dist/css/livingdocs.css'
 
     bump:
       options:
@@ -166,7 +175,7 @@ module.exports = (grunt) ->
     'clean:dist'
     'browserify:build'
     'uglify'
-    'copy:dependencies'
+    'autoprefixer:dist'
   ])
 
   grunt.registerTask('build', [
@@ -175,7 +184,7 @@ module.exports = (grunt) ->
     'karma:build'
     'mochaTest'
     'uglify'
-    'copy:dependencies'
+    'autoprefixer:dist'
   ])
 
   # Release a new version

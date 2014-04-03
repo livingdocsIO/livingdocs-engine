@@ -1,0 +1,181 @@
+
+/**
+ * Highlighting
+ */
+
+.doc-editable.doc-snippet-highlight,
+.doc-snippet-highlight {
+  /* Default */
+  /*outline: thin dotted #333;*/
+  box-shadow: 0 0 1px 2px rgba(123, 215, 253, 0.5);
+
+  /* Webkit */
+  /*outline: 5px auto -webkit-focus-ring-color;*/
+  /*outline-offset: 1px;*/
+}
+
+.doc-container-highlight {
+  outline: medium dashed rgba(255, 196, 13, 0.5);
+}
+
+
+/**
+ * Content Editable
+ */
+
+.doc-editable {
+  /* disable browser highlight of contenteditable */
+  outline: none;
+}
+
+@keyframes fadeIn {
+  0% {   opacity: 0; }
+  100% { opacity: 0.4; }
+}
+
+.doc-editable:before {
+  content: attr(data-doc-placeholder);
+  opacity: 0.4;
+  animation: fadeIn 0.4s;
+}
+
+.doc-editable.doc-no-placeholder:before {
+  content: normal;
+  opacity: 1;
+  animation: none;
+}
+
+
+/**
+ * Drag & Drop
+ */
+
+@keyframes wiggle {
+  0%, 100% {transform: translateX(0);}
+  10%, 30%, 50%, 70%, 90% {transform: translateX(-10px);}
+  20%, 40%, 60%, 80% {transform: translateX(10px);}
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  20% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pulse-dragged {
+  0% {  transform: scale(1); opacity: 1; }
+  20% { transform: scale(1.02); }
+  100% { transform: scale(1); opacity: 0.3; }
+}
+
+.doc-dragged {
+  animation: pulse 0.3s;
+  opacity: .4;
+}
+
+.doc-before-drop {
+  transition: all 0.3s;
+  transform: translateY(-25px);
+}
+
+.doc-after-drop {
+  transition: all 0.3s;
+  transform: translateY(25px);
+}
+
+.doc-dragged-placeholder {
+  margin-top: 18px;
+  margin-left: 12px;
+  position: absolute;
+  background: #09D;
+  border-radius: 5px;
+  padding: 0 10px;
+  padding-left: 20px;
+  /*border: 1px solid #efefef;*/
+  color: #fff;
+  height: 25px;
+  line-height: 25px;
+  box-shadow: 0 1px 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+.doc-drag-counter {
+  position: absolute;
+  top: 0;
+  left: -10px;
+  display: block;
+  background: #09D;
+  color: #fff;
+  border-radius: 20px;
+  height: 25px;
+  width: 25px;
+  text-align: center;
+  line-height: 25px;
+  font-weight: bold;
+}
+
+.doc-drag-no-drop {
+  background: #dd0009;
+  opacity: 0.5;
+}
+
+.doc-drag-no-drop .doc-drag-counter {
+  background: #dd0009;
+}
+
+.doc-drop-marker {
+  position: absolute;
+  margin-top: -3px;
+  min-width: 20px;
+  height: 6px;
+  border-radius: 3px;
+  background: #09d;
+}
+
+
+/**
+ * Longpress indicator
+ */
+
+@keyframes ring {
+  20% { transform: scale(3.5); border: 3px solid rgba(0, 0, 0, 0); }
+  100% { border: 3px solid rgba(0, 153, 221, 0.6); }
+}
+
+@keyframes inner-ring {
+  20% { border: 1px solid rgba(0, 153, 221, 0); }
+  100% { border: 1px solid rgba(0, 153, 221, 0.8); transform: scale(0.3); }
+}
+
+.doc-longpress-indicator {
+  position: absolute;
+  margin-top: -6px;
+  margin-left: -6px;
+  width: 2px;
+  height: 2px;
+  pointer-events: none;
+  border-radius: 10px;
+  border: 3px solid rgba(0, 153, 221, 0);
+  animation: ring 0.4s ease-in;
+
+}
+
+.doc-longpress-indicator div {
+  position: absolute;
+  margin-top: -8px;
+  margin-left: -8px;
+
+  width: 16px;
+  height: 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 153, 221, 0);
+  animation: inner-ring 0.4s ease-in;
+}
+
+
+/**
+ * Utils
+ */
+
+.doc-no-selection {
+  user-select: none;
+}
