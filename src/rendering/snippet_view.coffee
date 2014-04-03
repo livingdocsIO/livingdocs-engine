@@ -138,24 +138,24 @@ module.exports = class SnippetView
 
   setEditable: (name, value) ->
     $elem = @directives.$getElem(name)
-    placeholder = if value
-      config.zeroWidthCharacter
+    if value
+      $elem.addClass(css.noPlaceholder)
     else
-      @template.defaults[name]
+      $elem.removeClass(css.noPlaceholder)
 
-    $elem.attr(attr.placeholder, placeholder)
+    $elem.attr(attr.placeholder, @template.defaults[name])
     $elem.html(value || '')
 
 
   focusEditable: (name) ->
     $elem = @directives.$getElem(name)
-    $elem.attr(attr.placeholder, config.zeroWidthCharacter)
+    $elem.addClass(css.noPlaceholder)
 
 
   blurEditable: (name) ->
     $elem = @directives.$getElem(name)
     if @model.isEmpty(name)
-      $elem.attr(attr.placeholder, @template.defaults[name])
+      $elem.removeClass(css.noPlaceholder)
 
 
   getHtml: (name) ->

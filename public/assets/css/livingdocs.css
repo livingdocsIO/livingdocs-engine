@@ -39,6 +39,12 @@
   -webkit-animation: fadeIn 0.4s;
 }
 
+.doc-editable.doc-no-placeholder:before {
+  content: normal;
+  opacity: 1;
+  -webkit-animation: none;
+}
+
 
 /**
  * Drag & Drop

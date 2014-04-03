@@ -30,6 +30,7 @@ module.exports = config = do ->
     # snippet classes
     snippet: 'doc-snippet'
     editable: 'doc-editable'
+    noPlaceholder: 'doc-no-placeholder'
     emptyImage: 'doc-image-empty'
     interface: 'doc-ui'
 
