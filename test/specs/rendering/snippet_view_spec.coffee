@@ -14,14 +14,15 @@ describe 'SnippetView', ->
         <h1 #{ test.editableAttr }="title"
           class="#{ css.editable } #{ css.snippet }"
             #{ attr.template }="test.title"
-            #{ test.emptyPlaceholderAttr }>
-          Humble Bundle
+            #{ attr.placeholder }="#{ @snippetView.template.defaults['title'] }">
         </h1>
         """
 
 
     it 'sets title', ->
       @snippetView.set('title', 'Humble Bundle')
+      @expected.addClass(css.noPlaceholder)
+      @expected.html('Humble Bundle')
       expect(@snippetView.$html).to.have.html(@expected)
 
 
@@ -29,13 +30,14 @@ describe 'SnippetView', ->
       it 'clears the html', ->
         @snippetView.set('title', 'foobar')
         @snippetView.set('title', undefined)
-        @expected.html('')
-        expect(@snippetView.$html).to.have.html(@expected)
+        expect(@snippetView.$html[0]).to.have.html(@expected[0])
 
 
     it 'renders content from the model', ->
       @snippetView.model.set('title', 'Humble Bundle')
       @snippetView.render()
+      @expected.addClass(css.noPlaceholder)
+      @expected.html('Humble Bundle')
       expect(@snippetView.$html).to.have.html(@expected)
 
 
@@ -52,7 +54,8 @@ describe 'SnippetView title set style', ->
     @$expected = $ """
       <h1 #{ test.editableAttr }="title"
           class="#{ css.editable } #{ css.snippet }"
-          #{ attr.template }="test.title">
+          #{ attr.template }="test.title"
+          #{ attr.placeholder }="#{ @title.template.defaults['title'] }">
       </h1>"""
 
   it 'sets "Color" style to "color--blue"', ->
@@ -80,11 +83,11 @@ describe 'SnippetView hero', ->
       <div  class="#{ css.snippet }"
             #{ attr.template }="test.hero">
         <h1 #{ test.editableAttr }="title"
-            class="#{ css.editable }"
-            #{ test.emptyPlaceholderAttr }>Humble Bundle 2</h1>
+            class="#{ css.editable } #{ css.noPlaceholder }"
+            #{ attr.placeholder }="#{ @snippetView.template.defaults['title'] }">Humble Bundle 2</h1>
         <p  #{ test.editableAttr }="tagline"
-            class="#{ css.editable }"
-            #{ test.emptyPlaceholderAttr }>Get it now!</p>
+            class="#{ css.editable } #{ css.noPlaceholder }"
+            #{ attr.placeholder }="#{ @snippetView.template.defaults['tagline'] }">Get it now!</p>
       </div>"""
 
 
@@ -110,6 +113,7 @@ describe 'SnippetView hero', ->
       @snippetView.model.set('tagline', undefined)
       @snippetView.render()
       @expected.find('p').hide().html('')
+      @expected.find('p').removeClass(css.noPlaceholder)
 
 
     it 'is hidden by default', ->

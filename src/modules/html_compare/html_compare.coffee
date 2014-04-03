@@ -8,7 +8,6 @@ module.exports = do ->
   normalizeWhitespace: true
   ignoreStyleUrlQuotes: true
 
-
   compare: (a, b) ->
 
     # prepare parameters
@@ -33,12 +32,20 @@ module.exports = do ->
   # Returns true if they are equivalent.
   # It returns false if either a or b is undefined.
   compareNode: (a, b) ->
-    if a? and b?
-      if a.nodeType == b.nodeType
+    if @bothExist(a, b)
+      if @bothAreOfSameNodeType(a, b)
         switch a.nodeType
           when 1 then @compareElement(a, b)
           when 3 then @compareText(a, b)
           else log.error "HtmlCompare: nodeType #{ a.nodeType } not supported"
+
+
+  bothExist: (a, b) ->
+    a? and b?
+
+
+  bothAreOfSameNodeType: (a, b) ->
+    a.nodeType == b.nodeType
 
 
   compareElement: (a, b) ->

@@ -110,7 +110,7 @@ module.exports = class Template
     $elem.addClass(config.css.editable)
 
     defaultValue = words.trim(elem.innerHTML)
-    @defaults[name] = defaultValue if defaultValue
+    @defaults[name] = if defaultValue then defaultValue else ''
     elem.innerHTML = ''
 
 

@@ -14,9 +14,6 @@ module.exports = config = do ->
   # string containng only a <br> followed by whitespaces
   singleLineBreak: /^<br\s*\/?>\s*$/
 
-  # (U+FEFF) zero width no-break space
-  zeroWidthCharacter: '\ufeff'
-
   attributePrefix: 'data'
 
   # In css and attr you find everything that can end up in the html
@@ -30,6 +27,7 @@ module.exports = config = do ->
     # snippet classes
     snippet: 'doc-snippet'
     editable: 'doc-editable'
+    noPlaceholder: 'doc-no-placeholder'
     emptyImage: 'doc-image-empty'
     interface: 'doc-ui'
 

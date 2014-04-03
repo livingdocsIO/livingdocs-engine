@@ -45,7 +45,8 @@
     "jsdom": "~0.10.1",
     "underscore": "~1.6.0",
     "xmldom": "~0.1.19",
-    "karma-safari-launcher": "~0.1.1"
+    "karma-safari-launcher": "~0.1.1",
+    "grunt-autoprefixer": "~0.7.2"
   },
   "engines": {
     "node": ">=0.10.0"

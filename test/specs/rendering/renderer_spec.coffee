@@ -29,10 +29,10 @@ describe 'Renderer', ->
         expect(@page.renderNode).to.have.html """
           <section>
             <h1
-              class="#{ css.snippet } #{ css.editable }"
+              class="#{ css.snippet } #{ css.editable } #{ css.noPlaceholder }"
               #{ attr.template }="test.title"
               #{ test.editableAttr }="title"
-              #{ test.emptyPlaceholderAttr }>A</h1>
+              #{ attr.placeholder }="#{ @title.template.defaults['title'] }">A</h1>
           </section>"""
 
 
