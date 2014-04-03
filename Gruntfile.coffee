@@ -8,7 +8,7 @@ module.exports = (grunt) ->
     watch:
       src:
         files: [
-          'src/{,*/}*.coffee'
+          'src/**/*.coffee'
         ]
         tasks: ['browserify:test', 'browserify:tmp']
       livereload:
