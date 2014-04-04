@@ -7,6 +7,7 @@
 .doc-snippet-highlight {
   /* Default */
   /*outline: thin dotted #333;*/
+  -webkit-box-shadow: 0 0 1px 2px rgba(123, 215, 253, 0.5);
   box-shadow: 0 0 1px 2px rgba(123, 215, 253, 0.5);
 
   /* Webkit */
@@ -33,10 +34,23 @@
   100% { opacity: 0.4; }
 }
 
+@keyframes fadeIn {
+  0% {   opacity: 0; }
+  100% { opacity: 0.4; }
+}
+
 .doc-editable:before {
   content: attr(data-doc-placeholder);
   opacity: 0.4;
   -webkit-animation: fadeIn 0.4s;
+  animation: fadeIn 0.4s;
+}
+
+.doc-editable.doc-no-placeholder:before {
+  content: normal;
+  opacity: 1;
+  -webkit-animation: none;
+  animation: none;
 }
 
 
@@ -44,43 +58,62 @@
  * Drag & Drop
  */
 
-/*@-webkit-keyframes dragged {
-  0% {-webkit-transform:rotate(2deg);}
-  50% {-webkit-transform:rotate(-2deg);}
-  100% {-webkit-transform:rotate(0deg);}
-}*/
-
 @-webkit-keyframes wiggle {
-  0%, 100% {-webkit-transform: translateX(0);}
-  10%, 30%, 50%, 70%, 90% {-webkit-transform: translateX(-10px);}
-  20%, 40%, 60%, 80% {-webkit-transform: translateX(10px);}
+  0%, 100% {-webkit-transform: translateX(0);transform: translateX(0);}
+  10%, 30%, 50%, 70%, 90% {-webkit-transform: translateX(-10px);transform: translateX(-10px);}
+  20%, 40%, 60%, 80% {-webkit-transform: translateX(10px);transform: translateX(10px);}
+}
+
+@keyframes wiggle {
+  0%, 100% {-webkit-transform: translateX(0);transform: translateX(0);}
+  10%, 30%, 50%, 70%, 90% {-webkit-transform: translateX(-10px);transform: translateX(-10px);}
+  20%, 40%, 60%, 80% {-webkit-transform: translateX(10px);transform: translateX(10px);}
 }
 
 @-webkit-keyframes pulse {
-  0% { -webkit-transform: scale(1); }
-  20% { -webkit-transform: scale(1.02); }
-  100% { -webkit-transform: scale(1); }
+  0% { -webkit-transform: scale(1); transform: scale(1); }
+  20% { -webkit-transform: scale(1.02); transform: scale(1.02); }
+  100% { -webkit-transform: scale(1); transform: scale(1); }
+}
+
+@keyframes pulse {
+  0% { -webkit-transform: scale(1); transform: scale(1); }
+  20% { -webkit-transform: scale(1.02); transform: scale(1.02); }
+  100% { -webkit-transform: scale(1); transform: scale(1); }
 }
 
 @-webkit-keyframes pulse-dragged {
-  0% {  -webkit-transform: scale(1); opacity: 1; }
-  20% { -webkit-transform: scale(1.02); }
-  100% { -webkit-transform: scale(1); opacity: 0.3; }
+  0% {  -webkit-transform: scale(1);  transform: scale(1); opacity: 1; }
+  20% { -webkit-transform: scale(1.02); transform: scale(1.02); }
+  100% { -webkit-transform: scale(1); transform: scale(1); opacity: 0.3; }
+}
+
+@keyframes pulse-dragged {
+  0% {  -webkit-transform: scale(1);  transform: scale(1); opacity: 1; }
+  20% { -webkit-transform: scale(1.02); transform: scale(1.02); }
+  100% { -webkit-transform: scale(1); transform: scale(1); opacity: 0.3; }
 }
 
 .doc-dragged {
   -webkit-animation: pulse 0.3s;
+  animation: pulse 0.3s;
   opacity: .4;
 }
 
 .doc-before-drop {
   -webkit-transition: all 0.3s;
+  transition: all 0.3s;
   -webkit-transform: translateY(-25px);
+  -ms-transform: translateY(-25px);
+  transform: translateY(-25px);
 }
 
 .doc-after-drop {
   -webkit-transition: all 0.3s;
+  transition: all 0.3s;
   -webkit-transform: translateY(25px);
+  -ms-transform: translateY(25px);
+  transform: translateY(25px);
 }
 
 .doc-dragged-placeholder {
@@ -95,6 +128,7 @@
   color: #fff;
   height: 25px;
   line-height: 25px;
+  -webkit-box-shadow: 0 1px 2px 2px rgba(0, 0, 0, 0.2);
   box-shadow: 0 1px 2px 2px rgba(0, 0, 0, 0.2);
 }
 
@@ -136,31 +170,24 @@
  * Longpress indicator
  */
 
-/*@-webkit-keyframes ring {
-  20% { border: 4px solid rgba(0, 0, 0, 0.2); }
-  100% { -webkit-transform: scale(1.3); border: 4px solid rgba(0, 0, 0, 0.1); }
+@-webkit-keyframes ring {
+  20% { -webkit-transform: scale(3.5); transform: scale(3.5); border: 3px solid rgba(0, 0, 0, 0); }
+  100% { border: 3px solid rgba(0, 153, 221, 0.6); }
 }
 
-.doc-longpress-indicator {
-  position: absolute;
-  margin-top: -7px;
-  margin-left: -7px;
-  width: 10px;
-  height: 10px;
-  pointer-events: none;
-  border-radius: 10px;
-  border: 4px solid rgba(0, 0, 0, 0);
-  -webkit-animation: ring 0.4s;
-}*/
-
-@-webkit-keyframes ring {
-  20% { -webkit-transform: scale(3.5); border: 3px solid rgba(0, 0, 0, 0); }
+@keyframes ring {
+  20% { -webkit-transform: scale(3.5); transform: scale(3.5); border: 3px solid rgba(0, 0, 0, 0); }
   100% { border: 3px solid rgba(0, 153, 221, 0.6); }
 }
 
 @-webkit-keyframes inner-ring {
   20% { border: 1px solid rgba(0, 153, 221, 0); }
-  100% { border: 1px solid rgba(0, 153, 221, 0.8); -webkit-transform: scale(0.3); }
+  100% { border: 1px solid rgba(0, 153, 221, 0.8); -webkit-transform: scale(0.3); transform: scale(0.3); }
+}
+
+@keyframes inner-ring {
+  20% { border: 1px solid rgba(0, 153, 221, 0); }
+  100% { border: 1px solid rgba(0, 153, 221, 0.8); -webkit-transform: scale(0.3); transform: scale(0.3); }
 }
 
 .doc-longpress-indicator {
@@ -173,6 +200,7 @@
   border-radius: 10px;
   border: 3px solid rgba(0, 153, 221, 0);
   -webkit-animation: ring 0.4s ease-in;
+  animation: ring 0.4s ease-in;
 
 }
 
@@ -186,24 +214,8 @@
   border-radius: 10px;
   border: 1px solid rgba(0, 153, 221, 0);
   -webkit-animation: inner-ring 0.4s ease-in;
+  animation: inner-ring 0.4s ease-in;
 }
-
-/*@-webkit-keyframes line {
-  20% { width: 0; }
-  100% { width: 60px; margin-left: -30px;}
-}
-
-.doc-longpress-indicator {
-  pointer-events: none;
-  position: absolute;
-  margin-top: 14px;
-  margin-left: 0px;
-  width: 0;
-  height: 5px;
-  border-radius: 5px;
-  background-color: rgba(0, 0, 0, 0.1);
-  -webkit-animation: line 0.4s;
-}*/
 
 
 /**
@@ -211,9 +223,7 @@
  */
 
 .doc-no-selection {
-  -webkit-touch-callout: none;
   -webkit-user-select: none;
-  -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
