@@ -261,14 +261,14 @@ describe 'using volatile values', ->
     expect(@view.$html).to.have.attr('src', TestImage)
 
 
-  it 'uses a temporary base64 value if the image src is empty string', ->
-    @snippet.set('image', '')
-    @view.render()
-    expect(@view.$html).to.have.attr('src', TestImage)
-
-
-  it 'uses the image content if it is set', ->
+  it 'uses the image content if it is set after the temporary base64', ->
     @snippet.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
     @view.render()
     expect(@view.$html).to.have.attr('src', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
 
+
+  it 'prefers a temporary value if it is set after the persisted url content', ->
+    @snippet.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
+    @snippet.set('image', TestImage, true)
+    @view.render()
+    expect(@view.$html).to.have.attr('src', TestImage)

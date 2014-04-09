@@ -109,7 +109,7 @@ module.exports = class SnippetView
 
   content: (content, sessionContent) ->
     for name, value of content
-      if sessionContent[name]? && ( !value? || value == '' )
+      if sessionContent[name]?
         @set(name, sessionContent[name])
       else
         @set(name, value)
