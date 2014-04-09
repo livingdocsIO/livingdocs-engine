@@ -111,11 +111,11 @@ module.exports = class SnippetModel
     delete @temporaryContent[name]
 
 
-  set: (name, value, volatile=false) ->
+  set: (name, value, flag='') ->
     assert @content?.hasOwnProperty(name),
       "set error: #{ @identifier } has no content named #{ name }"
 
-    if volatile
+    if flag == 'temporaryOverride'
       storageContainer = @temporaryContent
     else
       @resetVolatileValue(name) # as soon as we get real content, reset the temporaryContent

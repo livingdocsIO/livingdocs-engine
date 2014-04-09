@@ -65,7 +65,7 @@ describe 'Snippet Serialization', ->
 
     it 'does not save a session value', ->
       cover = test.getSnippet('cover')
-      cover.set('image', TestImage, true)
+      cover.set('image', TestImage, 'temporaryOverride')
       json = cover.toJson()
       expect(json.temporaryContent).to.be.undefined
       expect(json.content.image).to.be.undefined
