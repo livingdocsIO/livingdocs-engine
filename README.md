@@ -1,9 +1,49 @@
 # Livingdocs Engine
 
 
-## Organization
+The engine is the central piece of livingdocs and defines the APIs for manipulating, displaying and storing the document.
 
-All code is wrapped in one function. All coffee files share the same closure.
+
+## Useage
+
+Load the necessary scripts into your browser.
+The engine then sets the global variable `doc`.
+
+```html
+<!-- dependencies of livingdocs-engine -->
+<script src="/jquery/jquery.js"></script>
+<script src="/EditableJS/editable.js"></script>
+
+<!-- design -->
+<script src="/designs/bootstrap/design.js"></script>
+
+<!-- livingdocs-engine. yeah! -->
+<script src="/livingdocs-engine.js"></script>
+```
+
+Load a design into the engine:
+```javascript
+doc.design.load(design.bootstrap);
+```
+
+Create a new document:
+```javascript
+var document = doc.new({
+  design: 'bootstrap'
+});
+```
+
+Create views:
+```javascript
+var interactiveView = document.createView('.editor-section', { interactive: true });
+var preview = document.createView('.editor-preview');
+```
+
+Add content programmatically:
+```javascript
+document.model.append('title');
+document.model.append('text');
+```
 
 ## Build (and Release)
 
@@ -15,7 +55,10 @@ grunt build
 ```
 
 #### Release
-1. **Update Changelog**
+
+For a detailed description see: [guides/repositories/versioning](https://github.com/upfrontIO/guides/blob/master/repositories/versioning.md)
+
+1. **Build and Update Changelog**
 
   List changes and link to merged pull-requests
 
@@ -24,8 +67,6 @@ grunt build
   (if something changed)
 
 3. **Create a release tag and push everything**
-  
-  (Build is done automatically before creating the tag)
 
   ```bash
   # Example for a patch release:
