@@ -7,6 +7,7 @@
 - Read the default paragraph snippet (gets repeated on pressing Enter) from the design's configuration [#90](https://github.com/upfrontIO/livingdocs-engine/pull/90)
 - Add a data property to the snippetModel to persist structured JSON data (https://github.com/upfrontIO/livingdocs-engine/commit/6524654aabacf05b04e7bbbecc40f205fa01cc86)
 - Support resrc.it image service URL creation [#94](https://github.com/upfrontIO/livingdocs-engine/pull/94)
+- Support resetting of temporary values [#98](https://github.com/upfrontIO/livingdocs-engine/pull/98)
 
 #### Architecture Changes:
 
