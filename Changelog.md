@@ -17,6 +17,7 @@
 - Unescaped background-url [#88](https://github.com/upfrontIO/livingdocs-engine/pull/88)
   (The fix only works in the browser. See commit 34b4b078c021350 for details)
 - Position caret according to text-align in editables [#96](https://github.com/upfrontIO/livingdocs-engine/pull/96)
+- Dragging into empty documents not possible [#100](https://github.com/upfrontIO/livingdocs-engine/pull/100)
 
 
 # v0.1.2 (2014-01-30)
