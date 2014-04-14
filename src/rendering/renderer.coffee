@@ -22,11 +22,14 @@ module.exports = class Renderer
     if @$wrapperHtml?.length && @$wrapperHtml.jquery
       selector = ".#{ config.css.section }"
       $insert = @$wrapperHtml.find(selector).add( @$wrapperHtml.filter(selector) )
-      return unless $insert.length
+      if $insert.length
+        @$wrapper = @$root
+        @$wrapper.append(@$wrapperHtml)
+        @$root = $insert
 
-      @$wrapper = @$root
-      @$wrapper.append(@$wrapperHtml)
-      @$root = $insert
+    # Store a reference to the snippetTree in the $root node.
+    # Some dom.coffee methods need it to get hold of the snippet tree
+    @$root.data('snippetTree', @snippetTree)
 
 
   renderOncePageReady: ->
