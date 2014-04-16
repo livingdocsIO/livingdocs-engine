@@ -1,5 +1,12 @@
 
 /**
+ * Set a min height on doc-section so it does not disappear when emtpy
+ */
+.doc-section:empty {
+  min-height: 100px;
+}
+
+/**
  * Highlighting
  */
 
