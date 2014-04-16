@@ -107,18 +107,20 @@ module.exports = class SnippetModel
     this
 
 
-  resetVolatileValue: (name) ->
+  resetVolatileValue: (name, triggerChangeEvent=true) ->
     delete @temporaryContent[name]
+    if triggerChangeEvent
+      @snippetTree.contentChanging(this, name) if @snippetTree
 
 
-  set: (name, value, volatile=false) ->
+  set: (name, value, flag='') ->
     assert @content?.hasOwnProperty(name),
       "set error: #{ @identifier } has no content named #{ name }"
 
-    if volatile
+    if flag == 'temporaryOverride'
       storageContainer = @temporaryContent
     else
-      @resetVolatileValue(name) # as soon as we get real content, reset the temporaryContent
+      @resetVolatileValue(name, false) # as soon as we get real content, reset the temporaryContent
       storageContainer = @content
 
     if storageContainer[name] != value
