@@ -1,6 +1,7 @@
 // Chai
 chai = require('chai');
 expect = chai.expect;
+sinon = require('sinon');
 
 // Jsdom
 // Define window for jQuery.
