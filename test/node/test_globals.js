@@ -15,9 +15,12 @@ require('../support/setup');
 log = require('../../src/modules/logging/log')
 assert = require('../../src/modules/logging/assert')
 
-test = require('../support/test_helpers');
+$ = require('../../components/jquery/jquery');
+chai.use(function (_chai, utils) {
+  return require('../support/chai-jquery/chai-jquery')(_chai, utils, $);
+});
 
-$ = test.$;
+test = require('../support/test_helpers');
 _ = require('underscore')
 
 config = require('../../src/configuration/defaults')
