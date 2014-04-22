@@ -30,14 +30,15 @@ module.exports = class Document extends EventEmitter
       @emit 'change', arguments
 
 
-  createView: (parent, options) ->
+  createView: (parent, options={}) ->
     parent ?= window.document.body
-    options ?= readOnly: true
+    options.readOnly ?= true
 
     $parent = $(parent).first()
 
-    options.$wrapper = @findWrapper($parent)
+    options.$wrapper ?= @findWrapper($parent)
     $parent.html('') # empty container
+
 
     view = new View(@snippetTree, $parent[0])
     promise = view.create(options)

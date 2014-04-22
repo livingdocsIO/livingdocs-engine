@@ -35,6 +35,14 @@ describe 'document', ->
         done()
 
 
+    it 'accepts a wrapper as an argument', (done) ->
+      $wrapper = $('<div class="wrapper doc-section"></div>')
+      @doc.createView(undefined, $wrapper: $wrapper)
+      .then ({ iframe, renderer }) ->
+        expect(renderer.$wrapperHtml).to.exist
+        done()
+
+
   describe 'serialize()', ->
     beforeEach ->
       { @snippetTree } = getInstances('snippetTree')
