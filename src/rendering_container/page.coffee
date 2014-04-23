@@ -14,8 +14,6 @@ module.exports = class Page extends RenderingContainer
     super()
 
     @setRenderNode(renderNode)
-    # store reference to snippetTree
-    $(@renderNode).data('snippetTree', @snippetTree)
     @cssLoader = new CssLoader(@window)
     @beforePageReady()
 

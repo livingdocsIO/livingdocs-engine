@@ -38,7 +38,10 @@ describe 'ResrcitImageManager', ->
     it 'adds the correct background-image on a div', ->
       $elem = $('<div></div>')
       @imageManager.set($elem, 'http://www.lolcats.com/images/u/13/39/tastegood.jpg')
-      expect($elem).to.have.css('background-image', "url(#{ResrcitImageManager.resrcitUrl}http://www.lolcats.com/images/u/13/39/tastegood.jpg)")
+      expectedUrlFirefox = "url(\"#{ResrcitImageManager.resrcitUrl}http://www.lolcats.com/images/u/13/39/tastegood.jpg\")"
+      expectedUrlOthers = "url(#{ResrcitImageManager.resrcitUrl}http://www.lolcats.com/images/u/13/39/tastegood.jpg)"
+      test = $elem.css('background-image') == expectedUrlFirefox || $elem.css('background-image') == expectedUrlOthers
+      expect(test).to.be.true
 
 
     it 'adds the "resrc" class on a div', ->
@@ -58,4 +61,7 @@ describe 'ResrcitImageManager', ->
     it 'adds a base64 string to the background-image tag', ->
       $elem = $('<div></div>')
       @imageManager.set($elem, TestImage)
-      expect($elem).to.have.css('background-image', "url(#{TestImage})")
+      expectedUrlFirefox = "url(\"#{TestImage}\")"
+      expectedUrlOthers = "url(#{TestImage})"
+      test = $elem.css('background-image') == expectedUrlFirefox || $elem.css('background-image') == expectedUrlOthers
+      expect(test).to.be.true

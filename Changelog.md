@@ -7,6 +7,7 @@
 - Read the default paragraph snippet (gets repeated on pressing Enter) from the design's configuration [#90](https://github.com/upfrontIO/livingdocs-engine/pull/90)
 - Add a data property to the snippetModel to persist structured JSON data (https://github.com/upfrontIO/livingdocs-engine/commit/6524654aabacf05b04e7bbbecc40f205fa01cc86)
 - Support resrc.it image service URL creation [#94](https://github.com/upfrontIO/livingdocs-engine/pull/94)
+- Support resetting of temporary values [#98](https://github.com/upfrontIO/livingdocs-engine/pull/98)
 
 #### Architecture Changes:
 
@@ -17,6 +18,7 @@
 - Unescaped background-url [#88](https://github.com/upfrontIO/livingdocs-engine/pull/88)
   (The fix only works in the browser. See commit 34b4b078c021350 for details)
 - Position caret according to text-align in editables [#96](https://github.com/upfrontIO/livingdocs-engine/pull/96)
+- Dragging into empty documents not possible [#100](https://github.com/upfrontIO/livingdocs-engine/pull/100)
 
 
 # v0.1.2 (2014-01-30)

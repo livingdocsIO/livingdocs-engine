@@ -152,7 +152,7 @@ describe 'SnippetTree (Content Events)', ->
 
     beforeEach ->
       @changeSnippetContent = =>
-        @imageSnippet.set('image', TestImage, true)
+        @imageSnippet.set('image', TestImage, 'temporaryOverride')
 
 
     it 'fires snippetContentChanged event', ->

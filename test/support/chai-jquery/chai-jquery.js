@@ -112,15 +112,6 @@
     );
   });
 
-  chai.Assertion.addMethod('html', function (html) {
-    this.assert(
-        flag(this, 'object').html() === html
-      , 'expected #{this} to have HTML #{exp}'
-      , 'expected #{this} not to have HTML #{exp}'
-      , html
-    );
-  });
-
   chai.Assertion.addMethod('text', function (text) {
     this.assert(
         flag(this, 'object').text() === text
