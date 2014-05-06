@@ -3,7 +3,7 @@ assert = require('../modules/logging/assert')
 
 module.exports = class RescritImageManager extends DefaultImageManager
 
-  @resrcitUrl: 'http://trial.resrc.it/'
+  @resrcitUrl: 'http://app.resrc.it/'
 
 
   constructor: ->
