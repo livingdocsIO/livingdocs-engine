@@ -153,7 +153,10 @@ module.exports = class EditableController
 
 
   newline: (view, editable, cursor) ->
-    false # disable editableJS default behaviour
+    if config.editable.allowNewline
+      return true # enable editableJS default behaviour
+    else
+     return false # disable editableJS default behaviour
 
 
   hasSingleEditable: (view) ->

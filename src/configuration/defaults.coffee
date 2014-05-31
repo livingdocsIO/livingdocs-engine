@@ -18,6 +18,7 @@ module.exports = config = do ->
 
   # Editable configuration
   editable:
+    allowNewline: true # Allow to insert newlines with Shift+Enter
     changeTimeout: 0 # Delay in milliseconds. 0 For immediate updates. false to disable.
 
 
