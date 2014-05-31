@@ -16,6 +16,11 @@ module.exports = config = do ->
 
   attributePrefix: 'data'
 
+  # Editable configuration
+  editable:
+    changeTimeout: 0 # Delay in milliseconds. 0 For immediate updates. false to disable.
+
+
   # In css and attr you find everything that can end up in the html
   # the engine spits out or works with.
 

@@ -21,6 +21,7 @@ module.exports = class EditableController
       .split(@withContext(@split))
       .selection(@withContext(@selectionChanged))
       .newline(@withContext(@newline))
+      .change(@withContext(@change))
 
 
   # Register DOM nodes with EditableJS.
@@ -51,8 +52,8 @@ module.exports = class EditableController
       func.apply(this, args)
 
 
-  updateModel: (view, editableName) ->
-    value = view.get(editableName)
+  updateModel: (view, editableName, element) ->
+    value = @editable.getContent(element)
     if config.singleLineBreak.test(value) || value == ''
       value = undefined
 
@@ -68,11 +69,14 @@ module.exports = class EditableController
 
 
   blur: (view, editableName) ->
-    view.blurEditable(editableName)
+    @clearChangeTimeout()
 
     element = view.getDirectiveElement(editableName)
+    @updateModel(view, editableName, element)
+
+    view.blurEditable(editableName)
     @page.focus.editableBlurred(element, view)
-    @updateModel(view, editableName)
+
     true # enable editableJS default behaviour
 
 
@@ -115,8 +119,8 @@ module.exports = class EditableController
         # Make sure the model of the mergedView is up to date
         # otherwise bugs like in issue #56 can occur.
         cursor.save()
-        @updateModel(mergedView, editableName)
         cursor.restore()
+        @updateModel(mergedView, editableName, elem)
 
         view.model.remove()
         cursor.setSelection()
@@ -154,3 +158,21 @@ module.exports = class EditableController
 
   hasSingleEditable: (view) ->
     view.directives.length == 1 && view.directives[0].type == 'editable'
+
+
+  change: (view, editableName) ->
+    @clearChangeTimeout()
+    return if config.editable.changeTimeout == false
+
+    @changeTimeout = setTimeout =>
+      elem = view.getDirectiveElement(editableName)
+      @updateModel(view, editableName, elem)
+      @changeTimeout = undefined
+    , config.editable.changeTimeout
+
+
+  clearChangeTimeout: ->
+    if @changeTimeout?
+      clearTimeout(@changeTimeout)
+      @changeTimeout = undefined
+
