@@ -105,25 +105,25 @@ module.exports = class EditableController
 
       if mergedView && mergedView.template == view.template
 
+        # Focus the merged view so the view gets cleaned up by EditableJS
+        mergedView.focus()
+
         # create document fragment
         contents = view.directives.$getElem(editableName).contents()
         frag = @page.document.createDocumentFragment()
         for el in contents
           frag.appendChild(el)
 
-        mergedView.focus()
         elem = mergedView.getDirectiveElement(editableName)
         cursor = @editable.createCursor(elem, if direction == 'before' then 'end' else 'beginning')
         cursor[ if direction == 'before' then 'insertAfter' else 'insertBefore' ](frag)
 
         # Make sure the model of the mergedView is up to date
         # otherwise bugs like in issue #56 can occur.
-        cursor.save()
-        cursor.restore()
         @updateModel(mergedView, editableName, elem)
 
         view.model.remove()
-        cursor.setSelection()
+        cursor.setVisibleSelection()
 
     false # disable editableJS default behaviour
 
@@ -136,13 +136,13 @@ module.exports = class EditableController
       beforeContent = before.querySelector('*').innerHTML
       afterContent = after.querySelector('*').innerHTML
 
-      # set editable of snippets to innerHTML of fragments
-      view.model.set(editableName, beforeContent)
-      copy.set(editableName, afterContent)
-
       # append and focus copy of snippet
+      copy.set(editableName, afterContent)
       view.model.after(copy)
       view.next().focus()
+
+      # set content of the before element (after focus is set to the after element)
+      view.model.set(editableName, beforeContent)
 
     false # disable editableJS default behaviour
 
