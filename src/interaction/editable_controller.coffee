@@ -80,6 +80,9 @@ module.exports = class EditableController
     true # enable editableJS default behaviour
 
 
+  # Insert a new block.
+  # Usually triggered by pressing enter at the end of a block
+  # or by pressing delete at the beginning of a block.
   insert: (view, editableName, direction, cursor) ->
     if @hasSingleEditable(view)
 
@@ -100,6 +103,11 @@ module.exports = class EditableController
     false # disable editableJS default behaviour
 
 
+  # Merge two blocks. Works in two directions.
+  # Either the current block is being merged into the preceeding ('before')
+  # or the following ('after') block.
+  # After the merge the current block is removed and the focus set to the
+  # other block that was merged into.
   merge: (view, editableName, direction, cursor) ->
     if @hasSingleEditable(view)
       mergedView = if direction == 'before' then view.prev() else view.next()
@@ -128,6 +136,8 @@ module.exports = class EditableController
     false # disable editableJS default behaviour
 
 
+  # Split a block in two.
+  # Usually triggered by pressing enter in the middle of a block.
   split: (view, editableName, before, after, cursor) ->
     if @hasSingleEditable(view)
       copy = view.template.createModel()
@@ -147,11 +157,14 @@ module.exports = class EditableController
     false # disable editableJS default behaviour
 
 
+  # Occurs whenever the user selects one or more characters or whenever the
+  # selection is changed.
   selectionChanged: (view, editableName, selection) ->
     element = view.getDirectiveElement(editableName)
     @selection.fire(view, element, selection)
 
 
+  # Insert a newline (Shift + Enter)
   newline: (view, editable, cursor) ->
     if config.editable.allowNewline
       return true # enable editableJS default behaviour
@@ -159,10 +172,9 @@ module.exports = class EditableController
      return false # disable editableJS default behaviour
 
 
-  hasSingleEditable: (view) ->
-    view.directives.length == 1 && view.directives[0].type == 'editable'
-
-
+  # Triggered whenever the user changes the content of a block.
+  # The change event does not automatically fire if the content has
+  # been changed via javascript.
   change: (view, editableName) ->
     @clearChangeTimeout()
     return if config.editable.changeTimeout == false
@@ -178,4 +190,8 @@ module.exports = class EditableController
     if @changeTimeout?
       clearTimeout(@changeTimeout)
       @changeTimeout = undefined
+
+
+  hasSingleEditable: (view) ->
+    view.directives.length == 1 && view.directives[0].type == 'editable'
 
