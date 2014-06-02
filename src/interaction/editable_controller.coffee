@@ -94,7 +94,8 @@ module.exports = class EditableController
         view.model.after(copy)
         view.next()
 
-      newView.focus() if newView
+      newView.focus() if newView && direction == 'after'
+
 
     false # disable editableJS default behaviour
 
