@@ -104,26 +104,25 @@ module.exports = class EditableController
       mergedView = if direction == 'before' then view.prev() else view.next()
 
       if mergedView && mergedView.template == view.template
+        viewElem = view.getDirectiveElement(editableName)
+        mergedViewElem = mergedView.getDirectiveElement(editableName)
 
-        # Focus the merged view so the view gets cleaned up by EditableJS
-        mergedView.focus()
-
-        # create document fragment
-        contents = view.directives.$getElem(editableName).contents()
+        # Gather the content that is going to be merged
+        contentToMerge = @editable.getContent(viewElem)
         frag = @page.document.createDocumentFragment()
+        contents = $('<div>').html(contentToMerge).contents()
         for el in contents
           frag.appendChild(el)
 
-        elem = mergedView.getDirectiveElement(editableName)
-        cursor = @editable.createCursor(elem, if direction == 'before' then 'end' else 'beginning')
+        cursor = @editable.createCursor(mergedViewElem, if direction == 'before' then 'end' else 'beginning')
         cursor[ if direction == 'before' then 'insertAfter' else 'insertBefore' ](frag)
-
-        # Make sure the model of the mergedView is up to date
-        # otherwise bugs like in issue #56 can occur.
-        @updateModel(mergedView, editableName, elem)
 
         view.model.remove()
         cursor.setVisibleSelection()
+
+        # After everything is done and the focus is set update the model to
+        # make sure the model is up to date and changes are notified.
+        @updateModel(mergedView, editableName, mergedViewElem)
 
     false # disable editableJS default behaviour
 
