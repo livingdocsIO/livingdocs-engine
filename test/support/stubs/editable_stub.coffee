@@ -25,6 +25,7 @@ class Editable
   split: chainableListener()
   selection: chainableListener()
   newline: chainableListener()
+  change: chainableListener()
 
 window.Editable = Editable
 
