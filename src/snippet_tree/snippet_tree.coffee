@@ -263,11 +263,17 @@ module.exports = class SnippetTree
     data
 
 
-  toJson: ->
-    @serialize()
+  # Initialize a snippetTree
+  # This method suppresses change events in the snippetTree.
+  #
+  # Consider to change params:
+  # fromData({ content, design, silent }) # silent [boolean]: suppress change events
+  fromData: (data, design) ->
+    if design?
+      assert not @design? || design.equals(@design), 'Error loading data. Specified design is different from current snippetTree design'
+    else
+      design = @design
 
-
-  fromJson: (data, design) ->
     @root.snippetTree = undefined
     if data.content
       for snippetData in data.content
@@ -278,5 +284,19 @@ module.exports = class SnippetTree
     @root.each (snippet) =>
       snippet.snippetTree = this
 
+
+  toData: ->
+    @serialize()
+
+
+  # Aliases
+  # -------
+
+  fromJson: (args...) ->
+    @fromData.apply(this, args)
+
+
+  toJson: (args...) ->
+    @toData.apply(this, args)
 
 
