@@ -58,6 +58,12 @@ module.exports = class DirectiveCollection
       @length
 
 
+  names: (type) ->
+    return [] unless this[type]?.length
+    for directive in this[type]
+      directive.name
+
+
   each: (callback) ->
     for directive in this
       callback(directive)

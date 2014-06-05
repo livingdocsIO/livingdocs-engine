@@ -80,3 +80,12 @@ describe 'DirectiveCollection', ->
         expect(@list.nextOfType('B')).to.be.undefined
 
 
+    describe 'names()', ->
+
+      it 'returns a list of all "editable" names', ->
+        expect(@list.names('editable')).to.have.same.members(['A', 'B'])
+
+
+      it 'returns an empty array for "html"', ->
+        expect(@list.names('html')).to.have.same.members([])
+
