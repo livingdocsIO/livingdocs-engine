@@ -25,6 +25,10 @@ module.exports = class Design
     @addTemplatesNotInGroups()
 
 
+  equals: (design) ->
+    design.namespace == @namespace
+
+
   storeTemplateDefinitions: (templates) ->
     @templateDefinitions = {}
     for template in templates

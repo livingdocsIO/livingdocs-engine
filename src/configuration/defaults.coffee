@@ -5,6 +5,10 @@ module.exports = config = do ->
   # Load css and js resources in pages and interactive pages
   loadResources: true
 
+  # CSS selector for elements (and their children) that should be ignored
+  # when focussing or blurring a snippet
+  ignoreInteraction: '.ld-control'
+
   # Setup paths to load resources dynamically
   designPath: '/designs'
   livingdocsCssFile: '/assets/css/livingdocs.css'
@@ -15,6 +19,12 @@ module.exports = config = do ->
   singleLineBreak: /^<br\s*\/?>\s*$/
 
   attributePrefix: 'data'
+
+  # Editable configuration
+  editable:
+    allowNewline: true # Allow to insert newlines with Shift+Enter
+    changeTimeout: 0 # Delay in milliseconds. 0 For immediate updates. false to disable.
+
 
   # In css and attr you find everything that can end up in the html
   # the engine spits out or works with.

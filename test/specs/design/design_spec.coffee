@@ -32,6 +32,24 @@ describe 'Design', ->
       expect(@design.paragraphSnippet).to.equal('text')
 
 
+    describe 'equals()', ->
+
+      it 'recognizes the same design as equal', ->
+        sameDesign = new Design
+          templates: []
+          config: { namespace: 'test' }
+
+        expect(@design.equals(sameDesign)).to.equal(true)
+
+
+      it 'recognizes a different design', ->
+        otherDesign = new Design
+          templates: []
+          config: { namespace: 'xxx' }
+
+        expect(@design.equals(otherDesign)).to.equal(false)
+
+
   describe 'with a template and paragraph element', ->
 
     beforeEach ->

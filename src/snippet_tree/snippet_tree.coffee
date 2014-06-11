@@ -263,20 +263,64 @@ module.exports = class SnippetTree
     data
 
 
-  toJson: ->
-    @serialize()
+  # Initialize a snippetTree
+  # This method suppresses change events in the snippetTree.
+  #
+  # Consider to change params:
+  # fromData({ content, design, silent }) # silent [boolean]: suppress change events
+  fromData: (data, design, silent=true) ->
+    if design?
+      assert not @design? || design.equals(@design), 'Error loading data. Specified design is different from current snippetTree design'
+    else
+      design = @design
 
+    if silent
+      @root.snippetTree = undefined
 
-  fromJson: (data, design) ->
-    @root.snippetTree = undefined
     if data.content
       for snippetData in data.content
         snippet = SnippetModel.fromJson(snippetData, design)
         @root.append(snippet)
 
-    @root.snippetTree = this
-    @root.each (snippet) =>
-      snippet.snippetTree = this
+    if silent
+      @root.snippetTree = this
+      @root.each (snippet) =>
+        snippet.snippetTree = this
 
+
+  # Append data to this snippetTree
+  # Fires snippetAdded event for every snippet
+  addData: (data, design) ->
+    @fromData(data, design, false)
+
+
+  addDataWithAnimation: (data, delay=200) ->
+    assert @design?, 'Error adding data. SnippetTree has no design'
+
+    timeout = Number(delay)
+    for snippetData in data.content
+      do =>
+        content = snippetData
+        setTimeout =>
+          snippet = SnippetModel.fromJson(content, @design)
+          @root.append(snippet)
+        , timeout
+
+      timeout += Number(delay)
+
+
+  toData: ->
+    @serialize()
+
+
+  # Aliases
+  # -------
+
+  fromJson: (args...) ->
+    @fromData.apply(this, args)
+
+
+  toJson: (args...) ->
+    @toData.apply(this, args)
 
 

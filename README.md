@@ -12,7 +12,7 @@ The engine then sets the global variable `doc`.
 ```html
 <!-- dependencies of livingdocs-engine -->
 <script src="/jquery/jquery.js"></script>
-<script src="/EditableJS/editable.js"></script>
+<script src="/editable/editable.js"></script>
 
 <!-- design -->
 <script src="/designs/bootstrap/design.js"></script>

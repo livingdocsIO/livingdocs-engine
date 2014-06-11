@@ -137,13 +137,12 @@ module.exports = class SnippetView
 
 
   setEditable: (name, value) ->
-    $elem = @directives.$getElem(name)
-    if value
-      $elem.addClass(css.noPlaceholder)
-    else
-      $elem.removeClass(css.noPlaceholder)
+    return if @hasFocus()
 
+    $elem = @directives.$getElem(name)
+    $elem.toggleClass(css.noPlaceholder, Boolean(value))
     $elem.attr(attr.placeholder, @template.defaults[name])
+
     $elem.html(value || '')
 
 

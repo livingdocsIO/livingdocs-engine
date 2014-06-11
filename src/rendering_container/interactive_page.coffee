@@ -30,9 +30,7 @@ module.exports = class InteractivePage extends Page
     @focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
     @focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )
     @beforeInteractivePageReady()
-
     @$document
-      .on('click.livingdocs', $.proxy(@click, this))
       .on('mousedown.livingdocs', $.proxy(@mousedown, this))
       .on('touchstart.livingdocs', $.proxy(@mousedown, this))
       .on('dragstart', $.proxy(@browserDragStart, this))
@@ -56,12 +54,23 @@ module.exports = class InteractivePage extends Page
 
   mousedown: (event) ->
     return if event.which != LEFT_MOUSE_BUTTON && event.type == 'mousedown' # only respond to left mouse button
-    snippetView = dom.findSnippetView(event.target)
-    return unless snippetView
 
-    @startDrag
-      snippetView: snippetView
-      event: event
+    # Ignore interactions on certain elements
+    isControl = $(event.target).closest(config.ignoreInteraction).length
+    return if isControl
+
+    # Identify the clicked snippet
+    snippetView = dom.findSnippetView(event.target)
+
+    # This is called in mousedown since editables get focus on mousedown
+    # and only before the editables clear their placeholder can we safely
+    # identify where the user has clicked.
+    @handleClickedSnippet(event, snippetView)
+
+    if snippetView
+      @startDrag
+        snippetView: snippetView
+        event: event
 
 
   startDrag: ({ snippetModel, snippetView, event, config }) ->
@@ -81,24 +90,11 @@ module.exports = class InteractivePage extends Page
     @dragBase.init(snippetDrag, event, config)
 
 
-  click: (event) ->
-    snippetView = dom.findSnippetView(event.target)
-    nodeContext = dom.findNodeContext(event.target)
-
-    # todo: if a user clicked on a margin of a snippet it should
-    # still get selected. (if a snippet is found by parentSnippet
-    # and that snippet has no children we do not need to search)
-
-    # if snippet hasChildren, make sure we didn't want to select
-    # a child
-
-    # if no snippet was selected check if the user was not clicking
-    # on a margin of a snippet
-
-    # todo: check if the click was meant for a snippet container
+  handleClickedSnippet: (event, snippetView) ->
     if snippetView
       @focus.snippetFocused(snippetView)
 
+      nodeContext = dom.findNodeContext(event.target)
       if nodeContext
         switch nodeContext.contextAttr
           when config.directives.image.renderedAttr
