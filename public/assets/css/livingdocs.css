@@ -7,10 +7,13 @@
 }
 
 .doc-section {
+  /* Allow for some space at the end of the document to drop snippets in */
   padding-bottom: 150px;
 }
 
-/* Clearfix */
+/*
+ * Clearfix for the main container
+ */
 .doc-section:before,
 .doc-section:after {
   content:"";
@@ -18,7 +21,6 @@
 }
 .doc-section:after {
   clear:both;
-  /* height: 150px; Allow for some space at the end of the document to drop snippets in */
 }
 
 
