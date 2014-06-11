@@ -47,8 +47,9 @@ module.exports = class DragBase
     @dragHandler.page = @page
 
 
-  # start a possible drag
-  # the drag is only really started if constraints are not violated (longpressDelay and longpressDistanceLimit or minDistance)
+  # Start a possible drag
+  # The drag is only really started if constraints are not violated
+  # (longpressDelay and longpressDistanceLimit or minDistance).
   init: (dragHandler, event, options) ->
     @reset()
     @initialized = true
