@@ -6,6 +6,24 @@
   min-height: 100px;
 }
 
+.doc-section {
+  /* Allow for some space at the end of the document to drop snippets in */
+  padding-bottom: 150px;
+}
+
+/*
+ * Clearfix for the main container
+ */
+.doc-section:before,
+.doc-section:after {
+  content:"";
+  display:table;
+}
+.doc-section:after {
+  clear:both;
+}
+
+
 /**
  * Highlighting
  */
