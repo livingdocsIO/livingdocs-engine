@@ -141,9 +141,10 @@ module.exports = class SnippetDrag
 
     @makeSpace(elem.firstChild, 'top')
     box = dom.getAbsoluteBoundingClientRect(elem)
+    paddingTop = parseInt($(elem).css('padding-top')) || 0
     @showMarker
       left: box.left
-      top: box.top + startAndEndOffset
+      top: box.top + startAndEndOffset + paddingTop
       width: box.width
 
 
@@ -152,9 +153,10 @@ module.exports = class SnippetDrag
 
     @makeSpace(elem.lastChild, 'bottom')
     box = dom.getAbsoluteBoundingClientRect(elem)
+    paddingBottom = parseInt($(elem).css('padding-bottom')) || 0
     @showMarker
       left: box.left
-      top: box.bottom - startAndEndOffset
+      top: box.bottom - startAndEndOffset - paddingBottom
       width: box.width
 
 
