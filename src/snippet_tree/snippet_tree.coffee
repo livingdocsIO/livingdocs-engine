@@ -268,23 +268,30 @@ module.exports = class SnippetTree
   #
   # Consider to change params:
   # fromData({ content, design, silent }) # silent [boolean]: suppress change events
-  fromData: (data, design) ->
+  fromData: (data, design, silent=true) ->
     if design?
       assert not @design? || design.equals(@design), 'Error loading data. Specified design is different from current snippetTree design'
     else
       design = @design
 
-    @root.snippetTree = undefined
+    if silent
+      @root.snippetTree = undefined
+
     if data.content
       for snippetData in data.content
         snippet = SnippetModel.fromJson(snippetData, design)
         @root.append(snippet)
 
-    @root.snippetTree = this
-    @root.each (snippet) =>
-      snippet.snippetTree = this
+    if silent
+      @root.snippetTree = this
+      @root.each (snippet) =>
+        snippet.snippetTree = this
 
 
+  # Append data to this snippetTree
+  # Fires snippetAdded event for every snippet
+  addData: (data, design) ->
+    @fromData(data, design, false)
   toData: ->
     @serialize()
 
