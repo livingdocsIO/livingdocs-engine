@@ -292,6 +292,23 @@ module.exports = class SnippetTree
   # Fires snippetAdded event for every snippet
   addData: (data, design) ->
     @fromData(data, design, false)
+
+
+  addDataWithAnimation: (data, delay=200) ->
+    assert @design?, 'Error adding data. SnippetTree has no design'
+
+    timeout = Number(delay)
+    for snippetData in data.content
+      do =>
+        content = snippetData
+        setTimeout =>
+          snippet = SnippetModel.fromJson(content, @design)
+          @root.append(snippet)
+        , timeout
+
+      timeout += Number(delay)
+
+
   toData: ->
     @serialize()
 
