@@ -54,6 +54,12 @@ module.exports = class InteractivePage extends Page
 
   mousedown: (event) ->
     return if event.which != LEFT_MOUSE_BUTTON && event.type == 'mousedown' # only respond to left mouse button
+
+    # Ignore interactions on certain elements
+    isControl = $(event.target).closest(config.ignoreInteraction).length
+    return if isControl
+
+    # Identify the clicked snippet
     snippetView = dom.findSnippetView(event.target)
 
     # This is called in mousedown since editables get focus on mousedown

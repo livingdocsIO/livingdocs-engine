@@ -5,6 +5,10 @@ module.exports = config = do ->
   # Load css and js resources in pages and interactive pages
   loadResources: true
 
+  # CSS selector for elements (and their children) that should be ignored
+  # when focussing or blurring a snippet
+  ignoreInteraction: '.ld-control'
+
   # Setup paths to load resources dynamically
   designPath: '/designs'
   livingdocsCssFile: '/assets/css/livingdocs.css'
