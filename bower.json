@@ -9,7 +9,7 @@
     "!dist/**/**"
   ],
   "dependencies": {
-    "EditableJS": "git@github.com:upfrontIO/Editable.JS.git#~0.3.0",
+    "editable": "~0.3.2",
     "jquery": "~2.1.0"
   }
 }

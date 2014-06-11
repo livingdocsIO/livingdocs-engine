@@ -1,13 +1,13 @@
 dom = require('./dom')
 config = require('../configuration/defaults')
 
-# EditableJS Controller
+# editable.js Controller
 # ---------------------
-# Integrate EditableJS into Livingdocs
+# Integrate editable.js into Livingdocs
 module.exports = class EditableController
 
   constructor: (@page) ->
-    # Initialize EditableJS
+    # Initialize editable.js
     @editable = new Editable(window: @page.window);
 
     @editableAttr = config.directives.editable.renderedAttr
@@ -24,7 +24,7 @@ module.exports = class EditableController
       .change(@withContext(@change))
 
 
-  # Register DOM nodes with EditableJS.
+  # Register DOM nodes with editable.js.
   # After that Editable will fire events for that node.
   add: (nodes) ->
     @editable.add(nodes)
@@ -38,7 +38,7 @@ module.exports = class EditableController
     @editable.continue()
 
 
-  # Get view and editableName from the DOM element passed by EditableJS
+  # Get view and editableName from the DOM element passed by editable.js
   #
   # All listeners params get transformed so they get view and editableName
   # instead of element:
@@ -65,7 +65,7 @@ module.exports = class EditableController
 
     element = view.getDirectiveElement(editableName)
     @page.focus.editableFocused(element, view)
-    true # enable editableJS default behaviour
+    true # enable editable.js default behaviour
 
 
   blur: (view, editableName) ->
@@ -77,7 +77,7 @@ module.exports = class EditableController
     view.blurEditable(editableName)
     @page.focus.editableBlurred(element, view)
 
-    true # enable editableJS default behaviour
+    true # enable editable.js default behaviour
 
 
   # Insert a new block.
@@ -100,7 +100,7 @@ module.exports = class EditableController
       newView.focus() if newView && direction == 'after'
 
 
-    false # disable editableJS default behaviour
+    false # disable editable.js default behaviour
 
 
   # Merge two blocks. Works in two directions.
@@ -133,7 +133,7 @@ module.exports = class EditableController
         # make sure the model is up to date and changes are notified.
         @updateModel(mergedView, editableName, mergedViewElem)
 
-    false # disable editableJS default behaviour
+    false # disable editable.js default behaviour
 
 
   # Split a block in two.
@@ -154,7 +154,7 @@ module.exports = class EditableController
       # set content of the before element (after focus is set to the after element)
       view.model.set(editableName, beforeContent)
 
-    false # disable editableJS default behaviour
+    false # disable editable.js default behaviour
 
 
   # Occurs whenever the user selects one or more characters or whenever the
@@ -167,9 +167,9 @@ module.exports = class EditableController
   # Insert a newline (Shift + Enter)
   newline: (view, editable, cursor) ->
     if config.editable.allowNewline
-      return true # enable editableJS default behaviour
+      return true # enable editable.js default behaviour
     else
-     return false # disable editableJS default behaviour
+     return false # disable editable.js default behaviour
 
 
   # Triggered whenever the user changes the content of a block.
