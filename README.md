@@ -4,7 +4,7 @@
 The engine is the central piece of livingdocs and defines the APIs for manipulating, displaying and storing the document.
 
 
-## Useage
+## Usage
 
 Load the necessary scripts into your browser.
 The engine then sets the global variable `doc`.
