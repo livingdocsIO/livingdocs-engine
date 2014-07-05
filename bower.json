@@ -4,6 +4,7 @@
   "homepage": "https://github.com/upfrontIO/livingdocs-engine",
   "description": "Livingdocs Engine",
   "private": true,
+  "license": "LGPL-3.0+",
   "ignore": [
     "**/**",
     "!dist/**/**"
