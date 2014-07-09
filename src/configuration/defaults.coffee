@@ -49,6 +49,7 @@ module.exports = config = do ->
     dragged: 'doc-dragged'
     draggedPlaceholder: 'doc-dragged-placeholder'
     draggedPlaceholderCounter: 'doc-drag-counter'
+    dragBlocker: 'doc-drag-blocker'
     dropMarker: 'doc-drop-marker'
     beforeDrop: 'doc-before-drop'
     noDrop: 'doc-drag-no-drop'
