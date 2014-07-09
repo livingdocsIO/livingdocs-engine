@@ -1,4 +1,5 @@
 config = require('../configuration/defaults')
+css = config.css
 
 # DragBase
 #
@@ -90,7 +91,7 @@ module.exports = class DragBase
 
     # prevent text-selections while dragging
     @addBlocker()
-    @page.$body.addClass(config.css.preventSelection)
+    @page.$body.addClass(css.preventSelection)
     @dragHandler.start(eventPosition)
 
 
@@ -102,7 +103,7 @@ module.exports = class DragBase
   reset: ->
     if @started
       @started = false
-      @page.$body.removeClass(config.css.preventSelection)
+      @page.$body.removeClass(css.preventSelection)
 
 
     if @initialized
@@ -120,25 +121,24 @@ module.exports = class DragBase
 
 
   addBlocker: ->
-    $blocker = $("<div class='dragBlocker'>")
+    $blocker = $("<div class='#{ css.dragBlocker }'>")
       .attr('style', 'position: absolute; top: 0; bottom: 0; left: 0; right: 0;')
     @page.$body.append($blocker)
 
 
   removeBlocker: ->
-    @page.$body.find('.dragBlocker').remove()
-
+    @page.$body.find(".#{ css.dragBlocker }").remove()
 
 
   addLongpressIndicator: ({ pageX, pageY }) ->
     return unless @options.longpress.showIndicator
-    $indicator = $("<div class=\"#{ config.css.longpressIndicator }\"><div></div></div>")
+    $indicator = $("<div class=\"#{ css.longpressIndicator }\"><div></div></div>")
     $indicator.css(left: pageX, top: pageY)
     @page.$body.append($indicator)
 
 
   removeLongpressIndicator: ->
-    @page.$body.find(".#{ config.css.longpressIndicator }").remove()
+    @page.$body.find(".#{ css.longpressIndicator }").remove()
 
 
   # These events are initialized immediately to allow a long-press finish

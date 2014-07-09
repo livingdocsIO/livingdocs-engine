@@ -21,7 +21,7 @@ module.exports = class SnippetDrag
 
     # placeholder below cursor
     @$placeholder = @createPlaceholder().css('pointer-events': 'none')
-    @$dragBlocker = @page.$body.find('.dragBlocker')
+    @$dragBlocker = @page.$body.find(".#{ css.dragBlocker }")
 
     # drop marker
     @$dropMarker = $("<div class='#{ css.dropMarker }'>")
