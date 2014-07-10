@@ -180,6 +180,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask('build', [
     'clean:dist'
+    'browserify:test'
     'browserify:build'
     'karma:build'
     'mochaTest'
