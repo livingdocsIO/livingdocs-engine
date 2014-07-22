@@ -97,6 +97,8 @@ module.exports = class DragBase
 
   drop: (event) ->
     @dragHandler.drop(event) if @started
+    if $.isFunction(@options.onDrop)
+      @options.onDrop(event, @dragHandler)
     @reset()
 
 
