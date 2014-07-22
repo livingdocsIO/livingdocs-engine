@@ -100,6 +100,10 @@ module.exports = class DragBase
     @reset()
 
 
+  cancel: ->
+    @reset()
+
+
   reset: ->
     if @started
       @started = false
