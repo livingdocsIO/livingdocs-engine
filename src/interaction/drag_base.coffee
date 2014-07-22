@@ -95,8 +95,8 @@ module.exports = class DragBase
     @dragHandler.start(eventPosition)
 
 
-  drop: ->
-    @dragHandler.drop() if @started
+  drop: (event) ->
+    @dragHandler.drop(event) if @started
     @reset()
 
 
@@ -104,7 +104,6 @@ module.exports = class DragBase
     if @started
       @started = false
       @page.$body.removeClass(css.preventSelection)
-
 
     if @initialized
       @initialized = false
@@ -151,8 +150,8 @@ module.exports = class DragBase
       else
         'mouseup.livingdocs-drag'
 
-    @page.$document.on eventNames, =>
-      @drop()
+    @page.$document.on eventNames, (event) =>
+      @drop(event)
 
 
   # These events are possibly initialized with a delay in snippetDrag#onStart
