@@ -226,7 +226,10 @@ module.exports = class SnippetDrag
     elem = undefined
     @unblockElementFromPoint =>
       { clientX, clientY } = eventPosition
-      elem = @page.document.elementFromPoint(clientX, clientY)
+
+      if clientX? && clientY?
+        elem = @page.document.elementFromPoint(clientX, clientY)
+
       if elem?.nodeName == 'IFRAME'
         { eventPosition, elem } = @findElemInIframe(elem, eventPosition)
       else
