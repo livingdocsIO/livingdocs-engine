@@ -1,3 +1,8 @@
+# v0.2.1
+
+- Add file drag support to dragBase [#106](https://github.com/upfrontIO/livingdocs-engine/pull/106)
+
+
 # v0.2.0
 
 #### Features:
