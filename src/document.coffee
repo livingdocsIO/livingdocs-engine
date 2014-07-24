@@ -6,6 +6,7 @@ Renderer = require('./rendering/renderer')
 View = require('./rendering/view')
 EventEmitter = require('wolfy87-eventemitter')
 config = require('./configuration/defaults')
+dom = require('./interaction/dom')
 
 module.exports = class Document extends EventEmitter
 
@@ -15,6 +16,16 @@ module.exports = class Document extends EventEmitter
     @setSnippetTree(snippetTree)
     @views = {}
     @interactiveView = undefined
+
+
+  # Get a drop target for an event
+  getDropTarget: ({ event }) ->
+    document = event.target.ownerDocument
+    { clientX, clientY } = event
+    elem = document.elementFromPoint(clientX, clientY)
+    if elem?
+      coords = { left: event.pageX, top: event.pageY }
+      target = dom.dropTarget(elem, coords)
 
 
   setSnippetTree: (snippetTree) ->
@@ -98,5 +109,7 @@ module.exports = class Document extends EventEmitter
   printModel: () ->
     @snippetTree.print()
 
+
+  Document.dom = dom
 
 

@@ -95,8 +95,14 @@ module.exports = class DragBase
     @dragHandler.start(eventPosition)
 
 
-  drop: ->
-    @dragHandler.drop() if @started
+  drop: (event) ->
+    @dragHandler.drop(event) if @started
+    if $.isFunction(@options.onDrop)
+      @options.onDrop(event, @dragHandler)
+    @reset()
+
+
+  cancel: ->
     @reset()
 
 
@@ -104,7 +110,6 @@ module.exports = class DragBase
     if @started
       @started = false
       @page.$body.removeClass(css.preventSelection)
-
 
     if @initialized
       @initialized = false
@@ -146,11 +151,13 @@ module.exports = class DragBase
     eventNames =
       if event.type == 'touchstart'
         'touchend.livingdocs-drag touchcancel.livingdocs-drag touchleave.livingdocs-drag'
+      else if event.type == 'dragenter' || event.type == 'dragbetterenter'
+        'drop.livingdocs-drag dragend.livingdocs-drag'
       else
         'mouseup.livingdocs-drag'
 
-    @page.$document.on eventNames, =>
-      @drop()
+    @page.$document.on eventNames, (event) =>
+      @drop(event)
 
 
   # These events are possibly initialized with a delay in snippetDrag#onStart
@@ -158,6 +165,13 @@ module.exports = class DragBase
     if event.type == 'touchstart'
       @page.$document.on 'touchmove.livingdocs-drag', (event) =>
         event.preventDefault()
+        if @started
+          @dragHandler.move(@getEventPosition(event))
+        else
+          @move(event)
+
+    else if event.type == 'dragenter' || event.type == 'dragbetterenter'
+      @page.$document.on 'dragover.livingdocs-drag', (event) =>
         if @started
           @dragHandler.move(@getEventPosition(event))
         else
@@ -174,6 +188,10 @@ module.exports = class DragBase
   getEventPosition: (event) ->
     if event.type == 'touchstart' || event.type == 'touchmove'
       event = event.originalEvent.changedTouches[0]
+
+    # So far I do not understand why the jQuery event does not contain clientX etc.
+    else if event.type == 'dragover'
+      event = event.originalEvent
 
     clientX: event.clientX
     clientY: event.clientY

@@ -90,6 +90,10 @@ module.exports = class InteractivePage extends Page
     @dragBase.init(snippetDrag, event, config)
 
 
+  cancelDrag: ->
+    @dragBase.cancel()
+
+
   handleClickedSnippet: (event, snippetView) ->
     if snippetView
       @focus.snippetFocused(snippetView)
