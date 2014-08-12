@@ -70,7 +70,6 @@ module.exports = (grunt) ->
         extensions: ['.coffee']
         transform: ['coffeeify']
         debug: true
-        alias: ['./src/kickstart/browser_xmldom:xmldom']
       tmp:
         files:
           '.tmp/livingdocs-engine.js' : [
@@ -102,7 +101,6 @@ module.exports = (grunt) ->
           'test/specs/configuration/*.coffee'
           'test/specs/design/*.coffee'
           'test/specs/interaction/dom_spec.coffee'
-          'test/specs/kickstart/*.coffee'
           'test/specs/modules/*.coffee'
           'test/specs/rendering/*.coffee'
           'test/specs/serialization/*.coffee'
