@@ -65,6 +65,7 @@ module.exports = do ->
   templates: [
       id:   'hero'
       title: 'Hero'
+      weight: 10
       styles: [
         name: 'Extra Space'
         type: 'option'
@@ -79,6 +80,7 @@ module.exports = do ->
         """
     ,
       id: 'title'
+      weight: 9
       title: 'Title'
       html: """<h1 #{ editableAttr }="title"></h1>"""
     ,

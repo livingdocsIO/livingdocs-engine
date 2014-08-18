@@ -48,7 +48,7 @@ module.exports = class Design
       title: templateDefinition.title
       styles: templateStyles
       html: templateDefinition.html
-      weight: templateDefinition.sortOrder || 0
+      weight: templateDefinition.weight || 0
 
     @templates.push(template)
     template
