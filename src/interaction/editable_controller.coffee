@@ -52,11 +52,16 @@ module.exports = class EditableController
       func.apply(this, args)
 
 
-  updateModel: (view, editableName, element) ->
+  extractContent: (element) ->
     value = @editable.getContent(element)
     if config.singleLineBreak.test(value) || value == ''
-      value = undefined
+      undefined
+    else
+      value
 
+
+  updateModel: (view, editableName, element) ->
+    value = @extractContent(element)
     view.model.set(editableName, value)
 
 
@@ -140,19 +145,15 @@ module.exports = class EditableController
   # Usually triggered by pressing enter in the middle of a block.
   split: (view, editableName, before, after, cursor) ->
     if @hasSingleEditable(view)
-      copy = view.template.createModel()
-
-      # get content out of 'before' and 'after'
-      beforeContent = before.querySelector('*').innerHTML
-      afterContent = after.querySelector('*').innerHTML
 
       # append and focus copy of snippet
-      copy.set(editableName, afterContent)
+      copy = view.template.createModel()
+      copy.set(editableName, @extractContent(after))
       view.model.after(copy)
       view.next().focus()
 
       # set content of the before element (after focus is set to the after element)
-      view.model.set(editableName, beforeContent)
+      view.model.set(editableName, @extractContent(before))
 
     false # disable editable.js default behaviour
 
