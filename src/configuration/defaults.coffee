@@ -67,11 +67,6 @@ module.exports = config = do ->
     placeholder: 'data-doc-placeholder'
 
 
-  # Kickstart config
-  kickstart:
-    attr:
-      styles: 'doc-styles'
-
   # Directive definitions
   #
   # attr: attribute used in templates to define the directive
