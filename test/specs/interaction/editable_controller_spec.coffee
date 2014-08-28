@@ -1,11 +1,23 @@
-require('../../support/stubs/editable_stub')
 EditableController = require('../../../src/interaction/editable_controller')
 
 describe 'editableController', ->
 
+  # Helpers
+  # -------
+
+  triggerEditableEvent = (eventName, args...) ->
+    func = @withContext(this[eventName])
+    func.apply(this, args)
+
+
+  # Spec
+  # ----
+
   beforeEach ->
     { @renderer, @snippetTree } = getInstances('page', 'renderer')
+
     @editableController = new EditableController(@renderer.renderingContainer)
+    @editableController.triggerEditableEvent = triggerEditableEvent
     @editable = @editableController.editable
 
 
@@ -23,7 +35,7 @@ describe 'editableController', ->
         foundSnippet = snippet
         expect.element
 
-      @editable.selection.fire(@elem, undefined)
+      @editableController.triggerEditableEvent('selectionChanged', @elem, undefined)
       expect(foundSnippet.model).to.equal(@title.model)
 
 
