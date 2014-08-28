@@ -123,13 +123,11 @@ module.exports = class EditableController
 
         # Gather the content that is going to be merged
         contentToMerge = @editable.getContent(viewElem)
-        frag = @page.document.createDocumentFragment()
-        contents = $('<div>').html(contentToMerge).contents()
-        for el in contents
-          frag.appendChild(el)
 
-        cursor = @editable.createCursor(mergedViewElem, if direction == 'before' then 'end' else 'beginning')
-        cursor[ if direction == 'before' then 'insertAfter' else 'insertBefore' ](frag)
+        cursor = if direction == 'before'
+          @editable.appendTo(mergedViewElem, contentToMerge)
+        else
+          @editable.prependTo(mergedViewElem, contentToMerge)
 
         view.model.remove()
         cursor.setVisibleSelection()
