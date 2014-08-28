@@ -150,7 +150,7 @@ module.exports = class EditableController
       copy = view.template.createModel()
       copy.set(editableName, @extractContent(after))
       view.model.after(copy)
-      view.next().focus()
+      view.next()?.focus()
 
       # set content of the before element (after focus is set to the after element)
       view.model.set(editableName, @extractContent(before))

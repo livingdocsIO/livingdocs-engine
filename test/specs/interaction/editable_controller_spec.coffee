@@ -61,3 +61,25 @@ describe 'editableController', ->
       @snippetTree.design.paragraphSnippet = 'title'
       @editableController.insert(@title.createView())
       expect(@renderer.snippetTree.toJson().content[1].identifier).to.equal('test.title')
+
+
+  describe 'split event', ->
+
+    beforeEach ->
+      @title = test.createSnippet('title', 'A')
+      @snippetTree.append(@title)
+
+      @before = document.createDocumentFragment()
+      @before.appendChild( $('<span>hey</span>')[0] )
+      @after = document.createDocumentFragment()
+      @after.appendChild( $('<span>there</span>')[0] )
+
+
+    it 'inserts a second element', ->
+      @editableController.split(@title.createView(), 'title', @before, @after)
+      content = @snippetTree.toJson().content
+      expect(content.length).to.equal(2)
+      expect(content[0].content.title).to.equal('<span>hey</span>')
+      expect(content[1].content.title).to.equal('<span>there</span>')
+
+
