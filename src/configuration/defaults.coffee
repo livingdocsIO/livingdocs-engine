@@ -23,7 +23,9 @@ module.exports = config = do ->
   # Editable configuration
   editable:
     allowNewline: true # Allow to insert newlines with Shift+Enter
-    changeTimeout: 0 # Delay in milliseconds. 0 For immediate updates. false to disable.
+    changeDelay: 0 # Delay for updating the snippet models in milliseconds after user changes. 0 For immediate updates. false to disable.
+    browserSpellcheck: false # Set the spellcheck attribute on contenteditables to 'true' or 'false'
+    mouseMoveSelectionChanges: false # Whether to fire cursor and selction changes on mousemove
 
 
   # In css and attr you find everything that can end up in the html

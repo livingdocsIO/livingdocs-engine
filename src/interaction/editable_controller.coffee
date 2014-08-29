@@ -7,8 +7,12 @@ config = require('../configuration/defaults')
 module.exports = class EditableController
 
   constructor: (@page) ->
+
     # Initialize editable.js
-    @editable = new Editable(window: @page.window);
+    @editable = new Editable
+      window: @page.window
+      browserSpellcheck: config.editable.browserSpellcheck
+      mouseMoveSelectionChanges: config.editable.mouseMoveSelectionChanges
 
     @editableAttr = config.directives.editable.renderedAttr
     @selection = $.Callbacks()
@@ -176,13 +180,13 @@ module.exports = class EditableController
   # been changed via javascript.
   change: (view, editableName) ->
     @clearChangeTimeout()
-    return if config.editable.changeTimeout == false
+    return if config.editable.changeDelay == false
 
     @changeTimeout = setTimeout =>
       elem = view.getDirectiveElement(editableName)
       @updateModel(view, editableName, elem)
       @changeTimeout = undefined
-    , config.editable.changeTimeout
+    , config.editable.changeDelay
 
 
   clearChangeTimeout: ->
