@@ -10,7 +10,7 @@
     "!dist/**/**"
   ],
   "dependencies": {
-    "editable": "~0.3.2",
+    "editable": "~0.4.0",
     "jquery": "~2.1.0"
   }
 }
