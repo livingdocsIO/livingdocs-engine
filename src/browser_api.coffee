@@ -1,6 +1,6 @@
 assert = require('./modules/logging/assert')
 
-config = require('./configuration/defaults')
+config = require('./configuration/config')
 Document = require('./document')
 SnippetTree = require('./snippet_tree/snippet_tree')
 Design = require('./design/design')

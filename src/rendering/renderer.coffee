@@ -1,7 +1,7 @@
 assert = require('../modules/logging/assert')
 log = require('../modules/logging/log')
 Semaphore = require('../modules/semaphore')
-config = require('../configuration/defaults')
+config = require('../configuration/config')
 
 module.exports = class Renderer
 

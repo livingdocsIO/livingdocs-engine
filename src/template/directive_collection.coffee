@@ -1,5 +1,5 @@
 assert = require('../modules/logging/assert')
-config = require('../configuration/defaults')
+config = require('../configuration/config')
 Directive = require('./directive')
 
 # A list of all directives of a template

@@ -1,4 +1,4 @@
-config = require('../configuration/defaults')
+config = require('../configuration/config')
 Page = require('./page')
 dom = require('../interaction/dom')
 Focus = require('../interaction/focus')

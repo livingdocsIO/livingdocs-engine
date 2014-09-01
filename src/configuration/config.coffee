@@ -1,3 +1,5 @@
+augmentConfig = require('./augment_config')
+
 # Configuration
 # -------------
 module.exports = config = do ->
@@ -112,26 +114,4 @@ module.exports = config = do ->
         $elem.slideUp(250)
 
 
-# Enrich the configuration
-# ------------------------
-#
-# Enrich the configuration with shorthands and computed values.
-enrichConfig = ->
-
-  # Shorthands for stuff that is used all over the place to make
-  # code and specs more readable.
-  @docDirective = {}
-  @templateAttrLookup = {}
-
-  for name, value of @directives
-
-    # Create the renderedAttrs for the directives
-    # (prepend directive attributes with the configured prefix)
-    prefix = "#{ @attributePrefix }-" if @attributePrefix
-    value.renderedAttr = "#{ prefix || '' }#{ value.attr }"
-
-    @docDirective[name] = value.renderedAttr
-    @templateAttrLookup[value.attr] = name
-
-
-enrichConfig.call(config)
+augmentConfig(config)

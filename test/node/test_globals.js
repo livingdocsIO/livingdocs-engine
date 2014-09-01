@@ -23,6 +23,6 @@ chai.use(function (_chai, utils) {
 test = require('../support/test_helpers');
 _ = require('underscore')
 
-config = require('../../src/configuration/defaults')
+config = require('../../src/configuration/config')
 getInstances = require('../support/factories/instance_injector').get
 

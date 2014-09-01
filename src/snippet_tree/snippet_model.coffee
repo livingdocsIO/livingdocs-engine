@@ -1,11 +1,10 @@
 deepEqual = require('deep-equal')
-config = require('../configuration/defaults')
+config = require('../configuration/config')
 SnippetContainer = require('./snippet_container')
 guid = require('../modules/guid')
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
 serialization = require('../modules/serialization')
-config = require('../configuration/defaults')
 
 # SnippetModel
 # ------------

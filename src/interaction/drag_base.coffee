@@ -1,4 +1,4 @@
-config = require('../configuration/defaults')
+config = require('../configuration/config')
 css = config.css
 
 # DragBase

@@ -1,4 +1,4 @@
-config = require('../../src/configuration/defaults')
+config = require('../../src/configuration/config')
 log = require('../../src/modules/logging/log')
 assert = require('../../src/modules/logging/assert')
 testHelpers = require('./test_helpers')

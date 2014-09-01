@@ -1,8 +1,7 @@
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
 words = require('../modules/words')
-
-config = require('../configuration/defaults')
+config = require('../configuration/config')
 
 DirectiveIterator = require('./directive_iterator')
 DirectiveCollection = require('./directive_collection')

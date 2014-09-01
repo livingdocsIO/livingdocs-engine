@@ -1,4 +1,4 @@
-config = require('../configuration/defaults')
+config = require('../configuration/config')
 css = config.css
 attr = config.attr
 DirectiveIterator = require('../template/directive_iterator')

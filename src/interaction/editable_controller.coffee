@@ -1,5 +1,5 @@
 dom = require('./dom')
-config = require('../configuration/defaults')
+config = require('../configuration/config')
 
 # editable.js Controller
 # ---------------------

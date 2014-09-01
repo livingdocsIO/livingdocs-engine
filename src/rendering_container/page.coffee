@@ -1,6 +1,6 @@
 RenderingContainer = require('./rendering_container')
 CssLoader = require('./css_loader')
-config = require('../configuration/defaults')
+config = require('../configuration/config')
 
 # A Page is a subclass of RenderingContainer which is intended to be shown to
 # the user. It has a Loader which allows you to inject CSS and JS files into the
