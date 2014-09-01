@@ -1,4 +1,4 @@
-config = require('../../src/configuration/defaults')
+config = require('../../src/configuration/config')
 
 # Define attribute names as specified in the config
 containerAttr = config.directives.container.attr

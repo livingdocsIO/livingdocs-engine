@@ -1,4 +1,4 @@
-config = require('../../src/configuration/defaults')
+config = require('../../src/configuration/config')
 $ = require('../../components/jquery/jquery')
 Design = require('../../src/design/design')
 designJson = require('./test_design_json')

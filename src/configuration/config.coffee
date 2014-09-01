@@ -1,3 +1,5 @@
+augmentConfig = require('./augment_config')
+
 # Configuration
 # -------------
 module.exports = config = do ->
@@ -23,7 +25,9 @@ module.exports = config = do ->
   # Editable configuration
   editable:
     allowNewline: true # Allow to insert newlines with Shift+Enter
-    changeTimeout: 0 # Delay in milliseconds. 0 For immediate updates. false to disable.
+    changeDelay: 0 # Delay for updating the snippet models in milliseconds after user changes. 0 For immediate updates. false to disable.
+    browserSpellcheck: false # Set the spellcheck attribute on contenteditables to 'true' or 'false'
+    mouseMoveSelectionChanges: false # Whether to fire cursor and selction changes on mousemove
 
 
   # In css and attr you find everything that can end up in the html
@@ -110,26 +114,4 @@ module.exports = config = do ->
         $elem.slideUp(250)
 
 
-# Enrich the configuration
-# ------------------------
-#
-# Enrich the configuration with shorthands and computed values.
-enrichConfig = ->
-
-  # Shorthands for stuff that is used all over the place to make
-  # code and specs more readable.
-  @docDirective = {}
-  @templateAttrLookup = {}
-
-  for name, value of @directives
-
-    # Create the renderedAttrs for the directives
-    # (prepend directive attributes with the configured prefix)
-    prefix = "#{ @attributePrefix }-" if @attributePrefix
-    value.renderedAttr = "#{ prefix || '' }#{ value.attr }"
-
-    @docDirective[name] = value.renderedAttr
-    @templateAttrLookup[value.attr] = name
-
-
-enrichConfig.call(config)
+augmentConfig(config)

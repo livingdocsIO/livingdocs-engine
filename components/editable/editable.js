@@ -3452,12 +3452,25 @@ var string = (function() {
  * first in editable.prefix in order for it to be the only externally visible
  * variable.
  *
+ * @param {Object} configuration for this editable instance.
+ *   window: The window where to attach the editable events.
+ *   defaultBehavior: {Boolean} Load default-behavior.js.
+ *   mouseMoveSelectionChanges: {Boolean} Whether to get cursor and selection events on mousemove.
+ *   browserSpellcheck: {Boolean} Set the spellcheck attribute on editable elements
+ *
  * @class Editable
  */
-Editable = function(userConfig) {
-  this.config = $.extend(true, {}, config, userConfig);
-  this.win = this.config.window || window;
-  this.editableSelector = '.' + this.config.editableClass;
+Editable = function(instanceConfig) {
+  var defaultInstanceConfig = {
+    window: window,
+    defaultBehavior: true,
+    mouseMoveSelectionChanges: false,
+    browserSpellcheck: true
+  };
+
+  this.config = $.extend(defaultInstanceConfig, instanceConfig);
+  this.win = this.config.window;
+  this.editableSelector = '.' + config.editableClass;
 
   if (!rangy.initialized) {
     rangy.init();
@@ -3469,7 +3482,24 @@ Editable = function(userConfig) {
   }
 };
 
-window.Editable = Editable;
+
+/**
+ * Set configuration options that affect all editable
+ * instances.
+ *
+ * @param {Object} global configuration options (defaults are defined in config.js)
+ *   log: {Boolean}
+ *   logErrors: {Boolean}
+ *   editableClass: {String} e.g. 'js-editable'
+ *   editableDisabledClass: {String} e.g. 'js-editable-disabled'
+ *   pastingAttribute: {String} default: e.g. 'data-editable-is-pasting'
+ *   boldTag: e.g. '<strong>'
+ *   italicTag: e.g. '<em>'
+ */
+Editable.globalConfig = function(globalConfig) {
+  $.extend(config, globalConfig);
+};
+
 
 /**
  * Adds the Editable.JS API to the given target elements.
@@ -3480,14 +3510,10 @@ window.Editable = Editable;
  * @param {HTMLElement|Array(HTMLElement)|String} target A HTMLElement, an
  *    array of HTMLElement or a query selector representing the target where
  *    the API should be added on.
- * @param {Object} [elementConfiguration={}] Configuration options override.
  * @chainable
  */
-Editable.prototype.add = function(target, elementConfiguration) {
-  var elemConfig = $.extend(true, {}, config, elementConfiguration);
-  // todo: store element configuration
+Editable.prototype.add = function(target) {
   this.enable($(target));
-
   // todo: check css whitespace settings
   return this;
 };
@@ -3525,6 +3551,7 @@ Editable.prototype.disable = function($elem) {
   $elem = $elem || $('.' + config.editableClass, body);
   $elem
     .removeAttr('contenteditable')
+    .removeAttr('spellcheck')
     .removeClass(config.editableClass)
     .addClass(config.editableDisabledClass);
 
@@ -3546,6 +3573,7 @@ Editable.prototype.enable = function($elem, normalize) {
   $elem = $elem || $('.' + config.editableDisabledClass, body);
   $elem
     .attr('contenteditable', true)
+    .attr('spellcheck', this.config.browserSpellcheck)
     .removeClass(config.editableDisabledClass)
     .addClass(config.editableClass);
 
@@ -3638,8 +3666,84 @@ Editable.prototype.createCursorAfter = function(element) {
   return this.createCursor(element, 'after');
 };
 
+/**
+ * Extract the content from an editable host or document fragment.
+ * This method will remove all internal elements and ui-elements.
+ *
+ * @param {DOM node or Document Fragment} The innerHTML of this element or fragment will be extracted.
+ * @returns {String} The cleaned innerHTML.
+ */
 Editable.prototype.getContent = function(element) {
   return content.extractContent(element);
+};
+
+
+/**
+ * @param {String | DocumentFragment} content to append.
+ * @returns {Cursor} A new Cursor object just before the inserted content.
+ */
+Editable.prototype.appendTo = function(element, contentToAppend) {
+  if (typeof contentToAppend === 'string') {
+    contentToAppend = content.createFragmentFromString(contentToAppend);
+  }
+
+  var cursor = this.createCursor(element, 'end');
+  cursor.insertAfter(contentToAppend);
+  return cursor;
+};
+
+
+/**
+ * @param {String | DocumentFragment} content to prepend
+ * @returns {Cursor} A new Cursor object just after the inserted content.
+ */
+Editable.prototype.prependTo = function(element, contentToPrepend) {
+  if (typeof contentToPrepend === 'string') {
+    contentToPrepend = content.createFragmentFromString(contentToPrepend);
+  }
+
+  var cursor = this.createCursor(element, 'beginning');
+  cursor.insertBefore(contentToPrepend);
+  return cursor;
+};
+
+
+/**
+ * Get the current selection.
+ * Only returns something if the selection is within an editable element.
+ * If you pass an editable host as param it only returns something if the selection is inside this
+ * very editable element.
+ *
+ * @param {DOMNode} Optional. An editable host where the selection needs to be contained.
+ * @returns A Cursor or Selection object or undefined.
+ */
+Editable.prototype.getSelection = function(editableHost) {
+  var selection = this.dispatcher.selectionWatcher.getFreshSelection();
+  if (editableHost && selection) {
+    var range = selection.range;
+    // Check if the selection is inside the editableHost
+    // The try...catch is required if the editableHost was removed from the DOM.
+    try {
+      if (range.compareNode(editableHost) !== range.NODE_BEFORE_AND_AFTER) {
+        selection = undefined;
+      }
+    } catch (e) {
+      selection = undefined;
+    }
+  }
+  return selection;
+};
+
+
+/**
+ * Enable spellchecking
+ *
+ * @chainable
+ */
+Editable.prototype.setupSpellcheck = function(spellcheckConfig) {
+  this.spellcheck = new Spellcheck(this, spellcheckConfig);
+
+  return this;
 };
 
 
@@ -3686,201 +3790,41 @@ Editable.prototype.unload = function() {
 };
 
 /**
- * Subscribe to the {{#crossLink "Editable/focus:event"}}{{/crossLink}}
- * event.
+ * Generate a callback function to subscribe to an event.
  *
- * @method focus
- * @param {Function} handler The callback to execute in response to the
- *   event.
- * @chainable
+ * @method createEventSubscriber
+ * @param {String} Event name
  */
-Editable.prototype.focus = function(handler) {
-  return this.on('focus', handler);
+var createEventSubscriber = function(name) {
+  Editable.prototype[name] = function(handler) {
+    return this.on(name, handler);
+  };
 };
 
 /**
- * Subscribe to the {{#crossLink "Editable/blur:event"}}{{/crossLink}}
- * event.
- *
- * @method blur
- * @param {Function} handler The callback to execute in response to the
- *   event.
- * @chainable
+ * Set up callback functions for several events.
  */
-Editable.prototype.blur = function(handler) {
-  return this.on('blur', handler);
-};
+var events = ['focus', 'blur', 'flow', 'selection', 'cursor', 'newline', 'insert',
+              'split', 'merge', 'empty', 'change', 'switch', 'move', 'clipboard'];
 
-/**
- * Subscribe to the {{#crossLink "Editable/flow:event"}}{{/crossLink}}
- * event.
- *
- * @method flow
- * @param {Function} handler The callback to execute in response to the
- *   event.
- * @chainable
- */
-Editable.prototype.flow = function(handler) {
-  return this.on('flow', handler);
-};
-
-/**
- * Subscribe to the {{#crossLink "Editable/selection:event"}}{{/crossLink}}
- * event.
- *
- * @method selection
- * @param {Function} handler The callback to execute in response to the
- *   event.
- * @chainable
- */
-Editable.prototype.selection = function(handler) {
-  return this.on('selection', handler);
-};
-
-/**
- * Subscribe to the {{#crossLink "Editable/cursor:event"}}{{/crossLink}}
- * event.
- *
- * @method cursor
- * @param {Function} handler The callback to execute in response to the
- *   event.
- * @chainable
- */
-Editable.prototype.cursor = function(handler) {
-  return this.on('cursor', handler);
-};
-
-/**
- * Subscribe to the {{#crossLink "Editable/newline:event"}}{{/crossLink}}
- * event.
- *
- * @method newline
- * @param {Function} handler The callback to execute in response to the
- *   event.
- * @chainable
- */
-Editable.prototype.newline = function(handler) {
-  return this.on('newline', handler);
-};
-
-/**
- * Subscribe to the {{#crossLink "Editable/insert:event"}}{{/crossLink}}
- * event.
- *
- * @method insert
- * @param {Function} handler The callback to execute in response to the
- *   event.
- * @chainable
- */
-Editable.prototype.insert = function(handler) {
-  return this.on('insert', handler);
-};
-
-/**
- * Subscribe to the {{#crossLink "Editable/split:event"}}{{/crossLink}}
- * event.
- *
- * @method split
- * @param {Function} handler The callback to execute in response to the
- *   event.
- * @chainable
- */
-Editable.prototype.split = function(handler) {
-  return this.on('split', handler);
-};
-
-/**
- * Subscribe to the {{#crossLink "Editable/merge:event"}}{{/crossLink}}
- * event.
- *
- * @method merge
- * @param {Function} handler The callback to execute in response to the
- *   event.
- * @chainable
- */
-Editable.prototype.merge = function(handler) {
-  return this.on('merge', handler);
-};
-
-/**
- * Subscribe to the {{#crossLink "Editable/empty:event"}}{{/crossLink}}
- * event.
- *
- * @method empty
- * @param {Function} handler The callback to execute in response to the
- *   event.
- * @chainable
- */
-Editable.prototype.empty = function(handler) {
-  return this.on('empty', handler);
-};
-
-/**
- * Subscribe to the {{#crossLink "Editable/change:event"}}{{/crossLink}}
- * event.
- *
- * @method change
- * @param {Function} handler The callback to execute in response to the
- *   event.
- * @chainable
- */
-Editable.prototype.change = function(handler) {
-  return this.on('change', handler);
-};
-
-/**
- * Subscribe to the {{#crossLink "Editable/switch:event"}}{{/crossLink}}
- * event.
- *
- * @method switch
- * @param {Function} handler The callback to execute in response to the
- *   event.
- * @chainable
- */
-Editable.prototype['switch'] = function(handler) {
-  return this.on('switch', handler);
-};
-
-/**
- * Subscribe to the {{#crossLink "Editable/move:event"}}{{/crossLink}}
- * event.
- *
- * @method move
- * @param {Function} handler The callback to execute in response to the
- *   event.
- * @chainable
- */
-Editable.prototype.move = function(handler) {
-  return this.on('move', handler);
-};
-
-/**
- * Subscribe to the {{#crossLink "Editable/clipboard:event"}}{{/crossLink}}
- * event.
- *
- * @method clipboard
- * @param {Function} handler The callback to execute in response to the
- *   event.
- * @chainable
- */
-Editable.prototype.clipboard = function(handler) {
-  return this.on('clipboard', handler);
-};
-
+for (var i = 0; i < events.length; ++i) {
+  var eventName = events[i];
+  createEventSubscriber(eventName);
+}
 
 var block = (function() {
-  return {
-    next: function(element) {
-      var next = element.nextElementSibling;
-      if (next && next.getAttribute('contenteditable')) return next;
-      return null;
-    },
 
-    previous: function(element) {
-      var previous = element.previousElementSibling;
-      if (previous && previous.getAttribute('contenteditable')) return previous;
+  var getSibling = function(type) {
+    return function(element) {
+      var sibling = element[type];
+      if (sibling && sibling.getAttribute('contenteditable')) return sibling;
       return null;
-    }
+    };
+  };
+
+  return {
+    next: getSibling('nextElementSibling'),
+    previous: getSibling('previousElementSibling'),
   };
 })();
 
@@ -3897,10 +3841,8 @@ var config = {
   editableClass: 'js-editable',
   editableDisabledClass: 'js-editable-disabled',
   pastingAttribute: 'data-editable-is-pasting',
-  mouseMoveSelectionChanges: false,
   boldTag: '<strong>',
-  italicTag: '<em>',
-  defaultBehavior: true
+  italicTag: '<em>'
 };
 
 
@@ -3935,7 +3877,7 @@ var content = (function() {
         // skip empty tags, so they'll get removed
         if (node.nodeName !== 'BR' && !node.textContent) continue;
 
-        if (node.nodeType === 1 && node.nodeName !== 'BR') {
+        if (node.nodeType === nodeType.elementNode && node.nodeName !== 'BR') {
           sibling = node;
           while ((sibling = sibling.nextSibling) !== null) {
             if (!parser.isSameNode(sibling, node))
@@ -3969,43 +3911,100 @@ var content = (function() {
     cleanInternals: function(element) {
       // Uses extract content for simplicity. A custom method
       // that does not clone the element could be faster if needed.
-      element.innerHTML = this.extractContent(element);
+      element.innerHTML = this.extractContent(element, true);
     },
 
     /**
      * Extracts the content from a host element.
      * Does not touch or change the host. Just returns
      * the content and removes elements marked for removal by editable.
+     *
+     * @param {DOM node or document framgent} Element where to clean out the innerHTML. If you pass a document fragment it will be empty after this call.
+     * @param {Boolean} Flag whether to keep ui elements like spellchecking highlights.
+     * @returns {String} The cleaned innerHTML of the passed element or document fragment.
      */
-    extractContent: function(element) {
-      var innerHtml = element.innerHTML;
+    extractContent: function(element, keepUiElements) {
+      var innerHtml;
+      if (element.nodeType === nodeType.documentFragmentNode) {
+        innerHtml = this.getInnerHtmlOfFragment(element);
+      } else {
+        innerHtml = element.innerHTML;
+      }
+
       innerHtml = innerHtml.replace(zeroWidthNonBreakingSpace, ''); // Used for forcing inline elments to have a height
       innerHtml = innerHtml.replace(zeroWidthSpace, '<br>'); // Used for cross-browser newlines
 
       var clone = document.createElement('div');
       clone.innerHTML = innerHtml;
-      this.unwrapInternalNodes(clone);
+      this.unwrapInternalNodes(clone, keepUiElements);
 
       return clone.innerHTML;
+    },
+
+    getInnerHtmlOfFragment: function(documentFragment) {
+      var div = document.createElement('div');
+      div.appendChild(documentFragment);
+      return div.innerHTML;
+    },
+
+    /**
+     * Create a document fragment from an html string
+     * @param {String} e.g. 'some html <span>text</span>.'
+     */
+    createFragmentFromString: function(htmlString) {
+      var fragment = document.createDocumentFragment();
+      var contents = $('<div>').html(htmlString).contents();
+      for (var i = 0; i < contents.length; i++) {
+        var el = contents[i];
+        fragment.appendChild(el);
+      }
+      return fragment;
+    },
+
+    /**
+     * This is a slight variation of the cloneContents method of a rangyRange.
+     * It will return a fragment with the cloned contents of the range
+     * without the commonAncestorElement.
+     *
+     * @param {rangyRange}
+     * @return {DocumentFragment}
+     */
+    cloneRangeContents: function(range) {
+      var rangeFragment = range.cloneContents();
+      var parent = rangeFragment.childNodes[0];
+      var fragment = document.createDocumentFragment();
+      while (parent.childNodes.length) {
+        fragment.appendChild(parent.childNodes[0]);
+      }
+      return fragment;
     },
 
     /**
      * Remove elements that were inserted for internal or user interface purposes
      *
+     * @param {DOM node}
+     * @param {Boolean} whether to keep ui elements like spellchecking highlights
      * Currently:
      * - Saved ranges
      */
-    unwrapInternalNodes: function(sibling) {
+    unwrapInternalNodes: function(sibling, keepUiElements) {
       while (sibling) {
         var nextSibling = sibling.nextSibling;
 
-        if (sibling.nodeType === 1) {
+        if (sibling.nodeType === nodeType.elementNode) {
           var attr = sibling.getAttribute('data-editable');
 
           if (sibling.firstChild) {
-            this.unwrapInternalNodes(sibling.firstChild);
+            this.unwrapInternalNodes(sibling.firstChild, keepUiElements);
           }
+
           if (attr === 'remove') {
+            $(sibling).remove();
+          } else if (attr === 'unwrap') {
+            this.unwrap(sibling);
+          } else if (attr === 'ui-remove' && !keepUiElements) {
+            $(sibling).remove();
+          } else if (attr === 'ui-unwrap' && !keepUiElements) {
             this.unwrap(sibling);
           }
         }
@@ -4025,7 +4024,7 @@ var content = (function() {
 
       if (!element) return;
 
-      if (element.nodeType === 3) {
+      if (element.nodeType === nodeType.textNode) {
         element.nodeValue = element.nodeValue.replace(/^(\s)/, nonBreakingSpace).replace(/(\s)$/, nonBreakingSpace);
       }
       else {
@@ -4061,7 +4060,7 @@ var content = (function() {
      * Get all tags that start or end inside the range
      */
     getInnerTags: function(range, filterFunc) {
-      return range.getNodes([1], filterFunc);
+      return range.getNodes([nodeType.elementNode], filterFunc);
     },
 
     /**
@@ -4206,7 +4205,6 @@ var content = (function() {
       var boundaryRange = range.cloneRange();
       boundaryRange.collapse(atStart);
       boundaryRange.insertNode(insertEl);
-      boundaryRange.detach();
 
       if (atStart) {
         range.setStartBefore(insertEl);
@@ -4239,7 +4237,7 @@ var content = (function() {
         range = restoreRange(host, range, function() {
           var charRegexp = string.regexp(character);
 
-          var textNodes = range.getNodes([3], function(node) {
+          var textNodes = range.getNodes([nodeType.textNode], function(node) {
             return node.nodeValue.search(charRegexp) >= 0;
           });
 
@@ -4327,7 +4325,7 @@ var Cursor = (function() {
         if (parser.isDocumentFragmentWithoutChildren(element)) return;
 
         var preceedingElement = element;
-        if (element.nodeType === 11) { // DOCUMENT_FRAGMENT_NODE
+        if (element.nodeType === nodeType.documentFragmentNode) {
           var lastIndex = element.childNodes.length - 1;
           preceedingElement = element.childNodes[lastIndex];
         }
@@ -4355,26 +4353,60 @@ var Cursor = (function() {
       },
 
       setVisibleSelection: function() {
-        $(this.host).focus(); // Without this Firefox is not happy (seems setting a selection is not enough. probably because Firefox can handle multiple selections)
+        // Without setting focus() Firefox is not happy (seems setting a selection is not enough.
+        // Probably because Firefox can handle multiple selections).
+        if (this.win.document.activeElement !== this.host) {
+          $(this.host).focus();
+        }
         rangy.getSelection(this.win).setSingleRange(this.range);
       },
 
+      /**
+       * Take the following example:
+       * (The character '|' represents the cursor position)
+       *
+       * <div contenteditable="true">fo|o</div>
+       * before() will return a document frament containing a text node 'fo'.
+       *
+       * @returns {Document Fragment} content before the cursor or selection.
+       */
       before: function() {
         var fragment = null;
         var range = this.range.cloneRange();
         range.setStartBefore(this.host);
-        fragment = range.cloneContents();
-        range.detach();
+        fragment = content.cloneRangeContents(range);
         return fragment;
       },
 
+      /**
+       * Same as before() but returns a string.
+       */
+      beforeHtml: function() {
+        return content.getInnerHtmlOfFragment(this.before());
+      },
+
+      /**
+       * Take the following example:
+       * (The character '|' represents the cursor position)
+       *
+       * <div contenteditable="true">fo|o</div>
+       * after() will return a document frament containing a text node 'o'.
+       *
+       * @returns {Document Fragment} content after the cursor or selection.
+       */
       after: function() {
         var fragment = null;
         var range = this.range.cloneRange();
         range.setEndAfter(this.host);
-        fragment = range.cloneContents();
-        range.detach();
+        fragment = content.cloneRangeContents(range);
         return fragment;
+      },
+
+      /**
+       * Same as after() but returns a string.
+       */
+      afterHtml: function() {
+        return content.getInnerHtmlOfFragment(this.after());
       },
 
       /**
@@ -4402,10 +4434,6 @@ var Cursor = (function() {
           height: coords.height,
           width: coords.width
         };
-      },
-
-      detach: function() {
-        this.range.detach();
       },
 
       moveBefore: function(element) {
@@ -4463,6 +4491,13 @@ var Cursor = (function() {
           error('Can not set cursor outside of an editable block');
         }
         this.setHost(host);
+      },
+
+      retainVisibleSelection: function(callback) {
+        this.save();
+        callback();
+        this.restore();
+        this.setVisibleSelection();
       },
 
       save: function() {
@@ -4599,13 +4634,22 @@ var createDefaultBehavior = function(editable) {
     },
 
     split: function(element, before, after, cursor) {
+      var newNode = element.cloneNode();
+      newNode.appendChild(before);
+
       var parent = element.parentNode;
-      var newStart = after.firstChild;
-      parent.insertBefore(before, element);
-      parent.replaceChild(after, element);
-      content.normalizeTags(newStart);
-      content.normalizeSpaces(newStart);
-      newStart.focus();
+      parent.insertBefore(newNode, element);
+
+      while (element.firstChild) {
+        element.removeChild(element.firstChild);
+      }
+      element.appendChild(after);
+
+      content.normalizeTags(newNode);
+      content.normalizeSpaces(newNode);
+      content.normalizeTags(element);
+      content.normalizeSpaces(element);
+      element.focus();
     },
 
     merge: function(element, direction, cursor) {
@@ -4625,19 +4669,13 @@ var createDefaultBehavior = function(editable) {
       if (!(container && merger))
         return;
 
-      if (container.childNodes.length > 0)
-        cursor.moveAtTextEnd(container);
-      else
-        cursor.moveAtBeginning(container);
-      cursor.setVisibleSelection();
-
-      fragment = document.createDocumentFragment();
-      chunks = merger.childNodes;
-      for (i = 0; i < chunks.length; i++) {
-        fragment.appendChild(chunks[i].cloneNode(true));
+      if (container.childNodes.length > 0) {
+        cursor = editable.appendTo(container, merger.innerHTML);
+      } else {
+        cursor = editable.prependTo(container, merger.innerHTML);
       }
-      newChild = container.appendChild(fragment);
 
+      // remove merged node
       merger.parentNode.removeChild(merger);
 
       cursor.save();
@@ -4949,10 +4987,10 @@ Dispatcher.prototype.unload = function() {
 Dispatcher.prototype.setupElementEvents = function() {
   var _this = this;
   this.$document.on('focus.editable', _this.editableSelector, function(event) {
-    if (this.getAttribute(_this.config.pastingAttribute)) return;
+    if (this.getAttribute(config.pastingAttribute)) return;
     _this.notify('focus', this);
   }).on('blur.editable', _this.editableSelector, function(event) {
-    if (this.getAttribute(_this.config.pastingAttribute)) return;
+    if (this.getAttribute(config.pastingAttribute)) return;
     _this.notify('blur', this);
   }).on('copy.editable', _this.editableSelector, function(event) {
     log('Copy');
@@ -5315,6 +5353,167 @@ var browserFeatures = (function() {
 
 })();
 
+var highlightText = (function() {
+
+  return {
+    extractText: function(element) {
+      var textNode;
+      var text = '';
+      var iterator = new NodeIterator(element);
+      while ( (textNode = iterator.getNextTextNode()) ) {
+        text = text + textNode.data;
+      }
+      return text;
+    },
+
+    highlight: function(element, regex, stencilElement) {
+      var matches = this.find(element, regex);
+      this.highlightMatches(element, matches, stencilElement);
+    },
+
+    find: function(element, regex) {
+      var text = this.extractText(element);
+      var match;
+      var matches = [];
+      var matchIndex = 0;
+      while ( (match = regex.exec(text)) ) {
+        matches.push(this.prepareMatch(match, matchIndex));
+        matchIndex += 1;
+      }
+      return matches;
+    },
+
+    highlightMatches: function(element, matches, stencilElement) {
+      if (!matches || matches.length === 0) {
+        return;
+      }
+
+      var textNode, length, offset, isFirstPortion, isLastPortion;
+      var currentMatchIndex = 0;
+      var currentMatch = matches[currentMatchIndex];
+      var totalOffset = 0;
+      var iterator = new NodeIterator(element);
+      var portions = [];
+      while ( (textNode = iterator.getNextTextNode()) ) {
+        var nodeText = textNode.data;
+        var nodeEndOffset = totalOffset + nodeText.length;
+        if (nodeEndOffset > currentMatch.startIndex && totalOffset < currentMatch.endIndex) {
+
+          // get portion position
+          isFirstPortion = isLastPortion = false;
+          if (totalOffset <= currentMatch.startIndex) {
+            isFirstPortion = true;
+          }
+          if (nodeEndOffset >= currentMatch.endIndex) {
+            isLastPortion = true;
+          }
+
+          // calculate offset and length
+          if (isFirstPortion) {
+            offset = currentMatch.startIndex - totalOffset;
+          } else {
+            offset = 0;
+          }
+
+          if (isLastPortion) {
+            length = (currentMatch.endIndex - totalOffset) - offset;
+          } else {
+            length = textNode.data.length - offset;
+          }
+
+          // create portion object
+          var portion = {
+            element: textNode,
+            text: textNode.data.substring(offset, offset + length),
+            offset: offset,
+            length: length,
+            isLastPortion: isLastPortion
+          };
+
+          portions.push(portion);
+
+          if (isLastPortion) {
+            var lastNode = this.wrapWord(portions, stencilElement);
+            iterator.replaceCurrent(lastNode);
+
+            // recalculate nodeEndOffset if we have to replace the current node.
+            nodeEndOffset = totalOffset + portion.length + portion.offset;
+
+            portions = [];
+            currentMatchIndex += 1;
+            if (currentMatchIndex < matches.length) {
+              currentMatch = matches[currentMatchIndex];
+            }
+          }
+        }
+
+        totalOffset = nodeEndOffset;
+      }
+    },
+
+    getRange: function(element) {
+      var range = rangy.createRange();
+      range.selectNodeContents(element);
+      return range;
+    },
+
+    // @return the last wrapped element
+    wrapWord: function(portions, stencilElement) {
+      var element;
+      for (var i = 0; i < portions.length; i++) {
+        var portion = portions[i];
+        element = this.wrapPortion(portion, stencilElement);
+      }
+
+      return element;
+    },
+
+    wrapPortion: function(portion, stencilElement) {
+      var range = rangy.createRange();
+      range.setStart(portion.element, portion.offset);
+      range.setEnd(portion.element, portion.offset + portion.length);
+      var node = stencilElement.cloneNode(true);
+      range.surroundContents(node);
+
+      // Fix a weird behaviour where an empty text node is inserted after the range
+      if (node.nextSibling) {
+        var next = node.nextSibling;
+        if (next.nodeType === nodeType.textNode && next.data === '') {
+          next.parentNode.removeChild(next);
+        }
+      }
+
+      return node;
+    },
+
+    prepareMatch: function (match, matchIndex) {
+      // Quickfix for the spellcheck regex where we need to match the second subgroup.
+      if (match[2]) {
+        return this.prepareMatchForSecondSubgroup(match, matchIndex);
+      }
+
+      return {
+        startIndex: match.index,
+        endIndex: match.index + match[0].length,
+        matchIndex: matchIndex,
+        search: match[0]
+      };
+    },
+
+    prepareMatchForSecondSubgroup: function (match, matchIndex) {
+      var index = match.index;
+      index += match[1].length;
+      return {
+        startIndex: index,
+        endIndex: index + match[2].length,
+        matchIndex: matchIndex,
+        search: match[0]
+      };
+    }
+
+  };
+})();
+
 /**
  * The Keyboard module defines an event API for key events.
  */
@@ -5403,6 +5602,76 @@ Keyboard.prototype.key = {
 
 Keyboard.key = Keyboard.prototype.key;
 
+// A DOM node iterator.
+//
+// Has the ability to replace nodes on the fly and continue
+// the iteration.
+var NodeIterator = (function() {
+
+  var NodeIterator = function(root) {
+    this.root = root;
+    this.current = this.next = this.root;
+  };
+
+  NodeIterator.prototype.getNextTextNode = function() {
+    var next;
+    while ( (next = this.getNext()) ) {
+      if (next.nodeType === nodeType.textNode && next.data !== '') {
+        return next;
+      }
+    }
+  },
+
+  NodeIterator.prototype.getNext = function() {
+    var child, n;
+    n = this.current = this.next;
+    child = this.next = undefined;
+    if (this.current) {
+      child = n.firstChild;
+
+      // Skip the children of elements with the attribute data-editable="remove"
+      // This prevents text nodes that are not part of the content to be included.
+      if (child && n.getAttribute('data-editable') !== 'remove') {
+        this.next = child;
+      } else {
+        while ((n !== this.root) && !(this.next = n.nextSibling)) {
+          n = n.parentNode;
+        }
+      }
+    }
+    return this.current;
+  };
+
+  NodeIterator.prototype.replaceCurrent = function(replacement) {
+    this.current = replacement;
+    this.next = undefined;
+    var n = this.current;
+    while ((n !== this.root) && !(this.next = n.nextSibling)) {
+      n = n.parentNode;
+    }
+  };
+
+  return NodeIterator;
+})();
+
+// DOM node types
+// https://developer.mozilla.org/en-US/docs/Web/API/Node.nodeType
+
+var nodeType = {
+  elementNode: 1,
+  attributeNode: 2,
+  textNode: 3,
+  cdataSectionNode: 4,
+  entityReferenceNode: 5,
+  entityNode: 6,
+  processingInstructionNode: 7,
+  commentNode: 8,
+  documentNode: 9,
+  documentTypeNode: 10,
+  documentFragmentNode: 11,
+  notationNode: 12
+};
+
 /**
  * The parser module provides helper methods to parse html-chunks
  * manipulations and helpers for common tasks.
@@ -5410,23 +5679,6 @@ Keyboard.key = Keyboard.prototype.key;
  * @module core
  * @submodule parser
  */
-
-
-/** DOM NODE TYPES:
-  *
-  * 'ELEMENT_NODE': 1
-  * 'ATTRIBUTE_NODE': 2
-  * 'TEXT_NODE': 3
-  * 'CDATA_SECTION_NODE': 4
-  * 'ENTITY_REFERENCE_NODE': 5
-  * 'ENTITY_NODE': 6
-  * 'PROCESSING_INSTRUCTION_NODE': 7
-  * 'COMMENT_NODE': 8
-  * 'DOCUMENT_NODE': 9
-  * 'DOCUMENT_TYPE_NODE': 10
-  * 'DOCUMENT_FRAGMENT_NODE': 11
-  * 'NOTATION_NODE': 12
-  */
 
 var parser = (function() {
   /**
@@ -5477,9 +5729,9 @@ var parser = (function() {
       for (i = 0, len = childNodes.length; i < len; i++) {
         child = childNodes[i];
 
-        if (child.nodeType === 3 && !this.isVoidTextNode(child)) {
+        if (child.nodeType === nodeType.textNode && !this.isVoidTextNode(child)) {
           return false;
-        } else if (child.nodeType === 1) {
+        } else if (child.nodeType === nodeType.elementNode) {
           return false;
         }
       }
@@ -5493,7 +5745,7 @@ var parser = (function() {
      * @param {HTMLElement}
      */
     isVoidTextNode: function(node) {
-      return node.nodeType === 3 && !node.nodeValue;
+      return node.nodeType === nodeType.textNode && !node.nodeValue;
     },
 
     /**
@@ -5503,11 +5755,11 @@ var parser = (function() {
      * @param {HTMLElement}
      */
     isWhitespaceOnly: function(node) {
-      return node.nodeType === 3 && this.lastOffsetWithContent(node) === 0;
+      return node.nodeType === nodeType.textNode && this.lastOffsetWithContent(node) === 0;
     },
 
     isLinebreak: function(node) {
-      return node.nodeType === 1 && node.tagName === 'BR';
+      return node.nodeType === nodeType.elementNode && node.tagName === 'BR';
     },
 
     /**
@@ -5519,7 +5771,7 @@ var parser = (function() {
      * @param {HTMLElement}
      */
     lastOffsetWithContent: function(node) {
-      if (node.nodeType === 3) {
+      if (node.nodeType === nodeType.textNode) {
         return string.trimRight(node.nodeValue).length;
       } else {
         var i,
@@ -5574,7 +5826,7 @@ var parser = (function() {
     },
 
     isStartOffset: function(container, offset) {
-      if (container.nodeType === 3) {
+      if (container.nodeType === nodeType.textNode) {
         return offset === 0;
       } else {
         if (container.childNodes.length === 0)
@@ -5585,7 +5837,7 @@ var parser = (function() {
     },
 
     isEndOffset: function(container, offset) {
-      if (container.nodeType === 3) {
+      if (container.nodeType === nodeType.textNode) {
         return offset === container.length;
       } else {
         if (container.childNodes.length === 0)
@@ -5615,7 +5867,7 @@ var parser = (function() {
     },
 
     isTextEndOffset: function(container, offset) {
-      if (container.nodeType === 3) {
+      if (container.nodeType === nodeType.textNode) {
         var text = string.trimRight(container.nodeValue);
         return offset >= text.length;
       } else if (container.childNodes.length === 0) {
@@ -5668,7 +5920,7 @@ var parser = (function() {
      */
     isDocumentFragmentWithoutChildren: function(fragment) {
       if (fragment &&
-          fragment.nodeType === 11 &&
+          fragment.nodeType === nodeType.documentFragmentNode &&
           fragment.childNodes.length === 0) {
         return true;
       }
@@ -5784,7 +6036,6 @@ var rangeSaveRestore = (function() {
       markerEl.appendChild(doc.createTextNode(markerTextChar));
 
       boundaryRange.insertNode(markerEl);
-      boundaryRange.detach();
       return markerEl;
     },
 
@@ -5841,7 +6092,7 @@ var rangeSaveRestore = (function() {
           var previousNode = markerEl.previousSibling;
 
           // Workaround for rangy issue 17
-          if (previousNode && previousNode.nodeType === 3) {
+          if (previousNode && previousNode.nodeType === nodeType.textNode) {
             markerEl.parentNode.removeChild(markerEl);
             range.collapseToPoint(previousNode, previousNode.length);
           } else {
@@ -6267,5 +6518,157 @@ var Selection = (function() {
   return Selection;
 })();
 
+var Spellcheck = (function() {
+
+  // Unicode character blocks for letters.
+  // See: http://jrgraphix.net/research/unicode_blocks.php
+  //
+  // \\u0041-\\u005A    A-Z (Basic Latin)
+  // \\u0061-\\u007A    a-z (Basic Latin)
+  // \\u0030-\\u0039    0-9 (Basic Latin)
+  // \\u00AA            ª   (Latin-1 Supplement)
+  // \\u00B5            µ   (Latin-1 Supplement)
+  // \\u00BA            º   (Latin-1 Supplement)
+  // \\u00C0-\\u00D6    À-Ö (Latin-1 Supplement)
+  // \\u00D8-\\u00F6    Ø-ö (Latin-1 Supplement)
+  // \\u00F8-\\u00FF    ø-ÿ (Latin-1 Supplement)
+  // \\u0100-\\u017F    Ā-ſ (Latin Extended-A)
+  // \\u0180-\\u024F    ƀ-ɏ (Latin Extended-B)
+  var letterChars = '\\u0041-\\u005A\\u0061-\\u007A\\u0030-\\u0039\\u00AA\\u00B5\\u00BA\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u00FF\\u0100-\\u017F\\u0180-\\u024F';
+
+  var escapeRegEx = function(s) {
+    return String(s).replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
+  };
+
+  /**
+   * Spellcheck class.
+   *
+   * @class Spellcheck
+   * @constructor
+   */
+  var Spellcheck = function(editable, configuration) {
+    var defaultConfig = {
+      checkOnChange: true,
+      checkOnFocus: false,
+      spellcheckService: undefined,
+      markerNode: $('<span class="spellcheck"></span>')[0],
+      throttle: 1000 // delay after changes stop before calling the spellcheck service
+    };
+
+    this.config = $.extend(defaultConfig, configuration);
+    this.prepareMarkerNode();
+    this.editable = editable;
+    this.setup();
+  };
+
+  Spellcheck.prototype.setup = function(editable) {
+    if (this.config.checkOnFocus) {
+      this.editable.on('focus', $.proxy(this, 'onFocus'));
+      this.editable.on('blur', $.proxy(this, 'onBlur'));
+    }
+    if (this.config.checkOnChange) {
+      this.editable.on('change', $.proxy(this, 'onChange'));
+    }
+  };
+
+  Spellcheck.prototype.onFocus = function(editableHost) {
+    if (this.focusedEditable !== editableHost) {
+      this.focusedEditable = editableHost;
+      this.editableHasChanged(editableHost);
+    }
+  };
+
+  Spellcheck.prototype.onBlur = function(editableHost) {
+    if (this.focusedEditable === editableHost) {
+      this.focusedEditable = undefined;
+    }
+  };
+
+  Spellcheck.prototype.onChange = function(editableHost) {
+    this.editableHasChanged(editableHost);
+  };
+
+  Spellcheck.prototype.prepareMarkerNode = function() {
+    var marker = this.config.markerNode;
+    if (marker.jquery) {
+      this.config.markerNode = marker = marker[0];
+    }
+    marker.setAttribute('data-editable', 'ui-unwrap');
+    marker.setAttribute('data-spellcheck', 'spellcheck');
+  };
+
+  Spellcheck.prototype.createMarkerNode = function() {
+    return this.config.markerNode.cloneNode();
+  };
+
+  Spellcheck.prototype.removeHighlights = function(editableHost) {
+    $(editableHost).find('[data-spellcheck=spellcheck]').each(function(index, elem) {
+      content.unwrap(elem);
+    });
+  };
+
+  Spellcheck.prototype.createRegex = function(words) {
+    var escapedWords = $.map(words, function(word) {
+      return escapeRegEx(word);
+    });
+
+    var regex = '';
+    regex += '([^' + letterChars + ']|^)';
+    regex += '(' + escapedWords.join('|') + ')';
+    regex += '(?=[^' + letterChars + ']|$)';
+
+    return new RegExp(regex, 'g');
+  };
+
+  Spellcheck.prototype.highlight = function(editableHost, misspelledWords) {
+
+    // Remove old highlights
+    this.removeHighlights(editableHost);
+
+    // Create new highlights
+    if (misspelledWords && misspelledWords.length > 0) {
+      var regex = this.createRegex(misspelledWords);
+      var span = this.createMarkerNode();
+      highlightText.highlight(editableHost, regex, span);
+    }
+  };
+
+  Spellcheck.prototype.editableHasChanged = function(editableHost) {
+    if (this.timeoutId && this.currentEditableHost === editableHost) {
+      clearTimeout(this.timeoutId);
+    }
+
+    var that = this;
+    this.timeoutId = setTimeout(function() {
+      that.checkSpelling(editableHost);
+      that.currentEditableHost = undefined;
+      that.timeoutId = undefined;
+    }, this.config.throttle);
+
+    this.currentEditableHost = editableHost;
+  };
+
+  Spellcheck.prototype.checkSpelling = function(editableHost) {
+    var that = this;
+    var text = highlightText.extractText(editableHost);
+    this.config.spellcheckService(text, function(misspelledWords) {
+      var selection = that.editable.getSelection(editableHost);
+      if (selection) {
+        selection.retainVisibleSelection(function() {
+          that.highlight(editableHost, misspelledWords);
+        });
+      } else {
+        that.highlight(editableHost, misspelledWords);
+      }
+    });
+  };
+
+  return Spellcheck;
+})();
+
+
   window.Editable = Editable;
+  Editable.parser = parser;
+  Editable.content = content;
+
 })(window, document, window.jQuery);

@@ -10,6 +10,7 @@ module.exports = (config) ->
     # list of files / patterns to load in the browser
     files: [
       'components/jquery/jquery.js'
+      'components/editable/editable.js'
       'test/support/chai-jquery/chai-jquery.js'
       '.tmp/livingdocs-engine-test.js'
     ],

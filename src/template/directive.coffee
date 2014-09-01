@@ -1,4 +1,4 @@
-config = require('../configuration/defaults')
+config = require('../configuration/config')
 dom = require('../interaction/dom')
 
 module.exports = class Directive

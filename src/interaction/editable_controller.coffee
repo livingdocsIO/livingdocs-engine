@@ -1,5 +1,5 @@
 dom = require('./dom')
-config = require('../configuration/defaults')
+config = require('../configuration/config')
 
 # editable.js Controller
 # ---------------------
@@ -7,8 +7,12 @@ config = require('../configuration/defaults')
 module.exports = class EditableController
 
   constructor: (@page) ->
+
     # Initialize editable.js
-    @editable = new Editable(window: @page.window);
+    @editable = new Editable
+      window: @page.window
+      browserSpellcheck: config.editable.browserSpellcheck
+      mouseMoveSelectionChanges: config.editable.mouseMoveSelectionChanges
 
     @editableAttr = config.directives.editable.renderedAttr
     @selection = $.Callbacks()
@@ -52,11 +56,16 @@ module.exports = class EditableController
       func.apply(this, args)
 
 
-  updateModel: (view, editableName, element) ->
+  extractContent: (element) ->
     value = @editable.getContent(element)
     if config.singleLineBreak.test(value) || value == ''
-      value = undefined
+      undefined
+    else
+      value
 
+
+  updateModel: (view, editableName, element) ->
+    value = @extractContent(element)
     view.model.set(editableName, value)
 
 
@@ -118,13 +127,11 @@ module.exports = class EditableController
 
         # Gather the content that is going to be merged
         contentToMerge = @editable.getContent(viewElem)
-        frag = @page.document.createDocumentFragment()
-        contents = $('<div>').html(contentToMerge).contents()
-        for el in contents
-          frag.appendChild(el)
 
-        cursor = @editable.createCursor(mergedViewElem, if direction == 'before' then 'end' else 'beginning')
-        cursor[ if direction == 'before' then 'insertAfter' else 'insertBefore' ](frag)
+        cursor = if direction == 'before'
+          @editable.appendTo(mergedViewElem, contentToMerge)
+        else
+          @editable.prependTo(mergedViewElem, contentToMerge)
 
         view.model.remove()
         cursor.setVisibleSelection()
@@ -140,19 +147,15 @@ module.exports = class EditableController
   # Usually triggered by pressing enter in the middle of a block.
   split: (view, editableName, before, after, cursor) ->
     if @hasSingleEditable(view)
-      copy = view.template.createModel()
-
-      # get content out of 'before' and 'after'
-      beforeContent = before.querySelector('*').innerHTML
-      afterContent = after.querySelector('*').innerHTML
 
       # append and focus copy of snippet
-      copy.set(editableName, afterContent)
+      copy = view.template.createModel()
+      copy.set(editableName, @extractContent(after))
       view.model.after(copy)
-      view.next().focus()
+      view.next()?.focus()
 
       # set content of the before element (after focus is set to the after element)
-      view.model.set(editableName, beforeContent)
+      view.model.set(editableName, @extractContent(before))
 
     false # disable editable.js default behaviour
 
@@ -177,13 +180,13 @@ module.exports = class EditableController
   # been changed via javascript.
   change: (view, editableName) ->
     @clearChangeTimeout()
-    return if config.editable.changeTimeout == false
+    return if config.editable.changeDelay == false
 
     @changeTimeout = setTimeout =>
       elem = view.getDirectiveElement(editableName)
       @updateModel(view, editableName, elem)
       @changeTimeout = undefined
-    , config.editable.changeTimeout
+    , config.editable.changeDelay
 
 
   clearChangeTimeout: ->

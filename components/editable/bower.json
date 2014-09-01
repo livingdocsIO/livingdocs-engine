@@ -16,14 +16,5 @@
     "**/**",
     "!editable.js",
     "!editable.min.js"
-  ],
-  "_release": "0.4.0",
-  "_resolution": {
-    "type": "version",
-    "tag": "v0.4.0",
-    "commit": "68e00ed89f491ef3b216be62f5916a1088304d94"
-  },
-  "_source": "git://github.com/upfrontIO/editable.js.git",
-  "_target": "~0.4.0",
-  "_originalSource": "editable"
+  ]
 }

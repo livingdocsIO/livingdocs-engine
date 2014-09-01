@@ -1,6 +1,7 @@
 assert = require('./modules/logging/assert')
 
-config = require('./configuration/defaults')
+config = require('./configuration/config')
+augmentConfig = require('./configuration/augment_config')
 Document = require('./document')
 SnippetTree = require('./snippet_tree/snippet_tree')
 Design = require('./design/design')
@@ -58,6 +59,8 @@ module.exports = doc = do ->
 
   config: (userConfig) ->
     $.extend(true, config, userConfig)
+    augmentConfig(config)
+
 
 
 # Export global variable

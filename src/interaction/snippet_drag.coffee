@@ -1,6 +1,6 @@
 dom = require('./dom')
 isSupported = require('../modules/feature_detection/is_supported')
-config = require('../configuration/defaults')
+config = require('../configuration/config')
 css = config.css
 
 module.exports = class SnippetDrag
