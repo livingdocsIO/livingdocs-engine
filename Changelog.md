@@ -1,4 +1,4 @@
-# v0.?.?
+# v0.2.2
 
 - Use improved editable API [#111](https://github.com/upfrontIO/livingdocs-engine/pull/111)
 - Remove Kickstart class & deprecated files [#108](https://github.com/upfrontIO/livingdocs-engine/pull/108)
