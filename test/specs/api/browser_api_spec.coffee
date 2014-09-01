@@ -19,6 +19,19 @@ describe 'Browser API', ->
       expect(doc.design.has('test')).to.be.true
 
 
+    it 'reseets the design cache', ->
+      doc.design.load(test.designJson)
+      doc.design.resetCache()
+      expect(doc.design.has('test')).to.be.false
+
+
+    it 'does not load a design twice', ->
+      spy = sinon.spy(doc.design, 'add')
+      doc.design.load(test.designJson)
+      doc.design.load(test.designJson)
+      expect(spy.callCount).to.equal(1)
+
+
   describe 'new', ->
     beforeEach ->
       @snippetTree = test.createSnippetTree

@@ -15,12 +15,14 @@ module.exports = do ->
   #
   # Load from a custom server:
   # doc.design.load('http://yourserver.io/designs/ghibli/design.json')
-  load: (name) ->
-    if typeof name == 'string'
+  load: (designSpec) ->
+    if typeof designSpec == 'string'
       assert false, 'Load design by name is not implemented yet.'
     else
-      designConfig = name
-      design = new Design(designConfig)
+      name = designSpec.config?.namespace
+      return if not name? or @has(name)
+
+      design = new Design(designSpec)
       @add(design)
 
 
