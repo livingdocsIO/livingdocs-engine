@@ -39,3 +39,32 @@ describe 'Browser API', ->
       firstSnippet = document.snippetTree.first()
       expect(firstSnippet.get('title')).to.equal('It Works')
 
+
+  describe 'config', ->
+
+    beforeEach ->
+      @originalConfig = $.extend(true, {}, config)
+
+    afterEach ->
+      doc.config(@originalConfig)
+
+
+    it 'changes an editable config property', ->
+      expect(config.editable.browserSpellcheck).to.equal(false)
+      doc.config( editable: { browserSpellcheck: true } )
+      expect(config.editable.browserSpellcheck).to.equal(true)
+
+
+    it 'does not reset sibling properties', ->
+      expect(config.editable.changeDelay).to.equal(0)
+      expect(config.editable.browserSpellcheck).to.equal(false)
+      doc.config( editable: { browserSpellcheck: true } )
+      expect(config.editable.changeDelay).to.equal(0)
+      expect(config.editable.browserSpellcheck).to.equal(true)
+
+
+    it 're-calculates the docDirectives after changing the attributePrefix', ->
+      expect(config.docDirective.editable).to.equal('data-doc-editable')
+      doc.config(attributePrefix: 'x')
+      expect(config.docDirective.editable).to.equal('x-doc-editable')
+
