@@ -1,5 +1,5 @@
 ImageManager = require('../../../src/rendering/image_manager')
-TestImage = require('../../support/test_base64_image')
+base64Image = require('../../support/test_base64_image')
 
 css = config.css
 attr = config.attr
@@ -237,8 +237,10 @@ describe 'SnippetView html', ->
 
 
   describe 'set("html", value)', ->
+
     it 'adds the html to the snippet', ->
       expect(@view.$html).to.have.html(@expected)
+
 
     describe 'when clearing an existing value', ->
       it 'inserts the default value', ->
@@ -252,13 +254,13 @@ describe 'using volatile values', ->
 
   beforeEach ->
     @snippet = test.getSnippet('image')
-    @snippet.set('image', TestImage, 'temporaryOverride')
+    @snippet.set('image', base64Image, 'temporaryOverride')
     @view = @snippet.createView()
 
 
   it 'uses a temporary base64 value if there is no image set', ->
     @view.render()
-    expect(@view.$html).to.have.attr('src', TestImage)
+    expect(@view.$html).to.have.attr('src', base64Image)
 
 
   it 'uses the image content if it is set after the temporary base64', ->
@@ -269,6 +271,7 @@ describe 'using volatile values', ->
 
   it 'prefers a temporary value if it is set after the persisted url content', ->
     @snippet.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
-    @snippet.set('image', TestImage, 'temporaryOverride')
+    @snippet.set('image', base64Image, 'temporaryOverride')
     @view.render()
-    expect(@view.$html).to.have.attr('src', TestImage)
+    expect(@view.$html).to.have.attr('src', base64Image)
+

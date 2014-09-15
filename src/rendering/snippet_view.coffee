@@ -4,7 +4,7 @@ attr = config.attr
 DirectiveIterator = require('../template/directive_iterator')
 eventing = require('../modules/eventing')
 dom = require('../interaction/dom')
-ImageManager = require('./image_manager')
+imageManager = require('./image_manager')
 
 module.exports = class SnippetView
 
@@ -30,7 +30,7 @@ module.exports = class SnippetView
 
 
   updateContent: ->
-    @content(@model.content, @model.temporaryContent)
+    @content(@model.content)
 
     if not @hasFocus()
       @displayOptionals()
@@ -107,10 +107,13 @@ module.exports = class SnippetView
     dom.getAbsoluteBoundingClientRect(@$html[0])
 
 
-  content: (content, sessionContent) ->
+  content: (content) ->
     for name, value of content
-      if sessionContent[name]?
-        @set(name, sessionContent[name])
+      if @model.directives[name].isImage()
+        if @model.directives[name].base64Image?
+          @set(name, @model.directives[name].base64Image)
+        else
+          @set(name, @model.directives[name].getImageUrl() )
       else
         @set(name, value)
 
@@ -203,12 +206,14 @@ module.exports = class SnippetView
 
     if value
       @cancelDelayed(name)
+
       imageService = @model.data('imageService')[name] if @model.data('imageService')
-      ImageManager.set($elem, value, imageService)
+      imageManager.set($elem, value, imageService)
+
       $elem.removeClass(config.css.emptyImage)
     else
       setPlaceholder = $.proxy(@setPlaceholderImage, this, $elem)
-      @delayUntilAttached(name, setPlaceholder)
+      @delayUntilAttached(name, setPlaceholder) # todo: replace with @afterInserted -> ... (something like $.Callbacks('once remember'))
 
 
   setPlaceholderImage: ($elem) ->
@@ -221,7 +226,7 @@ module.exports = class SnippetView
       height = $elem.outerHeight()
     value = "http://placehold.it/#{width}x#{height}/BEF56F/B2E668"
     imageService = @model.data('imageService')[name] if @model.data('imageService')
-    ImageManager.set($elem, value, imageService)
+    imageManager.set($elem, value, imageService)
 
 
   style: (name, className) ->
@@ -267,6 +272,7 @@ module.exports = class SnippetView
     $(dom.findContainer(@$html[0]).node)
 
 
+  # Wait to execute a method until the view is attached to the DOM
   delayUntilAttached: (name, func) ->
     if @isAttachedToDom
       func()
