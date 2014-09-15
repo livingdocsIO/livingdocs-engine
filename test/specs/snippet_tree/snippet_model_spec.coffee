@@ -1,4 +1,4 @@
-TestImage = require('../../support/test_base64_image')
+base64Image = require('../../support/test_base64_image')
 
 describe 'Title Snippet', ->
 
@@ -88,15 +88,16 @@ describe 'Image snippet', ->
 
 
   it 'sets a base64 image as volatile', ->
-    @image.set('image', TestImage, 'temporaryOverride')
-    expect(@image.temporaryContent.image).to.equal(TestImage)
+    @image.set('image', base64Image, 'temporaryOverride')
+    expect(@image.directives['image'].base64Image).to.equal(base64Image)
+    expect(@image.get('image')).to.equal(undefined)
 
 
   it 'resets a volatile base64 image once the url is set', ->
-    @image.set('image', TestImage, 'temporaryOverride')
+    @image.set('image', base64Image, 'temporaryOverride')
     @image.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
-    expect(@image.temporaryContent.image).to.be.undefined
-    expect(@image.content.image).to.equal('http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
+    expect(@image.directives['image'].base64Image).to.be.undefined
+    expect(@image.get('image')).to.equal('http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
 
 
 describe 'Hero SnippetModel#style', ->

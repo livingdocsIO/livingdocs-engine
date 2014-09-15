@@ -5,6 +5,7 @@ guid = require('../modules/guid')
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
 serialization = require('../modules/serialization')
+SnippetDirective = require('./snippet_directive')
 
 # SnippetModel
 # ------------
@@ -46,10 +47,19 @@ module.exports = class SnippetModel
             name: directive.name
             parentSnippet: this
         when 'editable', 'image', 'html'
+          @createSnippetDirective(directive)
           @content ||= {}
           @content[directive.name] = undefined
         else
           log.error "Template directive type '#{ directive.type }' not implemented in SnippetModel"
+
+
+  # Create a directive for 'editable', 'image', 'html' template directives
+  createSnippetDirective: (templateDirective) ->
+    @directives ?= {}
+    @directives[templateDirective.name] = new SnippetDirective
+      snippet: this
+      templateDirective: templateDirective
 
 
   createView: (isReadOnly) ->
@@ -116,22 +126,30 @@ module.exports = class SnippetModel
     assert @content?.hasOwnProperty(name),
       "set error: #{ @identifier } has no content named #{ name }"
 
-    if flag == 'temporaryOverride'
-      storageContainer = @temporaryContent
+    directive = @directives[name]
+    if directive.isImage()
+      if flag == 'temporaryOverride'
+        directive.setBase64Image(value)
+        @snippetTree.contentChanging(this, name) if @snippetTree
+      else
+        if directive.getImageUrl() != value
+          directive.setImageUrl(value)
+          @snippetTree.contentChanging(this, name) if @snippetTree
     else
-      @resetVolatileValue(name, false) # as soon as we get real content, reset the temporaryContent
-      storageContainer = @content
-
-    if storageContainer[name] != value
-      storageContainer[name] = value
-      @snippetTree.contentChanging(this, name) if @snippetTree
+      if @content[name] != value
+        @content[name] = value
+        @snippetTree.contentChanging(this, name) if @snippetTree
 
 
   get: (name) ->
     assert @content?.hasOwnProperty(name),
       "get error: #{ @identifier } has no content named #{ name }"
 
-    @content[name]
+    directive = @directives[name]
+    if directive.isImage()
+      directive.getImageUrl()
+    else
+      @content[name]
 
 
   # can be called with a string or a hash
@@ -316,7 +334,13 @@ SnippetModel.fromJson = (json, design) ->
   for name, value of json.content
     assert model.content.hasOwnProperty(name),
       "error while deserializing snippet: unknown content '#{ name }'"
-    model.content[name] = value
+
+    # Transform string into object: Backwards compatibility for old image values.
+    if model.directives[name].type == 'image' && typeof value == 'string'
+      model.content[name] =
+        url: value
+    else
+      model.content[name] = value
 
   for styleName, value of json.styles
     model.style(styleName, value)
