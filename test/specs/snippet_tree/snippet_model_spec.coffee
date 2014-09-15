@@ -88,13 +88,13 @@ describe 'Image snippet', ->
 
 
   it 'sets a base64 image as volatile', ->
-    @image.set('image', base64Image, 'temporaryOverride')
+    @image.directives['image'].setBase64Image(base64Image)
     expect(@image.directives['image'].base64Image).to.equal(base64Image)
     expect(@image.get('image')).to.equal(undefined)
 
 
   it 'resets a volatile base64 image once the url is set', ->
-    @image.set('image', base64Image, 'temporaryOverride')
+    @image.directives['image'].setBase64Image(base64Image)
     @image.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
     expect(@image.directives['image'].base64Image).to.be.undefined
     expect(@image.get('image')).to.equal('http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')

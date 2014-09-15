@@ -1,5 +1,5 @@
 SnippetTree = require('../../../src/snippet_tree/snippet_tree')
-TestImage = require('../../support/test_base64_image')
+base64Image = require('../../support/test_base64_image')
 
 # SnippetTree Events
 # ------------------
@@ -152,7 +152,7 @@ describe 'SnippetTree (Content Events)', ->
 
     beforeEach ->
       @changeSnippetContent = =>
-        @imageSnippet.set('image', TestImage, 'temporaryOverride')
+        @imageSnippet.directives['image'].setBase64Image(base64Image)
 
 
     it 'fires snippetContentChanged event', ->

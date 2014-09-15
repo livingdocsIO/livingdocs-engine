@@ -254,7 +254,7 @@ describe 'using volatile values', ->
 
   beforeEach ->
     @snippet = test.getSnippet('image')
-    @snippet.set('image', base64Image, 'temporaryOverride')
+    @snippet.directives['image'].setBase64Image(base64Image)
     @view = @snippet.createView()
 
 
@@ -271,7 +271,7 @@ describe 'using volatile values', ->
 
   it 'prefers a temporary value if it is set after the persisted url content', ->
     @snippet.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
-    @snippet.set('image', base64Image, 'temporaryOverride')
+    @snippet.directives['image'].setBase64Image(base64Image)
     @view.render()
     expect(@view.$html).to.have.attr('src', base64Image)
 

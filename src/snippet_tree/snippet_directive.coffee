@@ -23,6 +23,7 @@ module.exports = class SnippetDirective
 
   setBase64Image: (base64String) ->
     @base64Image = base64String
+    @snippet.snippetTree.contentChanging(@snippet, name) if @snippet.snippetTree
 
 
   isImage: ->
@@ -111,8 +112,4 @@ module.exports = class SnippetDirective
       cropInfo = currentValue.crop
       currentValue.url = imgService.getUrl(value, cropInfo)
       currentValue.originalUrl = value
-
-
-  # todo
-  # setBase64Image: (base64Data) ->
 

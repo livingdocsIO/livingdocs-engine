@@ -1,6 +1,6 @@
 SnippetTree = require('../../../src/snippet_tree/snippet_tree')
 SnippetModel = require('../../../src/snippet_tree/snippet_model')
-TestImage = require('../../support/test_base64_image')
+base64Image = require('../../support/test_base64_image')
 
 describe 'Snippet Serialization', ->
 
@@ -65,7 +65,7 @@ describe 'Snippet Serialization', ->
 
     it 'does not save a session value', ->
       cover = test.getSnippet('cover')
-      cover.set('image', TestImage, 'temporaryOverride')
+      cover.directives['image'].setBase64Image(base64Image)
       json = cover.toJson()
       expect(json.temporaryContent).to.be.undefined
       expect(json.content.image).to.be.undefined

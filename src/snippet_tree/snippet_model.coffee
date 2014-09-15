@@ -116,19 +116,15 @@ module.exports = class SnippetModel
     this
 
 
-  set: (name, value, flag='') ->
+  set: (name, value) ->
     assert @content?.hasOwnProperty(name),
       "set error: #{ @identifier } has no content named #{ name }"
 
     directive = @directives[name]
     if directive.isImage()
-      if flag == 'temporaryOverride'
-        directive.setBase64Image(value)
+      if directive.getImageUrl() != value
+        directive.setImageUrl(value)
         @snippetTree.contentChanging(this, name) if @snippetTree
-      else
-        if directive.getImageUrl() != value
-          directive.setImageUrl(value)
-          @snippetTree.contentChanging(this, name) if @snippetTree
     else
       if @content[name] != value
         @content[name] = value
