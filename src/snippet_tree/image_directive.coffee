@@ -1,23 +1,32 @@
 assert = require('../modules/logging/assert')
 imageService = require('../image_services/image_service')
 
-module.exports = class SnippetDirective
+module.exports = class ImageDirective
 
   constructor: ({ @snippet, @templateDirective }) ->
     @name = @templateDirective.name
     @type = @templateDirective.type
 
 
+  isImage: true
+
+
+  setContent: (value) ->
+    @setImageUrl(value)
+
+
+  getContent: ->
+    @getImageUrl()
+
+
   # Image Directive Methods
   # -----------------------
 
   isBackgroundImage: (directive) ->
-    assert @type == 'image', 'Error: method only viable for image directives'
     @templateDirective.getTagName() != 'img'
 
 
   isInlineImage: (directive) ->
-    assert @type == 'image', 'Error: method only viable for image directives'
     @templateDirective.getTagName() == 'img'
 
 
@@ -26,12 +35,7 @@ module.exports = class SnippetDirective
     @snippet.snippetTree.contentChanging(@snippet, name) if @snippet.snippetTree
 
 
-  isImage: ->
-    @type == 'image'
-
-
   setImageUrl: (value) ->
-    assert @type == 'image', 'Error: method only viable for image directives'
     currentValue = @snippet.content[@name]
     if typeof currentValue == 'string' || not currentValue
       @snippet.content[@name] =
@@ -45,8 +49,6 @@ module.exports = class SnippetDirective
 
 
   getImageUrl: ->
-    assert @type == 'image', 'Error: method only viable for image directives'
-
     image = @snippet.content[@name]
     if not image
       undefined
@@ -61,7 +63,6 @@ module.exports = class SnippetDirective
 
 
   setCrop: ({ x, y, width, height }) ->
-    assert @type == 'image', 'Error: method only viable for image directives'
     currentValue = @snippet.content[@name]
 
     if currentValue?.url?
@@ -90,7 +91,6 @@ module.exports = class SnippetDirective
 
 
   setImageService: (imageServiceName) ->
-    assert @type == 'image', 'Error: method only viable for image directives'
     assert imageService.has(imageServiceName), "Error: could not load image service #{ imageServiceName }"
 
     imageUrl = @getImageUrl()
@@ -104,7 +104,6 @@ module.exports = class SnippetDirective
 
 
   processImageUrl: (value) ->
-    assert @type == 'image', 'Error: method only viable for image directives'
     currentValue = @snippet.content[@name]
 
     if currentValue?.imageService?

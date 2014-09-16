@@ -5,7 +5,7 @@ guid = require('../modules/guid')
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
 serialization = require('../modules/serialization')
-SnippetDirective = require('./snippet_directive')
+directiveFactory = require('./snippet_directive_factory')
 
 # SnippetModel
 # ------------
@@ -57,7 +57,7 @@ module.exports = class SnippetModel
   # Create a directive for 'editable', 'image', 'html' template directives
   createSnippetDirective: (templateDirective) ->
     @directives ?= {}
-    @directives[templateDirective.name] = new SnippetDirective
+    @directives[templateDirective.name] = directiveFactory.create
       snippet: this
       templateDirective: templateDirective
 
@@ -116,30 +116,40 @@ module.exports = class SnippetModel
     this
 
 
+  # set the content data field of the snippet
+  setContent: (name, value) ->
+    if not value
+      if @content[name]
+        @content[name] = undefined
+        @snippetTree.contentChanging(this, name) if @snippetTree
+    else if typeof value == 'string'
+      if @content[name] != value
+        @content[name] = value
+        @snippetTree.contentChanging(this, name) if @snippetTree
+    else
+      if not deepEqual(@content[name], value)
+        @content[name] = value
+        @snippetTree.contentChanging(this, name) if @snippetTree
+
+
   set: (name, value) ->
     assert @content?.hasOwnProperty(name),
       "set error: #{ @identifier } has no content named #{ name }"
 
     directive = @directives[name]
-    if directive.isImage()
+    if directive.isImage
       if directive.getImageUrl() != value
         directive.setImageUrl(value)
         @snippetTree.contentChanging(this, name) if @snippetTree
     else
-      if @content[name] != value
-        @content[name] = value
-        @snippetTree.contentChanging(this, name) if @snippetTree
+      @setContent(name, value)
 
 
   get: (name) ->
     assert @content?.hasOwnProperty(name),
       "get error: #{ @identifier } has no content named #{ name }"
 
-    directive = @directives[name]
-    if directive.isImage()
-      directive.getImageUrl()
-    else
-      @content[name]
+    @directives[name].getContent()
 
 
   # can be called with a string or a hash
@@ -156,7 +166,7 @@ module.exports = class SnippetModel
 
 
   changeData: (name, value) ->
-    if deepEqual(@dataValues[name], value) == false
+    if not deepEqual(@dataValues[name], value)
       @dataValues[name] = value
       true
     else

@@ -109,7 +109,7 @@ module.exports = class SnippetView
 
   content: (content) ->
     for name, value of content
-      if @model.directives[name].isImage()
+      if @model.directives[name].isImage
         if @model.directives[name].base64Image?
           @set(name, @model.directives[name].base64Image)
         else
