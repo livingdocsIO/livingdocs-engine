@@ -65,22 +65,10 @@ module.exports = class SnippetModel
     @template.createView(this, isReadOnly)
 
 
-  hasContainers: ->
-    @template.directives.count('container') > 0
+  # SnippetTree operations
+  # ----------------------
 
-
-  hasEditables: ->
-    @template.directives.count('editable') > 0
-
-
-  hasHtml: ->
-    @template.directives.count('html') > 0
-
-
-  hasImages: ->
-    @template.directives.count('image') > 0
-
-
+  # Insert a snippet before this one
   before: (snippetModel) ->
     if snippetModel
       @parentContainer.insertBefore(this, snippetModel)
@@ -89,6 +77,7 @@ module.exports = class SnippetModel
       @previous
 
 
+  # Insert a snippet after this one
   after: (snippetModel) ->
     if snippetModel
       @parentContainer.insertAfter(this, snippetModel)
@@ -97,6 +86,7 @@ module.exports = class SnippetModel
       @next
 
 
+  # Append a snippet to a container of this snippet
   append: (containerName, snippetModel) ->
     if arguments.length == 1
       snippetModel = containerName
@@ -106,6 +96,7 @@ module.exports = class SnippetModel
     this
 
 
+  # Prepend a snippet to a container of this snippet
   prepend: (containerName, snippetModel) ->
     if arguments.length == 1
       snippetModel = containerName
@@ -115,138 +106,31 @@ module.exports = class SnippetModel
     this
 
 
-  # set the content data field of the snippet
-  setContent: (name, value) ->
-    if not value
-      if @content[name]
-        @content[name] = undefined
-        @snippetTree.contentChanging(this, name) if @snippetTree
-    else if typeof value == 'string'
-      if @content[name] != value
-        @content[name] = value
-        @snippetTree.contentChanging(this, name) if @snippetTree
-    else
-      if not deepEqual(@content[name], value)
-        @content[name] = value
-        @snippetTree.contentChanging(this, name) if @snippetTree
-
-
-  set: (name, value) ->
-    assert @content?.hasOwnProperty(name),
-      "set error: #{ @identifier } has no content named #{ name }"
-
-    directive = @directives[name]
-    if directive.isImage
-      if directive.getImageUrl() != value
-        directive.setImageUrl(value)
-        @snippetTree.contentChanging(this, name) if @snippetTree
-    else
-      @setContent(name, value)
-
-
-  get: (name) ->
-    assert @content?.hasOwnProperty(name),
-      "get error: #{ @identifier } has no content named #{ name }"
-
-    @directives[name].getContent()
-
-
-  # can be called with a string or a hash
-  data: (arg) ->
-    if typeof(arg) == 'object'
-      changedDataProperties = []
-      for name, value of arg
-        if @changeData(name, value)
-          changedDataProperties.push(name)
-      if @snippetTree && changedDataProperties.length > 0
-        @snippetTree.dataChanging(this, changedDataProperties)
-    else
-      @dataValues[arg]
-
-
-  changeData: (name, value) ->
-    if not deepEqual(@dataValues[name], value)
-      @dataValues[name] = value
-      true
-    else
-      false
-
-
-  isEmpty: (name) ->
-    value = @get(name)
-    value == undefined || value == ''
-
-
-  style: (name, value) ->
-    if arguments.length == 1
-      @styles[name]
-    else
-      @setStyle(name, value)
-
-
-  setStyle: (name, value) ->
-    style = @template.styles[name]
-    if not style
-      log.warn "Unknown style '#{ name }' in SnippetModel #{ @identifier }"
-    else if not style.validateValue(value)
-      log.warn "Invalid value '#{ value }' for style '#{ name }' in SnippetModel #{ @identifier }"
-    else
-      if @styles[name] != value
-        @styles[name] = value
-        if @snippetTree
-          @snippetTree.htmlChanging(this, 'style', { name, value })
-
-
-  copy: ->
-    log.warn("SnippetModel#copy() is not implemented yet.")
-
-    # serializing/deserializing should work but needs to get some tests first
-    # json = @toJson()
-    # json.id = guid.next()
-    # SnippetModel.fromJson(json)
-
-
-  copyWithoutContent: ->
-    @template.createModel()
-
-
-  # move up (previous)
+  # Move this snippet up (previous)
   up: ->
     @parentContainer.up(this)
     this
 
 
-  # move down (next)
+  # Move this snippet down (next)
   down: ->
     @parentContainer.down(this)
     this
 
 
-  # remove TreeNode from its container and SnippetTree
+  # Remove this snippet from its container and SnippetTree
   remove: ->
     @parentContainer.remove(this)
 
 
-  # @api private
-  destroy: ->
-    # todo: move into to renderer
-
-    # remove user interface elements
-    @uiInjector.remove() if @uiInjector
-
+  # SnippetTree Iterators
+  # ---------------------
+  #
+  # Navigate and query the snippet tree relative to this snippet.
 
   getParent: ->
      @parentContainer?.parentSnippet
 
-
-  ui: ->
-    if not @uiInjector
-      @snippetTree.renderer.createInterfaceInjector(this)
-    @uiInjector
-
-
-  # Iterators
-  # ---------
 
   parents: (callback) ->
     snippetModel = this
@@ -294,6 +178,156 @@ module.exports = class SnippetModel
   childrenAndSelf: (callback) ->
     callback(this)
     @children(callback)
+
+
+  # Directive Operations
+  # --------------------
+  #
+  # Example how to get an ImageDirective:
+  # imageDirective = snippetModel.directives['image']
+
+  hasContainers: ->
+    @template.directives.count('container') > 0
+
+
+  hasEditables: ->
+    @template.directives.count('editable') > 0
+
+
+  hasHtml: ->
+    @template.directives.count('html') > 0
+
+
+  hasImages: ->
+    @template.directives.count('image') > 0
+
+
+  # set the content data field of the snippet
+  setContent: (name, value) ->
+    if not value
+      if @content[name]
+        @content[name] = undefined
+        @snippetTree.contentChanging(this, name) if @snippetTree
+    else if typeof value == 'string'
+      if @content[name] != value
+        @content[name] = value
+        @snippetTree.contentChanging(this, name) if @snippetTree
+    else
+      if not deepEqual(@content[name], value)
+        @content[name] = value
+        @snippetTree.contentChanging(this, name) if @snippetTree
+
+
+  set: (name, value) ->
+    assert @content?.hasOwnProperty(name),
+      "set error: #{ @identifier } has no content named #{ name }"
+
+    directive = @directives[name]
+    if directive.isImage
+      if directive.getImageUrl() != value
+        directive.setImageUrl(value)
+        @snippetTree.contentChanging(this, name) if @snippetTree
+    else
+      @setContent(name, value)
+
+
+  get: (name) ->
+    assert @content?.hasOwnProperty(name),
+      "get error: #{ @identifier } has no content named #{ name }"
+
+    @directives[name].getContent()
+
+
+  # Check if a directive has content
+  isEmpty: (name) ->
+    value = @get(name)
+    value == undefined || value == ''
+
+
+  # Data Operations
+  # ---------------
+  #
+  # Set arbitrary data to be stored with this snippetModel.
+
+
+  # can be called with a string or a hash
+  data: (arg) ->
+    if typeof(arg) == 'object'
+      changedDataProperties = []
+      for name, value of arg
+        if @changeData(name, value)
+          changedDataProperties.push(name)
+      if @snippetTree && changedDataProperties.length > 0
+        @snippetTree.dataChanging(this, changedDataProperties)
+    else
+      @dataValues[arg]
+
+
+  # @api private
+  changeData: (name, value) ->
+    if not deepEqual(@dataValues[name], value)
+      @dataValues[name] = value
+      true
+    else
+      false
+
+
+  # Style Operations
+  # ----------------
+
+  getStyle: (name) ->
+    @styles[name]
+
+
+  setStyle: (name, value) ->
+    style = @template.styles[name]
+    if not style
+      log.warn "Unknown style '#{ name }' in SnippetModel #{ @identifier }"
+    else if not style.validateValue(value)
+      log.warn "Invalid value '#{ value }' for style '#{ name }' in SnippetModel #{ @identifier }"
+    else
+      if @styles[name] != value
+        @styles[name] = value
+        if @snippetTree
+          @snippetTree.htmlChanging(this, 'style', { name, value })
+
+
+  # Getter and Setter in one.
+  style: (name, value) ->
+    if arguments.length == 1
+      @styles[name]
+    else
+      @setStyle(name, value)
+
+
+  # SnippetModel Operations
+  # -----------------------
+
+  copy: ->
+    log.warn("SnippetModel#copy() is not implemented yet.")
+
+    # serializing/deserializing should work but needs to get some tests first
+    # json = @toJson()
+    # json.id = guid.next()
+    # SnippetModel.fromJson(json)
+
+
+  copyWithoutContent: ->
+    @template.createModel()
+
+
+  # @api private
+  destroy: ->
+    # todo: move into to renderer
+
+    # remove user interface elements
+    @uiInjector.remove() if @uiInjector
+
+
+  ui: ->
+    if not @uiInjector
+      @snippetTree.renderer.createInterfaceInjector(this)
+    @uiInjector
 
 
   # Serialization
