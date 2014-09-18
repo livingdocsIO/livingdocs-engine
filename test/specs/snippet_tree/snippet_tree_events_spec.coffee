@@ -174,7 +174,7 @@ describe 'SnippetTree (Html Events)', ->
   describe 'adding a style', ->
 
     beforeEach ->
-      @changeStyle = => @hero.style('Extra Space', 'extra-space')
+      @changeStyle = => @hero.setStyle('Extra Space', 'extra-space')
 
     it 'fires htmlChanged event', ->
       @expectHtlmChanged 1, => @changeStyle()
@@ -194,7 +194,7 @@ describe 'SnippetTree (Html Events)', ->
 
     it 'does not fire the htmlChanged event', ->
       @expectHtlmChanged 0, =>
-        @hero.style('Extra Space', 'gazillion-pixel-whitespace')
+        @hero.setStyle('Extra Space', 'gazillion-pixel-whitespace')
 
 
   describe 'SnippetTree (Data Events)', ->

@@ -40,7 +40,7 @@ module.exports = class SnippetView
 
   updateHtml: ->
     for name, value of @model.styles
-      @style(name, value)
+      @setStyle(name, value)
 
     @stripHtmlIfReadOnly()
 
@@ -229,7 +229,7 @@ module.exports = class SnippetView
     imageManager.set($elem, value, imageService)
 
 
-  style: (name, className) ->
+  setStyle: (name, className) ->
     changes = @template.styles[name].cssClassChanges(className)
     if changes.remove
       for removeClass in changes.remove

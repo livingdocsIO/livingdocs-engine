@@ -25,8 +25,8 @@ describe 'Snippet Serialization', ->
 
     it 'saves all styles', ->
       hero = test.getSnippet('hero')
-      hero.style('Extra Space', 'extra-space')
-      hero.style('Color', 'color--blue')
+      hero.setStyle('Extra Space', 'extra-space')
+      hero.setStyle('Color', 'color--blue')
       json = hero.toJson()
       expect(json.styles).to.deep.equal
         'Extra Space': 'extra-space'
@@ -147,7 +147,7 @@ describe 'Deserialization', ->
 
     it 'returns a snippet with its styles', ->
       snippet = SnippetModel.fromJson(@json, @design)
-      expect(snippet.style('Color')).to.equal('color--blue')
+      expect(snippet.getStyle('Color')).to.equal('color--blue')
 
 
   describe 'of a snippet with invalid styles', ->
@@ -161,7 +161,7 @@ describe 'Deserialization', ->
 
     it 'returns a snippet with its styles', ->
       snippet = SnippetModel.fromJson(@json, @design)
-      expect(snippet.style('Color')).to.be.undefined
+      expect(snippet.getStyle('Color')).to.be.undefined
 
 
   describe 'of a snippet with data', ->

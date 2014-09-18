@@ -292,8 +292,10 @@ module.exports = class SnippetModel
           @snippetTree.htmlChanging(this, 'style', { name, value })
 
 
+  # @deprecated
   # Getter and Setter in one.
   style: (name, value) ->
+    console.log("SnippetModel#style() is deprecated. Please use #getStyle() and #setStyle().")
     if arguments.length == 1
       @styles[name]
     else
@@ -376,7 +378,7 @@ SnippetModel.fromJson = (json, design) ->
       model.content[name] = value
 
   for styleName, value of json.styles
-    model.style(styleName, value)
+    model.setStyle(styleName, value)
 
   model.data(json.data) if json.data
 
