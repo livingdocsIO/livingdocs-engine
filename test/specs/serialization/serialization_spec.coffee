@@ -61,17 +61,6 @@ describe 'Snippet Serialization', ->
       expect(json.data).to.deep.equal(expectedValue)
 
 
-  describe 'of temporaryContent', ->
-
-    it 'does not save a session value', ->
-      cover = test.getSnippet('cover')
-      cover.directives['image'].setBase64Image(base64Image)
-      json = cover.toJson()
-      expect(json.temporaryContent).to.be.undefined
-      expect(json.content.image).to.be.undefined
-
-
-
 describe 'SnippetTree Serialization', ->
 
   beforeEach ->

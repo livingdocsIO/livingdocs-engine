@@ -29,7 +29,6 @@ module.exports = class SnippetModel
     @initializeDirectives()
     @styles = {}
     @dataValues = {}
-    @temporaryContent = {}
     @id = id || guid.next()
     @identifier = @template.identifier
 
