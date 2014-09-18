@@ -107,13 +107,6 @@ module.exports = class SnippetContainer
     @_detachSnippet(snippet)
 
 
-  ui: ->
-    if not @uiInjector
-      snippetTree = @getSnippetTree()
-      snippetTree.renderer.createInterfaceInjector(this)
-    @uiInjector
-
-
   # Private
   # -------
 

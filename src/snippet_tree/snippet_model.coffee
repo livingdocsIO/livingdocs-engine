@@ -322,15 +322,6 @@ module.exports = class SnippetModel
   destroy: ->
     # todo: move into to renderer
 
-    # remove user interface elements
-    @uiInjector.remove() if @uiInjector
-
-
-  ui: ->
-    if not @uiInjector
-      @snippetTree.renderer.createInterfaceInjector(this)
-    @uiInjector
-
 
   # Serialization
   # -------------
