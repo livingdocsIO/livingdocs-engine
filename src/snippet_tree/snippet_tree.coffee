@@ -2,6 +2,7 @@ assert = require('../modules/logging/assert')
 SnippetContainer = require('./snippet_container')
 SnippetArray = require('./snippet_array')
 SnippetModel = require('./snippet_model')
+snippetModelSerializer = require('./snippet_model_serializer')
 
 # SnippetTree
 # -----------
@@ -279,7 +280,7 @@ module.exports = class SnippetTree
 
     if data.content
       for snippetData in data.content
-        snippet = SnippetModel.fromJson(snippetData, design)
+        snippet = snippetModelSerializer.fromJson(snippetData, design)
         @root.append(snippet)
 
     if silent
@@ -302,7 +303,7 @@ module.exports = class SnippetTree
       do =>
         content = snippetData
         setTimeout =>
-          snippet = SnippetModel.fromJson(content, @design)
+          snippet = snippetModelSerializer.fromJson(content, @design)
           @root.append(snippet)
         , timeout
 
