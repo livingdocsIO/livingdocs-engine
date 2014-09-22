@@ -60,7 +60,7 @@ module.exports = class ImageDirective
     @snippet.content[@name].originalUrl || @getImageUrl()
 
 
-  setCrop: ({ x, y, width, height }) ->
+  setCrop: ({ x, y, width, height, name }) ->
     currentValue = @snippet.content[@name]
 
     if currentValue?.url?
@@ -69,6 +69,7 @@ module.exports = class ImageDirective
         y: y
         width: width
         height: height
+        name: name
 
       @processImageUrl(currentValue.originalUrl || currentValue.url)
       @snippet.snippetTree.contentChanging(@snippet, @name) if @snippet.snippetTree
