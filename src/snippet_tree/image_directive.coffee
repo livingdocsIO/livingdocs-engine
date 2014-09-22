@@ -36,12 +36,8 @@ module.exports = class ImageDirective
 
 
   setImageUrl: (value) ->
-    currentValue = @snippet.content[@name]
-    if typeof currentValue == 'string' || not currentValue
-      @snippet.content[@name] =
-        url: value
-    else
-      @snippet.content[@name].url = value
+    @snippet.content[@name] ?= {}
+    @snippet.content[@name].url = value
 
     @resetCrop()
     @base64Image = undefined
@@ -50,12 +46,14 @@ module.exports = class ImageDirective
 
   getImageUrl: ->
     image = @snippet.content[@name]
-    if not image
-      undefined
-    else if typeof image == 'string'
-      image
-    else
+    if image
       image.url
+    else
+      undefined
+
+
+  getImageObject: ->
+    @snippet.content[@name]
 
 
   getOriginalUrl: ->
@@ -74,10 +72,6 @@ module.exports = class ImageDirective
 
       @processImageUrl(currentValue.originalUrl || currentValue.url)
       @snippet.snippetTree.contentChanging(@snippet, @name) if @snippet.snippetTree
-
-
-  getCropData: ->
-    @snippet.content[@name]?.crop
 
 
   resetCrop: ->
@@ -102,17 +96,19 @@ module.exports = class ImageDirective
       'default'
 
 
+  hasDefaultImageService: ->
+    @getImageServiceName() == 'default'
+
+
   getImageService: ->
     serviceName = @getImageServiceName()
     imageService.get(serviceName)
 
 
-  processImageUrl: (value) ->
-    currentValue = @snippet.content[@name]
-
-    if currentValue?.imageService?
-      imgService = imageService.get(currentValue.imageService)
-      cropInfo = currentValue.crop
-      currentValue.url = imgService.getUrl(value, cropInfo)
-      currentValue.originalUrl = value
+  processImageUrl: (url) ->
+    if not @hasDefaultImageService()
+      imgService = @getImageService()
+      imgObj = @getImageObject()
+      imgObj.url = imgService.getUrl(url, crop: imgObj.crop)
+      imgObj.originalUrl = url
 
