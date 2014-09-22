@@ -100,6 +100,7 @@ module.exports = (grunt) ->
         src: [
           'test/specs/configuration/*.coffee'
           'test/specs/design/*.coffee'
+          'test/specs/image_services/*.coffee'
           'test/specs/interaction/dom_spec.coffee'
           'test/specs/modules/*.coffee'
           'test/specs/rendering/*.coffee'

@@ -4,7 +4,6 @@ attr = config.attr
 DirectiveIterator = require('../template/directive_iterator')
 eventing = require('../modules/eventing')
 dom = require('../interaction/dom')
-imageManager = require('./image_manager')
 
 module.exports = class SnippetView
 
@@ -207,16 +206,16 @@ module.exports = class SnippetView
     if value
       @cancelDelayed(name)
 
-      imageService = @model.data('imageService')[name] if @model.data('imageService')
-      imageManager.set($elem, value, imageService)
+      imageService = @model.directives[name].getImageService()
+      imageService.set($elem, value)
 
       $elem.removeClass(config.css.emptyImage)
     else
-      setPlaceholder = $.proxy(@setPlaceholderImage, this, $elem)
+      setPlaceholder = $.proxy(@setPlaceholderImage, this, $elem, name)
       @delayUntilAttached(name, setPlaceholder) # todo: replace with @afterInserted -> ... (something like $.Callbacks('once remember'))
 
 
-  setPlaceholderImage: ($elem) ->
+  setPlaceholderImage: ($elem, name) ->
     $elem.addClass(config.css.emptyImage)
     if $elem[0].nodeName == 'IMG'
       width = $elem.width()
@@ -225,8 +224,9 @@ module.exports = class SnippetView
       width = $elem.outerWidth()
       height = $elem.outerHeight()
     value = "http://placehold.it/#{width}x#{height}/BEF56F/B2E668"
-    imageService = @model.data('imageService')[name] if @model.data('imageService')
-    imageManager.set($elem, value, imageService)
+
+    imageService = @model.directives[name].getImageService()
+    imageService.set($elem, value)
 
 
   setStyle: (name, className) ->

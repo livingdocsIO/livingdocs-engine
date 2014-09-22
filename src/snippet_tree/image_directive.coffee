@@ -32,7 +32,7 @@ module.exports = class ImageDirective
 
   setBase64Image: (base64String) ->
     @base64Image = base64String
-    @snippet.snippetTree.contentChanging(@snippet, name) if @snippet.snippetTree
+    @snippet.snippetTree.contentChanging(@snippet, @name) if @snippet.snippetTree
 
 
   setImageUrl: (value) ->
@@ -66,8 +66,6 @@ module.exports = class ImageDirective
     currentValue = @snippet.content[@name]
 
     if currentValue?.url?
-      currentValue.imageWidth = 0
-      currentValue.imageHeight = 0
       currentValue.crop =
         x: x
         y: y
@@ -75,7 +73,7 @@ module.exports = class ImageDirective
         height: height
 
       @processImageUrl(currentValue.originalUrl || currentValue.url)
-      @snippet.snippetTree.contentChanging(@snippet, name) if @snippet.snippetTree
+      @snippet.snippetTree.contentChanging(@snippet, @name) if @snippet.snippetTree
 
 
   getCropData: ->
@@ -85,8 +83,6 @@ module.exports = class ImageDirective
   resetCrop: ->
     currentValue = @snippet.content[@name]
     if currentValue?
-      currentValue.imageWidth = null
-      currentValue.imageHeight = null
       currentValue.crop = null
 
 
@@ -99,8 +95,16 @@ module.exports = class ImageDirective
       imageService: imageServiceName || null
 
 
+  getImageServiceName: ->
+    if @snippet.content[@name]?.imageService?
+      @snippet.content[@name].imageService
+    else
+      'default'
+
+
   getImageService: ->
-    @snippet.content[@name].imageService
+    serviceName = @getImageServiceName()
+    imageService.get(serviceName)
 
 
   processImageUrl: (value) ->

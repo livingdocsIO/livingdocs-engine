@@ -1,16 +1,40 @@
 module.exports =
 
+  # Image Service Interface
+  # -----------------------
+
+  name: 'default'
+
+  # Set value to an image or background image element.
+  #
+  # @param { jQuery object } Node to set the image to.
+  # @param { String } Image url
+  set: ($elem, value) ->
+    if @isInlineImage($elem)
+      @setInlineImage($elem, value)
+    else
+      @setBackgroundImage($elem, value)
+
+
+  setPlaceholder: ($elem) ->
+    dim = @getImageDimensions($elem)
+    imageUrl = "http://placehold.it/#{ dim.width }x#{ dim.height }/BEF56F/B2E668"
+
+
+  # The default service does not transfor the given url
+  getUrl: (value) ->
+    value
+
+
+  # Default Image Service methods
+  # -----------------------------
+
   setInlineImage: ($elem, value) ->
     $elem.attr('src', value)
 
 
   setBackgroundImage: ($elem, value) ->
     $elem.css('background-image', "url(#{ @escapeCssUri(value) })")
-
-
-  setPlaceholder: ($elem) ->
-    dim = @getImageDimensions($elem)
-    imageUrl = "http://placehold.it/#{ dim.width }x#{ dim.height }/BEF56F/B2E668"
 
 
   # Escape the URI in case invalid characters like '(' or ')' are present.
@@ -25,7 +49,7 @@ module.exports =
 
 
   getImageDimensions: ($elem) ->
-    if @isInlineImage()
+    if @isInlineImage($elem)
       width: $elem.width()
       height: $elem.height()
     else
@@ -34,7 +58,7 @@ module.exports =
 
 
   isBase64: (value) ->
-    value.indexOf('data:image') == 0
+    value.indexOf('data:image') == 0 if value?
 
 
   isInlineImage: ($elem) ->

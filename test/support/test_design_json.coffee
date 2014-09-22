@@ -96,6 +96,10 @@ module.exports = do ->
       title: 'Image'
       html: """<img #{ imageAttr }="image" src=""/>"""
     ,
+      id: 'background-image'
+      title: 'Background Image'
+      html: """<div #{ imageAttr }="image"></div>"""
+    ,
       id: 'cover'
       title: 'Cover'
       html:

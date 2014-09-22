@@ -1,32 +1,28 @@
-DefaultImageManager = require('../rendering/default_image_manager')
-ResrcitImageManager = require('../rendering/resrcit_image_manager')
+assert = require('../modules/logging/assert')
+defaultImageService = require('./default_image_service')
+resrcitImageService = require('./resrcit_image_service')
 
 module.exports = do ->
 
-  services = {}
+  # Available Image Services
+  services =
+    'resrc.it': resrcitImageService
+    'default': defaultImageService
+
 
   # Service
   # -------
 
   has: (serviceName) ->
-    @loadService(serviceName)?
+    services[serviceName]?
 
 
   get: (serviceName) ->
-    @loadService(serviceName)
+    assert @has(serviceName), "Could not load image service #{ serviceName }"
+    services[serviceName]
 
 
-  loadService: (serviceName) ->
-    return unless serviceName
-    return services[serviceName] if services[serviceName]?
-
-    imageService = switch serviceName
-      when 'resrc.it'
-        new ResrcitImageManager()
-      when 'default', '', null, undefined
-        new DefaultImageManager()
-      else
-        assert false, "Could not load image service #{ serviceName }"
-
-    services[serviceName] = imageService if imageService?
+  eachService: (callback) ->
+    for name, service of services
+      callback(name, service)
 

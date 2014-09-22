@@ -20,7 +20,7 @@ describe 'Snippet Directive', ->
 
       it 'sets resrc.it as image service', ->
         @imgDirective.setImageService('resrc.it')
-        expect(@imgDirective.getImageService()).to.equal('resrc.it')
+        expect(@imgDirective.getImageServiceName()).to.equal('resrc.it')
 
 
     describe 'setImageUrl()', ->
