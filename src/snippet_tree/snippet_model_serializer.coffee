@@ -59,7 +59,7 @@ module.exports = do ->
         "error while deserializing snippet: unknown content '#{ name }'"
 
       # Transform string into object: Backwards compatibility for old image values.
-      if model.directives[name].type == 'image' && typeof value == 'string'
+      if model.directives.get(name).type == 'image' && typeof value == 'string'
         model.content[name] =
           url: value
       else

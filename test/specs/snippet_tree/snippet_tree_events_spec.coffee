@@ -152,7 +152,7 @@ describe 'SnippetTree (Content Events)', ->
 
     beforeEach ->
       @changeSnippetContent = =>
-        @imageSnippet.directives['image'].setBase64Image(base64Image)
+        @imageSnippet.directives.get('image').setBase64Image(base64Image)
 
 
     it 'fires snippetContentChanged event', ->

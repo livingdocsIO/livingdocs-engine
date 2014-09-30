@@ -108,11 +108,12 @@ module.exports = class SnippetView
 
   content: (content) ->
     for name, value of content
-      if @model.directives[name].isImage
-        if @model.directives[name].base64Image?
-          @set(name, @model.directives[name].base64Image)
+      directive = @model.directives.get(name)
+      if directive.isImage
+        if directive.base64Image?
+          @set(name, directive.base64Image)
         else
-          @set(name, @model.directives[name].getImageUrl() )
+          @set(name, directive.getImageUrl() )
       else
         @set(name, value)
 
@@ -206,7 +207,7 @@ module.exports = class SnippetView
     if value
       @cancelDelayed(name)
 
-      imageService = @model.directives[name].getImageService()
+      imageService = @model.directives.get(name).getImageService()
       imageService.set($elem, value)
 
       $elem.removeClass(config.css.emptyImage)
@@ -225,7 +226,7 @@ module.exports = class SnippetView
       height = $elem.outerHeight()
     value = "http://placehold.it/#{width}x#{height}/BEF56F/B2E668"
 
-    imageService = @model.directives[name].getImageService()
+    imageService = @model.directives.get(name).getImageService()
     imageService.set($elem, value)
 
 

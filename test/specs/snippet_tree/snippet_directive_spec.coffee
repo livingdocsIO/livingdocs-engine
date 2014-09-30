@@ -3,7 +3,7 @@ describe 'Snippet Directive', ->
   describe 'snippet with inline image', ->
     beforeEach ->
       @image = test.getSnippet('image')
-      @imgDirective = @image.directives['image']
+      @imgDirective = @image.directives.get('image')
 
 
     it 'has a snippet directive with its parent snippet set', ->
@@ -70,7 +70,7 @@ describe 'Snippet Directive', ->
   describe 'snippet with background image', ->
     beforeEach ->
       @cover = test.getSnippet('cover')
-      @imgDirective = @cover.directives['image']
+      @imgDirective = @cover.directives.get('image')
 
 
     it 'has a snippet directive with its parent snippet set', ->

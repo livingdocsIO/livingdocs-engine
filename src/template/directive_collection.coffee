@@ -25,6 +25,7 @@ module.exports = class DirectiveCollection
     # directive.type is one of those 'container', 'editable', 'image', 'html'
     this[directive.type] ||= []
     this[directive.type].push(directive)
+    directive
 
 
   next: (name) ->

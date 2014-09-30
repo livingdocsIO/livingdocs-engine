@@ -5,6 +5,7 @@ guid = require('../modules/guid')
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
 directiveFactory = require('./snippet_directive_factory')
+DirectiveCollection = require('../template/directive_collection')
 
 # SnippetModel
 # ------------
@@ -37,6 +38,8 @@ module.exports = class SnippetModel
 
 
   initializeDirectives: ->
+    @directives = new DirectiveCollection()
+
     for directive in @template.directives
       switch directive.type
         when 'container'
@@ -54,8 +57,7 @@ module.exports = class SnippetModel
 
   # Create a directive for 'editable', 'image', 'html' template directives
   createSnippetDirective: (templateDirective) ->
-    @directives ?= {}
-    @directives[templateDirective.name] = directiveFactory.create
+    @directives.add directiveFactory.create
       snippet: this
       templateDirective: templateDirective
 
@@ -221,7 +223,7 @@ module.exports = class SnippetModel
     assert @content?.hasOwnProperty(name),
       "set error: #{ @identifier } has no content named #{ name }"
 
-    directive = @directives[name]
+    directive = @directives.get(name)
     if directive.isImage
       if directive.getImageUrl() != value
         directive.setImageUrl(value)
@@ -234,7 +236,7 @@ module.exports = class SnippetModel
     assert @content?.hasOwnProperty(name),
       "get error: #{ @identifier } has no content named #{ name }"
 
-    @directives[name].getContent()
+    @directives.get(name).getContent()
 
 
   # Check if a directive has content
