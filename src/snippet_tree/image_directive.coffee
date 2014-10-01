@@ -91,10 +91,7 @@ module.exports = class ImageDirective
 
 
   getImageServiceName: ->
-    if @snippet.content[@name]?.imageService?
-      @snippet.content[@name].imageService
-    else
-      'default'
+    @getImageService().name
 
 
   hasDefaultImageService: ->
@@ -102,8 +99,8 @@ module.exports = class ImageDirective
 
 
   getImageService: ->
-    serviceName = @getImageServiceName()
-    imageService.get(serviceName)
+    serviceName = @snippet.content[@name]?.imageService
+    imageService.get(serviceName || undefined)
 
 
   processImageUrl: (url) ->

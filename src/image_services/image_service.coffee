@@ -13,11 +13,11 @@ module.exports = do ->
   # Service
   # -------
 
-  has: (serviceName) ->
+  has: (serviceName = 'default') ->
     services[serviceName]?
 
 
-  get: (serviceName) ->
+  get: (serviceName = 'default') ->
     assert @has(serviceName), "Could not load image service #{ serviceName }"
     services[serviceName]
 
