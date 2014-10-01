@@ -185,22 +185,22 @@ module.exports = class SnippetModel
   # --------------------
   #
   # Example how to get an ImageDirective:
-  # imageDirective = snippetModel.directives['image']
+  # imageDirective = snippetModel.directives.get('image')
 
   hasContainers: ->
-    @template.directives.count('container') > 0
+    @directives.count('container') > 0
 
 
   hasEditables: ->
-    @template.directives.count('editable') > 0
+    @directives.count('editable') > 0
 
 
   hasHtml: ->
-    @template.directives.count('html') > 0
+    @directives.count('html') > 0
 
 
   hasImages: ->
-    @template.directives.count('image') > 0
+    @directives.count('image') > 0
 
 
   # set the content data field of the snippet

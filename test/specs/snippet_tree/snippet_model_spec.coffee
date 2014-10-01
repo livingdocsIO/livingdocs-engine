@@ -87,13 +87,13 @@ describe 'Image snippet', ->
     expect(@image.content).to.have.ownProperty('image')
 
 
-  it 'sets a base64 image as volatile', ->
+  it 'sets a base64 image', ->
     @image.directives.get('image').setBase64Image(base64Image)
     expect(@image.directives.get('image').base64Image).to.equal(base64Image)
     expect(@image.get('image')).to.equal(undefined)
 
 
-  it 'resets a volatile base64 image once the url is set', ->
+  it 'resets a base64 image when the url is set', ->
     @image.directives.get('image').setBase64Image(base64Image)
     @image.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
     expect(@image.directives.get('image').base64Image).to.be.undefined
