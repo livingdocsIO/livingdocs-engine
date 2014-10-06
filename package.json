@@ -1,13 +1,15 @@
 {
   "name": "livingdocs-engine",
   "version": "0.2.2",
+  "main": "src/node_api.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/upfrontIO/livingdocs-engine.git"
   },
   "dependencies": {
     "wolfy87-eventemitter": "~4.2.6",
-    "deep-equal": "~0.2.1"
+    "deep-equal": "~0.2.1",
+    "jsdom": "~0.10.1"
   },
   "devDependencies": {
     "grunt": "~0.4.2",
@@ -42,7 +44,6 @@
     "mocha": "~1.17.1",
     "karma-mocha": "~0.1.1",
     "karma-sinon-chai": "~0.1.4",
-    "jsdom": "~0.10.1",
     "underscore": "~1.6.0",
     "karma-safari-launcher": "~0.1.1",
     "grunt-autoprefixer": "~0.7.2",
