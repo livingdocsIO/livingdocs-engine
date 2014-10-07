@@ -1,4 +1,4 @@
-TestImage = require('../../support/test_base64_image')
+base64Image = require('../../support/test_base64_image')
 
 describe 'Title Snippet', ->
 
@@ -87,16 +87,17 @@ describe 'Image snippet', ->
     expect(@image.content).to.have.ownProperty('image')
 
 
-  it 'sets a base64 image as volatile', ->
-    @image.set('image', TestImage, 'temporaryOverride')
-    expect(@image.temporaryContent.image).to.equal(TestImage)
+  it 'sets a base64 image', ->
+    @image.directives.get('image').setBase64Image(base64Image)
+    expect(@image.directives.get('image').base64Image).to.equal(base64Image)
+    expect(@image.get('image')).to.equal(undefined)
 
 
-  it 'resets a volatile base64 image once the url is set', ->
-    @image.set('image', TestImage, 'temporaryOverride')
+  it 'resets a base64 image when the url is set', ->
+    @image.directives.get('image').setBase64Image(base64Image)
     @image.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
-    expect(@image.temporaryContent.image).to.be.undefined
-    expect(@image.content.image).to.equal('http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
+    expect(@image.directives.get('image').base64Image).to.be.undefined
+    expect(@image.get('image')).to.equal('http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
 
 
 describe 'Hero SnippetModel#style', ->
@@ -106,42 +107,42 @@ describe 'Hero SnippetModel#style', ->
 
 
   it 'gets style "Extra Space', ->
-    expect(@hero.style('Extra Space')).to.be.undefined
+    expect(@hero.getStyle('Extra Space')).to.be.undefined
 
 
   it 'sets style "Extra Space"', ->
-    @hero.style('Extra Space', 'extra-space')
+    @hero.setStyle('Extra Space', 'extra-space')
     expect(@hero.styles['Extra Space']).to.equal('extra-space')
 
 
   it 'resets style "Extra Space" with "" (empty string)', ->
-    @hero.style('Extra Space', 'extra-space')
-    @hero.style('Extra Space', '')
+    @hero.setStyle('Extra Space', 'extra-space')
+    @hero.setStyle('Extra Space', '')
     expect(@hero.styles['Extra Space']).to.equal('')
 
 
   it 'resets style "Extra Space" with null', ->
-    @hero.style('Extra Space', 'extra-space')
-    @hero.style('Extra Space', null)
+    @hero.setStyle('Extra Space', 'extra-space')
+    @hero.setStyle('Extra Space', null)
     expect(@hero.styles['Extra Space']).to.be.null
 
   it 'sets style "Color"', ->
-    @hero.style('Color', 'color--blue')
+    @hero.setStyle('Color', 'color--blue')
     expect(@hero.styles['Color']).to.equal('color--blue')
 
 
   it 'gets previously set style "Extra Space', ->
-    @hero.style('Extra Space', 'extra-space')
-    expect(@hero.style('Extra Space')).to.equal('extra-space')
+    @hero.setStyle('Extra Space', 'extra-space')
+    expect(@hero.styles['Extra Space']).to.equal('extra-space')
 
 
   it 'does not set style "Extra Space" with unknown class', ->
-    @hero.style('Extra Space', 'are-you-kidding-me')
+    @hero.setStyle('Extra Space', 'are-you-kidding-me')
     expect(@hero.styles['Extra Space']).to.be.undefined
 
 
   it 'does not set unspecified style "Conundrum"', ->
-    @hero.style('Conundrum', 'wtf')
+    @hero.setStyle('Conundrum', 'wtf')
     expect(@hero.styles['Conundrum']).to.be.undefined
 
 

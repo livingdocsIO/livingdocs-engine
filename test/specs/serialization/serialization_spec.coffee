@@ -1,6 +1,7 @@
 SnippetTree = require('../../../src/snippet_tree/snippet_tree')
 SnippetModel = require('../../../src/snippet_tree/snippet_model')
-TestImage = require('../../support/test_base64_image')
+snippetModelSerializer = require('../../../src/snippet_tree/snippet_model_serializer')
+base64Image = require('../../support/test_base64_image')
 
 describe 'Snippet Serialization', ->
 
@@ -25,8 +26,8 @@ describe 'Snippet Serialization', ->
 
     it 'saves all styles', ->
       hero = test.getSnippet('hero')
-      hero.style('Extra Space', 'extra-space')
-      hero.style('Color', 'color--blue')
+      hero.setStyle('Extra Space', 'extra-space')
+      hero.setStyle('Color', 'color--blue')
       json = hero.toJson()
       expect(json.styles).to.deep.equal
         'Extra Space': 'extra-space'
@@ -59,17 +60,6 @@ describe 'Snippet Serialization', ->
 
       json = hero.toJson()
       expect(json.data).to.deep.equal(expectedValue)
-
-
-  describe 'of temporaryContent', ->
-
-    it 'does not save a session value', ->
-      cover = test.getSnippet('cover')
-      cover.set('image', TestImage, 'temporaryOverride')
-      json = cover.toJson()
-      expect(json.temporaryContent).to.be.undefined
-      expect(json.content.image).to.be.undefined
-
 
 
 describe 'SnippetTree Serialization', ->
@@ -113,7 +103,7 @@ describe 'Deserialization', ->
       json = { identifier: 'unknown-snippet' }
 
       deserialize = =>
-        snippet = SnippetModel.fromJson(json, @design)
+        snippet = snippetModelSerializer.fromJson(json, @design)
 
       expect(deserialize).to.throw()
 
@@ -127,7 +117,7 @@ describe 'Deserialization', ->
           'title-misspelled': 'Baby Geniusses'
 
       deserialize = =>
-        snippet = SnippetModel.fromJson(json, @design)
+        snippet = snippetModelSerializer.fromJson(json, @design)
 
       expect(deserialize).to.throw()
 
@@ -142,7 +132,7 @@ describe 'Deserialization', ->
 
 
     it 'returns a snippet instance', ->
-      snippet = SnippetModel.fromJson(@json, @design)
+      snippet = snippetModelSerializer.fromJson(@json, @design)
       expect(snippet).to.be.an.instanceof(SnippetModel)
       expect(snippet.get('title')).to.equal('Baby Geniuses')
 
@@ -157,8 +147,8 @@ describe 'Deserialization', ->
 
 
     it 'returns a snippet with its styles', ->
-      snippet = SnippetModel.fromJson(@json, @design)
-      expect(snippet.style('Color')).to.equal('color--blue')
+      snippet = snippetModelSerializer.fromJson(@json, @design)
+      expect(snippet.getStyle('Color')).to.equal('color--blue')
 
 
   describe 'of a snippet with invalid styles', ->
@@ -171,8 +161,8 @@ describe 'Deserialization', ->
 
 
     it 'returns a snippet with its styles', ->
-      snippet = SnippetModel.fromJson(@json, @design)
-      expect(snippet.style('Color')).to.be.undefined
+      snippet = snippetModelSerializer.fromJson(@json, @design)
+      expect(snippet.getStyle('Color')).to.be.undefined
 
 
   describe 'of a snippet with data', ->
@@ -191,12 +181,12 @@ describe 'Deserialization', ->
 
 
     it 'returns a snippet with its center data', ->
-      snippet = SnippetModel.fromJson(@json, @design)
+      snippet = snippetModelSerializer.fromJson(@json, @design)
       expect(snippet.data('center')).to.deep.equal({'zoom': 12})
 
 
     it 'returns a snippet with its markers data', ->
-      snippet = SnippetModel.fromJson(@json, @design)
+      snippet = snippetModelSerializer.fromJson(@json, @design)
       expect(snippet.data('markers')).to.deep.equal([{'text': 'test'}, {'text': 'test2'}])
 
 
@@ -217,7 +207,7 @@ describe 'Deserialization', ->
 
 
     it 'returns a snippet instance', ->
-      row = SnippetModel.fromJson(@rowJson, @design)
+      row = snippetModelSerializer.fromJson(@rowJson, @design)
       firstChild = row.containers['main'].first
       secondChild = firstChild.next
       expect(firstChild.get('title')).to.equal('Do you feel lucky?')
@@ -236,7 +226,7 @@ describe 'Deserialization', ->
     it 'ignores null containers', ->
       @rowJson.containers.sidebar = null
       deserialize = =>
-        snippet = SnippetModel.fromJson(@rowJson, @design)
+        snippet = snippetModelSerializer.fromJson(@rowJson, @design)
 
       expect(deserialize).not.to.throw()
 
@@ -244,7 +234,7 @@ describe 'Deserialization', ->
     it 'throws an error if container is not an array', ->
       @rowJson.containers.sidebar = 'this makes no sense at all'
       deserialize = =>
-        snippet = SnippetModel.fromJson(@rowJson, @design)
+        snippet = snippetModelSerializer.fromJson(@rowJson, @design)
 
       expect(deserialize).to.throw()
 
@@ -252,7 +242,7 @@ describe 'Deserialization', ->
     it 'throws an error if it encouters an unknown containerName', ->
       @rowJson.containers.sidebarExtra = []
       deserialize = =>
-        snippet = SnippetModel.fromJson(@rowJson, @design)
+        snippet = snippetModelSerializer.fromJson(@rowJson, @design)
 
       expect(deserialize).to.throw()
 

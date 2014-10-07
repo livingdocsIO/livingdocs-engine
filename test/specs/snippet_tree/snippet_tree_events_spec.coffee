@@ -1,5 +1,5 @@
 SnippetTree = require('../../../src/snippet_tree/snippet_tree')
-TestImage = require('../../support/test_base64_image')
+base64Image = require('../../support/test_base64_image')
 
 # SnippetTree Events
 # ------------------
@@ -152,7 +152,7 @@ describe 'SnippetTree (Content Events)', ->
 
     beforeEach ->
       @changeSnippetContent = =>
-        @imageSnippet.set('image', TestImage, 'temporaryOverride')
+        @imageSnippet.directives.get('image').setBase64Image(base64Image)
 
 
     it 'fires snippetContentChanged event', ->
@@ -174,7 +174,7 @@ describe 'SnippetTree (Html Events)', ->
   describe 'adding a style', ->
 
     beforeEach ->
-      @changeStyle = => @hero.style('Extra Space', 'extra-space')
+      @changeStyle = => @hero.setStyle('Extra Space', 'extra-space')
 
     it 'fires htmlChanged event', ->
       @expectHtlmChanged 1, => @changeStyle()
@@ -194,7 +194,7 @@ describe 'SnippetTree (Html Events)', ->
 
     it 'does not fire the htmlChanged event', ->
       @expectHtlmChanged 0, =>
-        @hero.style('Extra Space', 'gazillion-pixel-whitespace')
+        @hero.setStyle('Extra Space', 'gazillion-pixel-whitespace')
 
 
   describe 'SnippetTree (Data Events)', ->

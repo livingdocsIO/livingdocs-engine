@@ -17,6 +17,11 @@ module.exports = class Directive
     @config.elementDirective
 
 
+  # Return the nodeName in lower case
+  getTagName: ->
+    @elem.nodeName.toLowerCase()
+
+
   # For every new SnippetView the directives are cloned from the
   # template and linked with the elements from the new view
   clone: ->

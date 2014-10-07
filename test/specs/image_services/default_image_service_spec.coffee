@@ -1,15 +1,16 @@
-DefaultImageManager = require('../../../src/rendering/default_image_manager')
-describe 'DefaultImageManager', ->
+defaultImageService = require('../../../src/image_services/default_image_service')
+
+describe 'defaultImageService', ->
 
   beforeEach ->
-    @imageManager = new DefaultImageManager()
+    @imageService = defaultImageService
 
 
   describe 'setting the image', ->
 
     it 'renders the image src on an img', ->
       $elem = $('<img>')
-      @imageManager.set($elem, 'http://www.lolcats.com/images/1.jpg')
+      @imageService.set($elem, 'http://www.lolcats.com/images/1.jpg')
       expect($elem).to.have.html """
         <img src="http://www.lolcats.com/images/1.jpg">
       """
@@ -17,7 +18,7 @@ describe 'DefaultImageManager', ->
 
     it 'renders the image background property on a div', ->
       $elem = $('<div></div>')
-      @imageManager.set($elem, 'http://www.lolcats.com/images/1.jpg')
+      @imageService.set($elem, 'http://www.lolcats.com/images/1.jpg')
       expect($elem).to.have.html """
         <div style="background-image:url(http://www.lolcats.com/images/1.jpg)"></div>
       """
@@ -26,7 +27,7 @@ describe 'DefaultImageManager', ->
   describe 'escapeCssUri()', ->
 
     it 'escapes an uri with paranthesis', ->
-      escapedUri = @imageManager.escapeCssUri('http://test.com/1')
+      escapedUri = @imageService.escapeCssUri('http://test.com/1')
 
       $elem = $('<div>')
       $elem.css('background-image', "url(#{ escapedUri })")

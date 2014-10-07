@@ -1,15 +1,15 @@
-DefaultImageManager = require('../../../src/rendering/default_image_manager')
+defaultImageService = require('../../../src/image_services/default_image_service')
 
 describe 'Browser only: DefaultImageManager', ->
 
   beforeEach ->
-    @imageManager = new DefaultImageManager()
+    @imageService = defaultImageService
 
 
   describe 'escapeCssUri()', ->
 
     it 'escapes an uri with paranthesis', ->
-      escapedUri = @imageManager.escapeCssUri('http://test.com/(1)')
+      escapedUri = @imageService.escapeCssUri('http://test.com/(1)')
 
       $elem = $('<div>')
       $elem.css('background-image', "url(#{ escapedUri })")

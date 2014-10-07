@@ -1,5 +1,4 @@
-ImageManager = require('../../../src/rendering/image_manager')
-TestImage = require('../../support/test_base64_image')
+base64Image = require('../../support/test_base64_image')
 
 css = config.css
 attr = config.attr
@@ -50,7 +49,7 @@ describe 'SnippetView title set style', ->
 
   beforeEach ->
     @title = test.getSnippet('title')
-    @title.style('Color', 'color--blue')
+    @title.setStyle('Color', 'color--blue')
     @$expected = $ """
       <h1 #{ test.editableAttr }="title"
           class="#{ css.editable } #{ css.snippet }"
@@ -67,7 +66,7 @@ describe 'SnippetView title set style', ->
   it 'changes "Color" style from "color--blue" to "color--red"', ->
     @$expected.addClass('color--red')
     snippetView = @title.template.createView(@title)
-    snippetView.style('Color', 'color--red')
+    snippetView.setStyle('Color', 'color--red')
     expect(snippetView.$html).to.have.html(@$expected)
 
 
@@ -97,13 +96,13 @@ describe 'SnippetView hero', ->
 
   it 'sets "Extra Space"', ->
     @expected.addClass('extra-space')
-    @snippetView.style('Extra Space', 'extra-space')
+    @snippetView.setStyle('Extra Space', 'extra-space')
     expect(@snippetView.$html).to.have.html(@expected)
 
 
   it 'resets "Extra Space"', ->
-    @snippetView.style('Extra Space', 'extra-space')
-    @snippetView.style('Extra Space', '')
+    @snippetView.setStyle('Extra Space', 'extra-space')
+    @snippetView.setStyle('Extra Space', '')
     expect(@snippetView.$html).to.have.html(@expected)
 
 
@@ -134,42 +133,43 @@ describe 'SnippetView image', ->
 
   beforeEach ->
     @snippet = test.getSnippet('image')
-    @defaultImageManager = ImageManager.getDefaultImageManager()
-    @resrcitImageManager = ImageManager.getResrcitImageManager()
-    @setOnDefault = sinon.spy(@defaultImageManager, 'set')
-    @setOnResrcit = sinon.spy(@resrcitImageManager, 'set')
 
 
-  afterEach ->
-    @defaultImageManager.set.restore()
-    @resrcitImageManager.set.restore()
+  describe 'with the default image service', ->
+
+    expectSrc = (view, src) ->
+      expect(view.$html).to.have.html """
+        <img src="#{ src }"
+          #{ test.imageAttr }="image"
+          class="#{ css.snippet }"
+          #{ attr.template }="test.image">"""
 
 
-  describe 'without an image service', ->
-
-    it 'calls the default image manager', ->
-      @snippet.set('image', 'http://www.lolcats.com/images/1.jpg')
-      @snippetView = @snippet.template.createView(@snippet)
-      expect(@setOnDefault).to.have.been.calledOnce
+    it 'sets the src', ->
+      @view = @snippet.createView()
+      @view.set('image', 'http://images.com/1')
+      expectSrc(@view, 'http://images.com/1')
 
 
-  describe 'with the resrc.it service', ->
+  describe 'with the resrc.it image service', ->
 
-    beforeEach ->
-      @snippet.data 'imageService':
-        'image': 'resrc.it'
-
-
-    it 'calls the resrcit image manager', ->
-      @snippet.set('image', 'http://www.lolcats.com/images/1.jpg')
-      @snippetView = @snippet.template.createView(@snippet)
-      expect(@setOnResrcit).to.have.been.calledOnce
-
+    it 'sets the data-src attribute', ->
+      @view = @snippet.createView()
+      @view.model.directives.get('image').setImageService('resrc.it')
+      @view.set('image', 'http://images.com/1')
+      expect(@view.$html).to.have.html """
+        <img
+          src=""
+          data-src="http://images.com/1"
+          class="#{ css.snippet } resrc"
+          #{ test.imageAttr }="image"
+          #{ attr.template }="test.image">
+          """
 
   describe 'delayed placeholder insertion', ->
 
     beforeEach ->
-      @view = @snippet.template.createView(@snippet)
+      @view = @snippet.createView()
       @view.set('image', undefined)
 
 
@@ -217,6 +217,25 @@ describe 'SnippetView image', ->
           #{ attr.template }="test.image">"""
 
 
+describe 'SnippetView background image', ->
+
+  beforeEach ->
+    @snippet = test.getSnippet('background-image')
+
+
+  describe 'with the default image service', ->
+
+    it 'sets the background-image in the style attribute', ->
+      @view = @snippet.createView()
+      @view.set('image', 'http://images.com/1')
+      expect(@view.$html).to.have.html """
+        <div
+          style="background-image: url(http://images.com/1);"
+          #{ test.imageAttr }="image"
+          class="#{ css.snippet }"
+          #{ attr.template }="test.background-image">"""
+
+
 describe 'SnippetView html', ->
 
   beforeEach ->
@@ -237,8 +256,10 @@ describe 'SnippetView html', ->
 
 
   describe 'set("html", value)', ->
+
     it 'adds the html to the snippet', ->
       expect(@view.$html).to.have.html(@expected)
+
 
     describe 'when clearing an existing value', ->
       it 'inserts the default value', ->
@@ -252,13 +273,13 @@ describe 'using volatile values', ->
 
   beforeEach ->
     @snippet = test.getSnippet('image')
-    @snippet.set('image', TestImage, 'temporaryOverride')
+    @snippet.directives.get('image').setBase64Image(base64Image)
     @view = @snippet.createView()
 
 
   it 'uses a temporary base64 value if there is no image set', ->
     @view.render()
-    expect(@view.$html).to.have.attr('src', TestImage)
+    expect(@view.$html).to.have.attr('src', base64Image)
 
 
   it 'uses the image content if it is set after the temporary base64', ->
@@ -269,6 +290,7 @@ describe 'using volatile values', ->
 
   it 'prefers a temporary value if it is set after the persisted url content', ->
     @snippet.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
-    @snippet.set('image', TestImage, 'temporaryOverride')
+    @snippet.directives.get('image').setBase64Image(base64Image)
     @view.render()
-    expect(@view.$html).to.have.attr('src', TestImage)
+    expect(@view.$html).to.have.attr('src', base64Image)
+

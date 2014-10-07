@@ -25,17 +25,18 @@ module.exports = class DirectiveCollection
     # directive.type is one of those 'container', 'editable', 'image', 'html'
     this[directive.type] ||= []
     this[directive.type].push(directive)
+    directive
 
 
   next: (name) ->
     directive = name if name instanceof Directive
-    directive ||= @all[name]
+    directive ?= @all[name]
     this[directive.index += 1]
 
 
   nextOfType: (name) ->
     directive = name if name instanceof Directive
-    directive ||= @all[name]
+    directive ?= @all[name]
 
     requiredType = directive.type
     while directive = @next(directive)
@@ -44,11 +45,6 @@ module.exports = class DirectiveCollection
 
   get: (name) ->
     @all[name]
-
-
-  # helper to directly get element wrapped in a jQuery object
-  $getElem: (name) ->
-    $(@all[name].elem)
 
 
   count: (type) ->
@@ -69,12 +65,40 @@ module.exports = class DirectiveCollection
       callback(directive)
 
 
+  eachOfType: (type, callback) ->
+    if this[type]
+      for directive in this[type]
+        callback(directive)
+
+
+  eachEditable: (callback) ->
+    @eachOfType('editable', callback)
+
+
+  eachImage: (callback) ->
+    @eachOfType('image', callback)
+
+
+  eachContainer: (callback) ->
+    @eachOfType('container', callback)
+
+
+  eachHtml: (callback) ->
+    @eachOfType('html', callback)
+
+
   clone: ->
     newCollection = new DirectiveCollection()
     @each (directive) ->
       newCollection.add(directive.clone())
 
     newCollection
+
+
+  # helper to directly get element wrapped in a jQuery object
+  # todo: rename or better remove
+  $getElem: (name) ->
+    $(@all[name].elem)
 
 
   assertAllLinked: ->

@@ -4,7 +4,6 @@ attr = config.attr
 DirectiveIterator = require('../template/directive_iterator')
 eventing = require('../modules/eventing')
 dom = require('../interaction/dom')
-ImageManager = require('./image_manager')
 
 module.exports = class SnippetView
 
@@ -30,7 +29,7 @@ module.exports = class SnippetView
 
 
   updateContent: ->
-    @content(@model.content, @model.temporaryContent)
+    @content(@model.content)
 
     if not @hasFocus()
       @displayOptionals()
@@ -40,7 +39,7 @@ module.exports = class SnippetView
 
   updateHtml: ->
     for name, value of @model.styles
-      @style(name, value)
+      @setStyle(name, value)
 
     @stripHtmlIfReadOnly()
 
@@ -107,10 +106,14 @@ module.exports = class SnippetView
     dom.getAbsoluteBoundingClientRect(@$html[0])
 
 
-  content: (content, sessionContent) ->
+  content: (content) ->
     for name, value of content
-      if sessionContent[name]?
-        @set(name, sessionContent[name])
+      directive = @model.directives.get(name)
+      if directive.isImage
+        if directive.base64Image?
+          @set(name, directive.base64Image)
+        else
+          @set(name, directive.getImageUrl() )
       else
         @set(name, value)
 
@@ -203,15 +206,17 @@ module.exports = class SnippetView
 
     if value
       @cancelDelayed(name)
-      imageService = @model.data('imageService')[name] if @model.data('imageService')
-      ImageManager.set($elem, value, imageService)
+
+      imageService = @model.directives.get(name).getImageService()
+      imageService.set($elem, value)
+
       $elem.removeClass(config.css.emptyImage)
     else
-      setPlaceholder = $.proxy(@setPlaceholderImage, this, $elem)
-      @delayUntilAttached(name, setPlaceholder)
+      setPlaceholder = $.proxy(@setPlaceholderImage, this, $elem, name)
+      @delayUntilAttached(name, setPlaceholder) # todo: replace with @afterInserted -> ... (something like $.Callbacks('once remember'))
 
 
-  setPlaceholderImage: ($elem) ->
+  setPlaceholderImage: ($elem, name) ->
     $elem.addClass(config.css.emptyImage)
     if $elem[0].nodeName == 'IMG'
       width = $elem.width()
@@ -220,11 +225,12 @@ module.exports = class SnippetView
       width = $elem.outerWidth()
       height = $elem.outerHeight()
     value = "http://placehold.it/#{width}x#{height}/BEF56F/B2E668"
-    imageService = @model.data('imageService')[name] if @model.data('imageService')
-    ImageManager.set($elem, value, imageService)
+
+    imageService = @model.directives.get(name).getImageService()
+    imageService.set($elem, value)
 
 
-  style: (name, className) ->
+  setStyle: (name, className) ->
     changes = @template.styles[name].cssClassChanges(className)
     if changes.remove
       for removeClass in changes.remove
@@ -267,6 +273,7 @@ module.exports = class SnippetView
     $(dom.findContainer(@$html[0]).node)
 
 
+  # Wait to execute a method until the view is attached to the DOM
   delayUntilAttached: (name, func) ->
     if @isAttachedToDom
       func()
