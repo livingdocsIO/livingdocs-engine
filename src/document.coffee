@@ -50,7 +50,6 @@ module.exports = class Document extends EventEmitter
     options.$wrapper ?= @findWrapper($parent)
     $parent.html('') # empty container
 
-
     view = new View(@snippetTree, $parent[0])
     promise = view.create(options)
 
@@ -58,6 +57,25 @@ module.exports = class Document extends EventEmitter
       @setInteractiveView(view)
 
     promise
+
+
+  # Append the article to the DOM.
+  #
+  # @param { DOM Node, jQuery object or CSS selector string } Where to append the article in the document.
+  # @param { Object } options:
+  #   interactive: { Boolean } Whether the document is edtiable.
+  #   loadAssets: { Boolean } Load CSS files. Only disable this if you are sure you have loaded everything manually.
+  #
+  # Example:
+  # article.appendTo('.article', { interactive: true, loadAssets: false });
+  appendTo: (parent, options={}) ->
+    $parent = $(parent).first()
+    options.$wrapper ?= @findWrapper($parent)
+    $parent.html('') # empty container
+
+    view = new View(@snippetTree, $parent[0])
+    view.createRenderer({ options })
+
 
 
   # A view sometimes has to be wrapped in a container.
