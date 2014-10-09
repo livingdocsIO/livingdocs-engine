@@ -7,7 +7,7 @@ The engine is the central piece of livingdocs and defines the APIs for manipulat
 ## Usage
 
 Load the necessary scripts into your browser.
-The engine then sets the global variable `doc`.
+
 
 ```html
 <!-- dependencies of livingdocs-engine -->
@@ -21,28 +21,47 @@ The engine then sets the global variable `doc`.
 <script src="/livingdocs-engine.js"></script>
 ```
 
-Load a design into the engine:
+#### Global variable:
+
+The engine then sets the global variable `doc`. Here you'll find the API of the `engine`.
+
+#### Load a design into the engine:
+
 ```javascript
 doc.design.load(design.bootstrap);
 ```
+If you want to create your own design get started with the [livingdocs-design-boilerplate](https://github.com/upfrontIO/livingdocs-design-boilerplate) project.
 
-Create a new document:
+#### Create a new livingdoc:
+
 ```javascript
-var document = doc.new({
+var livingdoc = doc.new({
   design: 'bootstrap'
 });
 ```
 
-Create views:
+#### Create views:
+
+Simply render a livingdoc into your current page:
+
 ```javascript
-var interactiveView = document.createView('.editor-section', { interactive: true });
-var preview = document.createView('.editor-preview');
+livingdoc.appendTo('.article-container', { interactive: false });
 ```
+
+Create multiple views in iframes:
+
+```javascript
+var interactiveView = livingdoc.createView('.editor-section', { interactive: true });
+var preview = livingdoc.createView('.editor-preview');
+```
+
+With the iframe technique you can isolate CSS or Javascript that is needed in your documents and also generate views that will work properly with responsive designs. There can only be one interactive view where the user can edit, but you can have as many readOnly views as you want to preview the content at different screen sizes at the same time.
+
 
 Add content programmatically:
 ```javascript
-document.model.append('title');
-document.model.append('text');
+livingdoc.model.append('title');
+livingdoc.model.append('text');
 ```
 
 ## Build (and Release)
