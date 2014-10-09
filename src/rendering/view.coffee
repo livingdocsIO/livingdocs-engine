@@ -42,7 +42,6 @@ module.exports = class View
   createIFrameRenderer: (iframe, options) ->
     params =
       renderNode: iframe.contentDocument.body
-      hostWindow: iframe.contentWindow
       design: @snippetTree.design
 
     @page = @createPage(params, options)

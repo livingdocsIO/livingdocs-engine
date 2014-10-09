@@ -9,21 +9,14 @@ module.exports = class Page extends RenderingContainer
 
   constructor: ({ renderNode, readOnly, hostWindow, @design, @snippetTree }={}) ->
     @isReadOnly = readOnly if readOnly?
+    @renderNode = if renderNode?.jquery then renderNode[0] else renderNode
     @setWindow(hostWindow)
+    @renderNode ?= $(".#{ config.css.section }", @$body)
 
     super()
 
-    @setRenderNode(renderNode)
     @cssLoader = new CssLoader(@window)
     @beforePageReady()
-
-
-  setRenderNode: (renderNode) ->
-    renderNode ?= $(".#{ config.css.section }", @$body)
-    if renderNode.jquery
-      @renderNode = renderNode[0]
-    else
-      @renderNode = renderNode
 
 
   beforeReady: ->
@@ -47,7 +40,15 @@ module.exports = class Page extends RenderingContainer
 
 
   setWindow: (hostWindow) ->
-    @window = hostWindow || window
+    hostWindow ?= @getParentWindow(@renderNode)
+    @window = hostWindow
     @document = @window.document
     @$document = $(@document)
     @$body = $(@document.body)
+
+
+  getParentWindow: (elem) ->
+    if elem?
+      elem.ownerDocument.defaultView
+    else
+      window
