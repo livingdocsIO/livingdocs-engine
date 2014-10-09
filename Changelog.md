@@ -4,6 +4,7 @@
 #### Features:
 
 - Store image object. Use snippetModelDirective to provide an easier API to work with directives of different types. [#114](https://github.com/upfrontIO/livingdocs-engine/pull/114)
+- Add document.appendTo method [#117](https://github.com/upfrontIO/livingdocs-engine/pull/117)
 
 
 # v0.2.2

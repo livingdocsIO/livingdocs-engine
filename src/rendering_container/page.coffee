@@ -7,23 +7,17 @@ config = require('../configuration/config')
 # page.
 module.exports = class Page extends RenderingContainer
 
-  constructor: ({ renderNode, readOnly, hostWindow, @design, @snippetTree }={}) ->
+  constructor: ({ renderNode, readOnly, hostWindow, @design, @snippetTree, @loadResources }={}) ->
     @isReadOnly = readOnly if readOnly?
+    @renderNode = if renderNode?.jquery then renderNode[0] else renderNode
     @setWindow(hostWindow)
+    @renderNode ?= $(".#{ config.css.section }", @$body)
 
     super()
 
-    @setRenderNode(renderNode)
     @cssLoader = new CssLoader(@window)
+    @cssLoader.disable() if not @shouldLoadResources()
     @beforePageReady()
-
-
-  setRenderNode: (renderNode) ->
-    renderNode ?= $(".#{ config.css.section }", @$body)
-    if renderNode.jquery
-      @renderNode = renderNode[0]
-    else
-      @renderNode = renderNode
 
 
   beforeReady: ->
@@ -34,8 +28,15 @@ module.exports = class Page extends RenderingContainer
     , 0
 
 
+  shouldLoadResources: ->
+    if @loadResources?
+      Boolean(@loadResources)
+    else
+      Boolean(config.loadResources)
+
+
   beforePageReady: =>
-    if @design? && config.loadResources
+    if @design?
       designPath = "#{ config.designPath }/#{ @design.namespace }"
       cssLocation = if @design.css?
         @design.css
@@ -47,7 +48,15 @@ module.exports = class Page extends RenderingContainer
 
 
   setWindow: (hostWindow) ->
-    @window = hostWindow || window
+    hostWindow ?= @getParentWindow(@renderNode)
+    @window = hostWindow
     @document = @window.document
     @$document = $(@document)
     @$body = $(@document.body)
+
+
+  getParentWindow: (elem) ->
+    if elem?
+      elem.ownerDocument.defaultView
+    else
+      window

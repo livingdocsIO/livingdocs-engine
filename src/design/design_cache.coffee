@@ -7,10 +7,11 @@ module.exports = do ->
 
   # Can load a design synchronously if you include the
   # design.js file before livingdocs.
-  # doc.design.load(designs['yourDesign'])
+  # doc.design.load(designs['nameOfYourDesign'])
   #
+  # Proposed extensions:
   # Will be extended to load designs remotely from a server:
-  # Load from the default source:
+  # Load from a remote server by name (server has to be configured as default)
   # doc.design.load('ghibli')
   #
   # Load from a custom server:
@@ -26,20 +27,26 @@ module.exports = do ->
       @add(design)
 
 
+  # Add an already parsed design.
+  # @param { Design object }
   add: (design) ->
     name = design.namespace
     @designs[name] = design
 
 
+  # Check if a design is loaded
   has: (name) ->
     @designs[name]?
 
 
+  # Get a loaded design
+  # @return { Design object }
   get: (name) ->
     assert @has(name), "Error: design '#{ name }' is not loaded."
     @designs[name]
 
 
+  # Clear the cache if you want to reload designs
   resetCache: ->
     @designs = {}
 

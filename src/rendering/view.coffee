@@ -22,7 +22,6 @@ module.exports = class View
     @createIFrame(@parent).then (iframe, renderNode) =>
       @iframe = iframe
       renderer = @createIFrameRenderer(iframe, options)
-
       iframe: iframe
       renderer: renderer
 
@@ -40,19 +39,27 @@ module.exports = class View
 
 
   createIFrameRenderer: (iframe, options) ->
-    params =
+    @createRenderer
       renderNode: iframe.contentDocument.body
-      hostWindow: iframe.contentWindow
+      options: options
+
+
+  createRenderer: ({ renderNode, options }={}) ->
+    params =
+      renderNode: renderNode || @parent
       design: @snippetTree.design
 
     @page = @createPage(params, options)
-    renderer = new Renderer
+
+    new Renderer
       renderingContainer: @page
       snippetTree: @snippetTree
       $wrapper: options.$wrapper
 
 
-  createPage: (params, { interactive, readOnly }={}) ->
+  createPage: (params, { interactive, readOnly, loadResources }={}) ->
+    params ?= {}
+    params.loadResources = loadResources
     if interactive?
       @isInteractive = true
       new InteractivePage(params)

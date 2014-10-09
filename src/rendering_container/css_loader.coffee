@@ -7,6 +7,8 @@ module.exports = class CssLoader
 
 
   load: (urls, callback=$.noop) ->
+    return callback() if @isDisabled
+
     urls = [urls] unless $.isArray(urls)
     semaphore = new Semaphore()
     semaphore.addCallback(callback)
@@ -14,13 +16,27 @@ module.exports = class CssLoader
     semaphore.start()
 
 
+  disable: ->
+    @isDisabled = true
+
+
   # @private
   loadSingleUrl: (url, callback=$.noop) ->
+    return callback() if @isDisabled
+
     if @isUrlLoaded(url)
       callback()
     else
       link = $('<link rel="stylesheet" type="text/css" />')[0]
       link.onload = callback
+
+      # Do not prevent the page from loading because of css errors
+      # onerror is not supported by every browser.
+      # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link
+      link.onerror = ->
+        console.warn "Stylesheet could not be loaded: #{ url }"
+        callback()
+
       link.href = url
       @window.document.head.appendChild(link)
       @markUrlAsLoaded(url)

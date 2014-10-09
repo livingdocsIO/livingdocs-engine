@@ -13,15 +13,23 @@ module.exports = doc = do ->
   editorPage = new EditorPage()
 
 
-  # Instantiation process:
-  # async or sync -> get design (include js for synchronous loading)
-  # sync -> create document
-  # async -> create view (iframe)
-  # async -> load resources into view
+  # Load and access designs.
+  #
+  # Load a design:
+  # design.load(yourDesignJson)
+  #
+  # Check if a design is already loaded:
+  # design.has(nameOfYourDesign)
+  #
+  # Get an already loaded design:
+  # design.get(nameOfYourDesign)
+  design: designCache
 
 
-  # Load a document from serialized data
-  # in a synchronous way. Design must be loaded first.
+  # Load a document from serialized data in a synchronous way.
+  # The design must be loaded first.
+  #
+  # @returns { Document object }
   new: ({ data, design }) ->
     snippetTree = if data?
       designName = data.design?.name
@@ -36,7 +44,14 @@ module.exports = doc = do ->
     @create(snippetTree)
 
 
+  # Direct creation with an existing SnippetTree
+  # @returns { Document object }
+  create: (snippetTree) ->
+    new Document({ snippetTree })
+
+
   # Todo: add async api (async because of the loading of the design)
+  # Move the design loading code from the editor into the enigne.
   #
   # Example:
   # doc.load(jsonFromServer)
@@ -46,17 +61,11 @@ module.exports = doc = do ->
   #    # view is ready
 
 
-  # Direct creation with an existing SnippetTree
-  create: (snippetTree) ->
-    new Document({ snippetTree })
-
-
-  # See designCache.load for examples how to load your design.
-  design: designCache
-
   # Start drag & drop
   startDrag: $.proxy(editorPage, 'startDrag')
 
+
+  # Change the configuration
   config: (userConfig) ->
     $.extend(true, config, userConfig)
     augmentConfig(config)

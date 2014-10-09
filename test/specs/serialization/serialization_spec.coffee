@@ -137,6 +137,12 @@ describe 'Deserialization', ->
       expect(snippet.get('title')).to.equal('Baby Geniuses')
 
 
+    it 'works with an identifier without a namespace', ->
+      @json.identifier = 'title'
+      snippet = snippetModelSerializer.fromJson(@json, @design)
+      expect(snippet).to.be.an.instanceof(SnippetModel)
+
+
   describe 'of a snippet with styles', ->
 
     beforeEach ->

@@ -47,7 +47,7 @@ module.exports = do ->
 
 
   fromJson: (json, design) ->
-    template = design.get(json.identifier)
+    template = design.get(json.component || json.identifier)
 
     assert template,
       "error while deserializing snippet: unknown template identifier '#{ json.identifier }'"
