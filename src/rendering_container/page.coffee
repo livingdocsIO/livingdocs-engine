@@ -7,7 +7,7 @@ config = require('../configuration/config')
 # page.
 module.exports = class Page extends RenderingContainer
 
-  constructor: ({ renderNode, readOnly, hostWindow, @design, @snippetTree }={}) ->
+  constructor: ({ renderNode, readOnly, hostWindow, @design, @snippetTree, @loadResources }={}) ->
     @isReadOnly = readOnly if readOnly?
     @renderNode = if renderNode?.jquery then renderNode[0] else renderNode
     @setWindow(hostWindow)
@@ -16,6 +16,7 @@ module.exports = class Page extends RenderingContainer
     super()
 
     @cssLoader = new CssLoader(@window)
+    @cssLoader.disable() if not @shouldLoadResources()
     @beforePageReady()
 
 
@@ -27,8 +28,15 @@ module.exports = class Page extends RenderingContainer
     , 0
 
 
+  shouldLoadResources: ->
+    if @loadResources?
+      Boolean(@loadResources)
+    else
+      Boolean(config.loadResources)
+
+
   beforePageReady: =>
-    if @design? && config.loadResources
+    if @design?
       designPath = "#{ config.designPath }/#{ @design.namespace }"
       cssLocation = if @design.css?
         @design.css
