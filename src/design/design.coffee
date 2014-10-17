@@ -81,6 +81,7 @@ module.exports = class Design
     @groups[name] =
       title: group.title
       templates: templates
+      weight: group.weight
 
 
   createDesignStyleCollection: (styles) ->
