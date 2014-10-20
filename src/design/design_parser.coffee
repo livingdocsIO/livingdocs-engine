@@ -19,11 +19,12 @@ module.exports = designParser =
 
 
   createDesign: (designConfig) ->
-    { assets, components, componentProperties, groups, defaultComponents } = designConfig
+    { assets, components, componentProperties, groups, defaultComponents, imageRatios } = designConfig
     try
       @design = @parseDesignInfo(designConfig)
       @parseAssets(assets)
       @parseComponentProperties(componentProperties)
+      @parseImageRatios(imageRatios)
       @parseComponents(components)
       @parseGroups(groups)
       @parseDefaults(defaultComponents)
@@ -54,8 +55,16 @@ module.exports = designParser =
       @componentProperties[name] = @createComponentProperty(config)
 
 
+  parseImageRatios: (ratios) ->
+    for name, ratio of ratios
+      @design.imageRatios[name] =
+        name: name
+        label: ratio.label || name
+        ratio: ratio.ratio
+
+
   parseComponents: (components=[]) ->
-    for { name, label, html, properties } in components
+    for { name, label, html, properties, directives } in components
       properties = @lookupComponentProperties(properties)
 
       component = new Template
@@ -64,18 +73,35 @@ module.exports = designParser =
         html: html
         properties: properties
 
+      @parseDirectives(component, directives)
       @design.add(component)
+
+
+  parseDirectives: (component, directives) ->
+    for name, conf of directives
+      directive = component.directives.get(name)
+      assert directive, "Could not find directive #{ name } in #{ component.name } component."
+      directiveConfig =
+        imageRatios: @lookupImageRatios(conf.imageRatios)
+      directive.setConfig(directiveConfig)
 
 
   lookupComponentProperties: (propertyNames) ->
     properties = {}
     for name in propertyNames || []
-      if property = @componentProperties[name]
-        properties[name] = property
-      else
-        log.warn("The componentProperty '#{ name }' was not found.")
+      property = @componentProperties[name]
+      assert property, "The componentProperty '#{ name }' was not found."
+      properties[name] = property
 
     properties
+
+
+  lookupImageRatios: (ratioNames) ->
+    return unless ratioNames?
+    @mapArray ratioNames, (name) =>
+      ratio = @design.imageRatios[name]
+      assert ratio, "The imageRatio '#{ name }' was not found."
+      ratio
 
 
   parseGroups: (groups=[]) ->
@@ -103,6 +129,15 @@ module.exports = designParser =
 
   createComponentProperty: (styleDefinition) ->
     new CssModificatorProperty(styleDefinition)
+
+
+  mapArray: (entries, lookup) ->
+    newArray = []
+    for entry in entries
+      val = lookup(entry)
+      newArray.push(val) if val?
+
+    newArray
 
 
 Design.parser = designParser

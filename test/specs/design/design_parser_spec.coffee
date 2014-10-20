@@ -63,6 +63,13 @@ describe 'designParser', ->
           name: 'paragraph'
           label: 'Text'
           html: '<p doc-editable="title"></p>'
+        ,
+          name: 'image'
+          label: 'Image'
+          directives:
+            image:
+              imageRatios: ["16:9"]
+          html: '<img doc-image="image">'
         ]
 
         groups: [
@@ -75,6 +82,11 @@ describe 'designParser', ->
 
         defaultComponents:
           paragraph: 'paragraph'
+
+        imageRatios:
+          "16:9":
+            label: "16:9 Cinemascope"
+            ratio: "16/9"
 
 
     it 'returns an instance of Design', ->
@@ -102,6 +114,23 @@ describe 'designParser', ->
     it 'parses the componentProperties', ->
       title = @design.get('title')
       expect(title.styles['position']).to.be.an.instanceof(CssModificatorProperty)
+
+
+    it 'parses the imageRatios', ->
+      ratio = @design.imageRatios["16:9"]
+      expect(ratio).to.deep.equal
+        name: "16:9"
+        label: "16:9 Cinemascope"
+        ratio: "16/9"
+
+
+    it 'assigns the ratios to the right directive', ->
+      image = @design.get('image')
+      imageDirective = image.directives.get('image')
+      expect(imageDirective.config.imageRatios[0]).to.deep.equal
+        name: "16:9"
+        label: "16:9 Cinemascope"
+        ratio: "16/9"
 
 
     it 'parses componentProperty labels', ->
