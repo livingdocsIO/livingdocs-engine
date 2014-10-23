@@ -114,8 +114,8 @@ module.exports = class Document extends EventEmitter
     data = @serialize()
     if prettify?
       replacer = null
-      space = 2
-      JSON.stringify(data, replacer, space)
+      indentation = 2
+      JSON.stringify(data, replacer, indentation)
     else
       JSON.stringify(data)
 
