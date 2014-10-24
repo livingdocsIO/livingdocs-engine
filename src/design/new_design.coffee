@@ -1,5 +1,6 @@
 assert = require('../modules/logging/assert')
 log = require('../modules/logging/log')
+Template = require('../template/template')
 
 module.exports = class Design
 
@@ -34,6 +35,6 @@ module.exports = class Design
       callback(componentTemplate)
 
 
-  getComponentNameFromIdentifier: (identifier, callback) ->
+  getComponentNameFromIdentifier: (identifier) ->
     { namespace, id } = Template.parseIdentifier(identifier)
     id
