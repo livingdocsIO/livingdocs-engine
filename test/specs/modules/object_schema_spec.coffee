@@ -183,6 +183,21 @@ describe 'ObjectSchema', ->
         expect(isValid).to.equal(false)
 
 
+    describe 'a schema with a missing template', ->
+
+      beforeEach ->
+        @schema.add 'record',
+          id: 'uuid'
+
+
+      it 'records an error for a missing template', ->
+        isValid = @schema.validate 'record',
+          id: '1'
+
+        expect(isValid).to.equal(false)
+        expect(@schema.errors[0]).to.equal('record.id: missing schema uuid')
+
+
     describe 'a schema with an array of strings', ->
 
       beforeEach ->

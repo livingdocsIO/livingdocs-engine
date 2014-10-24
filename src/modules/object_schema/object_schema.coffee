@@ -94,7 +94,4 @@ module.exports = class ValidObj
 
 
   writeProperty: (value) ->
-    if jsVariableName.test(value)
-      ".#{ value }"
-    else
-      "['#{ value }']"
+    if jsVariableName.test(value) then ".#{ value }" else "['#{ value }']"

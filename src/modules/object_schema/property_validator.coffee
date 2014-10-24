@@ -37,33 +37,29 @@ module.exports = class PropertyValidator
         types = term.split(' or ')
         console.log('todo')
       else
-        if not @childSchemaName?
-          @childSchemaName = term
-        else
-          console.log "term not found: #{ term }"
+        @validators[term] = (value ) =>
+          schema = @validator.schemas[term]
+          if schema?
+            message = @validator.__validate(schema, value).errors?[0]
+            return if message? then message else true
+          else
+            return "missing schema #{ term }"
 
     undefined
 
 
   validate: (value) ->
     for name, validate of @validators
-      return "#{ name } validator failed" unless validate(value)
+      res = validate(value)
+      continue if res == true
+      return "#{ name } validator failed" if res == false
+      return "#{ res }"
+
 
     return error if error = @validateRequiredProperties(value)
-    return error if error = @validateChildSchema(value)
     return error if error = @validateArray(value)
 
     undefined
-
-
-  validateChildSchema: (value) ->
-    return undefined unless @childSchemaName?
-
-    childSchema = @validator.schemas[@childSchemaName]
-    if childSchema?
-      return @validator.__validate(childSchema, value).errors?[0]
-    else
-      return "missing schema #{ @childSchemaName }"
 
 
   validateArray: (value) ->
