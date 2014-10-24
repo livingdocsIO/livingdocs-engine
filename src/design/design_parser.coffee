@@ -1,5 +1,5 @@
 log = require('../modules/logging/log')
-designConfigValidator = require('./design_config_validator')
+designConfigSchema = require('./design_config_schema')
 CssModificatorProperty = require('./css_modificator_property')
 Assets = require('./assets')
 Template = require('../template/template')
@@ -8,7 +8,7 @@ Design = require('./new_design')
 module.exports =
 
   parse: (designConfig) ->
-    @errors = designConfigValidator.validate(designConfig)
+    @errors = designConfigSchema.validate(designConfig)
     return false if @errors?
 
     if @tryDesignCreation(designConfig) then @design else false
