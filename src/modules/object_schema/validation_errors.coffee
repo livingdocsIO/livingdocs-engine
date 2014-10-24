@@ -17,6 +17,6 @@ module.exports = class ValidationErrors
   join: ({ errors }) ->
     return unless errors?
     if @errors?
-      @errors.push.apply(errors, errors)
+      @errors.push.apply(@errors, errors)
     else
       @errors = errors
