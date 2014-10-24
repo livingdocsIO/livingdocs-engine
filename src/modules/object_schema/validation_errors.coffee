@@ -1,5 +1,5 @@
 module.exports = class ValidationErrors
-
+  startsWithProperty = /^[\[.]/
   # Add an error message
   # @param { String or falsy } Error message. If falsy nothing is added.
   # @param { PropertyValidator instance } The property validator that got the error
@@ -7,7 +7,7 @@ module.exports = class ValidationErrors
     return unless error
 
     if propertyValidator? and propertyValidator.location
-      error = "#{ propertyValidator.location }#{ if error.indexOf('[') == 0 then '' else ': ' }#{ error }"
+      error = "#{ propertyValidator.location }#{ if startsWithProperty.test(error) then '' else ': ' }#{ error }"
     @errors ?= []
     @errors.push(error)
 

@@ -6,7 +6,7 @@ validators = require('./validators')
 module.exports = class PropertyValidator
   termRegex = /\w[\w ]*\w/g
 
-  constructor: ({ @inputString, @property, @parent, @validator }) ->
+  constructor: ({ @inputString, @property, @schemaName, @parent, @validator }) ->
     @validators = {}
     @location = @getLocation()
     @parent.addRequiredProperty(@property) if @parent?
@@ -15,7 +15,7 @@ module.exports = class PropertyValidator
 
   getLocation: ->
     if not @parent?
-      ''
+      @schemaName
     else if @parent.location
       @parent.location + ".#{ @property }"
     else
@@ -93,7 +93,7 @@ module.exports = class PropertyValidator
 
   validateRequiredProperties: (obj) ->
     for key, isRequired of @requiredProperties
-      return "require property #{ key }" if not obj[key]? && isRequired
+      return "#{ @validator.writeProperty(key) }: required property missing" if not obj[key]? && isRequired
 
     undefined
 

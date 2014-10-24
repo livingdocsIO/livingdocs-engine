@@ -24,7 +24,7 @@ describe 'ObjectSchema', ->
         property: 'string'
 
       validator = @schema.schemas['test']['property']['__validator']
-      expect(validator.location).to.equal('property')
+      expect(validator.location).to.equal('test.property')
 
 
     it 'adds a validator location at the second level', ->
@@ -33,7 +33,7 @@ describe 'ObjectSchema', ->
           levelTwo: 'string'
 
       validator = @schema.schemas['test']['levelOne']['levelTwo']['__validator']
-      expect(validator.location).to.equal('levelOne.levelTwo')
+      expect(validator.location).to.equal('test.levelOne.levelTwo')
 
 
   describe 'validate()', ->
@@ -65,7 +65,7 @@ describe 'ObjectSchema', ->
           anotherProperty: 'there is something missing here'
 
         expect(isValid).to.equal(false)
-        expect(@schema.errors[0]).to.equal('require property name')
+        expect(@schema.errors[0]).to.equal("test.name: required property missing")
 
 
       it 'records an error for an invalid property type', ->
@@ -73,7 +73,7 @@ describe 'ObjectSchema', ->
           name: false
 
         expect(isValid).to.equal(false)
-        expect(@schema.errors[0]).to.equal('name: string validator failed')
+        expect(@schema.errors[0]).to.equal('test.name: string validator failed')
 
 
     describe 'a schema with additional properties', ->
@@ -277,7 +277,7 @@ describe 'ObjectSchema', ->
           passwordConfirmation: '1235'
 
         expect(isValid).to.equal(false)
-        expect(@schema.errors[0]).to.equal('confirmPassword validator failed')
+        expect(@schema.errors[0]).to.equal('password: confirmPassword validator failed')
 
 
     describe 'a schema with a custom validator in a nested object', ->
@@ -286,14 +286,14 @@ describe 'ObjectSchema', ->
         @schema.addValidator 'phone', (value) ->
           /\d{7,12}/.test(value)
 
-        @schema.add 'person',
+        @schema.add 'account',
           person:
             name: 'string'
             phone: 'string, phone'
 
 
       it 'validates a valid object', ->
-        isValid = @schema.validate 'person',
+        isValid = @schema.validate 'account',
           person:
             name: 'Peter Pan'
             phone: '0764352253'
@@ -302,19 +302,19 @@ describe 'ObjectSchema', ->
 
 
       it 'records an error for an invalid phone number', ->
-        isValid = @schema.validate 'person',
+        isValid = @schema.validate 'account',
           person:
             name: 'Peter Pan'
             phone: 'no number here'
 
         expect(isValid).to.equal(false)
-        expect(@schema.errors[0]).to.equal('person.phone: phone validator failed')
+        expect(@schema.errors[0]).to.equal('account.person.phone: phone validator failed')
 
 
     describe 'a schema wich calls validate', ->
 
       beforeEach ->
-        @schema.add 'persons',
+        @schema.add 'obj',
           persons:
             __additionalProperty: (key, value) => @schema.validate('person', value)
 
@@ -324,7 +324,7 @@ describe 'ObjectSchema', ->
 
 
       it 'validates a valid object', ->
-        isValid = @schema.validate 'persons',
+        isValid = @schema.validate 'obj',
           persons:
             '1':
               name: 'Peter Pan'
@@ -334,12 +334,12 @@ describe 'ObjectSchema', ->
 
 
       it 'records an error for an invalid child object', ->
-        isValid = @schema.validate 'persons',
+        isValid = @schema.validate 'obj',
           persons:
             '1':
               name: 'Lucky Luke'
 
         expect(isValid).to.equal(false)
-        expect(@schema.errors[0]).to.equal("persons['1'] additional property check failed")
+        expect(@schema.errors[0]).to.equal("obj.persons['1'].place: required property missing")
         expect(@schema.errors.length).to.equal(1)
 

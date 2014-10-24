@@ -4,6 +4,7 @@ validators = require('./validators')
 
 
 module.exports = class ValidObj
+  jsVariableName = /^[a-zA-Z]\w*$/
 
   constructor: ->
     @schemas = {}
@@ -73,13 +74,27 @@ module.exports = class ValidObj
       return true
     else if key == '__additionalProperty'
       if $.type(validator) == 'function'
+        _that = this
         parentValidator.validateMissingProperty = (key, value) ->
+          _that.errors = undefined
           isValid = validator.call(this, key, value)
-          if isValid == true
-            return undefined
+          return undefined if isValid == true
+          if _that.errors?
+            message = _that.errors[0]
+            res = /[\[.].*:.*/.exec(message)
+            if res?
+              return "#{ _that.writeProperty(key) }#{ res[0] }"
+            else
+              return "#{ _that.writeProperty(key) }: #{ message }"
           else
-            return "['#{ key }'] additional property check failed"
+            return "#{ _that.writeProperty(key) }: additional property check failed"
       return true
     else
       return false
 
+
+  writeProperty: (value) ->
+    if jsVariableName.test(value)
+      ".#{ value }"
+    else
+      "['#{ value }']"
