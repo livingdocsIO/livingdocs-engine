@@ -8,19 +8,18 @@ module.exports = class PropertyValidator
 
   constructor: ({ @inputString, @property, @parent, @validator }) ->
     @validators = {}
-    @setLocation()
+    @location = @getLocation()
     @parent.addRequiredProperty(@property) if @parent?
     @addValidations(@inputString)
 
 
-  setLocation: ->
-    @location = if @parent?
-      if @parent.location
-        @parent.location + ".#{ @property }"
-      else
-        @property
-    else
+  getLocation: ->
+    if not @parent?
       ''
+    else if @parent.location
+      @parent.location + ".#{ @property }"
+    else
+      @property
 
 
   addValidations: (configString) ->
