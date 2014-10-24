@@ -82,7 +82,7 @@ describe 'ObjectSchema', ->
         @schema.add 'missingPropertyMethod',
           property: 'string'
           __additionalProperty: -> false
-          # __checkAdditionalProperty: (key, value) -> key == 'hello'
+
 
       it 'records an error with an additional field', ->
         isValid = @schema.validate 'missingPropertyMethod',
@@ -278,3 +278,68 @@ describe 'ObjectSchema', ->
 
         expect(isValid).to.equal(false)
         expect(@schema.errors[0]).to.equal('confirmPassword validator failed')
+
+
+    describe 'a schema with a custom validator in a nested object', ->
+
+      beforeEach ->
+        @schema.addValidator 'phone', (value) ->
+          /\d{7,12}/.test(value)
+
+        @schema.add 'person',
+          person:
+            name: 'string'
+            phone: 'string, phone'
+
+
+      it 'validates a valid object', ->
+        isValid = @schema.validate 'person',
+          person:
+            name: 'Peter Pan'
+            phone: '0764352253'
+
+        expect(isValid).to.equal(true)
+
+
+      it 'records an error for an invalid phone number', ->
+        isValid = @schema.validate 'person',
+          person:
+            name: 'Peter Pan'
+            phone: 'no number here'
+
+        expect(isValid).to.equal(false)
+        expect(@schema.errors[0]).to.equal('person.phone: phone validator failed')
+
+
+    describe 'a schema wich calls validate', ->
+
+      beforeEach ->
+        @schema.add 'persons',
+          persons:
+            __additionalProperty: (key, value) => @schema.validate('person', value)
+
+        @schema.add 'person',
+          name: 'string'
+          place: 'string'
+
+
+      it 'validates a valid object', ->
+        isValid = @schema.validate 'persons',
+          persons:
+            '1':
+              name: 'Peter Pan'
+              place: 'Neverland'
+
+        expect(isValid).to.equal(true)
+
+
+      it 'records an error for an invalid child object', ->
+        isValid = @schema.validate 'persons',
+          persons:
+            '1':
+              name: 'Lucky Luke'
+
+        expect(isValid).to.equal(false)
+        expect(@schema.errors[0]).to.equal('persons: additional property check failed')
+        expect(@schema.errors.length).to.equal(1)
+

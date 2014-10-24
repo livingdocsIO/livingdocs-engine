@@ -1,3 +1,5 @@
+ValidationErrors = require('./validation_errors')
+
 validators =
   'object': (value) -> $.type(value) == 'object'
   'string': (value) -> $.type(value) == 'string'
@@ -34,7 +36,11 @@ module.exports = class ValidObj
   validate: (schemaName, obj) ->
     @errors = undefined
     schema = @schemas[schemaName]
-    @__validate(schema, obj)
+    @errors = if schema?
+      @__validate(schema, obj).errors
+    else
+      ["missing schema #{ schemaName }"]
+
     return not @errors?
 
 
@@ -43,29 +49,20 @@ module.exports = class ValidObj
   # For internal use only.
   __validate: (schemaObj, obj) ->
     parentValidator = schemaObj['__validator']
-    @recordError(parentValidator.validate(obj), parentValidator)
+    errors = new ValidationErrors()
+    errors.record(parentValidator.validate(obj), parentValidator)
 
     for key, value of obj
       if schemaObj[key]?
         propertyValidator = schemaObj[key]['__validator']
         error = propertyValidator.validate(value)
-        @recordError(error, propertyValidator)
+        errors.record(error, propertyValidator)
         if not error? && not propertyValidator.childSchemaName? && $.type(value) == 'object'
-          @__validate(schemaObj[key], value)
+          errors.join(@__validate(schemaObj[key], value))
       else
-        @recordError(parentValidator.validateMissingProperty(key, value), parentValidator)
+        errors.record(parentValidator.validateMissingProperty(key, value), parentValidator)
 
-    undefined
-
-
-  recordError: (error, propertyValidator) ->
-    return unless error
-
-    if propertyValidator? and propertyValidator.location
-      error = "#{ propertyValidator.location }: #{ error }"
-
-    @errors ?= []
-    @errors.push(error)
+    errors
 
 
   parseConfigObj: (obj, parentValidator, schemaName) ->
@@ -165,8 +162,7 @@ class PropertyValidator
 
     childSchema = @validator.schemas[@childSchemaName]
     if childSchema?
-      @validator.__validate(childSchema, value)
-      return undefined
+      return @validator.__validate(childSchema, value).errors?[0]
     else
       return "missing schema #{ @childSchemaName }"
 
@@ -177,7 +173,8 @@ class PropertyValidator
     arraySchema = @validator.schemas[@arraySchemaName]
     if arraySchema?
       for entry in value
-        @validator.__validate(arraySchema, entry)
+        errors = @validator.__validate(arraySchema, entry).errors
+        return errors if errors
       return undefined
 
     # This probably only makes sense for types, the lookup in
@@ -209,4 +206,7 @@ class PropertyValidator
 
   removeRequiredProperty: (key) ->
     @requiredProperties[key] = undefined
+
+
+
 
