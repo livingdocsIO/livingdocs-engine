@@ -1,5 +1,5 @@
 Design = require('../../../src/design/design')
-DesignStyle = require('../../../src/design/design_style')
+CssModificatorProperty = require('../../../src/design/css_modificator_property')
 Template = require('../../../src/template/template')
 
 describe 'Design', ->
@@ -116,7 +116,7 @@ describe 'Design', ->
 
 
     it 'has global style Color', ->
-      expect(@design.globalStyles['Color']).to.be.an.instanceof(DesignStyle)
+      expect(@design.globalStyles['Color']).to.be.an.instanceof(CssModificatorProperty)
 
 
     it 'merges global, group and template styles', ->

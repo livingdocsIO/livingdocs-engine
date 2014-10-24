@@ -1,7 +1,7 @@
 assert = require('../modules/logging/assert')
 log = require('../modules/logging/log')
 Template = require('../template/template')
-DesignStyle = require('./design_style')
+CssModificatorProperty = require('./css_modificator_property')
 
 module.exports = class Design
 
@@ -96,7 +96,7 @@ module.exports = class Design
 
   createDesignStyle: (styleDefinition) ->
     if styleDefinition && styleDefinition.name
-      new DesignStyle
+      new CssModificatorProperty
         name: styleDefinition.name
         type: styleDefinition.type
         options: styleDefinition.options

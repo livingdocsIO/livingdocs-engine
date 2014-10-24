@@ -1,6 +1,6 @@
 log = require('../modules/logging/log')
 designConfigValidator = require('./design_config_validator')
-DesignStyle = require('./design_style')
+CssModificatorProperty = require('./css_modificator_property')
 Assets = require('./assets')
 Template = require('../template/template')
 Design = require('./new_design')
@@ -39,7 +39,7 @@ module.exports =
   parseComponentProperties: (componentProperties) ->
     @componentProperties = {}
     for name, config of componentProperties
-      @componentProperties[name] = @parseDesignStyle(config)
+      @componentProperties[name] = @createComponentProperty(config)
 
 
   parseComponents: (components=[]) ->
@@ -68,6 +68,6 @@ module.exports =
     if properties.length then properties else undefined
 
 
-  parseDesignStyle: (styleDefinition) ->
-    new DesignStyle(styleDefinition)
+  createComponentProperty: (styleDefinition) ->
+    new CssModificatorProperty(styleDefinition)
 

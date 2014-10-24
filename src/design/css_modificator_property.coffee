@@ -1,7 +1,7 @@
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
 
-module.exports = class DesignStyle
+module.exports = class CssModificatorProperty
 
   constructor: ({ @name, @type, value, options }) ->
     switch @type
@@ -45,7 +45,7 @@ module.exports = class DesignStyle
     else if @type is 'select'
       @containsOption(value)
     else
-      log.warn "Not implemented: DesignStyle#validateValue() for type #{ @type }"
+      log.warn "Not implemented: CssModificatorProperty#validateValue() for type #{ @type }"
 
 
   containsOption: (value) ->

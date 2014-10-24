@@ -1,12 +1,12 @@
-DesignStyle = require('../../../src/design/design_style')
+CssModificatorProperty = require('../../../src/design/css_modificator_property')
 
-describe 'DesignStyle', ->
+describe 'CssModificatorProperty', ->
 
   describe 'instantion', ->
 
     it 'should throw an error for an unknown type', ->
       createStyle = =>
-        new DesignStyle
+        new CssModificatorProperty
           name: 'Invalid Style'
           type: 'not-actually-a-type'
 
@@ -15,7 +15,7 @@ describe 'DesignStyle', ->
 
     it 'should throw an error if no value is provided', ->
       createStyle = =>
-        new DesignStyle
+        new CssModificatorProperty
           name: 'No Value'
           type: 'option'
 
@@ -24,7 +24,7 @@ describe 'DesignStyle', ->
 
     it 'should throw an error if no options are provided', ->
       createStyle = =>
-        new DesignStyle
+        new CssModificatorProperty
           name: 'No Value'
           type: 'select'
 
@@ -34,7 +34,7 @@ describe 'DesignStyle', ->
   describe '"Color" of type "select"', ->
 
     beforeEach ->
-      @style = new DesignStyle
+      @style = new CssModificatorProperty
         name: 'Color'
         type: 'select'
         options: [
@@ -67,7 +67,7 @@ describe 'DesignStyle', ->
   describe 'of type "option"', ->
 
     beforeEach ->
-      @style = new DesignStyle
+      @style = new CssModificatorProperty
         name: 'Watsonian'
         type: 'option'
         value: 'todo--code-review'
