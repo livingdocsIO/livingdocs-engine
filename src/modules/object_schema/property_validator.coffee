@@ -1,5 +1,3 @@
-validators = require('./validators')
-
 # Property Validator
 # ------------------
 
@@ -28,10 +26,10 @@ module.exports = class PropertyValidator
       if term == 'optional'
         @isOptional = true
         @parent.removeRequiredProperty(@property)
-      else if validators[term]?
-        @validators[term] = validators[term]
+      else if @validator.validators[term]?
+        @validators[term] = @validator.validators[term]
       else if term.indexOf('array of ') == 0
-        @validators['array'] = validators['array']
+        @validators['array'] = @validator.validators['array']
         @arraySchemaName = term.slice(9)
       else if term.indexOf(' or ') != -1
         types = term.split(' or ')
@@ -74,7 +72,7 @@ module.exports = class PropertyValidator
 
     # This probably only makes sense for types, the lookup in
     # validators is a bit hacky like this...
-    validateType = validators[@arraySchemaName]
+    validateType = @validator.validators[@arraySchemaName]
     if validateType?
       for entry in value
         return "#{ @arraySchemaName } validator failed" if not validateType(entry)

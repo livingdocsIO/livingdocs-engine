@@ -7,15 +7,19 @@ module.exports = class ValidObj
   jsVariableName = /^[a-zA-Z]\w*$/
 
   constructor: ->
+    @validators = Object.create(validators)
     @schemas = {}
 
 
   add: (name, schema) ->
-    @schemas[name] = @parseConfigObj(schema, undefined, name)
+    if $.type(schema) == 'function'
+      @validators[name] = schema
+    else
+      @addSchema(name, @parseConfigObj(schema, undefined, name))
 
 
-  addValidator: (name, method) ->
-    validators[name] = method
+  addSchema: (name, schema) ->
+    @schemas[name] = schema
 
 
   validate: (schemaName, obj) ->

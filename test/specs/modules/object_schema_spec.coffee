@@ -269,7 +269,7 @@ describe 'ObjectSchema', ->
     describe 'a schema with password confirmation', ->
 
       beforeEach ->
-        @schema.addValidator 'confirmPassword', (obj) ->
+        @schema.add 'confirmPassword', (obj) ->
           obj.password == obj.passwordConfirmation
 
         @schema.add 'password',
@@ -298,7 +298,7 @@ describe 'ObjectSchema', ->
     describe 'a schema with a custom validator in a nested object', ->
 
       beforeEach ->
-        @schema.addValidator 'phone', (value) ->
+        @schema.add 'phone', (value) ->
           /\d{7,12}/.test(value)
 
         @schema.add 'account',
