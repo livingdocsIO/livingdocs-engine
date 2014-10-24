@@ -10,20 +10,20 @@ describe 'ObjectSchema', ->
     it 'adds a schema', ->
       @schema.add 'test', {}
 
-      expect(@schema.getSchema('test')).to.exist
+      expect(@schema.schemas['test']).to.exist
 
     it 'adds a __validator property to the schema', ->
       @schema.add 'test',
         property: 'string'
 
-      expect(@schema.getSchema('test')['property']['__validator']).to.exist
+      expect(@schema.schemas['test']['property']['__validator']).to.exist
 
 
     it 'creates a validator for the property', ->
       @schema.add 'test',
         property: 'string'
 
-      validator = @schema.getSchema('test')['property']['__validator']
+      validator = @schema.schemas['test']['property']['__validator']
       expect(validator.location).to.equal('property')
 
 
@@ -32,7 +32,7 @@ describe 'ObjectSchema', ->
         levelOne:
           levelTwo: 'string'
 
-      validator = @schema.getSchema('test')['levelOne']['levelTwo']['__validator']
+      validator = @schema.schemas['test']['levelOne']['levelTwo']['__validator']
       expect(validator.location).to.equal('levelOne.levelTwo')
 
 
