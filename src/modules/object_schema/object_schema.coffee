@@ -67,18 +67,18 @@ module.exports = class ValidObj
     obj
 
 
-  addParentValidator: (parentValidator, key, value) ->
+  addParentValidator: (parentValidator, key, validator) ->
     if key == '__validate'
-      parentValidator.addValidations(value)
+      parentValidator.addValidations(validator)
       return true
     else if key == '__additionalProperty'
-      if $.type(value) == 'function'
-        parentValidator.validateMissingProperty = ->
-          isValid = value.apply(this, arguments)
+      if $.type(validator) == 'function'
+        parentValidator.validateMissingProperty = (key, value) ->
+          isValid = validator.call(this, key, value)
           if isValid == true
             return undefined
           else
-            return 'additional property check failed'
+            return "['#{ key }'] additional property check failed"
       return true
     else
       return false

@@ -340,6 +340,6 @@ describe 'ObjectSchema', ->
               name: 'Lucky Luke'
 
         expect(isValid).to.equal(false)
-        expect(@schema.errors[0]).to.equal('persons: additional property check failed')
+        expect(@schema.errors[0]).to.equal("persons['1'] additional property check failed")
         expect(@schema.errors.length).to.equal(1)
 

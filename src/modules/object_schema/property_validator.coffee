@@ -106,3 +106,4 @@ module.exports = class PropertyValidator
 
   removeRequiredProperty: (key) ->
     @requiredProperties[key] = undefined
+
