@@ -195,25 +195,25 @@ describe 'ObjectSchema', ->
           id: '1'
 
         expect(isValid).to.equal(false)
-        expect(@schema.errors[0]).to.equal('record.id: missing schema uuid')
+        expect(@schema.errors[0]).to.equal('record.id: missing validator uuid')
 
 
     describe 'a schema with an array of strings', ->
 
       beforeEach ->
-        @schema.add 'array',
+        @schema.add 'obj',
           words: 'array of string'
 
 
       it 'validates an array of strings', ->
-        isValid = @schema.validate 'array',
+        isValid = @schema.validate 'obj',
           words: ['hey', 'you']
 
         expect(isValid).to.equal(true)
 
 
       it 'records an error for an array of numbers', ->
-        isValid = @schema.validate 'array',
+        isValid = @schema.validate 'obj',
           words: [1, 2]
 
         expect(isValid).to.equal(false)
@@ -222,7 +222,7 @@ describe 'ObjectSchema', ->
     describe 'a schema with an array of a nested type', ->
 
       beforeEach ->
-        @schema.add 'array',
+        @schema.add 'templates',
           templates: 'array of template'
 
         @schema.add 'template',
@@ -231,7 +231,7 @@ describe 'ObjectSchema', ->
 
 
       it 'validates an array with two entries', ->
-        isValid = @schema.validate 'array',
+        isValid = @schema.validate 'templates',
           templates: [
             id: 1
             name: 'just another template'
@@ -244,26 +244,27 @@ describe 'ObjectSchema', ->
 
 
       it 'validates an empty array', ->
-        isValid = @schema.validate 'array',
+        isValid = @schema.validate 'templates',
           templates: []
 
         expect(isValid).to.equal(true)
 
 
       it 'records an error for a missing array', ->
-        isValid = @schema.validate 'array',
+        isValid = @schema.validate 'templates',
           templates: undefined
 
         expect(isValid).to.equal(false)
 
 
       it 'records an error for an invalid array entry', ->
-        isValid = @schema.validate 'array',
+        isValid = @schema.validate 'templates',
           templates: [
             id: 1
           ]
 
         expect(isValid).to.equal(false)
+        expect(@schema.errors[0]).to.equal('templates.templates[0].name: required property missing')
 
 
     describe 'a schema with password confirmation', ->

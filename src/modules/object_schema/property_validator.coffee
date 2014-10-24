@@ -5,7 +5,7 @@ module.exports = class PropertyValidator
   termRegex = /\w[\w ]*\w/g
 
   constructor: ({ @inputString, @property, @schemaName, @parent, @validator }) ->
-    @validators = {}
+    @validators = []
     @location = @getLocation()
     @parent.addRequiredProperty(@property) if @parent?
     @addValidations(@inputString)
@@ -26,33 +26,29 @@ module.exports = class PropertyValidator
       if term == 'optional'
         @isOptional = true
         @parent.removeRequiredProperty(@property)
-      else if @validator.validators[term]?
-        @validators[term] = @validator.validators[term]
       else if term.indexOf('array of ') == 0
-        @validators['array'] = @validator.validators['array']
-        @arraySchemaName = term.slice(9)
+        @validators.push('array')
+        @arrayValidator = term.slice(9)
       else if term.indexOf(' or ') != -1
         types = term.split(' or ')
         console.log('todo')
       else
-        @validators[term] = (value ) =>
-          schema = @validator.schemas[term]
-          if schema?
-            message = @validator.__validate(schema, value).errors?[0]
-            return if message? then message else true
-          else
-            return "missing schema #{ term }"
+        @validators.push(term)
 
     undefined
 
 
   validate: (value) ->
-    for name, validate of @validators
-      res = validate(value)
-      continue if res == true
-      return "#{ name } validator failed" if res == false
-      return "#{ res }"
-
+    validators = @validator.validators
+    for name in @validators || []
+      validate = validators[name]
+      if validate?
+        res = validate(value)
+        continue if res == true
+        return "#{ name } validator failed" if res == false
+        return "#{ res }"
+      else
+       return "missing validator #{ name }"
 
     return error if error = @validateRequiredProperties(value)
     return error if error = @validateArray(value)
@@ -61,24 +57,26 @@ module.exports = class PropertyValidator
 
 
   validateArray: (value) ->
-    return undefined unless @arraySchemaName?
+    return undefined unless @arrayValidator?
 
-    arraySchema = @validator.schemas[@arraySchemaName]
-    if arraySchema?
-      for entry in value
-        errors = @validator.__validate(arraySchema, entry).errors
-        return errors if errors
+    validate = @validator.validators[@arrayValidator]
+    if validate?
+      for entry, index in value
+        res = validate(entry)
+
+        # todo: dry this up (duplicate code in @validate() and objectSchema.addParentValidator())
+        return undefined if res == true
+        return "#{ name } validator failed" if res == false
+
+        regexRes = /[\[.].*:.*/.exec(res)
+        if regexRes?
+          return "[#{ index }]#{ regexRes[0] }"
+        else
+          return "[#{ index }] #{ res }"
+
       return undefined
 
-    # This probably only makes sense for types, the lookup in
-    # validators is a bit hacky like this...
-    validateType = @validator.validators[@arraySchemaName]
-    if validateType?
-      for entry in value
-        return "#{ @arraySchemaName } validator failed" if not validateType(entry)
-      return undefined
-
-    return "missing schema #{ @arraySchemaName }"
+    return "missing validator #{ @arrayValidator }"
 
 
   validateMissingProperty: (key, value) ->

@@ -19,7 +19,13 @@ module.exports = class ValidObj
 
 
   addSchema: (name, schema) ->
+    if @validators[name]?
+      throw new Error("A validator is alredy registered under this name: #{ name }")
+
     @schemas[name] = schema
+    @validators[name] = (value) =>
+      message = @__validate(schema, value).errors?[0]
+      return if message? then message else true
 
 
   validate: (schemaName, obj) ->
