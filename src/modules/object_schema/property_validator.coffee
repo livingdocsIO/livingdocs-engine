@@ -4,7 +4,7 @@
 module.exports = class PropertyValidator
   termRegex = /\w[\w ]*\w/g
 
-  constructor: ({ @inputString, @property, @schemaName, @parent, @validator }) ->
+  constructor: ({ @inputString, @property, @schemaName, @parent, @scheme }) ->
     @validators = []
     @location = @getLocation()
     @parent.addRequiredProperty(@property) if @parent?
@@ -39,7 +39,7 @@ module.exports = class PropertyValidator
 
 
   validate: (value) ->
-    validators = @validator.validators
+    validators = @scheme.validators
     for name in @validators || []
       validate = validators[name]
       if validate?
@@ -59,7 +59,7 @@ module.exports = class PropertyValidator
   validateArray: (value) ->
     return undefined unless @arrayValidator?
 
-    validate = @validator.validators[@arrayValidator]
+    validate = @scheme.validators[@arrayValidator]
     if validate?
       for entry, index in value
         res = validate(entry)
@@ -79,13 +79,27 @@ module.exports = class PropertyValidator
     return "missing validator #{ @arrayValidator }"
 
 
-  validateMissingProperty: (key, value) ->
-    undefined
+  validateOtherProperty: (key, value) ->
+    return unless @otherPropertyValidator?
+
+    @scheme.errors = undefined
+    isValid = @otherPropertyValidator.call(this, key, value)
+    return undefined if isValid == true
+
+    if @scheme.errors?
+      message = @scheme.errors[0]
+      res = /[\[.].*:.*/.exec(message)
+      if res?
+        return "#{ @scheme.writeProperty(key) }#{ res[0] }"
+      else
+        return "#{ @scheme.writeProperty(key) }: #{ message }"
+    else
+      return "#{ @scheme.writeProperty(key) }: additional property check failed"
 
 
   validateRequiredProperties: (obj) ->
     for key, isRequired of @requiredProperties
-      return "#{ @validator.writeProperty(key) }: required property missing" if not obj[key]? && isRequired
+      return "#{ @scheme.writeProperty(key) }: required property missing" if not obj[key]? && isRequired
 
     undefined
 

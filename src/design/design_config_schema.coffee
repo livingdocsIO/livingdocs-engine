@@ -1,5 +1,5 @@
-ObjectSchema = require('../modules/object_schema/object_schema')
-validator = new ObjectSchema()
+Scheme = require('../modules/object_schema/scheme')
+validator = new Scheme()
 
 # Custom Validators
 # -----------------

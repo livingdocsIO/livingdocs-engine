@@ -3,7 +3,7 @@ PropertyValidator = require('./property_validator')
 validators = require('./validators')
 
 
-module.exports = class ValidObj
+module.exports = class Scheme
   jsVariableName = /^[a-zA-Z]\w*$/
 
   constructor: ->
@@ -55,23 +55,23 @@ module.exports = class ValidObj
         if not error? && not propertyValidator.childSchemaName? && $.type(value) == 'object'
           errors.join(@__validate(schemaObj[key], value))
       else
-        errors.record(parentValidator.validateMissingProperty(key, value), parentValidator)
+        errors.record(parentValidator.validateOtherProperty(key, value), parentValidator)
 
     errors
 
 
   parseConfigObj: (obj, parentValidator, schemaName) ->
-    parentValidator ?= new PropertyValidator(inputString: 'object', schemaName: schemaName, validator: this)
+    parentValidator ?= new PropertyValidator(inputString: 'object', schemaName: schemaName, scheme: this)
 
     for key, value of obj
       continue if @addParentValidator(parentValidator, key, value)
 
       valueType = $.type(value)
       if valueType == 'string'
-        propValidator = new PropertyValidator(inputString: value, property: key, parent: parentValidator, validator: this)
+        propValidator = new PropertyValidator(inputString: value, property: key, parent: parentValidator, scheme: this)
         obj[key] = { '__validator': propValidator }
       else if valueType == 'object'
-        propValidator = new PropertyValidator(inputString: 'object', property: key, parent: parentValidator, validator: this)
+        propValidator = new PropertyValidator(inputString: 'object', property: key, parent: parentValidator, scheme: this)
         obj[key] = @parseConfigObj(value, propValidator)
 
     obj['__validator'] = parentValidator
@@ -79,29 +79,18 @@ module.exports = class ValidObj
 
 
   addParentValidator: (parentValidator, key, validator) ->
-    if key == '__validate'
-      parentValidator.addValidations(validator)
-      return true
-    else if key == '__additionalProperty'
-      if $.type(validator) == 'function'
-        _that = this
-        parentValidator.validateMissingProperty = (key, value) ->
-          _that.errors = undefined
-          isValid = validator.call(this, key, value)
-          return undefined if isValid == true
-          if _that.errors?
-            message = _that.errors[0]
-            res = /[\[.].*:.*/.exec(message)
-            if res?
-              return "#{ _that.writeProperty(key) }#{ res[0] }"
-            else
-              return "#{ _that.writeProperty(key) }: #{ message }"
-          else
-            return "#{ _that.writeProperty(key) }: additional property check failed"
-      return true
-    else
-      return false
+    switch key
+      when '__validate'
+        parentValidator.addValidations(validator)
+      when '__additionalProperty'
+        if $.type(validator) == 'function'
+          parentValidator.otherPropertyValidator = validator
+      else
+        return false
+
+    return true
 
 
   writeProperty: (value) ->
     if jsVariableName.test(value) then ".#{ value }" else "['#{ value }']"
+

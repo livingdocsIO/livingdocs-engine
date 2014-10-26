@@ -1,9 +1,9 @@
-ObjectSchema = require('../../../src/modules/object_schema/object_schema')
+Scheme = require('../../../src/modules/object_schema/scheme')
 
-describe 'ObjectSchema', ->
+describe 'object_schema', ->
 
   beforeEach ->
-    @schema = new ObjectSchema()
+    @schema = new Scheme()
 
   describe 'add()', ->
 
