@@ -24,7 +24,7 @@ module.exports = class Scheme
 
     @schemas[name] = schema
     @validators[name] = (value) =>
-      message = @__validate(schema, value).errors?[0]
+      message = @recursiveValidate(schema, value).errors?[0]
       return if message? then message else true
 
 
@@ -32,7 +32,7 @@ module.exports = class Scheme
     @errors = undefined
     schema = @schemas[schemaName]
     @errors = if schema?
-      @__validate(schema, obj).errors
+      @recursiveValidate(schema, obj).errors
     else
       ["missing schema #{ schemaName }"]
 
@@ -42,7 +42,7 @@ module.exports = class Scheme
   # Recursive validate
   # Used to travel the input object recursively.
   # For internal use only.
-  __validate: (schemaObj, obj) ->
+  recursiveValidate: (schemaObj, obj) ->
     parentValidator = schemaObj['__validator']
     errors = new ValidationErrors()
     errors.record(parentValidator.validate(obj), parentValidator)
@@ -53,7 +53,7 @@ module.exports = class Scheme
         error = propertyValidator.validate(value)
         errors.record(error, propertyValidator)
         if not error? && not propertyValidator.childSchemaName? && $.type(value) == 'object'
-          errors.join(@__validate(schemaObj[key], value))
+          errors.join(@recursiveValidate(schemaObj[key], value))
       else
         errors.record(parentValidator.validateOtherProperty(key, value), parentValidator)
 
