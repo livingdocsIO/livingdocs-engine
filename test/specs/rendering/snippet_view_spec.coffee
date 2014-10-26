@@ -119,16 +119,6 @@ describe 'SnippetView hero', ->
       expect(@snippetView.$html).to.have.html(@expected)
 
 
-    # In doubt delete this test (strongly tied to implementation)
-    #
-    # Does not work with JSDOM 10.1 on node:
-    # TypeError: Cannot call method 'match' of undefined
-    # The same error has already an issue: https://github.com/tmpvar/jsdom/issues/709
-    it.skip 'is revealed after view is focused', ->
-      @snippetView.afterFocused()
-      expect(@snippetView.$html.find('p').css('display')).not.to.equal('none')
-
-
 describe 'SnippetView image', ->
 
   beforeEach ->
