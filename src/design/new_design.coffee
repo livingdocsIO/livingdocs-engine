@@ -1,6 +1,7 @@
 assert = require('../modules/logging/assert')
 log = require('../modules/logging/log')
 Template = require('../template/template')
+OrderedHash = require('../modules/ordered_hash')
 
 module.exports = class Design
 
@@ -9,9 +10,8 @@ module.exports = class Design
     # templates in a structured format
     @groups = []
 
-    # templates by id
-    @components = {}
-    @orderedComponents = []
+    # templates by id and sorted
+    @components = new OrderedHash()
 
     # assets required by the design
     @assets = undefined
@@ -27,12 +27,11 @@ module.exports = class Design
 
   get: (identifier) ->
     componentName = @getComponentNameFromIdentifier(identifier)
-    @components[componentName]
+    @components.get(componentName)
 
 
   each: (callback) ->
-    for componentTemplate in @orderedComponents
-      callback(componentTemplate)
+    @components.each(callback)
 
 
   getComponentNameFromIdentifier: (identifier) ->

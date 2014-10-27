@@ -5,6 +5,7 @@ Assets = require('./assets')
 Template = require('../template/template')
 Design = require('./new_design')
 
+
 module.exports =
 
   parse: (designConfig) ->
@@ -43,7 +44,6 @@ module.exports =
 
 
   parseComponents: (components=[]) ->
-    @design.orderedComponents = []
     for { id, title, html, properties } in components
       properties = @lookupComponentProperties(properties)
 
@@ -54,8 +54,7 @@ module.exports =
         html: html
         properties: properties
 
-      @design.orderedComponents.push component
-      @design.components[id] = component
+      @design.components.push(id, component)
 
 
   lookupComponentProperties: (propertyNames) ->
