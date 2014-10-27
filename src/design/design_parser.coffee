@@ -14,7 +14,7 @@ module.exports =
     if @tryDesignCreation(designConfig) then @design else false
 
 
-  tryDesignCreation: ({ design, assets, components, componentProperties, groups, styles }) ->
+  tryDesignCreation: ({ design, assets, components, componentProperties, groups }) ->
     try
       @design = @parseDesign(design)
       @parseAssets(assets)
@@ -45,7 +45,8 @@ module.exports =
   parseComponents: (components=[]) ->
     @design.orderedComponents = []
     for { id, title, html, properties } in components
-      properties = @lookupComponentProperties()
+      properties = @lookupComponentProperties(properties)
+
       component = new Template
         namespace: @design.name
         id: id
@@ -58,14 +59,14 @@ module.exports =
 
 
   lookupComponentProperties: (propertyNames) ->
-    properties = []
+    properties = {}
     for name in propertyNames || []
-      if property = @componentProperties[name]?
-        properties.push(property)
+      if property = @componentProperties[name]
+        properties[name] = property
       else
         log.warn("The componentProperty '#{ name }' was not found.")
 
-    if properties.length then properties else undefined
+    properties
 
 
   createComponentProperty: (styleDefinition) ->

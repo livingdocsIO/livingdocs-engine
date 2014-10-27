@@ -28,6 +28,7 @@ module.exports = class Scheme
       return if errors.hasErrors() then errors else true
 
 
+  # @returns { Boolean } returns if the object is valid or not.
   validate: (schemaName, obj) ->
     @errors = undefined
     schema = @schemas[schemaName]

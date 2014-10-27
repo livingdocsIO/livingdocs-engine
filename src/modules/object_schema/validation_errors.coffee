@@ -49,3 +49,4 @@ module.exports = class ValidationErrors
       messages.push("#{ @root || '' }#{ error.path }: #{ error.message }")
 
     messages
+

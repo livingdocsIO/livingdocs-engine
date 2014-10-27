@@ -46,7 +46,7 @@ module.exports = class Design
       namespace: @namespace
       id: templateDefinition.id
       title: templateDefinition.title
-      styles: templateStyles
+      properties: templateStyles
       html: templateDefinition.html
       weight: templateDefinition.weight || 0
 

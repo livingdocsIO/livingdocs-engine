@@ -1,6 +1,7 @@
 designParser = require('../../../src/design/design_parser')
 Design = require('../../../src/design/new_design')
 Template = require('../../../src/template/template')
+CssModificatorProperty = require('../../../src/design/css_modificator_property')
 
 describe 'designParser', ->
 
@@ -66,3 +67,10 @@ describe 'designParser', ->
 
     it 'parses the components', ->
       expect(@design.get('title')).to.be.an.instanceof(Template)
+
+
+    it 'parses the componentProperties', ->
+      title = @design.get('title')
+      expect(title.styles['position']).to.be.an.instanceof(CssModificatorProperty)
+
+

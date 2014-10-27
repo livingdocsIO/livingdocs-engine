@@ -17,7 +17,7 @@ SnippetView = require('../rendering/snippet_view')
 module.exports = class Template
 
 
-  constructor: ({ html, @namespace, @id, identifier, title, styles, weight } = {}) ->
+  constructor: ({ html, @namespace, @id, identifier, title, properties } = {}) ->
     assert html, 'Template: param html missing'
 
     if identifier
@@ -30,8 +30,7 @@ module.exports = class Template
     @$wrap = @$template.parent()
 
     @title = title || words.humanize( @id )
-    @styles = styles || {}
-    @weight = weight
+    @styles = properties || {}
     @defaults = {}
 
     @parseTemplate()
