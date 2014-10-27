@@ -117,6 +117,21 @@ describe 'Subtitle Template', ->
     expect(subtitle.$template[0].innerHTML).to.equal('')
 
 
+  it 'prints the info', ->
+    subtitle = test.getTemplate('subtitle')
+    expect(subtitle.info()).to.deep.equal
+      name: 'subtitle'
+      design: 'test'
+      directives: [
+        name: 'title'
+        type: 'editable'
+      ]
+      properties: [
+        name: 'Color'
+        type: 'cssModificator'
+      ]
+
+
 describe 'Container', ->
 
  it 'creates a default container', ->

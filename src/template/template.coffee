@@ -11,6 +11,14 @@ directiveFinder = require('./directive_finder')
 SnippetModel = require('../snippet_tree/snippet_model')
 SnippetView = require('../rendering/snippet_view')
 
+sortByName = (a, b) ->
+  if (a.name > b.name)
+    1
+  else if (a.name < b.name)
+    -1
+  else
+    0
+
 # Template
 # --------
 # Parses snippet templates and creates SnippetModels and SnippetViews.
@@ -123,16 +131,29 @@ module.exports = class Template
     elem.innerHTML = ''
 
 
-  # output the accepted content of the snippet
-  # that can be passed to create
-  # e.g: { title: "Itchy and Scratchy" }
-  printDoc: () ->
+  # Return an object describing the interface of this template
+  # @returns { Object } An object wich contains the interface description
+  #   of this template. This object will be the same if the interface does
+  #   not change since directives and properties are sorted.
+  info: () ->
     doc =
-      identifier: @identifier
-      # editables: Object.keys @editables if @editables
-      # containers: Object.keys @containers if @containers
+      name: @id
+      design: @namespace
+      directives: []
+      properties: []
 
-    words.readableJson(doc)
+    @directives.each (directive) =>
+      { name, type } = directive
+      doc.directives.push({ name, type })
+
+
+    for name, style of @styles
+      doc.properties.push({ name, type: 'cssModificator' })
+
+    doc.directives.sort(sortByName)
+    doc.properties.sort(sortByName)
+    doc
+
 
 
 # Static functions
