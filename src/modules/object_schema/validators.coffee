@@ -1,6 +1,17 @@
 # Extend Validator interface
-# A: return an instance of ValidationErrors
-# B: return truthy or falsy (we can check for true explicitly to speed up the default case)
+#
+# Example Validator Method:
+# -------------------------
+# @param { object } Value to validate. Can be an object or a primitive data type.
+# @returns { true, false, String or ValidationErrors instance }
+#   - true: valid
+#   - false: invalid with standard error message
+#   - String: invalid with one single custom error message
+#   - ValidationErrors: invalid with multiple complete error messages
+#
+# (value) ->
+#   return true if value == 'valid'
+#
 module.exports =
   'object': (value) -> $.type(value) == 'object'
   'string': (value) -> $.type(value) == 'string'
@@ -14,3 +25,12 @@ module.exports =
   'truthy': (value) -> !!value == true
   'not empty': (value) -> !!value == true
   'deprecated': (value) -> true
+
+
+# suggestions:
+# accompanied by address -> makes address optional unless this field is specified
+# depends on address -> same as above
+# value(true) -> true if value is boolean true
+# value('address') -> true if value is string 'address'
+# value([0, 1]) -> true if value is an array with the specified values
+

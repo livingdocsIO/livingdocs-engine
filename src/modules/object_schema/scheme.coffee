@@ -2,7 +2,7 @@ ValidationErrors = require('./validation_errors')
 PropertyValidator = require('./property_validator')
 validators = require('./validators')
 
-
+# propeye, jsonjimmmy
 module.exports = class Scheme
   jsVariableName = /^[a-zA-Z]\w*$/
 
@@ -24,38 +24,44 @@ module.exports = class Scheme
 
     @schemas[name] = schema
     @validators[name] = (value) =>
-      message = @recursiveValidate(schema, value).errors?[0]
-      return if message? then message else true
+      errors = @recursiveValidate(schema, value)
+      return if errors.hasErrors() then errors else true
 
 
   validate: (schemaName, obj) ->
     @errors = undefined
     schema = @schemas[schemaName]
-    @errors = if schema?
-      @recursiveValidate(schema, obj).errors
-    else
-      ["missing schema #{ schemaName }"]
+    return ["missing schema #{ schemaName }"] unless schema?
+    @errors = @recursiveValidate(schema, obj).setRoot(schemaName)
+    return not @errors.hasErrors()
 
-    return not @errors?
+
+  hasErrors: ->
+    @errors?.hasErrors()
+
+
+  getErrorMessages: ->
+    @errors?.getMessages()
 
 
   # Recursive validate
   # Used to travel the input object recursively.
   # For internal use only.
+  #
+  # @returns { ValidationErrors obj } An object which contains validation errors.
   recursiveValidate: (schemaObj, obj) ->
     parentValidator = schemaObj['__validator']
     errors = new ValidationErrors()
-    errors.record(parentValidator.validate(obj), parentValidator)
+    parentValidator.validate(obj, errors)
 
     for key, value of obj
       if schemaObj[key]?
         propertyValidator = schemaObj[key]['__validator']
-        error = propertyValidator.validate(value)
-        errors.record(error, propertyValidator)
-        if not error? && not propertyValidator.childSchemaName? && $.type(value) == 'object'
+        isValid = propertyValidator.validate(value, errors)
+        if isValid && not propertyValidator.childSchemaName? && $.type(value) == 'object'
           errors.join(@recursiveValidate(schemaObj[key], value))
       else
-        errors.record(parentValidator.validateOtherProperty(key, value), parentValidator)
+        parentValidator.validateOtherProperty(key, value, errors)
 
     errors
 

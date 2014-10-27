@@ -12,12 +12,12 @@ module.exports = class PropertyValidator
 
 
   getLocation: ->
-    if not @parent?
-      @schemaName
-    else if @parent.location
-      @parent.location + ".#{ @property }"
+    if not @property?
+      ''
+    else if @parent?
+      @parent.location + @scheme.writeProperty(@property)
     else
-      @property
+      @scheme.writeProperty(@property)
 
 
   addValidations: (configString) ->
@@ -38,70 +38,61 @@ module.exports = class PropertyValidator
     undefined
 
 
-  validate: (value) ->
+  validate: (value, errors) ->
+    isValid = true
     validators = @scheme.validators
     for name in @validators || []
       validate = validators[name]
-      if validate?
-        res = validate(value)
-        continue if res == true
-        return "#{ name } validator failed" if res == false
-        return "#{ res }"
-      else
-       return "missing validator #{ name }"
+      return errors.add("missing validator #{ name }", location: @location) unless validate?
 
-    return error if error = @validateRequiredProperties(value)
-    return error if error = @validateArray(value)
+      continue if valid = validate(value) == true
+      errors.add(valid, location: @location, defaultMessage: "#{ name } validator failed")
+      isValid = false
 
-    undefined
+    return false if not isValid = @validateArray(value, errors)
+    return false if not isValid = @validateRequiredProperties(value, errors)
+
+    isValid
 
 
-  validateArray: (value) ->
-    return undefined unless @arrayValidator?
+  validateArray: (arr, errors) ->
+    return true unless @arrayValidator?
+    isValid = true
 
     validate = @scheme.validators[@arrayValidator]
-    if validate?
-      for entry, index in value
-        res = validate(entry)
+    return errors.add("missing validator #{ @arrayValidator }", location: @location) unless validate?
 
-        # todo: dry this up (duplicate code in @validate() and objectSchema.addParentValidator())
-        return undefined if res == true
-        return "#{ name } validator failed" if res == false
+    for entry, index in arr || []
+      res = validate(entry)
+      continue if res == true
+      location = "#{ @location }[#{ index }]"
+      errors.add(res, location: location, defaultMessage: "#{ name } validator failed")
+      isValid = false
 
-        regexRes = /[\[.].*:.*/.exec(res)
-        if regexRes?
-          return "[#{ index }]#{ regexRes[0] }"
-        else
-          return "[#{ index }] #{ res }"
-
-      return undefined
-
-    return "missing validator #{ @arrayValidator }"
+    isValid
 
 
-  validateOtherProperty: (key, value) ->
-    return unless @otherPropertyValidator?
-
+  validateOtherProperty: (key, value, errors) ->
+    return true unless @otherPropertyValidator?
     @scheme.errors = undefined
-    isValid = @otherPropertyValidator.call(this, key, value)
-    return undefined if isValid == true
+    return true if isValid = @otherPropertyValidator.call(this, key, value)
 
     if @scheme.errors?
-      message = @scheme.errors[0]
-      res = /[\[.].*:.*/.exec(message)
-      if res?
-        return "#{ @scheme.writeProperty(key) }#{ res[0] }"
-      else
-        return "#{ @scheme.writeProperty(key) }: #{ message }"
+      errors.join(@scheme.errors, location: "#{ @location }#{ @scheme.writeProperty(key) }")
     else
-      return "#{ @scheme.writeProperty(key) }: additional property check failed"
+      errors.add("additional property check failed", location: "#{ @location }#{ @scheme.writeProperty(key) }")
+
+    false
 
 
-  validateRequiredProperties: (obj) ->
+  validateRequiredProperties: (obj, errors) ->
+    isValid = true
     for key, isRequired of @requiredProperties
-      return "#{ @scheme.writeProperty(key) }: required property missing" if not obj[key]? && isRequired
+      if not obj[key]? && isRequired
+        errors.add("required property missing", location: "#{ @location }#{ @scheme.writeProperty(key) }")
+        isValid = false
 
-    undefined
+    isValid
 
 
   addRequiredProperty: (key) ->

@@ -8,8 +8,8 @@ Design = require('./new_design')
 module.exports =
 
   parse: (designConfig) ->
-    @errors = designConfigSchema.validate(designConfig)
-    return false if @errors?
+    isValid = designConfigSchema.validate(designConfig)
+    return false if not isValid
 
     if @tryDesignCreation(designConfig) then @design else false
 

@@ -54,5 +54,6 @@ module.exports =
 
   validate: (designConfig) ->
     validator.validate('designConfig', designConfig)
-    validator.errors
+    @errors = validator.errors
+    not validator.hasErrors()
 
