@@ -6,6 +6,7 @@ OrderedHash = require('../modules/ordered_hash')
 module.exports = class Design
 
   constructor: ({ @name, @version, @author, @description }) ->
+    assert @name?, 'Design needs a name'
 
     # templates in a structured format
     @groups = []

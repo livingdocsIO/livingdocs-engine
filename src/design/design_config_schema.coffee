@@ -22,6 +22,7 @@ validator.add 'designConfig',
     author: 'string, optional'
     description: 'string, optional'
   assets:
+    __validate: 'optional'
     css: 'array of string'
   components: 'array of component'
   componentProperties:

@@ -5,15 +5,35 @@ CssModificatorProperty = require('../../../src/design/css_modificator_property')
 
 describe 'designParser', ->
 
-  describe 'simple design', ->
+  describe 'minimal design', ->
+
+    before ->
+      @design = designParser.parse
+        design:
+          name: 'minimal'
+          version: '0.0.1'
+        components: [
+          id: 'title'
+          html: '<h1 doc-editable="title"></h1>'
+        ]
+
+    it 'returns an instance of Design', ->
+      expect(@design).to.be.an.instanceof(Design)
+
+
+    it 'parses the title component', ->
+      expect(@design.get('title')).to.be.an.instanceof(Template)
+
+
+  describe 'complete design', ->
 
     # Use a before to only construct the design one.
     # Here we just use multiple specs to test all aspects of the returned design
     before ->
-      designConfig =
+      @design = designParser.parse
 
         design:
-          name: 'test'
+          name: 'complete'
           version: '1.0.0'
           author: 'Peter Pan'
 
@@ -53,15 +73,13 @@ describe 'designParser', ->
           components: ['paragraph']
         ]
 
-      @design = designParser.parse(designConfig)
-
 
     it 'returns an instance of Design', ->
       expect(@design).to.be.an.instanceof(Design)
 
 
     it 'sets the designs name and version', ->
-      expect(@design.name).to.equal('test')
+      expect(@design.name).to.equal('complete')
       expect(@design.version).to.equal('1.0.0')
 
 
