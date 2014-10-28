@@ -44,6 +44,7 @@ describe 'editableController', ->
     beforeEach ->
       @title = test.createSnippet('title', 'A')
       @snippetTree.append(@title)
+      @design = @snippetTree.design
 
 
     it 'inserts a second element', ->
@@ -52,13 +53,13 @@ describe 'editableController', ->
 
 
     it 'inserts the default paragraph element', ->
-      expect(@snippetTree.design.paragraphSnippet).to.equal('text')
+      expect(@design.defaultParagraph.id).to.equal('text')
       @editableController.insert(@title.createView())
       expect(@renderer.snippetTree.toJson().content[1].identifier).to.equal('test.text')
 
 
     it 'inserts the paragraph snippet defined by the design', ->
-      @snippetTree.design.paragraphSnippet = 'title'
+      @design.defaultParagraph = test.getTemplate('title')
       @editableController.insert(@title.createView())
       expect(@renderer.snippetTree.toJson().content[1].identifier).to.equal('test.title')
 

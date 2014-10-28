@@ -93,11 +93,9 @@ module.exports = class EditableController
   # Usually triggered by pressing enter at the end of a block
   # or by pressing delete at the beginning of a block.
   insert: (view, editableName, direction, cursor) ->
-    if @hasSingleEditable(view)
-
-      snippetName = @page.design.paragraphSnippet
-      template = @page.design.get(snippetName)
-      copy = template.createModel()
+    defaultParagraph = @page.design.defaultParagraph
+    if @hasSingleEditable(view) && defaultParagraph?
+      copy = defaultParagraph.createModel()
 
       newView = if direction == 'before'
         view.model.before(copy)
