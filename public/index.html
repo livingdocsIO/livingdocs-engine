@@ -43,31 +43,31 @@
 
         // Setup the design and the document
         doc.design.load(design.bootstrap);
-        var document = doc.new({
+        var livingdoc = doc.new({
           design: 'bootstrap'
         });
 
         // Add some content
-        addDefaultContent(document);
+        addDefaultContent(livingdoc);
 
         // Create Views
-        viewReady = document.createView('.editor-section', { interactive: true });
-        previewReady = document.createView('.editor-preview');
+        viewReady = livingdoc.createView('.editor-section', { interactive: true });
+        previewReady = livingdoc.createView('.editor-preview');
 
         // Create Snippets
         var $toolbar = $('.doc-toolbar');
-        for (var i = 0; i < document.design.templates.length; i++) {
-          var template = document.design.templates[i];
+        for (var i = 0; i < livingdoc.design.templates.length; i++) {
+          var template = livingdoc.design.templates[i];
           $entry = $('<div class="toolbar-entry">');
           $entry.html(template.title);
           $toolbar.append($entry);
-          draggableSnippet(document, template.id, $entry);
+          draggableSnippet(livingdoc, template.id, $entry);
         }
 
 
-        function draggableSnippet (document, id, $elem) {
+        function draggableSnippet (livingdoc, id, $elem) {
           $elem.on('mousedown', function(event) {
-            var newSnippet = document.model.createModel(id);
+            var newSnippet = livingdoc.model.createModel(id);
 
             doc.startDrag({
               snippetModel: newSnippet,
@@ -81,11 +81,11 @@
         }
 
 
-        function addDefaultContent (document) {
-          document.model.append('mainAndSidebar');
-          var snippet = document.model.createSnippet('hero');
-          document.model.first().append('main', snippet);
-          var text = document.model.createSnippet('text');
+        function addDefaultContent (livingdoc) {
+          livingdoc.model.append('mainAndSidebar');
+          var snippet = livingdoc.model.createSnippet('hero');
+          livingdoc.model.first().append('main', snippet);
+          var text = livingdoc.model.createSnippet('text');
           snippet.after(text);
         }
       });
