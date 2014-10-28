@@ -29,6 +29,10 @@ validator.add 'design',
     __validate: 'optional'
     __additionalProperty: (key, value) -> validator.validate('componentProperty', value)
   groups: 'array, optional'
+  defaultComponents:
+    __validate: 'optional'
+    paragraph: 'string, optional'
+    image: 'string, optional'
 
 
 validator.add 'component',

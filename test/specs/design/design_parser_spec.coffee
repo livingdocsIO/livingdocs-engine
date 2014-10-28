@@ -73,6 +73,9 @@ describe 'designParser', ->
           components: ['paragraph']
         ]
 
+        defaultComponents:
+          paragraph: 'paragraph'
+
 
     it 'returns an instance of Design', ->
       expect(@design).to.be.an.instanceof(Design)
@@ -92,10 +95,15 @@ describe 'designParser', ->
       expect(title.styles['position']).to.be.an.instanceof(CssModificatorProperty)
 
 
+    it 'sets the default text paragraph', ->
+      expect(@design.defaultParagraph.id).to.equal('paragraph')
+
+
   describe 'parse error', ->
 
-    before ->
-      @design = designParser.parse
+
+    it 'returns a parse error for an invalid component', ->
+      json =
         design:
           name: 'minimal'
           version: '0.0.1'
@@ -103,6 +111,19 @@ describe 'designParser', ->
           id: 'title'
         ]
 
-    it 'returns a parse error', ->
-      expect(@design).to.equal(false)
-      expect(designParser.errors[0]).to.equal('design.components[0].html: required property missing')
+      expect( -> designParser.parse(json) ).to.throw()
+
+    it 'returns a parse error for a wrongly linked default paragraph', ->
+      json =
+        design:
+          name: 'minimal'
+          version: '0.0.1'
+        components: [
+          id: 'title'
+          html: '<h1 doc-editable="title"></h1>'
+        ]
+        defaultComponents:
+          paragraph: 'title-xxx'
+
+      expect( -> designParser.parse(json) ).to.throw()
+

@@ -9,22 +9,25 @@ Design = require('./new_design')
 module.exports =
 
   parse: (designConfig) ->
+    @design = undefined
     if designConfigSchema.validate('design', designConfig)
-      if @tryDesignCreation(designConfig) then @design else false
+      @createDesign(designConfig)
     else
-      @errors = designConfigSchema.getErrorMessages()
-      false
+      errors = designConfigSchema.getErrorMessages()
+      throw new Error(errors)
 
 
-  tryDesignCreation: ({ design, assets, components, componentProperties, groups }) ->
+  createDesign: ({ design, assets, components, componentProperties, groups, defaultComponents }) ->
     try
       @design = @parseDesign(design)
       @parseAssets(assets)
       @parseComponentProperties(componentProperties)
       @parseComponents(components)
+      @parseDefaults(defaultComponents)
     catch error
-      @errors = ["Error creating the design: #{ error }"]
-      return false
+      throw new Error("Error creating the design: #{ error }")
+
+    @design
 
 
   parseDesign: (design) ->
@@ -67,6 +70,19 @@ module.exports =
         log.warn("The componentProperty '#{ name }' was not found.")
 
     properties
+
+
+  parseDefaults: (defaultComponents) ->
+    return unless defaultComponents?
+    { paragraph, image } = defaultComponents
+    @design.defaultParagraph = @getComponent(paragraph) if paragraph
+    @design.defaultImage = @getComponent(image) if image
+
+
+  getComponent: (name) ->
+    component = @design.get(name)
+    assert component, "Could not find component #{ name }"
+    component
 
 
   createComponentProperty: (styleDefinition) ->
