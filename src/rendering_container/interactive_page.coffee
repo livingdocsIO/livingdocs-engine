@@ -37,7 +37,7 @@ module.exports = class InteractivePage extends Page
 
 
   beforeInteractivePageReady: ->
-    if config.livingdocsCssFile?
+    if config.livingdocsCssFile
       @cssLoader.load(config.livingdocsCssFile, @readySemaphore.wait())
 
 
