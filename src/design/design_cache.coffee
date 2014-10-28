@@ -20,18 +20,18 @@ module.exports = do ->
     if typeof designSpec == 'string'
       assert false, 'Load design by name is not implemented yet.'
     else
-      name = designSpec.config?.namespace
-      return if not name? or @has(name)
-
-      design = new Design(designSpec)
-      @add(design)
+      return if @has(designSpec.design?.name)
+      design = Design.parser.parse(designSpec)
+      if design
+        @add(design)
+      else
+        throw new Error(Design.parser.errors)
 
 
   # Add an already parsed design.
   # @param { Design object }
   add: (design) ->
-    name = design.namespace
-    @designs[name] = design
+    @designs[design.name] = design
 
 
   # Check if a design is loaded
