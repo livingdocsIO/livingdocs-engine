@@ -1,157 +1,53 @@
 assert = require('../modules/logging/assert')
 log = require('../modules/logging/log')
 Template = require('../template/template')
-CssModificatorProperty = require('./css_modificator_property')
+OrderedHash = require('../modules/ordered_hash')
 
 module.exports = class Design
 
-  constructor: (design) ->
-    templates = design.templates || design.snippets
-    config = design.config
-    groups = design.config.groups || design.groups
+  constructor: ({ @name, @version, @author, @description }) ->
+    assert @name?, 'Design needs a name'
+    @identifier = Design.getIdentifier(@name, @version)
 
-    @namespace = config?.namespace || 'livingdocs-templates'
-    @paragraphSnippet = config?.paragraph || 'text'
-    @css = config.css
-    @js = config.js
-    @fonts = config.fonts
-    @templates = []
-    @groups = {}
-    @styles = {}
+    # templates in a structured format
+    @groups = []
 
-    @storeTemplateDefinitions(templates)
-    @globalStyles = @createDesignStyleCollection(design.config.styles)
-    @addGroups(groups)
-    @addTemplatesNotInGroups()
+    # templates by id and sorted
+    @components = new OrderedHash()
+
+    # assets required by the design
+    @assets = undefined
+
+    # default components
+    @defaultParagraph = undefined
+    @defaultImage = undefined
 
 
   equals: (design) ->
-    design.namespace == @namespace
-
-
-  storeTemplateDefinitions: (templates) ->
-    @templateDefinitions = {}
-    for template in templates
-      @templateDefinitions[template.id] = template
-
-
-  # pass the template as object
-  # e.g add({id: "title", name:"Title", html: "<h1 doc-editable>Title</h1>"})
-  add: (templateDefinition, styles) ->
-    @templateDefinitions[templateDefinition.id] = undefined
-    templateOnlyStyles = @createDesignStyleCollection(templateDefinition.styles)
-    templateStyles = $.extend({}, styles, templateOnlyStyles)
-
-    template = new Template
-      namespace: @namespace
-      id: templateDefinition.id
-      title: templateDefinition.title
-      properties: templateStyles
-      html: templateDefinition.html
-      weight: templateDefinition.weight || 0
-
-    @templates.push(template)
-    template
-
-
-  addGroups: (collection) ->
-    for groupName, group of collection
-      groupOnlyStyles = @createDesignStyleCollection(group.styles)
-      groupStyles = $.extend({}, @globalStyles, groupOnlyStyles)
-
-      templates = {}
-      for templateId in group.templates
-        templateDefinition = @templateDefinitions[templateId]
-        if templateDefinition
-          template = @add(templateDefinition, groupStyles)
-          templates[template.id] = template
-        else
-          log.warn("The template '#{templateId}' referenced in the group '#{groupName}' does not exist.")
-
-      @addGroup(groupName, group, templates)
-
-
-  addTemplatesNotInGroups: (globalStyles) ->
-    for templateId, templateDefinition of @templateDefinitions
-      if templateDefinition
-        @add(templateDefinition, @globalStyles)
-
-
-  addGroup: (name, group, templates) ->
-    @groups[name] =
-      title: group.title
-      templates: templates
-      weight: group.weight
-
-
-  createDesignStyleCollection: (styles) ->
-    designStyles = {}
-    if styles
-      for styleDefinition in styles
-        designStyle = @createDesignStyle(styleDefinition)
-        designStyles[designStyle.name] = designStyle if designStyle
-
-    designStyles
-
-
-  createDesignStyle: (styleDefinition) ->
-    if styleDefinition && styleDefinition.name
-      new CssModificatorProperty
-        name: styleDefinition.name
-        type: styleDefinition.type
-        options: styleDefinition.options
-        value: styleDefinition.value
-
-
-  remove: (identifier) ->
-    @checkNamespace identifier, (id) =>
-      @templates.splice(@getIndex(id), 1)
+    design.name == @name && design.version == @version
 
 
   get: (identifier) ->
-    @checkNamespace identifier, (id) =>
-      template = undefined
-      @each (t, index) ->
-        if t.id == id
-          template = t
-
-      template
-
-
-  getIndex: (identifier) ->
-    @checkNamespace identifier, (id) =>
-      index = undefined
-      @each (t, i) ->
-        if t.id == id
-          index = i
-
-      index
-
-
-  checkNamespace: (identifier, callback) ->
-    { namespace, id } = Template.parseIdentifier(identifier)
-
-    assert not namespace or @namespace is namespace,
-      "design #{ @namespace }: cannot get template with different namespace #{ namespace } "
-
-    callback(id)
+    componentName = @getComponentNameFromIdentifier(identifier)
+    @components.get(componentName)
 
 
   each: (callback) ->
-    for template, index in @templates
-      callback(template, index)
+    @components.each(callback)
 
 
-  # list available Templates
-  list: ->
-    templates = []
-    @each (template) ->
-      templates.push(template.identifier)
-
-    templates
+  add: (template) ->
+    template.setDesign(this)
+    @components.push(template.id, template)
 
 
-  # print documentation for a template
-  info: (identifier) ->
-    template = @get(identifier)
-    template.printDoc()
+  getComponentNameFromIdentifier: (identifier) ->
+    { namespace, id } = Template.parseIdentifier(identifier)
+    id
+
+
+  @getIdentifier: (name, version) ->
+    if version?
+      "#{ name }@#{ version }"
+    else
+      "#{ name }"

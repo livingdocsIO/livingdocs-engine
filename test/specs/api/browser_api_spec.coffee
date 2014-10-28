@@ -13,7 +13,7 @@ describe 'Browser API', ->
 
   describe 'design', ->
 
-    it 'loads a design snchronously', ->
+    it 'loads a design synchronously', ->
       expect(doc.design.has('test')).to.be.false
       doc.design.load(test.designJson)
       expect(doc.design.has('test')).to.be.true

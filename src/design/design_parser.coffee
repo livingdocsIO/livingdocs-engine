@@ -3,10 +3,10 @@ designConfigSchema = require('./design_config_schema')
 CssModificatorProperty = require('./css_modificator_property')
 Assets = require('./assets')
 Template = require('../template/template')
-Design = require('./new_design')
+Design = require('./design')
 
 
-module.exports =
+module.exports = designParser =
 
   parse: (designConfig) ->
     @design = undefined
@@ -88,3 +88,5 @@ module.exports =
   createComponentProperty: (styleDefinition) ->
     new CssModificatorProperty(styleDefinition)
 
+
+Design.parser = designParser

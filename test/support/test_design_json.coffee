@@ -12,65 +12,15 @@ module.exports = do ->
   # Configuration
   # -------------
 
-  config:
-    namespace: 'test'
-    paragraph: 'text'
+  design:
+    name: 'test'
+    version: '0.0.1'
 
-    groups:
-      layout:
-        title: 'Layout'
-        templates: [
-          'row'
-          'container'
-          'stuffedContainer'
-        ]
-      header:
-        title: 'Header'
-        styles: [
-          name: 'Capitalized'
-          type: 'option'
-          value: 'capitalized'
-        ]
-        templates: [
-          'cover'
-          'hero'
-          'title'
-        ]
-      other:
-        title: 'Other'
-        templates: [
-          'subtitle'
-          'text'
-          'image'
-        ]
 
-    styles: [
-      name: 'Color'
-      type: 'select'
-      options: [
-        caption: 'Red'
-        value: 'color--red'
-      ,
-        caption: 'Blue'
-        value: 'color--blue'
-      ,
-        caption: 'Green'
-        value: 'color--green'
-      ]
-    ]
-
-  # Snippets
-  # --------
-
-  templates: [
+  components: [
       id:   'hero'
       title: 'Hero'
-      weight: 10
-      styles: [
-        name: 'Extra Space'
-        type: 'option'
-        value: 'extra-space'
-      ]
+      properties: ['extra-space', 'capitalized', 'color']
       html:
         """
           <div>
@@ -80,11 +30,12 @@ module.exports = do ->
         """
     ,
       id: 'title'
-      weight: 9
       title: 'Title'
+      properties: ['capitalized', 'color']
       html: """<h1 #{ editableAttr }="title"></h1>"""
     ,
       id: 'subtitle'
+      properties: ['color']
       title: 'Subtitle with a default value'
       html: """<h2 #{ editableAttr }="title">Who's your Caddy?</h2>"""
     ,
@@ -102,6 +53,7 @@ module.exports = do ->
     ,
       id: 'cover'
       title: 'Cover'
+      properties: ['capitalized']
       html:
         """
         <div>
@@ -155,3 +107,45 @@ module.exports = do ->
         </div>
         """
     ]
+
+
+  defaultComponents:
+    paragraph: 'text'
+    image: 'image'
+
+
+  componentProperties:
+    'color':
+      name: 'color'
+      type: 'select'
+      options: [
+        caption: 'Red'
+        value: 'color--red'
+      ,
+        caption: 'Blue'
+        value: 'color--blue'
+      ,
+        caption: 'Green'
+        value: 'color--green'
+      ]
+    'extra-space':
+      name: 'extra-space'
+      type: 'option'
+      value: 'extra-space'
+    'capitalized':
+      name: 'capitalized'
+      type: 'option'
+      value: 'capitalized'
+
+
+  groups: [
+    name: 'Layout'
+    components: ['row', 'container', 'stuffedContainer']
+  ,
+    name: 'Header'
+    components: ['cover', 'hero', 'title']
+  ,
+    name: 'Other'
+    components: ['subtitle', 'text', 'image']
+  ]
+

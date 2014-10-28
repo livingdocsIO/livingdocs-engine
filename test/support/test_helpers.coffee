@@ -22,7 +22,7 @@ module.exports = testHelpers =
 
 
   getDesign: () ->
-    cachedDesign ||= new Design(designJson)
+    cachedDesign ||= Design.parser.parse(designJson)
 
 
   getTemplate: (id) ->

@@ -32,7 +32,7 @@ module.exports = class InstanceInjector
           design: @create('design')
 
       when 'design'
-        new Design(test.designJson)
+        test.getDesign()
 
       when 'renderingContainer', 'page', 'interactivePage'
         @createContainer(name)

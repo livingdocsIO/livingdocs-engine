@@ -37,7 +37,7 @@ module.exports = class Page extends RenderingContainer
 
   beforePageReady: =>
     if @design?
-      designPath = "#{ config.designPath }/#{ @design.namespace }"
+      designPath = "#{ config.designPath }/#{ @design.name }"
       cssLocation = if @design.css?
         @design.css
       else

@@ -241,7 +241,7 @@ module.exports = class SnippetTree
   serialize: ->
     data = {}
     data['content'] = []
-    data['design'] = { name: @design.namespace }
+    data['design'] = { name: @design.name }
 
     snippetToData = (snippet, level, containerArray) ->
       snippetData = snippet.toJson()

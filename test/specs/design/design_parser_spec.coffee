@@ -1,5 +1,5 @@
 designParser = require('../../../src/design/design_parser')
-Design = require('../../../src/design/new_design')
+Design = require('../../../src/design/design')
 Template = require('../../../src/template/template')
 CssModificatorProperty = require('../../../src/design/css_modificator_property')
 
