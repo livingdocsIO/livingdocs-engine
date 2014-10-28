@@ -23,6 +23,7 @@ module.exports = designParser =
       @parseAssets(assets)
       @parseComponentProperties(componentProperties)
       @parseComponents(components)
+      @parseGroups(groups)
       @parseDefaults(defaultComponents)
     catch error
       throw new Error("Error creating the design: #{ error }")
@@ -52,13 +53,12 @@ module.exports = designParser =
       properties = @lookupComponentProperties(properties)
 
       component = new Template
-        namespace: @design.name
         id: id
         title: title
         html: html
         properties: properties
 
-      @design.components.push(id, component)
+      @design.add(component)
 
 
   lookupComponentProperties: (propertyNames) ->
@@ -70,6 +70,16 @@ module.exports = designParser =
         log.warn("The componentProperty '#{ name }' was not found.")
 
     properties
+
+
+  parseGroups: (groups=[]) ->
+    for group in groups
+      components = for componentName in group.components
+        @design.get(componentName)
+
+      @design.groups.push
+        name: group.name
+        components: components
 
 
   parseDefaults: (defaultComponents) ->

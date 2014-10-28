@@ -94,19 +94,12 @@ describe 'Design', ->
   describe 'groups', ->
 
     beforeEach ->
-      @design = new Design(test.designJson)
+      @design = test.getDesign()
 
 
     it 'are available through #groups', ->
-      groups = Object.keys @design.groups
-      expect(groups).to.contain('layout')
-      expect(groups).to.contain('header')
-      expect(groups).to.contain('other')
-
-
-    it 'contain templates', ->
-      container = @design.get('container')
-      expect(@design.groups['layout'].templates['container']).to.equal(container)
+      groups = @design.groups
+      expect(@design.groups[0]).to.have.property('name', 'Layout')
 
 
   describe 'styles configuration', ->

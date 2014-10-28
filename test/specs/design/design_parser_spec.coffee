@@ -95,6 +95,16 @@ describe 'designParser', ->
       expect(title.styles['position']).to.be.an.instanceof(CssModificatorProperty)
 
 
+    it 'parses the groups', ->
+      expect(@design.groups.length).to.equal(2)
+
+
+    it 'looks up the components for groups', ->
+      headerGroup = @design.groups[0]
+      expect(headerGroup.components[0]).to.be.an.instanceof(Template)
+      expect(headerGroup.components[0].id).to.equal('title')
+
+
     it 'sets the default text paragraph', ->
       expect(@design.defaultParagraph.id).to.equal('paragraph')
 
