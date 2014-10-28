@@ -1,5 +1,5 @@
 Scheme = require('../modules/object_schema/scheme')
-validator = new Scheme()
+module.exports = validator = new Scheme()
 
 # Custom Validators
 # -----------------
@@ -15,7 +15,7 @@ validator.add 'semVer', (value) ->
 # Schemas
 # -------
 
-validator.add 'designConfig',
+validator.add 'design',
   design:
     name: 'string'
     version: 'string, semVer'
@@ -49,12 +49,4 @@ validator.add 'componentProperty',
 validator.add 'styleOption',
   caption: 'string'
   value: 'string'
-
-
-module.exports =
-
-  validate: (designConfig) ->
-    validator.validate('designConfig', designConfig)
-    @errors = validator.errors
-    not validator.hasErrors()
 

@@ -92,3 +92,17 @@ describe 'designParser', ->
       expect(title.styles['position']).to.be.an.instanceof(CssModificatorProperty)
 
 
+  describe 'parse error', ->
+
+    before ->
+      @design = designParser.parse
+        design:
+          name: 'minimal'
+          version: '0.0.1'
+        components: [
+          id: 'title'
+        ]
+
+    it 'returns a parse error', ->
+      expect(@design).to.equal(false)
+      expect(designParser.errors[0]).to.equal('design.components[0].html: required property missing')

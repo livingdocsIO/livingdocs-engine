@@ -9,10 +9,11 @@ Design = require('./new_design')
 module.exports =
 
   parse: (designConfig) ->
-    isValid = designConfigSchema.validate(designConfig)
-    return false if not isValid
-
-    if @tryDesignCreation(designConfig) then @design else false
+    if designConfigSchema.validate('design', designConfig)
+      if @tryDesignCreation(designConfig) then @design else false
+    else
+      @errors = designConfigSchema.getErrorMessages()
+      false
 
 
   tryDesignCreation: ({ design, assets, components, componentProperties, groups }) ->
@@ -22,7 +23,7 @@ module.exports =
       @parseComponentProperties(componentProperties)
       @parseComponents(components)
     catch error
-      log.warn "Error parsing design config: #{ error }"
+      @errors = ["Error creating the design: #{ error }"]
       return false
 
 
