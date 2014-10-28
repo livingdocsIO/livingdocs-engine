@@ -66,7 +66,7 @@ module.exports = class PropertyValidator
       res = validate(entry)
       continue if res == true
       location = "#{ @location }[#{ index }]"
-      errors.add(res, location: location, defaultMessage: "#{ name } validator failed")
+      errors.add(res, location: location, defaultMessage: "#{ @arrayValidator } validator failed")
       isValid = false
 
     isValid

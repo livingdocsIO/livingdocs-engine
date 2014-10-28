@@ -217,6 +217,7 @@ describe 'object_schema', ->
           words: [1, 2]
 
         expect(isValid).to.equal(false)
+        expect(@schema.getErrorMessages()[0]).to.equal('obj.words[0]: string validator failed')
 
 
     describe 'a schema with an array of a nested type', ->
