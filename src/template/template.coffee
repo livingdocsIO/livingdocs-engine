@@ -44,6 +44,12 @@ module.exports = class Template
     @parseTemplate()
 
 
+  setDesign: (design) ->
+    @design = design
+    @namespace = design.name
+    @identifier = "#{ @namespace }.#{ @id }"
+
+
   # create a new SnippetModel instance from this template
   createModel: () ->
     new SnippetModel(template: this)
