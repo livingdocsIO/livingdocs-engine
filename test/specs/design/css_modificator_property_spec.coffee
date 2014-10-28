@@ -31,11 +31,11 @@ describe 'CssModificatorProperty', ->
       expect(createStyle).to.throw()
 
 
-  describe '"Color" of type "select"', ->
+  describe '"color" of type "select"', ->
 
     beforeEach ->
       @style = new CssModificatorProperty
-        name: 'Color'
+        name: 'color'
         type: 'select'
         options: [
           caption: 'Red'
@@ -68,7 +68,7 @@ describe 'CssModificatorProperty', ->
 
     beforeEach ->
       @style = new CssModificatorProperty
-        name: 'Watsonian'
+        name: 'watsonian'
         type: 'option'
         value: 'todo--code-review'
 

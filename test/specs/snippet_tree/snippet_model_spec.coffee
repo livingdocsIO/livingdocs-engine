@@ -106,44 +106,44 @@ describe 'Hero SnippetModel#style', ->
     @hero = test.getSnippet('hero')
 
 
-  it 'gets style "Extra Space', ->
-    expect(@hero.getStyle('Extra Space')).to.be.undefined
+  it 'gets style "extra-space"', ->
+    expect(@hero.getStyle('extra-space')).to.be.undefined
 
 
-  it 'sets style "Extra Space"', ->
-    @hero.setStyle('Extra Space', 'extra-space')
-    expect(@hero.styles['Extra Space']).to.equal('extra-space')
+  it 'sets style "extra-space"', ->
+    @hero.setStyle('extra-space', 'extra-space')
+    expect(@hero.styles['extra-space']).to.equal('extra-space')
 
 
-  it 'resets style "Extra Space" with "" (empty string)', ->
-    @hero.setStyle('Extra Space', 'extra-space')
-    @hero.setStyle('Extra Space', '')
-    expect(@hero.styles['Extra Space']).to.equal('')
+  it 'resets style "extra-space" with "" (empty string)', ->
+    @hero.setStyle('extra-space', 'extra-space')
+    @hero.setStyle('extra-space', '')
+    expect(@hero.styles['extra-space']).to.equal('')
 
 
-  it 'resets style "Extra Space" with null', ->
-    @hero.setStyle('Extra Space', 'extra-space')
-    @hero.setStyle('Extra Space', null)
-    expect(@hero.styles['Extra Space']).to.be.null
+  it 'resets style "extra-space" with null', ->
+    @hero.setStyle('extra-space', 'extra-space')
+    @hero.setStyle('extra-space', null)
+    expect(@hero.styles['extra-space']).to.be.null
 
-  it 'sets style "Color"', ->
-    @hero.setStyle('Color', 'color--blue')
-    expect(@hero.styles['Color']).to.equal('color--blue')
-
-
-  it 'gets previously set style "Extra Space', ->
-    @hero.setStyle('Extra Space', 'extra-space')
-    expect(@hero.styles['Extra Space']).to.equal('extra-space')
+  it 'sets style "color"', ->
+    @hero.setStyle('color', 'color--blue')
+    expect(@hero.styles['color']).to.equal('color--blue')
 
 
-  it 'does not set style "Extra Space" with unknown class', ->
-    @hero.setStyle('Extra Space', 'are-you-kidding-me')
-    expect(@hero.styles['Extra Space']).to.be.undefined
+  it 'gets previously set style "extra-space', ->
+    @hero.setStyle('extra-space', 'extra-space')
+    expect(@hero.styles['extra-space']).to.equal('extra-space')
 
 
-  it 'does not set unspecified style "Conundrum"', ->
-    @hero.setStyle('Conundrum', 'wtf')
-    expect(@hero.styles['Conundrum']).to.be.undefined
+  it 'does not set style "extra-space" with unknown class', ->
+    @hero.setStyle('extra-space', 'are-you-kidding-me')
+    expect(@hero.styles['extra-space']).to.be.undefined
+
+
+  it 'does not set unspecified style "conundrum"', ->
+    @hero.setStyle('conundrum', 'wtf')
+    expect(@hero.styles['conundrum']).to.be.undefined
 
 
 describe 'Html snippet', ->

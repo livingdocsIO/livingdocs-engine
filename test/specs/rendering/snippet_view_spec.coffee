@@ -49,7 +49,7 @@ describe 'SnippetView title set style', ->
 
   beforeEach ->
     @title = test.getSnippet('title')
-    @title.setStyle('Color', 'color--blue')
+    @title.setStyle('color', 'color--blue')
     @$expected = $ """
       <h1 #{ test.editableAttr }="title"
           class="#{ css.editable } #{ css.snippet }"
@@ -57,16 +57,16 @@ describe 'SnippetView title set style', ->
           #{ attr.placeholder }="#{ @title.template.defaults['title'] }">
       </h1>"""
 
-  it 'sets "Color" style to "color--blue"', ->
+  it 'sets "color" style to "color--blue"', ->
     @$expected.addClass('color--blue')
     snippetView = @title.template.createView(@title)
     expect(snippetView.$html).to.have.html(@$expected)
 
 
-  it 'changes "Color" style from "color--blue" to "color--red"', ->
+  it 'changes "color" style from "color--blue" to "color--red"', ->
     @$expected.addClass('color--red')
     snippetView = @title.template.createView(@title)
-    snippetView.setStyle('Color', 'color--red')
+    snippetView.setStyle('color', 'color--red')
     expect(snippetView.$html).to.have.html(@$expected)
 
 
@@ -94,15 +94,15 @@ describe 'SnippetView hero', ->
     expect(@snippetView.$html).to.have.html(@expected)
 
 
-  it 'sets "Extra Space"', ->
+  it 'sets "extra-space"', ->
     @expected.addClass('extra-space')
-    @snippetView.setStyle('Extra Space', 'extra-space')
+    @snippetView.setStyle('extra-space', 'extra-space')
     expect(@snippetView.$html).to.have.html(@expected)
 
 
-  it 'resets "Extra Space"', ->
-    @snippetView.setStyle('Extra Space', 'extra-space')
-    @snippetView.setStyle('Extra Space', '')
+  it 'resets "extra-space"', ->
+    @snippetView.setStyle('extra-space', 'extra-space')
+    @snippetView.setStyle('extra-space', '')
     expect(@snippetView.$html).to.have.html(@expected)
 
 

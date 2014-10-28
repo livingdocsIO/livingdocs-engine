@@ -26,12 +26,12 @@ describe 'Snippet Serialization', ->
 
     it 'saves all styles', ->
       hero = test.getSnippet('hero')
-      hero.setStyle('Extra Space', 'extra-space')
-      hero.setStyle('Color', 'color--blue')
+      hero.setStyle('extra-space', 'extra-space')
+      hero.setStyle('color', 'color--blue')
       json = hero.toJson()
       expect(json.styles).to.deep.equal
-        'Extra Space': 'extra-space'
-        'Color': 'color--blue'
+        'extra-space': 'extra-space'
+        'color': 'color--blue'
 
   describe 'of data', ->
 
@@ -149,12 +149,12 @@ describe 'Deserialization', ->
       @json = test.localstore
         identifier: 'test.hero'
         styles:
-          'Color': 'color--blue'
+          'color': 'color--blue'
 
 
     it 'returns a snippet with its styles', ->
       snippet = snippetModelSerializer.fromJson(@json, @design)
-      expect(snippet.getStyle('Color')).to.equal('color--blue')
+      expect(snippet.getStyle('color')).to.equal('color--blue')
 
 
   describe 'of a snippet with invalid styles', ->
@@ -163,12 +163,12 @@ describe 'Deserialization', ->
       @json = test.localstore
         identifier: 'test.hero'
         styles:
-          'Color': 'no-color-at-all'
+          'color': 'no-color-at-all'
 
 
     it 'returns a snippet with its styles', ->
       snippet = snippetModelSerializer.fromJson(@json, @design)
-      expect(snippet.getStyle('Color')).to.be.undefined
+      expect(snippet.getStyle('color')).to.be.undefined
 
 
   describe 'of a snippet with data', ->

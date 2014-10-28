@@ -86,29 +86,13 @@ describe 'Design', ->
       expect(@design.groups[0]).to.have.property('name', 'Layout')
 
 
-  describe 'styles configuration', ->
+  describe 'componentProperties', ->
 
     beforeEach ->
-      @design = new Design(test.designJson)
+      @design = test.getDesign()
 
 
-    it 'has global style Color', ->
-      expect(@design.globalStyles['Color']).to.be.an.instanceof(CssModificatorProperty)
-
-
-    it 'merges global, group and template styles', ->
-      template = @design.get('hero')
-      templateStyles = Object.keys template.styles
-      expect(templateStyles).to.contain('Color') # global style
-      expect(templateStyles).to.contain('Capitalized') # group style
-      expect(templateStyles).to.contain('Extra Space') # template style
-
-
-    it 'assigns global styles to a template with no other styles', ->
-      template = @design.get('container')
-      templateStyles = Object.keys template.styles
-      expect(templateStyles).to.contain('Color') # global style
-      expect(templateStyles).not.to.contain('Capitalized') # group style
-      expect(templateStyles).not.to.contain('Extra Space') # template style
-
+    it 'hero component has properties "extra-space" and "capitalized"', ->
+      hero = @design.get('hero')
+      expect(hero.styles).to.have.keys('capitalized', 'extra-space', 'color')
 

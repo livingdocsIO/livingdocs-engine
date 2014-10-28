@@ -42,7 +42,7 @@ describe 'designParser', ->
 
         componentProperties:
           'position':
-            name: 'Position'
+            name: 'position'
             type: 'select'
             options: [
               caption: 'Left'
@@ -52,7 +52,7 @@ describe 'designParser', ->
               value: 'position-right'
             ]
           'extra-space':
-            name: 'Extra Space'
+            name: 'extra-space'
             type: 'option'
             value: 'extra-space'
 

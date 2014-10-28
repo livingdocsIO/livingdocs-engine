@@ -127,7 +127,7 @@ describe 'Subtitle Template', ->
         type: 'editable'
       ]
       properties: [
-        name: 'Color'
+        name: 'color'
         type: 'cssModificator'
       ]
 
