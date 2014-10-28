@@ -1,69 +1,60 @@
 Design = require('../../../src/design/design')
 CssModificatorProperty = require('../../../src/design/css_modificator_property')
 Template = require('../../../src/template/template')
+editableAttr = config.directives.editable.attr
 
 describe 'Design', ->
 
   describe 'with no params', ->
 
-    beforeEach ->
-      @design = new Design
-        templates: []
-        config: {}
-
-
     it 'adds a default namespace', ->
-      expect(@design.namespace).to.equal('livingdocs-templates')
+      test = -> new Design()
+      expect(test).to.throw()
 
 
-  describe 'with no templates', ->
+  describe 'with just a name', ->
 
     beforeEach ->
-      @design = new Design
-        templates: []
-        config: { namespace: 'test' }
+      @design = new Design(name: 'test')
 
 
-    it 'has a namespace', ->
-      expect(@design.namespace).to.equal('test')
-
-
-    it 'has the default paragraph element', ->
-      expect(@design.paragraphSnippet).to.equal('text')
+    it 'has a name', ->
+      expect(@design.name).to.equal('test')
 
 
     describe 'equals()', ->
 
       it 'recognizes the same design as equal', ->
-        sameDesign = new Design
-          templates: []
-          config: { namespace: 'test' }
-
+        sameDesign = new Design(name: 'test')
         expect(@design.equals(sameDesign)).to.equal(true)
 
 
       it 'recognizes a different design', ->
-        otherDesign = new Design
-          templates: []
-          config: { namespace: 'xxx' }
-
+        otherDesign = new Design(name: 'other')
         expect(@design.equals(otherDesign)).to.equal(false)
+
+
+      it 'recognizes different versions', ->
+        differentVersion = new Design(name: 'test', version: '1.0.0')
+        expect(@design.equals(differentVersion)).to.equal(false)
 
 
   describe 'with a template and paragraph element', ->
 
     beforeEach ->
-      @design = new Design
-        templates: test.designJson.templates
-        config: { namespace: 'test', paragraph: 'p' }
+      @design = new Design(name: 'test')
+
+      @design.add new Template
+        id: 'title'
+        html: """<h1 #{ editableAttr }="title"></h1>"""
+
+      @design.add new Template
+        id: 'text'
+        html: """<p #{ editableAttr }="text"></p>"""
 
 
     it 'stores the template as Template', ->
-      expect(@design.templates[0]).to.be.an.instanceof(Template)
-
-
-    it 'has a paragraph element', ->
-      expect(@design.paragraphSnippet).to.equal('p')
+      expect(@design.components[0]).to.be.an.instanceof(Template)
 
 
     describe 'get()', ->
@@ -82,13 +73,6 @@ describe 'Design', ->
 
       it 'returns undefined for a non-existing template', ->
         expect( @design.get('something-ludicrous') ).to.equal(undefined)
-
-
-    describe 'remove()', ->
-
-      it 'removes the template', ->
-        @design.remove('title')
-        expect( @design.get('title') ).to.be.undefined
 
 
   describe 'groups', ->
