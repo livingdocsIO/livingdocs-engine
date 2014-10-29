@@ -35,6 +35,7 @@ module.exports = class Page extends RenderingContainer
       Boolean(config.loadResources)
 
 
+  # todo: move path resolutions to design.assets
   beforePageReady: =>
     if @design?
       designPath = "#{ config.designPath }/#{ @design.name }"

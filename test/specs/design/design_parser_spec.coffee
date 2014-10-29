@@ -86,6 +86,11 @@ describe 'designParser', ->
       expect(@design.version).to.equal('1.0.0')
 
 
+    it 'parses the assets', ->
+      expect(@design.assets.hasCss()).to.equal(true)
+      expect(@design.assets.css[0]).to.equal('/stylesheets/test.css')
+
+
     it 'parses the components', ->
       expect(@design.get('title')).to.be.an.instanceof(Template)
 

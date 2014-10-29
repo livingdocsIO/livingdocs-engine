@@ -2,6 +2,7 @@ assert = require('../modules/logging/assert')
 log = require('../modules/logging/log')
 Template = require('../template/template')
 OrderedHash = require('../modules/ordered_hash')
+Assets = require('./assets')
 
 module.exports = class Design
 
@@ -16,7 +17,7 @@ module.exports = class Design
     @components = new OrderedHash()
 
     # assets required by the design
-    @assets = undefined
+    @assets = new Assets()
 
     # default components
     @defaultParagraph = undefined

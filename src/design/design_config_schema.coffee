@@ -24,6 +24,7 @@ validator.add 'design',
   assets:
     __validate: 'optional'
     css: 'array of string'
+    js: 'array of string, optional'
   components: 'array of component'
   componentProperties:
     __validate: 'optional'

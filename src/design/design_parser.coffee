@@ -1,7 +1,6 @@
 log = require('../modules/logging/log')
 designConfigSchema = require('./design_config_schema')
 CssModificatorProperty = require('./css_modificator_property')
-Assets = require('./assets')
 Template = require('../template/template')
 Design = require('./design')
 
@@ -38,7 +37,9 @@ module.exports = designParser =
 
 
   parseAssets: (assets) ->
-    @design.assets = new Assets()
+    return unless assets?
+    @design.assets.addCss(assets.css)
+    @design.assets.addJs(assets.js)
 
 
   # Note: Currently componentProperties consist only of design styles
