@@ -23,7 +23,7 @@
     {
       "title": "Image",
       "id": "image",
-      "html": "<div class=\"img-polaroid\" doc-editable=\"image\">Drag your image here...</div>"
+      "html": "<div class=\"img-polaroid\" doc-image=\"image\">Drag your image here...</div>"
     },
     {
       "title": "Info",
