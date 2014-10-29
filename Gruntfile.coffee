@@ -98,17 +98,7 @@ module.exports = (grunt) ->
           compilers: 'coffee-script/register'
           require: './test/node/test_globals.js'
         src: [
-          'test/specs/configuration/*.coffee'
-          'test/specs/design/*.coffee'
-          'test/specs/image_services/*.coffee'
-          'test/specs/interaction/dom_spec.coffee'
-          'test/specs/livingdoc/*.coffee'
-          'test/specs/modules/*.coffee'
-          'test/specs/rendering/*.coffee'
-          'test/specs/serialization/*.coffee'
-          'test/specs/snippet_tree/*.coffee'
-          'test/specs/support/*.coffee'
-          'test/specs/template/*.coffee'
+          'test/specs/!(browser_only)/*.coffee'
         ]
 
     karma:
