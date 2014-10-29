@@ -2,21 +2,18 @@ Livingdoc = require('../../../src/livingdoc')
 
 describe 'livingdoc', ->
 
-  describe 'instantiation', ->
-    beforeEach ->
-      { @snippetTree } = getInstances('snippetTree')
+  beforeEach ->
+    { @snippetTree } = getInstances('snippetTree')
+    @doc = new Livingdoc({ @snippetTree })
 
+
+  describe 'instantiation', ->
 
     it 'creates a new livingdoc', ->
-      doc = new Livingdoc({ @snippetTree })
-      expect(doc).to.be.an.instanceof(Livingdoc)
+      expect(@doc).to.be.an.instanceof(Livingdoc)
 
 
   describe 'events', ->
-    beforeEach ->
-      { @snippetTree } = getInstances('snippetTree')
-      @doc = new Livingdoc({ @snippetTree })
-
 
     it 'emits a change event', (done) ->
       @doc.on 'change', ->
@@ -26,28 +23,7 @@ describe 'livingdoc', ->
       @snippetTree.append(snippet)
 
 
-  describe 'createView()', ->
-
-
-    it 'creates a readOnly iframe view', (done) ->
-      @doc.createView().then ({ iframe, renderer }) ->
-        expect(renderer.renderingContainer.isReadOnly).to.be.true
-        done()
-
-
-    it 'accepts a wrapper as an argument', (done) ->
-      $wrapper = $('<div class="wrapper doc-section"></div>')
-      @doc.createView(undefined, $wrapper: $wrapper)
-      .then ({ iframe, renderer }) ->
-        expect(renderer.$wrapperHtml).to.exist
-        done()
-
-
   describe 'serialize()', ->
-    beforeEach ->
-      { @snippetTree } = getInstances('snippetTree')
-      @doc = new Livingdoc({ @snippetTree })
-
 
     it 'serializes an empty livingdoc', ->
       expect(@doc.serialize()).to.deep.equal
@@ -65,10 +41,6 @@ describe 'livingdoc', ->
 
 
   describe 'toHtml()', ->
-    beforeEach ->
-      { @snippetTree } = getInstances('snippetTree')
-      @doc = new Livingdoc({ @snippetTree })
-
 
     it 'renders an empty livingdoc', ->
       expect(@doc.toHtml()).to.equal('')
@@ -83,10 +55,6 @@ describe 'livingdoc', ->
 
 
   describe 'toJson()', ->
-    beforeEach ->
-      { @snippetTree } = getInstances('snippetTree')
-      @doc = new Livingdoc({ @snippetTree })
-
 
     it 'renders an empty livingdoc', ->
       expect(@doc.toJson()).to.equal(

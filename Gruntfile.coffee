@@ -102,6 +102,7 @@ module.exports = (grunt) ->
           'test/specs/design/*.coffee'
           'test/specs/image_services/*.coffee'
           'test/specs/interaction/dom_spec.coffee'
+          'test/specs/livingdoc/*.coffee'
           'test/specs/modules/*.coffee'
           'test/specs/rendering/*.coffee'
           'test/specs/serialization/*.coffee'
