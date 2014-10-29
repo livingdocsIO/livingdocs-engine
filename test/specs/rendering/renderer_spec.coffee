@@ -176,6 +176,7 @@ describe 'Renderer', ->
           </section>
           """
 
+
   describe 'with a wrapper', ->
     beforeEach ->
       { @componentTree, @page, @renderer } = getInstances('componentTree', 'page')
@@ -217,3 +218,49 @@ describe 'Renderer', ->
           """
         done()
 
+
+  describe 'exclude components', ->
+
+    beforeEach (done) ->
+      { @componentTree, @page, @renderer } = getInstances('page', 'renderer')
+      @renderer.ready -> done()
+
+
+    it 'excludes the title before it is appended to the componentTree', ->
+      @title = test.createComponent('title', 'A')
+      @renderer.excludeComponent(@title.id)
+      @componentTree.append(@title)
+      expect(@page.renderNode).to.have.html('<section></section>')
+
+
+    it 'excludes the second title before it is appended to the componentTree', ->
+      @titleA = test.createComponent('title', 'A')
+      @componentTree.append(@titleA)
+      @titleB = test.createComponent('title', 'B')
+      @renderer.excludeComponent(@titleB.id)
+      @componentTree.append(@titleB)
+      expect(@page.renderNode).to.have.html '
+        <section>
+          <h1>A</h1>
+        </section>'
+
+
+    it 'excludes two components at once before they are appended to the componentTree', ->
+      @titleA = test.createComponent('title', 'A')
+      @titleB = test.createComponent('title', 'B')
+      @renderer.excludeComponent([@titleA.id, @titleB.id])
+      @componentTree.append(@titleA)
+      @componentTree.append(@titleB)
+      expect(@page.renderNode).to.have.html '<section></section>'
+
+
+    it 'excludes the title after it is appended to the componentTree', ->
+      @title = test.createComponent('title', 'A')
+      @componentTree.append(@title)
+      expect(@page.renderNode).to.have.html '
+        <section>
+          <h1>A</h1>
+        </section>'
+
+      @renderer.excludeComponent(@title.id)
+      expect(@page.renderNode).to.have.html '<section></section>'

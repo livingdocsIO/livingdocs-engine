@@ -5,7 +5,12 @@ config = require('../configuration/config')
 
 module.exports = class Renderer
 
-  constructor: ({ @componentTree, @renderingContainer, $wrapper }) ->
+  # @param { Object }
+  # - componentTree { ComponentTree }
+  # - renderingContainer { RenderingContainer }
+  # - $wrapper { jQuery object } A wrapper with a node with a 'doc-section' css class where to insert the content.
+  # - excludeComponents { String or Array } componentModel.id or an array of such.
+  constructor: ({ @componentTree, @renderingContainer, $wrapper, excludeComponents }) ->
     assert @componentTree, 'no componentTree specified'
     assert @renderingContainer, 'no rendering container specified'
 
@@ -13,9 +18,24 @@ module.exports = class Renderer
     @$wrapperHtml = $wrapper
     @componentViews = {}
 
+    @excludedComponentIds = {}
+    @excludeComponent(excludeComponents)
     @readySemaphore = new Semaphore()
     @renderOncePageReady()
     @readySemaphore.start()
+
+
+  # @param { String or Array } componentModel.id or an array of such.
+  excludeComponent: (componentId) ->
+    return unless componentId?
+    if $.isArray(componentId)
+      for compId in componentId
+        @excludeComponent(compId)
+    else
+      @excludedComponentIds[componentId] = true
+      view = @componentViews[componentId]
+      if view? and view.isAttachedToDom
+        @removeComponent(view.model)
 
 
   setRoot: () ->
@@ -117,7 +137,7 @@ module.exports = class Renderer
 
 
   insertComponent: (model) ->
-    return if @isComponentAttached(model)
+    return if @isComponentAttached(model) || @excludedComponentIds[model.id] == true
 
     if @isComponentAttached(model.previous)
       @insertComponentAsSibling(model.previous, model)

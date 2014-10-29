@@ -99,10 +99,11 @@ module.exports = class Livingdoc extends EventEmitter
     @interactiveView = view
 
 
-  toHtml: ->
+  toHtml: ({ excludeComponents }={}) ->
     new Renderer(
       componentTree: @componentTree
       renderingContainer: new RenderingContainer()
+      excludeComponents: excludeComponents
     ).html()
 
 
