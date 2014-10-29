@@ -1,3 +1,9 @@
+# v0.x.x
+
+#### Features:
+
+- Add option to exclude components in Renderer [#128](https://github.com/upfrontIO/livingdocs-engine/pull/128)
+
 
 # v0.3.0
 
