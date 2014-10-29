@@ -2,7 +2,7 @@ assert = require('./modules/logging/assert')
 
 config = require('./configuration/config')
 augmentConfig = require('./configuration/augment_config')
-Document = require('./document')
+Livingdoc = require('./livingdoc')
 SnippetTree = require('./snippet_tree/snippet_tree')
 designParser = require('./design/design_parser')
 Design = require('./design/design')
@@ -27,14 +27,14 @@ module.exports = doc = do ->
   design: designCache
 
 
-  # Load a document from serialized data in a synchronous way.
+  # Load a livingdoc from serialized data in a synchronous way.
   # The design must be loaded first.
   #
-  # @returns { Document object }
+  # @returns { Livingdoc object }
   new: ({ data, design }) ->
     snippetTree = if data?
       designName = data.design?.name
-      assert designName?, 'Error creating document: No design is specified.'
+      assert designName?, 'Error creating livingdoc: No design is specified.'
       design = @design.get(designName)
       new SnippetTree(content: data, design: design)
     else
@@ -46,9 +46,9 @@ module.exports = doc = do ->
 
 
   # Direct creation with an existing SnippetTree
-  # @returns { Document object }
+  # @returns { Livingdoc object }
   create: (snippetTree) ->
-    new Document({ snippetTree })
+    new Livingdoc({ snippetTree })
 
 
   # Todo: add async api (async because of the loading of the design)
@@ -56,8 +56,8 @@ module.exports = doc = do ->
   #
   # Example:
   # doc.load(jsonFromServer)
-  #  .then (document) ->
-  #    document.createView('.container', { interactive: true })
+  #  .then (livingdoc) ->
+  #    livingdoc.createView('.container', { interactive: true })
   #  .then (view) ->
   #    # view is ready
 

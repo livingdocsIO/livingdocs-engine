@@ -1,21 +1,21 @@
-Document = require('../../../src/document')
+Livingdoc = require('../../../src/livingdoc')
 
-describe 'document', ->
+describe 'livingdoc', ->
 
   describe 'instantiation', ->
     beforeEach ->
       { @snippetTree } = getInstances('snippetTree')
 
 
-    it 'creates a new document', ->
-      doc = new Document({ @snippetTree })
-      expect(doc).to.be.an.instanceof(Document)
+    it 'creates a new livingdoc', ->
+      doc = new Livingdoc({ @snippetTree })
+      expect(doc).to.be.an.instanceof(Livingdoc)
 
 
   describe 'events', ->
     beforeEach ->
       { @snippetTree } = getInstances('snippetTree')
-      @doc = new Document({ @snippetTree })
+      @doc = new Livingdoc({ @snippetTree })
 
 
     it 'emits a change event', (done) ->
@@ -46,17 +46,17 @@ describe 'document', ->
   describe 'serialize()', ->
     beforeEach ->
       { @snippetTree } = getInstances('snippetTree')
-      @doc = new Document({ @snippetTree })
+      @doc = new Livingdoc({ @snippetTree })
 
 
-    it 'serializes an empty document', ->
+    it 'serializes an empty livingdoc', ->
       expect(@doc.serialize()).to.deep.equal
         content: []
         design:
           name: 'test'
 
 
-    it 'serializes a minimal document', ->
+    it 'serializes a minimal livingdoc', ->
       model = test.getSnippet('title')
       model.set('title', 'It Works')
       @snippetTree.append(model)
@@ -67,14 +67,14 @@ describe 'document', ->
   describe 'toHtml()', ->
     beforeEach ->
       { @snippetTree } = getInstances('snippetTree')
-      @doc = new Document({ @snippetTree })
+      @doc = new Livingdoc({ @snippetTree })
 
 
-    it 'renders an empty document', ->
+    it 'renders an empty livingdoc', ->
       expect(@doc.toHtml()).to.equal('')
 
 
-    it 'renders a minimal document', ->
+    it 'renders a minimal livingdoc', ->
       model = test.getSnippet('title')
       model.set('title', 'It Works')
       @snippetTree.append(model)
@@ -85,14 +85,14 @@ describe 'document', ->
   describe 'toJson()', ->
     beforeEach ->
       { @snippetTree } = getInstances('snippetTree')
-      @doc = new Document({ @snippetTree })
+      @doc = new Livingdoc({ @snippetTree })
 
 
-    it 'renders an empty document', ->
+    it 'renders an empty livingdoc', ->
       expect(@doc.toJson()).to.equal(
         '{"content":[],"design":{"name":"test"}}')
 
 
-    it 'renders an empty document with prettify', ->
+    it 'renders an empty livingdoc with prettify', ->
       expect(@doc.toJson('prettify')).to.contain('\n  ')
 

@@ -40,20 +40,20 @@ describe 'Browser API', ->
       @data = @snippetTree.serialize()
 
 
-    it 'creates a new empty document', ->
-      document = doc.new(design: 'test')
-      firstSnippet = document.snippetTree.first()
+    it 'creates a new empty livingdoc', ->
+      livingdoc = doc.new(design: 'test')
+      firstSnippet = livingdoc.snippetTree.first()
       expect(firstSnippet).to.be.undefined
 
 
-    it 'creates a new document from data', ->
-      document = doc.new(data: @data)
-      firstSnippet = document.snippetTree.first()
+    it 'creates a new livingdoc from data', ->
+      livingdoc = doc.new(data: @data)
+      firstSnippet = livingdoc.snippetTree.first()
       expect(firstSnippet.get('title')).to.equal('It Works')
 
 
-    it 'creates a new document from json data', ->
-      document = doc.new({
+    it 'creates a new livingdoc from json data', ->
+      livingdoc = doc.new({
         data: {
           content: [
             {
@@ -68,7 +68,7 @@ describe 'Browser API', ->
           }
         }
       })
-      expect(document.snippetTree.first().get('title')).to.equal('This is it!')
+      expect(livingdoc.snippetTree.first().get('title')).to.equal('This is it!')
 
 
   describe 'config', ->

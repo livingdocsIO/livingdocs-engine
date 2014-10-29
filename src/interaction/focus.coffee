@@ -1,7 +1,7 @@
 dom = require('./dom')
 
-# Document Focus
-# --------------
+# Component Focus
+# ---------------
 # Manage the snippet or editable that is currently focused
 module.exports = class Focus
 

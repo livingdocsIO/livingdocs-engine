@@ -8,7 +8,7 @@ EventEmitter = require('wolfy87-eventemitter')
 config = require('./configuration/config')
 dom = require('./interaction/dom')
 
-module.exports = class Document extends EventEmitter
+module.exports = class Livingdoc extends EventEmitter
 
 
   constructor: ({ snippetTree }) ->
@@ -94,7 +94,7 @@ module.exports = class Document extends EventEmitter
 
   setInteractiveView: (view) ->
     assert not @interactiveView?,
-      'Error creating interactive view: Document can have only one interactive view'
+      'Error creating interactive view: Livingdoc can have only one interactive view'
 
     @interactiveView = view
 
@@ -128,6 +128,6 @@ module.exports = class Document extends EventEmitter
     @snippetTree.print()
 
 
-  Document.dom = dom
+  Livingdoc.dom = dom
 
 
