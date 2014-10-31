@@ -1,4 +1,5 @@
 log = require('../modules/logging/log')
+assert = require('../modules/logging/assert')
 designConfigSchema = require('./design_config_schema')
 CssModificatorProperty = require('./css_modificator_property')
 Template = require('../template/template')
