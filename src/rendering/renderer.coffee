@@ -6,7 +6,7 @@ config = require('../configuration/config')
 module.exports = class Renderer
 
   constructor: ({ @componentTree, @renderingContainer, $wrapper }) ->
-    assert @componentTree, 'no snippet tree specified'
+    assert @componentTree, 'no componentTree specified'
     assert @renderingContainer, 'no rendering container specified'
 
     @$root = $(@renderingContainer.renderNode)
@@ -28,7 +28,7 @@ module.exports = class Renderer
         @$root = $insert
 
     # Store a reference to the componentTree in the $root node.
-    # Some dom.coffee methods need it to get hold of the snippet tree
+    # Some dom.coffee methods need it to get hold of the componentTree
     @$root.data('componentTree', @componentTree)
 
 
@@ -54,59 +54,59 @@ module.exports = class Renderer
     @renderingContainer.html()
 
 
-  # Snippet Tree Event Handling
-  # ---------------------------
+  # ComponentTree Event Handling
+  # ----------------------------
 
   setupComponentTreeListeners: ->
-    @componentTree.snippetAdded.add( $.proxy(@snippetAdded, this) )
-    @componentTree.snippetRemoved.add( $.proxy(@snippetRemoved, this) )
-    @componentTree.snippetMoved.add( $.proxy(@snippetMoved, this) )
-    @componentTree.snippetContentChanged.add( $.proxy(@snippetContentChanged, this) )
-    @componentTree.snippetHtmlChanged.add( $.proxy(@snippetHtmlChanged, this) )
+    @componentTree.componentAdded.add( $.proxy(@componentAdded, this) )
+    @componentTree.componentRemoved.add( $.proxy(@componentRemoved, this) )
+    @componentTree.componentMoved.add( $.proxy(@componentMoved, this) )
+    @componentTree.componentContentChanged.add( $.proxy(@componentContentChanged, this) )
+    @componentTree.componentHtmlChanged.add( $.proxy(@componentHtmlChanged, this) )
 
 
-  snippetAdded: (model) ->
-    @insertSnippet(model)
+  componentAdded: (model) ->
+    @insertComponent(model)
 
 
-  snippetRemoved: (model) ->
-    @removeSnippet(model)
-    @deleteCachedComponentViewForSnippet(model)
+  componentRemoved: (model) ->
+    @removeComponent(model)
+    @deleteCachedComponentViewForComponent(model)
 
 
-  snippetMoved: (model) ->
-    @removeSnippet(model)
-    @insertSnippet(model)
+  componentMoved: (model) ->
+    @removeComponent(model)
+    @insertComponent(model)
 
 
-  snippetContentChanged: (model) ->
-    @componentViewForSnippet(model).updateContent()
+  componentContentChanged: (model) ->
+    @componentViewForComponent(model).updateContent()
 
 
-  snippetHtmlChanged: (model) ->
-    @componentViewForSnippet(model).updateHtml()
+  componentHtmlChanged: (model) ->
+    @componentViewForComponent(model).updateHtml()
 
 
   # Rendering
   # ---------
 
 
-  componentViewForSnippet: (model) ->
+  componentViewForComponent: (model) ->
     @componentViews[model.id] ||= model.createView(@renderingContainer.isReadOnly)
 
 
-  deleteCachedComponentViewForSnippet: (model) ->
+  deleteCachedComponentViewForComponent: (model) ->
     delete @componentViews[model.id]
 
 
   render: ->
     @componentTree.each (model) =>
-      @insertSnippet(model)
+      @insertComponent(model)
 
 
   clear: ->
     @componentTree.each (model) =>
-      @componentViewForSnippet(model).setAttachedToDom(false)
+      @componentViewForComponent(model).setAttachedToDom(false)
 
     @$root.empty()
 
@@ -116,56 +116,56 @@ module.exports = class Renderer
     @render()
 
 
-  insertSnippet: (model) ->
-    return if @isSnippetAttached(model)
+  insertComponent: (model) ->
+    return if @isComponentAttached(model)
 
-    if @isSnippetAttached(model.previous)
-      @insertSnippetAsSibling(model.previous, model)
-    else if @isSnippetAttached(model.next)
-      @insertSnippetAsSibling(model.next, model)
+    if @isComponentAttached(model.previous)
+      @insertComponentAsSibling(model.previous, model)
+    else if @isComponentAttached(model.next)
+      @insertComponentAsSibling(model.next, model)
     else if model.parentContainer
-      @appendSnippetToParentContainer(model)
+      @appendComponentToParentContainer(model)
     else
-      log.error('Snippet could not be inserted by renderer.')
+      log.error('Component could not be inserted by renderer.')
 
-    componentView = @componentViewForSnippet(model)
+    componentView = @componentViewForComponent(model)
     componentView.setAttachedToDom(true)
     @renderingContainer.componentViewWasInserted(componentView)
-    @attachChildSnippets(model)
+    @attachChildComponents(model)
 
 
-  isSnippetAttached: (model) ->
-    model && @componentViewForSnippet(model).isAttachedToDom
+  isComponentAttached: (model) ->
+    model && @componentViewForComponent(model).isAttachedToDom
 
 
-  attachChildSnippets: (model) ->
+  attachChildComponents: (model) ->
     model.children (childModel) =>
-      if not @isSnippetAttached(childModel)
-        @insertSnippet(childModel)
+      if not @isComponentAttached(childModel)
+        @insertComponent(childModel)
 
 
-  insertSnippetAsSibling: (sibling, model) ->
+  insertComponentAsSibling: (sibling, model) ->
     method = if sibling == model.previous then 'after' else 'before'
-    @$nodeForSnippet(sibling)[method](@$nodeForSnippet(model))
+    @$nodeForComponent(sibling)[method](@$nodeForComponent(model))
 
 
-  appendSnippetToParentContainer: (model) ->
-    @$nodeForSnippet(model).appendTo(@$nodeForContainer(model.parentContainer))
+  appendComponentToParentContainer: (model) ->
+    @$nodeForComponent(model).appendTo(@$nodeForContainer(model.parentContainer))
 
 
-  $nodeForSnippet: (model) ->
-    @componentViewForSnippet(model).$html
+  $nodeForComponent: (model) ->
+    @componentViewForComponent(model).$html
 
 
   $nodeForContainer: (container) ->
     if container.isRoot
       @$root
     else
-      parentView = @componentViewForSnippet(container.parentComponent)
+      parentView = @componentViewForComponent(container.parentComponent)
       $(parentView.getDirectiveElement(container.name))
 
 
-  removeSnippet: (model) ->
-    @componentViewForSnippet(model).setAttachedToDom(false)
-    @$nodeForSnippet(model).detach()
+  removeComponent: (model) ->
+    @componentViewForComponent(model).setAttachedToDom(false)
+    @$nodeForComponent(model).detach()
 

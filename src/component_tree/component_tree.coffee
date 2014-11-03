@@ -7,7 +7,7 @@ componentModelSerializer = require('./component_model_serializer')
 # ComponentTree
 # -----------
 # Livingdocs equivalent to the DOM tree.
-# A snippet tree containes all the snippets of a page in hierarchical order.
+# A componentTree containes all the snippets of a page in hierarchical order.
 #
 # The root of the ComponentTree is a ComponentContainer. A ComponentContainer
 # contains a list of snippets.
@@ -37,7 +37,7 @@ module.exports = class ComponentTree
     assert @design?, "Error instantiating ComponentTree: design param is misssing."
     @root = new ComponentContainer(isRoot: true)
 
-    # initialize content before we set the snippet tree to the root
+    # initialize content before we set the componentTree to the root
     # otherwise all the events will be triggered while building the tree
     @fromJson(content, @design) if content?
 
@@ -86,20 +86,20 @@ module.exports = class ComponentTree
   initializeEvents: () ->
 
     # layout changes
-    @snippetAdded = $.Callbacks()
-    @snippetRemoved = $.Callbacks()
-    @snippetMoved = $.Callbacks()
+    @componentAdded = $.Callbacks()
+    @componentRemoved = $.Callbacks()
+    @componentMoved = $.Callbacks()
 
     # content changes
-    @snippetContentChanged = $.Callbacks()
-    @snippetHtmlChanged = $.Callbacks()
+    @componentContentChanged = $.Callbacks()
+    @componentHtmlChanged = $.Callbacks()
     @snippetSettingsChanged = $.Callbacks()
     @snippetDataChanged = $.Callbacks()
 
     @changed = $.Callbacks()
 
 
-  # Traverse the whole snippet tree.
+  # Traverse the whole componentTree.
   each: (callback) ->
     @root.each(callback)
 
@@ -188,17 +188,17 @@ module.exports = class ComponentTree
     if snippet.componentTree == this
       # move snippet
       attachSnippetFunc()
-      @fireEvent('snippetMoved', snippet)
+      @fireEvent('componentMoved', snippet)
     else
       if snippet.componentTree?
-        # remove from other snippet tree
+        # remove from other componentTree
         snippet.componentContainer.detachSnippet(snippet)
 
       snippet.descendantsAndSelf (descendant) =>
         descendant.componentTree = this
 
       attachSnippetFunc()
-      @fireEvent('snippetAdded', snippet)
+      @fireEvent('componentAdded', snippet)
 
 
   fireEvent: (event, args...) ->
@@ -214,15 +214,15 @@ module.exports = class ComponentTree
       descendants.componentTree = undefined
 
     detachSnippetFunc()
-    @fireEvent('snippetRemoved', snippet)
+    @fireEvent('componentRemoved', snippet)
 
 
   contentChanging: (snippet) ->
-    @fireEvent('snippetContentChanged', snippet)
+    @fireEvent('componentContentChanged', snippet)
 
 
   htmlChanging: (snippet) ->
-    @fireEvent('snippetHtmlChanged', snippet)
+    @fireEvent('componentHtmlChanged', snippet)
 
 
   dataChanging: (snippet, changedProperties) ->
@@ -290,7 +290,7 @@ module.exports = class ComponentTree
 
 
   # Append data to this componentTree
-  # Fires snippetAdded event for every snippet
+  # Fires componentAdded event for every snippet
   addData: (data, design) ->
     @fromData(data, design, false)
 

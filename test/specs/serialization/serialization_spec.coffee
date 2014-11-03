@@ -77,13 +77,13 @@ describe 'ComponentTree Serialization', ->
     expect(json.content).to.deep.equal([])
 
 
-  it 'saves a snippet tree with one snippet', ->
+  it 'saves a componentTree with one snippet', ->
     @tree.append( test.getSnippet('title') )
     json = @tree.toJson()
     expect(json.content[0].identifier).to.equal('test.title')
 
 
-  it 'saves a snippet tree with nested snippets', ->
+  it 'saves a componentTree with nested snippets', ->
     row = test.getSnippet('row')
     row.append('main', test.getSnippet('title'))
     @tree.append(row)

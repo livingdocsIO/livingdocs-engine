@@ -7,7 +7,7 @@ Renderer = require('../../../src/rendering/renderer')
 
 describe 'instanceInjector', ->
 
-  it 'gets a snippet tree', ->
+  it 'gets a componentTree', ->
     instances = getInstances('componentTree')
     expect(instances.design).to.be.an.instanceof(Design)
     expect(instances.componentTree).to.be.an.instanceof(ComponentTree)

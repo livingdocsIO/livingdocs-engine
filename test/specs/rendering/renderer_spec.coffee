@@ -42,7 +42,7 @@ describe 'Renderer', ->
           <section></section>"""
 
 
-  describe 'insertSnippet()', ->
+  describe 'insertComponent()', ->
     beforeEach (done) ->
       { @componentTree, @page, @renderer } = getInstances('page', 'renderer')
       @renderer.ready -> done()

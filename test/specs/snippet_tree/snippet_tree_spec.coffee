@@ -240,7 +240,7 @@ describe 'ComponentTree with three levels', ->
     @row.append('main', @title)
     @rowInMain.append('sidebar', @text)
 
-    # Thats how the snippet tree looks now:
+    # Thats how the componentTree looks now:
     # -row
     #   main:
     #     -rowInMain
@@ -275,7 +275,7 @@ describe 'ComponentTree with three snippets', ->
 
 
   # regression test for https://github.com/upfrontIO/livingdocs-engine/issues/13
-  it 'moving the last snippet one up does not currupt the snippet tree', ->
+  it 'moving the last snippet one up does not currupt the componentTree', ->
     @snippets[2].up()
     visitedSnippets = []
     @componentTree.each (snippet) ->

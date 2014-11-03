@@ -127,7 +127,7 @@ module.exports = class ComponentModel
   # ComponentTree Iterators
   # ---------------------
   #
-  # Navigate and query the snippet tree relative to this snippet.
+  # Navigate and query the componentTree relative to this snippet.
 
   getParent: ->
      @parentContainer?.parentComponent

@@ -11,9 +11,9 @@ describe 'ComponentTree (Layout Events) ->', ->
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
     monitor = test.createCallbackMonitor
-    @expectSnippetAdded = monitor(@componentTree.snippetAdded)
-    @expectSnippetRemoved = monitor(@componentTree.snippetRemoved)
-    @expectSnippetMoved = monitor(@componentTree.snippetMoved)
+    @expectSnippetAdded = monitor(@componentTree.componentAdded)
+    @expectSnippetRemoved = monitor(@componentTree.componentRemoved)
+    @expectSnippetMoved = monitor(@componentTree.componentMoved)
     @expectChanged = monitor(@componentTree.changed)
 
 
@@ -26,7 +26,7 @@ describe 'ComponentTree (Layout Events) ->', ->
         @componentTree.append(snippet)
 
 
-    it 'fires snippetAdded event', ->
+    it 'fires componentAdded event', ->
       @expectSnippetRemoved 0, =>
         @expectSnippetMoved 0, =>
           @expectSnippetAdded 1, =>
@@ -48,19 +48,19 @@ describe 'ComponentTree (Layout Events) ->', ->
 
     describe 'removing a snippet', ->
       beforeEach ->
-        @removeSnippet = =>
+        @removeComponent = =>
           @snippetB.remove()
 
 
-      it 'fires snippetRemoved event', ->
+      it 'fires componentRemoved event', ->
         @expectSnippetAdded 0, =>
           @expectSnippetMoved 0, =>
             @expectSnippetRemoved 1, =>
-              @removeSnippet()
+              @removeComponent()
 
 
       it 'fires changed event', ->
-        @expectChanged 1, => @removeSnippet()
+        @expectChanged 1, => @removeComponent()
 
 
     describe 'moving a snippet', ->
@@ -72,7 +72,7 @@ describe 'ComponentTree (Layout Events) ->', ->
           @snippetA.up()
 
 
-      it 'fires snippetMoved event', ->
+      it 'fires componentMoved event', ->
         @expectSnippetMoved 2, => @moveSnippets()
 
 
@@ -87,7 +87,7 @@ describe 'ComponentTree (Layout Events) ->', ->
           @unsuccessfullyMoveSnippet = => @snippetA.up()
 
 
-        it 'does not fire snippetMoved event', ->
+        it 'does not fire componentMoved event', ->
           @expectSnippetMoved 0, => @unsuccessfullyMoveSnippet()
 
 
@@ -100,7 +100,7 @@ describe 'ComponentTree (Content Events)', ->
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
     monitor = test.createCallbackMonitor
-    @expectContentChanged = monitor(@componentTree.snippetContentChanged)
+    @expectContentChanged = monitor(@componentTree.componentContentChanged)
     @expectChanged = monitor(@componentTree.changed)
 
     @snippetA = test.getSnippet('title')
@@ -118,7 +118,7 @@ describe 'ComponentTree (Content Events)', ->
         @snippetA.set('title', 'Talk to the hand')
 
 
-    it 'fires snippetContentChanged event', ->
+    it 'fires componentContentChanged event', ->
       @expectContentChanged 1, => @changeSnippetContent()
 
 
@@ -133,7 +133,7 @@ describe 'ComponentTree (Content Events)', ->
         @imageSnippet.set('image', 'http://www.lolcats.com/images/1.jpg')
 
 
-    it 'fires snippetContentChanged event', ->
+    it 'fires componentContentChanged event', ->
       @expectContentChanged 1, => @changeSnippetContent()
 
 
@@ -144,7 +144,7 @@ describe 'ComponentTree (Content Events)', ->
         @coverSnippet.set('image', 'http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg')
 
 
-    it 'fires snippetContentChanged event', ->
+    it 'fires componentContentChanged event', ->
       @expectContentChanged 1, => @changeSnippetContent()
 
 
@@ -155,7 +155,7 @@ describe 'ComponentTree (Content Events)', ->
         @imageSnippet.directives.get('image').setBase64Image(base64Image)
 
 
-    it 'fires snippetContentChanged event', ->
+    it 'fires componentContentChanged event', ->
       @expectContentChanged 1, => @changeSnippetContent()
 
 
@@ -164,7 +164,7 @@ describe 'ComponentTree (Html Events)', ->
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
     monitor = test.createCallbackMonitor
-    @expectHtlmChanged = monitor(@componentTree.snippetHtmlChanged)
+    @expectHtlmChanged = monitor(@componentTree.componentHtmlChanged)
     @expectChanged = monitor(@componentTree.changed)
 
     @hero = test.getSnippet('hero')

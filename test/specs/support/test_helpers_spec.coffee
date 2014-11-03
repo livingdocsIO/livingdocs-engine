@@ -4,7 +4,7 @@ describe 'testHelpers', ->
 
     # If only one element has to be created the array
     # declaration can be omitted.
-    it 'creates a snippet tree with one title', ->
+    it 'creates a componentTree with one title', ->
       componentTree = test.createComponentTree
         title: { title: 'It Works' }
 
@@ -12,7 +12,7 @@ describe 'testHelpers', ->
       expect(firstSnippet.get('title')).to.equal('It Works')
 
 
-    it 'creates a snippet tree with two titles', ->
+    it 'creates a componentTree with two titles', ->
       componentTree = test.createComponentTree [
         title: { title: 'A' }
       ,

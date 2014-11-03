@@ -129,7 +129,7 @@ module.exports = class ComponentContainer
   # attached to one.
   # Snippets that are moved inside a componentTree should not
   # call _detachSnippet since we don't want to fire
-  # SnippetRemoved events on the snippet tree, in these
+  # SnippetRemoved events on the componentTree, in these
   # cases unlink can be used
   # @api private
   _detachSnippet: (snippet) ->
