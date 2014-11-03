@@ -19,7 +19,7 @@ module.exports = class CssModificatorProperty
 
 
   # Get instructions which css classes to add and remove.
-  # We do not control the class attribute of a snippet DOM element
+  # We do not control the class attribute of a component DOM element
   # since the UI or other scripts can mess with it any time. So the
   # instructions are designed not to interfere with other css classes
   # present in an elements class attribute.

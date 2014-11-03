@@ -146,7 +146,7 @@ module.exports = class EditableController
   split: (view, editableName, before, after, cursor) ->
     if @hasSingleEditable(view)
 
-      # append and focus copy of snippet
+      # append and focus copy of component
       copy = view.template.createModel()
       copy.set(editableName, @extractContent(after))
       view.model.after(copy)

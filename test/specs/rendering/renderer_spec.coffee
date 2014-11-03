@@ -18,7 +18,7 @@ describe 'Renderer', ->
       @renderer.ready -> done()
 
 
-    describe 'with a single title snippet', ->
+    describe 'with a single title component', ->
 
       beforeEach ->
         @title = test.createComponent('title', 'A')
@@ -29,7 +29,7 @@ describe 'Renderer', ->
         expect(@page.renderNode).to.have.html """
           <section>
             <h1
-              class="#{ css.snippet } #{ css.editable } #{ css.noPlaceholder }"
+              class="#{ css.component } #{ css.editable } #{ css.noPlaceholder }"
               #{ attr.template }="test.title"
               #{ test.editableAttr }="title"
               #{ attr.placeholder }="#{ @title.template.defaults['title'] }">A</h1>
@@ -47,7 +47,7 @@ describe 'Renderer', ->
       { @componentTree, @page, @renderer } = getInstances('page', 'renderer')
       @renderer.ready -> done()
 
-    it 'insertes the already appended components of an inserted snippet', ->
+    it 'insertes the already appended components of an inserted component', ->
       container = test.getComponent('container')
       title = test.createComponent('title', 'A')
       container.append(config.directives.container.defaultName, title)
@@ -141,7 +141,7 @@ describe 'Renderer', ->
         row.append('main', @cover)
 
 
-      it 'renders row, title and cover snippet', ->
+      it 'renders row, title and cover component', ->
         expect(@page.renderNode).to.have.html """
           <section>
             <div class="row-fluid">

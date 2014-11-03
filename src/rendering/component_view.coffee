@@ -17,7 +17,7 @@ module.exports = class ComponentView
       # add attributes and references to the html
       @$html
         .data('snippet', this)
-        .addClass(css.snippet)
+        .addClass(css.component)
         .attr(attr.template, @template.identifier)
 
     @render()
@@ -79,12 +79,12 @@ module.exports = class ComponentView
 
 
   afterFocused: () ->
-    @$html.addClass(css.snippetHighlight)
+    @$html.addClass(css.componentHighlight)
     @showOptionals()
 
 
   afterBlurred: () ->
-    @$html.removeClass(css.snippetHighlight)
+    @$html.removeClass(css.componentHighlight)
     @hideEmptyOptionals()
 
 
@@ -95,7 +95,7 @@ module.exports = class ComponentView
 
 
   hasFocus: ->
-    @$html.hasClass(css.snippetHighlight)
+    @$html.hasClass(css.componentHighlight)
 
 
   getBoundingClientRect: ->

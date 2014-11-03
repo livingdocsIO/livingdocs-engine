@@ -2,7 +2,7 @@ config = require('../configuration/config')
 
 # Directive Iterator
 # ---------------------
-# Code is ported from rangy NodeIterator and adapted for snippet templates
+# Code is ported from rangy NodeIterator and adapted for component templates
 # so it does not traverse into containers.
 #
 # Use to traverse all nodes of a template. The iterator does not go into

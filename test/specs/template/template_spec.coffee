@@ -79,7 +79,7 @@ describe 'Template with default value', ->
     expect(template.defaults['title']).to.equal('your title')
 
 
-# Component with snippet containers
+# Component with containers
 describe 'Row Template', ->
 
   template = null
@@ -87,11 +87,11 @@ describe 'Row Template', ->
     template = test.getTemplate('row')
 
 
-  it 'initializes ComponentContainers', ->
-    snippet = template.createModel()
-    expect(snippet).to.exist
-    expect(snippet.containers.main instanceof ComponentContainer).to.equal(true)
-    expect(snippet.containers.sidebar instanceof ComponentContainer).to.equal(true)
+  it 'initializes componentContainers', ->
+    component = template.createModel()
+    expect(component).to.exist
+    expect(component.containers.main instanceof ComponentContainer).to.equal(true)
+    expect(component.containers.sidebar instanceof ComponentContainer).to.equal(true)
 
 
 describe 'Subtitle Template', ->

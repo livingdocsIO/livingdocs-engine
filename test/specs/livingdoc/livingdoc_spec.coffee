@@ -19,8 +19,8 @@ describe 'livingdoc', ->
       @doc.on 'change', ->
         done()
 
-      snippet = test.getComponent('title')
-      @componentTree.append(snippet)
+      component = test.getComponent('title')
+      @componentTree.append(component)
 
 
   describe 'serialize()', ->

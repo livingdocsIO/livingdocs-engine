@@ -6,7 +6,7 @@ css = config.css
 # Methods to parse and update the Dom tree in accordance to
 # the ComponentTree and Livingdocs classes and attributes
 module.exports = do ->
-  componentRegex = new RegExp("(?: |^)#{ css.snippet }(?: |$)")
+  componentRegex = new RegExp("(?: |^)#{ css.component }(?: |$)")
   sectionRegex = new RegExp("(?: |^)#{ css.section }(?: |$)")
 
   # Find the component this node is contained within.
@@ -167,7 +167,7 @@ module.exports = do ->
 
   # Get the closest component in a container for a top left position
   getClosestComponent: (container, { top, left }) ->
-    $components = $(container).find(".#{ css.snippet }")
+    $components = $(container).find(".#{ css.component }")
     closest = undefined
     closestComponent = undefined
 

@@ -21,7 +21,7 @@ sortByName = (a, b) ->
 
 # Template
 # --------
-# Parses snippet templates and creates ComponentModels and ComponentViews.
+# Parses component templates and creates ComponentModels and ComponentViews.
 module.exports = class Template
 
 
@@ -102,12 +102,12 @@ module.exports = class Template
   # and linked with the elements from the new view.
   linkDirectives: (elem) ->
     iterator = new DirectiveIterator(elem)
-    snippetDirectives = @directives.clone()
+    componentDirectives = @directives.clone()
 
     while elem = iterator.nextElement()
-      directiveFinder.link(elem, snippetDirectives)
+      directiveFinder.link(elem, componentDirectives)
 
-    snippetDirectives
+    componentDirectives
 
 
   formatEditable: (name, elem) ->
@@ -167,4 +167,4 @@ Template.parseIdentifier = (identifier) ->
   else if parts.length == 2
     { designName: parts[0], name: parts[1] }
   else
-    log.error("could not parse snippet template identifier: #{ identifier }")
+    log.error("could not parse component template identifier: #{ identifier }")

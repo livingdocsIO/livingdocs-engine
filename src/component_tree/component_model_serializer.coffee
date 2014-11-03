@@ -22,24 +22,24 @@ module.exports = do ->
   # styles: { ... }
   # data: { ... }
   # containers: { ... }
-  ComponentModel::toJson = (snippet) ->
-    snippet ?= this
+  ComponentModel::toJson = (component) ->
+    component ?= this
 
     json =
-      id: snippet.id
-      identifier: snippet.template.identifier
+      id: component.id
+      identifier: component.template.identifier
 
-    unless serialization.isEmpty(snippet.content)
-      json.content = serialization.flatCopy(snippet.content)
+    unless serialization.isEmpty(component.content)
+      json.content = serialization.flatCopy(component.content)
 
-    unless serialization.isEmpty(snippet.styles)
-      json.styles = serialization.flatCopy(snippet.styles)
+    unless serialization.isEmpty(component.styles)
+      json.styles = serialization.flatCopy(component.styles)
 
-    unless serialization.isEmpty(snippet.dataValues)
-      json.data = $.extend(true, {}, snippet.dataValues)
+    unless serialization.isEmpty(component.dataValues)
+      json.data = $.extend(true, {}, component.dataValues)
 
     # create an array for every container
-    for name of snippet.containers
+    for name of component.containers
       json.containers ||= {}
       json.containers[name] = []
 
@@ -50,13 +50,13 @@ module.exports = do ->
     template = design.get(json.component || json.identifier)
 
     assert template,
-      "error while deserializing snippet: unknown template identifier '#{ json.identifier }'"
+      "error while deserializing component: unknown template identifier '#{ json.identifier }'"
 
     model = new ComponentModel({ template, id: json.id })
 
     for name, value of json.content
       assert model.content.hasOwnProperty(name),
-        "error while deserializing snippet: unknown content '#{ name }'"
+        "error while deserializing component: unknown content '#{ name }'"
 
       # Transform string into object: Backwards compatibility for old image values.
       if model.directives.get(name).type == 'image' && typeof value == 'string'
@@ -72,11 +72,11 @@ module.exports = do ->
 
     for containerName, componentArray of json.containers
       assert model.containers.hasOwnProperty(containerName),
-        "error while deserializing snippet: unknown container #{ containerName }"
+        "error while deserializing component: unknown container #{ containerName }"
 
       if componentArray
         assert $.isArray(componentArray),
-          "error while deserializing snippet: container is not array #{ containerName }"
+          "error while deserializing component: container is not array #{ containerName }"
         for child in componentArray
           model.append( containerName, @fromJson(child, design) )
 

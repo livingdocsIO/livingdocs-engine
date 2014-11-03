@@ -11,7 +11,7 @@ describe 'ComponentView', ->
       @componentView = test.getTemplate('title').createView()
       @expected = $ """
         <h1 #{ test.editableAttr }="title"
-          class="#{ css.editable } #{ css.snippet }"
+          class="#{ css.editable } #{ css.component }"
             #{ attr.template }="test.title"
             #{ attr.placeholder }="#{ @componentView.template.defaults['title'] }">
         </h1>
@@ -52,7 +52,7 @@ describe 'ComponentView title set style', ->
     @title.setStyle('color', 'color--blue')
     @$expected = $ """
       <h1 #{ test.editableAttr }="title"
-          class="#{ css.editable } #{ css.snippet }"
+          class="#{ css.editable } #{ css.component }"
           #{ attr.template }="test.title"
           #{ attr.placeholder }="#{ @title.template.defaults['title'] }">
       </h1>"""
@@ -79,7 +79,7 @@ describe 'ComponentView hero', ->
     template = test.getTemplate('hero')
     @componentView = template.createView(snippet)
     @expected = $ """
-      <div  class="#{ css.snippet }"
+      <div  class="#{ css.component }"
             #{ attr.template }="test.hero">
         <h1 #{ test.editableAttr }="title"
             class="#{ css.editable } #{ css.noPlaceholder }"
@@ -90,7 +90,7 @@ describe 'ComponentView hero', ->
       </div>"""
 
 
-  it 'renders snippet content on creation', ->
+  it 'renders component content on creation', ->
     expect(@componentView.$html).to.have.html(@expected)
 
 
@@ -131,7 +131,7 @@ describe 'ComponentView image', ->
       expect(view.$html).to.have.html """
         <img src="#{ src }"
           #{ test.imageAttr }="image"
-          class="#{ css.snippet }"
+          class="#{ css.component }"
           #{ attr.template }="test.image">"""
 
 
@@ -151,7 +151,7 @@ describe 'ComponentView image', ->
         <img
           src=""
           data-src="http://images.com/1"
-          class="#{ css.snippet } resrc"
+          class="#{ css.component } resrc"
           #{ test.imageAttr }="image"
           #{ attr.template }="test.image">
           """
@@ -167,7 +167,7 @@ describe 'ComponentView image', ->
       expect(@view.$html).to.have.html """
         <img src=""
           #{ test.imageAttr }="image"
-          class="#{ css.snippet }"
+          class="#{ css.component }"
           #{ attr.template }="test.image">"""
 
 
@@ -178,7 +178,7 @@ describe 'ComponentView image', ->
       expect(@view.$html).to.have.html """
         <img src="#{ placeholderUrl }"
           #{ test.imageAttr }="image"
-          class="#{ css.snippet } doc-image-empty"
+          class="#{ css.component } doc-image-empty"
           #{ attr.template }="test.image">"""
 
 
@@ -190,7 +190,7 @@ describe 'ComponentView image', ->
       expect(@view.$html).to.have.html """
         <img src="#{ imageUrl }"
           #{ test.imageAttr }="image"
-          class="#{ css.snippet }"
+          class="#{ css.component }"
           #{ attr.template }="test.image">"""
 
 
@@ -203,7 +203,7 @@ describe 'ComponentView image', ->
       expect(@view.$html).to.have.html """
         <img src="#{ imageUrl }"
           #{ test.imageAttr }="image"
-          class="#{ css.snippet }"
+          class="#{ css.component }"
           #{ attr.template }="test.image">"""
 
 
@@ -222,7 +222,7 @@ describe 'ComponentView background image', ->
         <div
           style="background-image: url(http://images.com/1);"
           #{ test.imageAttr }="image"
-          class="#{ css.snippet }"
+          class="#{ css.component }"
           #{ attr.template }="test.background-image">"""
 
 
@@ -235,7 +235,7 @@ describe 'ComponentView html', ->
     # There is additional code by the interaction blocker element in there
     # which is not nice but hopefully works out just fine.
     @expected = $ """
-      <div class="#{ css.snippet }"
+      <div class="#{ css.component }"
         #{ attr.template }="test.html"
         #{ test.htmlAttr }="html"
         style="position: relative; ">
@@ -247,7 +247,7 @@ describe 'ComponentView html', ->
 
   describe 'set("html", value)', ->
 
-    it 'adds the html to the snippet', ->
+    it 'adds the html to the component', ->
       expect(@view.$html).to.have.html(@expected)
 
 

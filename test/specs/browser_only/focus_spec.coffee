@@ -17,7 +17,7 @@ describe 'Focus', ->
       @editable = @componentView.directives['editable'][0].elem
 
 
-    it 'focuses a snippet view', ->
+    it 'focuses a component view', ->
       @focus.componentFocused(@componentView)
       expect(@focus.componentView).to.equal(@componentView)
       expect(@focus.editableNode).to.be.undefined
@@ -57,7 +57,7 @@ describe 'Focus', ->
       @focus.componentFocused(@componentView)
 
 
-    it 'does not fire componentFocus() a second time for the same snippet', ->
+    it 'does not fire componentFocus() a second time for the same component', ->
       eventSpy = sinon.spy(@focus.componentFocus, 'fire')
       @focus.componentFocused(@componentView)
       @focus.componentFocused(@componentView)

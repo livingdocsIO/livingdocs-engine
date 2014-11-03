@@ -51,10 +51,10 @@ module.exports = testHelpers =
 
   # helper to create components with one directive easier
   createComponent: (id, value) ->
-    snippet = @getComponent(id)
-    firstDirective = snippet.template.directives[0]
-    snippet.set(firstDirective.name, value)
-    snippet
+    component = @getComponent(id)
+    firstDirective = component.template.directives[0]
+    component.set(firstDirective.name, value)
+    component
 
 
   # use this to test serialization and deserialization

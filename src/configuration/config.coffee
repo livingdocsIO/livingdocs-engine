@@ -8,7 +8,7 @@ module.exports = config = do ->
   loadResources: true
 
   # CSS selector for elements (and their children) that should be ignored
-  # when focussing or blurring a snippet
+  # when focussing or blurring a component
   ignoreInteraction: '.ld-control'
 
   # Setup paths to load resources dynamically
@@ -27,7 +27,7 @@ module.exports = config = do ->
   # Editable configuration
   editable:
     allowNewline: true # Allow to insert newlines with Shift+Enter
-    changeDelay: 0 # Delay for updating the snippet models in milliseconds after user changes. 0 For immediate updates. false to disable.
+    changeDelay: 0 # Delay for updating the component models in milliseconds after user changes. 0 For immediate updates. false to disable.
     browserSpellcheck: false # Set the spellcheck attribute on contenteditables to 'true' or 'false'
     mouseMoveSelectionChanges: false # Whether to fire cursor and selction changes on mousemove
 
@@ -40,15 +40,15 @@ module.exports = config = do ->
     # document classes
     section: 'doc-section'
 
-    # snippet classes
-    snippet: 'doc-component'
+    # component classes
+    component: 'doc-component'
     editable: 'doc-editable'
     noPlaceholder: 'doc-no-placeholder'
     emptyImage: 'doc-image-empty'
     interface: 'doc-ui'
 
     # highlight classes
-    snippetHighlight: 'doc-component-highlight'
+    componentHighlight: 'doc-component-highlight'
     containerHighlight: 'doc-container-highlight'
 
     # drag & drop

@@ -28,11 +28,11 @@ describe 'editableController', ->
       @elem = @title.$html[0]
 
 
-    it 'fires and finds snippet event', ->
+    it 'fires and finds component event', ->
       foundComponent = undefined
 
-      @editableController.selection.add (snippet, element, selection) ->
-        foundComponent = snippet
+      @editableController.selection.add (component, element, selection) ->
+        foundComponent = component
         expect.element
 
       @editableController.triggerEditableEvent('selectionChanged', @elem, undefined)
@@ -58,7 +58,7 @@ describe 'editableController', ->
       expect(@renderer.componentTree.toJson().content[1].identifier).to.equal('test.text')
 
 
-    it 'inserts the paragraph snippet defined by the design', ->
+    it 'inserts the paragraph component defined by the design', ->
       @design.defaultParagraph = test.getTemplate('title')
       @editableController.insert(@title.createView())
       expect(@renderer.componentTree.toJson().content[1].identifier).to.equal('test.title')
