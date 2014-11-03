@@ -19,163 +19,163 @@ module.exports = class ComponentContainer
     @first = @last = undefined
 
 
-  prepend: (snippet) ->
+  prepend: (component) ->
     if @first
-      @insertBefore(@first, snippet)
+      @insertBefore(@first, component)
     else
-      @attachSnippet(snippet)
+      @attachComponent(component)
 
     this
 
 
-  append: (snippet) ->
+  append: (component) ->
     if @parentComponent
-      assert snippet isnt @parentComponent, 'cannot append snippet to itself'
+      assert component isnt @parentComponent, 'cannot append component to itself'
 
     if @last
-      @insertAfter(@last, snippet)
+      @insertAfter(@last, component)
     else
-      @attachSnippet(snippet)
+      @attachComponent(component)
 
     this
 
 
-  insertBefore: (snippet, insertedSnippet) ->
-    return if snippet.previous == insertedSnippet
-    assert snippet isnt insertedSnippet, 'cannot insert snippet before itself'
+  insertBefore: (component, insertedComponent) ->
+    return if component.previous == insertedComponent
+    assert component isnt insertedComponent, 'cannot insert component before itself'
 
     position =
-      previous: snippet.previous
-      next: snippet
-      parentContainer: snippet.parentContainer
+      previous: component.previous
+      next: component
+      parentContainer: component.parentContainer
 
-    @attachSnippet(insertedSnippet, position)
+    @attachComponent(insertedComponent, position)
 
 
-  insertAfter: (snippet, insertedSnippet) ->
-    return if snippet.next == insertedSnippet
-    assert snippet isnt insertedSnippet, 'cannot insert snippet after itself'
+  insertAfter: (component, insertedComponent) ->
+    return if component.next == insertedComponent
+    assert component isnt insertedComponent, 'cannot insert component after itself'
 
     position =
-      previous: snippet
-      next: snippet.next
-      parentContainer: snippet.parentContainer
+      previous: component
+      next: component.next
+      parentContainer: component.parentContainer
 
-    @attachSnippet(insertedSnippet, position)
-
-
-  up: (snippet) ->
-    if snippet.previous?
-      @insertBefore(snippet.previous, snippet)
+    @attachComponent(insertedComponent, position)
 
 
-  down: (snippet) ->
-    if snippet.next?
-      @insertAfter(snippet.next, snippet)
+  up: (component) ->
+    if component.previous?
+      @insertBefore(component.previous, component)
+
+
+  down: (component) ->
+    if component.next?
+      @insertAfter(component.next, component)
 
 
   getComponentTree: ->
     @componentTree || @parentComponent?.componentTree
 
 
-  # Traverse all snippets
+  # Traverse all components
   each: (callback) ->
-    snippet = @first
-    while (snippet)
-      snippet.descendantsAndSelf(callback)
-      snippet = snippet.next
+    component = @first
+    while (component)
+      component.descendantsAndSelf(callback)
+      component = component.next
 
 
   eachContainer: (callback) ->
     callback(this)
-    @each (snippet) ->
-      for name, componentContainer of snippet.containers
+    @each (component) ->
+      for name, componentContainer of component.containers
         callback(componentContainer)
 
 
-  # Traverse all snippets and containers
+  # Traverse all components and containers
   all: (callback) ->
     callback(this)
-    @each (snippet) ->
-      callback(snippet)
-      for name, componentContainer of snippet.containers
+    @each (component) ->
+      callback(component)
+      for name, componentContainer of component.containers
         callback(componentContainer)
 
 
-  remove: (snippet) ->
-    snippet.destroy()
-    @_detachSnippet(snippet)
+  remove: (component) ->
+    component.destroy()
+    @_detachComponent(component)
 
 
   # Private
   # -------
 
-  # Every snippet added or moved most come through here.
-  # Notifies the componentTree if the parent snippet is
+  # Every component added or moved most come through here.
+  # Notifies the componentTree if the parent component is
   # attached to one.
   # @api private
-  attachSnippet: (snippet, position = {}) ->
+  attachComponent: (component, position = {}) ->
     func = =>
-      @link(snippet, position)
+      @link(component, position)
 
     if componentTree = @getComponentTree()
-      componentTree.attachingSnippet(snippet, func)
+      componentTree.attachingComponent(component, func)
     else
       func()
 
 
-  # Every snippet that is removed must come through here.
-  # Notifies the componentTree if the parent snippet is
+  # Every component that is removed must come through here.
+  # Notifies the componentTree if the parent component is
   # attached to one.
-  # Snippets that are moved inside a componentTree should not
-  # call _detachSnippet since we don't want to fire
-  # SnippetRemoved events on the componentTree, in these
+  # Components that are moved inside a componentTree should not
+  # call _detachComponent since we don't want to fire
+  # ComponentRemoved events on the componentTree, in these
   # cases unlink can be used
   # @api private
-  _detachSnippet: (snippet) ->
+  _detachComponent: (component) ->
     func = =>
-      @unlink(snippet)
+      @unlink(component)
 
     if componentTree = @getComponentTree()
-      componentTree.detachingSnippet(snippet, func)
+      componentTree.detachingComponent(component, func)
     else
       func()
 
 
   # @api private
-  link: (snippet, position) ->
-    @unlink(snippet) if snippet.parentContainer
+  link: (component, position) ->
+    @unlink(component) if component.parentContainer
 
     position.parentContainer ||= this
-    @setSnippetPosition(snippet, position)
+    @setComponentPosition(component, position)
 
 
   # @api private
-  unlink: (snippet) ->
-    container = snippet.parentContainer
+  unlink: (component) ->
+    container = component.parentContainer
     if container
 
       # update parentContainer links
-      container.first = snippet.next unless snippet.previous?
-      container.last = snippet.previous unless snippet.next?
+      container.first = component.next unless component.previous?
+      container.last = component.previous unless component.next?
 
       # update previous and next nodes
-      snippet.next?.previous = snippet.previous
-      snippet.previous?.next = snippet.next
+      component.next?.previous = component.previous
+      component.previous?.next = component.next
 
-      @setSnippetPosition(snippet, {})
+      @setComponentPosition(component, {})
 
 
   # @api private
-  setSnippetPosition: (snippet, { parentContainer, previous, next }) ->
-    snippet.parentContainer = parentContainer
-    snippet.previous = previous
-    snippet.next = next
+  setComponentPosition: (component, { parentContainer, previous, next }) ->
+    component.parentContainer = parentContainer
+    component.previous = previous
+    component.next = next
 
     if parentContainer
-      previous.next = snippet if previous
-      next.previous = snippet if next
-      parentContainer.first = snippet unless snippet.previous?
-      parentContainer.last = snippet unless snippet.next?
+      previous.next = component if previous
+      next.previous = component if next
+      parentContainer.first = component unless component.previous?
+      parentContainer.last = component unless component.next?
 
 

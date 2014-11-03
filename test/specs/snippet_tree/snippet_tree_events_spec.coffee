@@ -202,7 +202,7 @@ describe 'ComponentTree (Html Events)', ->
     beforeEach ->
       { @componentTree } = getInstances('componentTree')
       monitor = test.createCallbackMonitor
-      @expectDataChanged = monitor(@componentTree.snippetDataChanged)
+      @expectDataChanged = monitor(@componentTree.componentDataChanged)
       @expectChanged = monitor(@componentTree.changed)
 
       @hero = test.getSnippet('hero')

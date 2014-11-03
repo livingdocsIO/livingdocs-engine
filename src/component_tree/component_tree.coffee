@@ -7,12 +7,12 @@ componentModelSerializer = require('./component_model_serializer')
 # ComponentTree
 # -----------
 # Livingdocs equivalent to the DOM tree.
-# A componentTree containes all the snippets of a page in hierarchical order.
+# A componentTree containes all the components of a page in hierarchical order.
 #
 # The root of the ComponentTree is a ComponentContainer. A ComponentContainer
-# contains a list of snippets.
+# contains a list of components.
 #
-# snippets can have multible ComponentContainers themselves.
+# components can have multible ComponentContainers themselves.
 #
 # ### Example:
 #     - ComponentContainer (root)
@@ -25,10 +25,10 @@ componentModelSerializer = require('./component_model_serializer')
 #
 # ### Events:
 # The first set of ComponentTree Events are concerned with layout changes like
-# adding, removing or moving snippets.
+# adding, removing or moving components.
 #
 # Consider: Have a documentFragment as the rootNode if no rootNode is given
-# maybe this would help simplify some code (since snippets are always
+# maybe this would help simplify some code (since components are always
 # attached to the DOM).
 module.exports = class ComponentTree
 
@@ -45,27 +45,27 @@ module.exports = class ComponentTree
     @initializeEvents()
 
 
-  # Insert a snippet at the beginning.
-  # @param: componentModel instance or snippet name e.g. 'title'
-  prepend: (snippet) ->
-    snippet = @getSnippet(snippet)
-    @root.prepend(snippet) if snippet?
+  # Insert a component at the beginning.
+  # @param: componentModel instance or component name e.g. 'title'
+  prepend: (component) ->
+    component = @getSnippet(component)
+    @root.prepend(component) if component?
     this
 
 
-  # Insert snippet at the end.
-  # @param: componentModel instance or snippet name e.g. 'title'
-  append: (snippet) ->
-    snippet = @getSnippet(snippet)
-    @root.append(snippet) if snippet?
+  # Insert component at the end.
+  # @param: componentModel instance or component name e.g. 'title'
+  append: (component) ->
+    component = @getSnippet(component)
+    @root.append(component) if component?
     this
 
 
-  getSnippet: (snippetName) ->
-    if typeof snippetName == 'string'
-      @createModel(snippetName)
+  getSnippet: (componentName) ->
+    if typeof componentName == 'string'
+      @createModel(componentName)
     else
-      snippetName
+      componentName
 
 
   createModel: (componentName) ->
@@ -93,8 +93,8 @@ module.exports = class ComponentTree
     # content changes
     @componentContentChanged = $.Callbacks()
     @componentHtmlChanged = $.Callbacks()
-    @snippetSettingsChanged = $.Callbacks()
-    @snippetDataChanged = $.Callbacks()
+    @componentSettingsChanged = $.Callbacks()
+    @componentDataChanged = $.Callbacks()
 
     @changed = $.Callbacks()
 
@@ -108,12 +108,12 @@ module.exports = class ComponentTree
     @root.eachContainer(callback)
 
 
-  # Get the first snippet
+  # Get the first component
   first: ->
     @root.first
 
 
-  # Traverse all containers and snippets
+  # Traverse all containers and components
   all: (callback) ->
     @root.all(callback)
 
@@ -121,9 +121,9 @@ module.exports = class ComponentTree
   find: (search) ->
     if typeof search == 'string'
       res = []
-      @each (snippet) ->
-        if snippet.componentName == search
-          res.push(snippet)
+      @each (component) ->
+        if component.componentName == search
+          res.push(component)
 
       new ComponentArray(res)
     else
@@ -132,8 +132,8 @@ module.exports = class ComponentTree
 
   detach: ->
     @root.componentTree = undefined
-    @each (snippet) ->
-      snippet.componentTree = undefined
+    @each (component) ->
+      component.componentTree = undefined
 
     oldRoot = @root
     @root = new ComponentContainer(isRoot: true)
@@ -141,17 +141,17 @@ module.exports = class ComponentTree
     oldRoot
 
 
-  # eachWithParents: (snippet, parents) ->
+  # eachWithParents: (component, parents) ->
   #   parents ||= []
 
   #   # traverse
-  #   parents = parents.push(snippet)
-  #   for name, componentContainer of snippet.containers
-  #     snippet = componentContainer.first
+  #   parents = parents.push(component)
+  #   for name, componentContainer of component.containers
+  #     component = componentContainer.first
 
-  #     while (snippet)
-  #       @eachWithParents(snippet, parents)
-  #       snippet = snippet.next
+  #     while (component)
+  #       @eachWithParents(component, parents)
+  #       component = component.next
 
   #   parents.splice(-1)
 
@@ -163,17 +163,17 @@ module.exports = class ComponentTree
     addLine = (text, indentation = 0) ->
       output += "#{ Array(indentation + 1).join(" ") }#{ text }\n"
 
-    walker = (snippet, indentation = 0) ->
-      template = snippet.template
+    walker = (component, indentation = 0) ->
+      template = component.template
       addLine("- #{ template.label } (#{ template.name })", indentation)
 
       # traverse children
-      for name, componentContainer of snippet.containers
+      for name, componentContainer of component.containers
         addLine("#{ name }:", indentation + 2)
         walker(componentContainer.first, indentation + 4) if componentContainer.first
 
       # traverse siblings
-      walker(snippet.next, indentation) if snippet.next
+      walker(component.next, indentation) if component.next
 
     walker(@root.first) if @root.first
     return output
@@ -181,24 +181,24 @@ module.exports = class ComponentTree
 
   # Tree Change Events
   # ------------------
-  # Raise events for Add, Remove and Move of snippets
+  # Raise events for Add, Remove and Move of components
   # These functions should only be called by componentContainers
 
-  attachingSnippet: (snippet, attachSnippetFunc) ->
-    if snippet.componentTree == this
-      # move snippet
-      attachSnippetFunc()
-      @fireEvent('componentMoved', snippet)
+  attachingComponent: (component, attachComponentFunc) ->
+    if component.componentTree == this
+      # move component
+      attachComponentFunc()
+      @fireEvent('componentMoved', component)
     else
-      if snippet.componentTree?
+      if component.componentTree?
         # remove from other componentTree
-        snippet.componentContainer.detachSnippet(snippet)
+        component.componentContainer.detachSnippet(component)
 
-      snippet.descendantsAndSelf (descendant) =>
+      component.descendantsAndSelf (descendant) =>
         descendant.componentTree = this
 
-      attachSnippetFunc()
-      @fireEvent('componentAdded', snippet)
+      attachComponentFunc()
+      @fireEvent('componentAdded', component)
 
 
   fireEvent: (event, args...) ->
@@ -206,27 +206,27 @@ module.exports = class ComponentTree
     @changed.fire()
 
 
-  detachingSnippet: (snippet, detachSnippetFunc) ->
-    assert snippet.componentTree is this,
-      'cannot remove snippet from another ComponentTree'
+  detachingComponent: (component, detachSnippetFunc) ->
+    assert component.componentTree is this,
+      'cannot remove component from another ComponentTree'
 
-    snippet.descendantsAndSelf (descendants) ->
+    component.descendantsAndSelf (descendants) ->
       descendants.componentTree = undefined
 
     detachSnippetFunc()
-    @fireEvent('componentRemoved', snippet)
+    @fireEvent('componentRemoved', component)
 
 
-  contentChanging: (snippet) ->
-    @fireEvent('componentContentChanged', snippet)
+  contentChanging: (component) ->
+    @fireEvent('componentContentChanged', component)
 
 
-  htmlChanging: (snippet) ->
-    @fireEvent('componentHtmlChanged', snippet)
+  htmlChanging: (component) ->
+    @fireEvent('componentHtmlChanged', component)
 
 
-  dataChanging: (snippet, changedProperties) ->
-    @fireEvent('snippetDataChanged', snippet, changedProperties)
+  dataChanging: (component, changedProperties) ->
+    @fireEvent('componentDataChanged', component, changedProperties)
 
 
   # Serialization
@@ -243,21 +243,21 @@ module.exports = class ComponentTree
     data['content'] = []
     data['design'] = { name: @design.name }
 
-    snippetToData = (snippet, level, containerArray) ->
-      snippetData = snippet.toJson()
-      containerArray.push snippetData
-      snippetData
+    componentToData = (component, level, containerArray) ->
+      componentData = component.toJson()
+      containerArray.push componentData
+      componentData
 
-    walker = (snippet, level, dataObj) ->
-      snippetData = snippetToData(snippet, level, dataObj)
+    walker = (component, level, dataObj) ->
+      componentData = componentToData(component, level, dataObj)
 
       # traverse children
-      for name, componentContainer of snippet.containers
-        containerArray = snippetData.containers[componentContainer.name] = []
+      for name, componentContainer of component.containers
+        containerArray = componentData.containers[componentContainer.name] = []
         walker(componentContainer.first, level + 1, containerArray) if componentContainer.first
 
       # traverse siblings
-      walker(snippet.next, level, dataObj) if snippet.next
+      walker(component.next, level, dataObj) if component.next
 
     walker(@root.first, 0, data['content']) if @root.first
 
@@ -279,18 +279,18 @@ module.exports = class ComponentTree
       @root.componentTree = undefined
 
     if data.content
-      for snippetData in data.content
-        snippet = componentModelSerializer.fromJson(snippetData, design)
-        @root.append(snippet)
+      for componentData in data.content
+        component = componentModelSerializer.fromJson(componentData, design)
+        @root.append(component)
 
     if silent
       @root.componentTree = this
-      @root.each (snippet) =>
-        snippet.componentTree = this
+      @root.each (component) =>
+        component.componentTree = this
 
 
   # Append data to this componentTree
-  # Fires componentAdded event for every snippet
+  # Fires componentAdded event for every component
   addData: (data, design) ->
     @fromData(data, design, false)
 
@@ -299,12 +299,12 @@ module.exports = class ComponentTree
     assert @design?, 'Error adding data. ComponentTree has no design'
 
     timeout = Number(delay)
-    for snippetData in data.content
+    for componentData in data.content
       do =>
-        content = snippetData
+        content = componentData
         setTimeout =>
-          snippet = componentModelSerializer.fromJson(content, @design)
-          @root.append(snippet)
+          component = componentModelSerializer.fromJson(content, @design)
+          @root.append(component)
         , timeout
 
       timeout += Number(delay)
