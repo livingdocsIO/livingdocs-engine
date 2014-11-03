@@ -54,18 +54,18 @@
         viewReady = document.createView('.editor-section', { interactive: true });
         previewReady = document.createView('.editor-preview');
 
-        // Create Snippets
+        // Create Components
         var $toolbar = $('.doc-toolbar');
         for (var i = 0; i < document.design.templates.length; i++) {
           var template = document.design.templates[i];
           $entry = $('<div class="toolbar-entry">');
           $entry.html(template.title);
           $toolbar.append($entry);
-          draggableSnippet(document, template.id, $entry);
+          draggableComponent(document, template.id, $entry);
         }
 
 
-        function draggableSnippet (document, id, $elem) {
+        function draggableComponent (document, id, $elem) {
           $elem.on('mousedown', function(event) {
             var newComponent = document.model.createModel(id);
 
