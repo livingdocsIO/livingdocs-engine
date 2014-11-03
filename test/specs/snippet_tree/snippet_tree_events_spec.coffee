@@ -1,4 +1,4 @@
-ComponentTree = require('../../../src/snippet_tree/snippet_tree')
+ComponentTree = require('../../../src/component_tree/component_tree')
 base64Image = require('../../support/test_base64_image')
 
 # ComponentTree Events

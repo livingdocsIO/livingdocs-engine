@@ -8,7 +8,7 @@ DirectiveCollection = require('./directive_collection')
 directiveCompiler = require('./directive_compiler')
 directiveFinder = require('./directive_finder')
 
-ComponentModel = require('../snippet_tree/component_model')
+ComponentModel = require('../component_tree/component_model')
 SnippetView = require('../rendering/snippet_view')
 
 sortByName = (a, b) ->

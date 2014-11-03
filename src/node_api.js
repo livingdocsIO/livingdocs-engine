@@ -10,5 +10,5 @@ exports.Document = document;
 var design = require('./design/design');
 exports.Design = design;
 
-var snippetTree = require('./snippet_tree/snippet_tree');
+var snippetTree = require('./component_tree/component_tree');
 exports.SnippetTree = snippetTree;

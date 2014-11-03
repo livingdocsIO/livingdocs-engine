@@ -1,7 +1,7 @@
 Page = require('../../../src/rendering_container/page')
 RenderingContainer = require('../../../src/rendering_container/rendering_container')
 Design = require('../../../src/design/design')
-ComponentTree = require('../../../src/snippet_tree/snippet_tree')
+ComponentTree = require('../../../src/component_tree/component_tree')
 Renderer = require('../../../src/rendering/renderer')
 
 module.exports = class InstanceInjector

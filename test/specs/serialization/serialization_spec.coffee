@@ -1,6 +1,6 @@
-ComponentTree = require('../../../src/snippet_tree/snippet_tree')
-ComponentModel = require('../../../src/snippet_tree/component_model')
-componentModelSerializer = require('../../../src/snippet_tree/component_model_serializer')
+ComponentTree = require('../../../src/component_tree/component_tree')
+ComponentModel = require('../../../src/component_tree/component_model')
+componentModelSerializer = require('../../../src/component_tree/component_model_serializer')
 base64Image = require('../../support/test_base64_image')
 
 describe 'Snippet Serialization', ->
