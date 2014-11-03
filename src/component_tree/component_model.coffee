@@ -4,7 +4,7 @@ ComponentContainer = require('./component_container')
 guid = require('../modules/guid')
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
-directiveFactory = require('./snippet_directive_factory')
+directiveFactory = require('./component_directive_factory')
 DirectiveCollection = require('../template/directive_collection')
 
 # ComponentModel
