@@ -11,6 +11,16 @@ validator.add 'styleType', (value) ->
 validator.add 'semVer', (value) ->
   /\d\.\d\.\d/.test(value)
 
+# cssClassModificator properties need one 'Default' option
+# with an undefined value. Otherwise users cannot reset the
+# style via the dropdown in the UI.
+validator.add 'one empty option', (value) ->
+  emptyCount = 0
+  for entry in value
+    emptyCount += 1 if not entry.value
+
+  emptyCount == 1
+
 
 # Schemas
 # -------
@@ -48,10 +58,10 @@ validator.add 'componentProperty',
   name: 'string'
   type: 'string, styleType'
   value: 'string, optional'
-  options: 'array of styleOption, optional'
+  options: 'array of styleOption, one empty option, optional'
 
 
 validator.add 'styleOption',
   caption: 'string'
-  value: 'string'
+  value: 'string, optional'
 

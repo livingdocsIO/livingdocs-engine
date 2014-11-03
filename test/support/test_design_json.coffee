@@ -119,6 +119,8 @@ module.exports = do ->
       name: 'color'
       type: 'select'
       options: [
+        caption: 'Default'
+      ,
         caption: 'Red'
         value: 'color--red'
       ,

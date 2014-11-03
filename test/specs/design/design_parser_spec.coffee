@@ -43,8 +43,11 @@ describe 'designParser', ->
         componentProperties:
           'position':
             name: 'position'
+            label: 'Position'
             type: 'select'
             options: [
+              caption: 'Default'
+            ,
               caption: 'Left'
               value: 'position-left'
             ,
@@ -53,6 +56,7 @@ describe 'designParser', ->
             ]
           'extra-space':
             name: 'extra-space'
+            label: 'Extra Space'
             type: 'option'
             value: 'extra-space'
 
@@ -116,7 +120,6 @@ describe 'designParser', ->
 
   describe 'parse error', ->
 
-
     it 'returns a parse error for an invalid component', ->
       json =
         design:
@@ -127,6 +130,7 @@ describe 'designParser', ->
         ]
 
       expect( -> designParser.parse(json) ).to.throw()
+
 
     it 'returns a parse error for a wrongly linked default paragraph', ->
       json =
