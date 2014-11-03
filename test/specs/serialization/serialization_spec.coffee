@@ -1,4 +1,4 @@
-SnippetTree = require('../../../src/snippet_tree/snippet_tree')
+ComponentTree = require('../../../src/snippet_tree/snippet_tree')
 ComponentModel = require('../../../src/snippet_tree/snippet_model')
 componentModelSerializer = require('../../../src/snippet_tree/snippet_model_serializer')
 base64Image = require('../../support/test_base64_image')
@@ -65,14 +65,14 @@ describe 'Snippet Serialization', ->
       expect(json.data).to.deep.equal(expectedValue)
 
 
-describe 'SnippetTree Serialization', ->
+describe 'ComponentTree Serialization', ->
 
   beforeEach ->
     { componentTree } = getInstances('componentTree')
     @tree = componentTree
 
 
-  it 'saves an empty SnippetTree', ->
+  it 'saves an empty ComponentTree', ->
     json = @tree.toJson()
     expect(json.content).to.deep.equal([])
 
@@ -228,7 +228,7 @@ describe 'Deserialization', ->
         content: [@rowJson]
 
       expect()
-      tree = new SnippetTree(content: json, design: @design)
+      tree = new ComponentTree(content: json, design: @design)
       expect(tree.root.first).to.exist
 
 
@@ -267,7 +267,7 @@ describe 'Serialize and Deserialize', ->
     @row.append('sidebar', @title)
     @before.append(@row)
     @json = test.localstore(@before.toJson())
-    @after = new SnippetTree(content: @json, design: @design)
+    @after = new ComponentTree(content: @json, design: @design)
     @afterTitle = @after.find('title').first
 
 

@@ -1,8 +1,8 @@
-SnippetTree = require('../../../src/snippet_tree/snippet_tree')
+ComponentTree = require('../../../src/snippet_tree/snippet_tree')
 ComponentModel = require('../../../src/snippet_tree/snippet_model')
 SnippetContainer = require('../../../src/snippet_tree/snippet_container')
 
-describe 'SnippetTree', ->
+describe 'ComponentTree', ->
 
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
@@ -27,10 +27,10 @@ describe 'SnippetTree', ->
       expect(@componentTree.root.last).to.equal(snippet)
 
 
-describe 'SnippetTree with two snippets', ->
+describe 'ComponentTree with two snippets', ->
 
   beforeEach ->
-    @componentTree = test.createSnippetTree [
+    @componentTree = test.createComponentTree [
       title: undefined
     ,
       title: undefined
@@ -112,7 +112,7 @@ describe 'SnippetTree with two snippets', ->
       expect(@snippetB.next).to.be.undefined
 
 
-describe 'SnippetTree with a single-column row snippet', ->
+describe 'ComponentTree with a single-column row snippet', ->
 
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
@@ -144,7 +144,7 @@ describe 'SnippetTree with a single-column row snippet', ->
 
 
 
-describe 'SnippetTree with a multi-column row snippet', ->
+describe 'ComponentTree with a multi-column row snippet', ->
 
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
@@ -226,7 +226,7 @@ describe 'SnippetTree with a multi-column row snippet', ->
       expect(visitedContainers).to.equal(3)
 
 
-describe 'SnippetTree with three levels', ->
+describe 'ComponentTree with three levels', ->
 
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
@@ -264,7 +264,7 @@ describe 'SnippetTree with three levels', ->
       expect(visitedSnippets[3]).to.equal(@title)
 
 
-describe 'SnippetTree with three snippets', ->
+describe 'ComponentTree with three snippets', ->
 
   beforeEach ->
     { @componentTree } = getInstances('componentTree')

@@ -13,7 +13,7 @@ module.exports = class Livingdoc extends EventEmitter
 
   constructor: ({ componentTree }) ->
     @design = componentTree.design
-    @setSnippetTree(componentTree)
+    @setComponentTree(componentTree)
     @views = {}
     @interactiveView = undefined
 
@@ -28,15 +28,15 @@ module.exports = class Livingdoc extends EventEmitter
       target = dom.dropTarget(elem, coords)
 
 
-  setSnippetTree: (componentTree) ->
+  setComponentTree: (componentTree) ->
     assert componentTree.design == @design,
-      'SnippetTree must have the same design as the document'
+      'ComponentTree must have the same design as the document'
 
     @model = @componentTree = componentTree
-    @forwardSnippetTreeEvents()
+    @forwardComponentTreeEvents()
 
 
-  forwardSnippetTreeEvents: ->
+  forwardComponentTreeEvents: ->
     @componentTree.changed.add =>
       @emit 'change', arguments
 
@@ -123,7 +123,7 @@ module.exports = class Livingdoc extends EventEmitter
   # Debug
   # -----
 
-  # Print the SnippetTree.
+  # Print the ComponentTree.
   printModel: () ->
     @componentTree.print()
 

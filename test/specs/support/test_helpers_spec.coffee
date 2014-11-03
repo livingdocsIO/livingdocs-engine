@@ -1,11 +1,11 @@
 describe 'testHelpers', ->
 
-  describe 'createSnippetTree()', ->
+  describe 'createComponentTree()', ->
 
     # If only one element has to be created the array
     # declaration can be omitted.
     it 'creates a snippet tree with one title', ->
-      componentTree = test.createSnippetTree
+      componentTree = test.createComponentTree
         title: { title: 'It Works' }
 
       firstSnippet = componentTree.first()
@@ -13,7 +13,7 @@ describe 'testHelpers', ->
 
 
     it 'creates a snippet tree with two titles', ->
-      componentTree = test.createSnippetTree [
+      componentTree = test.createComponentTree [
         title: { title: 'A' }
       ,
         title: { title: 'B' }

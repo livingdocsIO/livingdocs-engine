@@ -4,12 +4,12 @@ SnippetArray = require('./snippet_array')
 ComponentModel = require('./snippet_model')
 componentModelSerializer = require('./snippet_model_serializer')
 
-# SnippetTree
+# ComponentTree
 # -----------
 # Livingdocs equivalent to the DOM tree.
 # A snippet tree containes all the snippets of a page in hierarchical order.
 #
-# The root of the SnippetTree is a SnippetContainer. A SnippetContainer
+# The root of the ComponentTree is a SnippetContainer. A SnippetContainer
 # contains a list of snippets.
 #
 # snippets can have multible SnippetContainers themselves.
@@ -24,17 +24,17 @@ componentModelSerializer = require('./snippet_model_serializer')
 #           - Snippet 'Info-Box''
 #
 # ### Events:
-# The first set of SnippetTree Events are concerned with layout changes like
+# The first set of ComponentTree Events are concerned with layout changes like
 # adding, removing or moving snippets.
 #
 # Consider: Have a documentFragment as the rootNode if no rootNode is given
 # maybe this would help simplify some code (since snippets are always
 # attached to the DOM).
-module.exports = class SnippetTree
+module.exports = class ComponentTree
 
 
   constructor: ({ content, @design } = {}) ->
-    assert @design?, "Error instantiating SnippetTree: design param is misssing."
+    assert @design?, "Error instantiating ComponentTree: design param is misssing."
     @root = new SnippetContainer(isRoot: true)
 
     # initialize content before we set the snippet tree to the root
@@ -158,7 +158,7 @@ module.exports = class SnippetTree
 
   # returns a readable string representation of the whole tree
   print: () ->
-    output = 'SnippetTree\n-----------\n'
+    output = 'ComponentTree\n-----------\n'
 
     addLine = (text, indentation = 0) ->
       output += "#{ Array(indentation + 1).join(" ") }#{ text }\n"
@@ -208,7 +208,7 @@ module.exports = class SnippetTree
 
   detachingSnippet: (snippet, detachSnippetFunc) ->
     assert snippet.componentTree is this,
-      'cannot remove snippet from another SnippetTree'
+      'cannot remove snippet from another ComponentTree'
 
     snippet.descendantsAndSelf (descendants) ->
       descendants.componentTree = undefined
@@ -296,7 +296,7 @@ module.exports = class SnippetTree
 
 
   addDataWithAnimation: (data, delay=200) ->
-    assert @design?, 'Error adding data. SnippetTree has no design'
+    assert @design?, 'Error adding data. ComponentTree has no design'
 
     timeout = Number(delay)
     for snippetData in data.content

@@ -74,7 +74,7 @@ module.exports = class SnippetContainer
       @insertAfter(snippet.next, snippet)
 
 
-  getSnippetTree: ->
+  getComponentTree: ->
     @componentTree || @parentSnippet?.componentTree
 
 
@@ -118,7 +118,7 @@ module.exports = class SnippetContainer
     func = =>
       @link(snippet, position)
 
-    if componentTree = @getSnippetTree()
+    if componentTree = @getComponentTree()
       componentTree.attachingSnippet(snippet, func)
     else
       func()
@@ -136,7 +136,7 @@ module.exports = class SnippetContainer
     func = =>
       @unlink(snippet)
 
-    if componentTree = @getSnippetTree()
+    if componentTree = @getComponentTree()
       componentTree.detachingSnippet(snippet, func)
     else
       func()

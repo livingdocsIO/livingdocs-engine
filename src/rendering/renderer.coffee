@@ -37,7 +37,7 @@ module.exports = class Renderer
     @renderingContainer.ready =>
       @setRoot()
       @render()
-      @setupSnippetTreeListeners()
+      @setupComponentTreeListeners()
       @readySemaphore.decrement()
 
 
@@ -57,7 +57,7 @@ module.exports = class Renderer
   # Snippet Tree Event Handling
   # ---------------------------
 
-  setupSnippetTreeListeners: ->
+  setupComponentTreeListeners: ->
     @componentTree.snippetAdded.add( $.proxy(@snippetAdded, this) )
     @componentTree.snippetRemoved.add( $.proxy(@snippetRemoved, this) )
     @componentTree.snippetMoved.add( $.proxy(@snippetMoved, this) )

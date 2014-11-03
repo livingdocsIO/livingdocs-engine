@@ -33,7 +33,7 @@ module.exports = testHelpers =
     @getTemplate(id).createModel()
 
 
-  createSnippetTree: (contentArray) ->
+  createComponentTree: (contentArray) ->
     { @componentTree } = getInstances('componentTree')
 
     if not $.isArray(contentArray)

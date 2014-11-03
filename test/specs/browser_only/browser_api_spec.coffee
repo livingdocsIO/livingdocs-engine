@@ -35,7 +35,7 @@ describe 'Browser API', ->
   describe 'new', ->
     beforeEach ->
       doc.design.load(test.designJson)
-      @componentTree = test.createSnippetTree
+      @componentTree = test.createComponentTree
         title: { title: 'It Works' }
       @data = @componentTree.serialize()
 

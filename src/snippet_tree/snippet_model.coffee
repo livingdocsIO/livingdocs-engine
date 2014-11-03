@@ -12,7 +12,7 @@ DirectiveCollection = require('../template/directive_collection')
 # Each ComponentModel has a template which allows to generate a snippetView
 # from a componentModel
 #
-# Represents a node in a SnippetTree.
+# Represents a node in a ComponentTree.
 # Every ComponentModel can have a parent (SnippetContainer),
 # siblings (other snippets) and multiple containers (SnippetContainers).
 #
@@ -34,7 +34,7 @@ module.exports = class ComponentModel
 
     @next = undefined # set by SnippetContainer
     @previous = undefined # set by SnippetContainer
-    @componentTree = undefined # set by SnippetTree
+    @componentTree = undefined # set by ComponentTree
 
 
   initializeDirectives: ->
@@ -66,7 +66,7 @@ module.exports = class ComponentModel
     @template.createView(this, isReadOnly)
 
 
-  # SnippetTree operations
+  # ComponentTree operations
   # ----------------------
 
   # Insert a snippet before this one
@@ -119,12 +119,12 @@ module.exports = class ComponentModel
     this
 
 
-  # Remove this snippet from its container and SnippetTree
+  # Remove this snippet from its container and ComponentTree
   remove: ->
     @parentContainer.remove(this)
 
 
-  # SnippetTree Iterators
+  # ComponentTree Iterators
   # ---------------------
   #
   # Navigate and query the snippet tree relative to this snippet.

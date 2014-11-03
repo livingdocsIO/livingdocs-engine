@@ -1,11 +1,11 @@
-SnippetTree = require('../../../src/snippet_tree/snippet_tree')
+ComponentTree = require('../../../src/snippet_tree/snippet_tree')
 base64Image = require('../../support/test_base64_image')
 
-# SnippetTree Events
+# ComponentTree Events
 # ------------------
-# Check that SnippetTree fires events properly
+# Check that ComponentTree fires events properly
 
-describe 'SnippetTree (Layout Events) ->', ->
+describe 'ComponentTree (Layout Events) ->', ->
 
 
   beforeEach ->
@@ -95,7 +95,7 @@ describe 'SnippetTree (Layout Events) ->', ->
           @expectChanged 0, => @unsuccessfullyMoveSnippet()
 
 
-describe 'SnippetTree (Content Events)', ->
+describe 'ComponentTree (Content Events)', ->
 
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
@@ -159,7 +159,7 @@ describe 'SnippetTree (Content Events)', ->
       @expectContentChanged 1, => @changeSnippetContent()
 
 
-describe 'SnippetTree (Html Events)', ->
+describe 'ComponentTree (Html Events)', ->
 
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
@@ -197,7 +197,7 @@ describe 'SnippetTree (Html Events)', ->
         @hero.setStyle('extra-space', 'gazillion-pixel-whitespace')
 
 
-  describe 'SnippetTree (Data Events)', ->
+  describe 'ComponentTree (Data Events)', ->
 
     beforeEach ->
       { @componentTree } = getInstances('componentTree')

@@ -1,7 +1,7 @@
 Page = require('../../../src/rendering_container/page')
 RenderingContainer = require('../../../src/rendering_container/rendering_container')
 Design = require('../../../src/design/design')
-SnippetTree = require('../../../src/snippet_tree/snippet_tree')
+ComponentTree = require('../../../src/snippet_tree/snippet_tree')
 Renderer = require('../../../src/rendering/renderer')
 
 module.exports = class InstanceInjector
@@ -28,7 +28,7 @@ module.exports = class InstanceInjector
           renderingContainer: @requireContainer()
 
       when 'componentTree'
-        new SnippetTree
+        new ComponentTree
           design: @create('design')
 
       when 'design'

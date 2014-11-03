@@ -7,7 +7,7 @@ DragBase = require('../interaction/drag_base')
 SnippetDrag = require('../interaction/snippet_drag')
 
 # An InteractivePage is a subclass of Page which allows for manipulation of the
-# rendered SnippetTree.
+# rendered ComponentTree.
 module.exports = class InteractivePage extends Page
 
   LEFT_MOUSE_BUTTON = 1

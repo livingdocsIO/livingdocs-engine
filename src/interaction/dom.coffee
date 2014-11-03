@@ -4,7 +4,7 @@ css = config.css
 # DOM helper methods
 # ------------------
 # Methods to parse and update the Dom tree in accordance to
-# the SnippetTree and Livingdocs classes and attributes
+# the ComponentTree and Livingdocs classes and attributes
 module.exports = do ->
   snippetRegex = new RegExp("(?: |^)#{ css.snippet }(?: |$)")
   sectionRegex = new RegExp("(?: |^)#{ css.section }(?: |$)")

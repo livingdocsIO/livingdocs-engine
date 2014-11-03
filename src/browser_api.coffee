@@ -3,7 +3,7 @@ assert = require('./modules/logging/assert')
 config = require('./configuration/config')
 augmentConfig = require('./configuration/augment_config')
 Livingdoc = require('./livingdoc')
-SnippetTree = require('./snippet_tree/snippet_tree')
+ComponentTree = require('./snippet_tree/snippet_tree')
 designParser = require('./design/design_parser')
 Design = require('./design/design')
 designCache = require('./design/design_cache')
@@ -36,16 +36,16 @@ module.exports = doc = do ->
       designName = data.design?.name
       assert designName?, 'Error creating livingdoc: No design is specified.'
       design = @design.get(designName)
-      new SnippetTree(content: data, design: design)
+      new ComponentTree(content: data, design: design)
     else
       designName = design
       design = @design.get(designName)
-      new SnippetTree(design: design)
+      new ComponentTree(design: design)
 
     @create(componentTree)
 
 
-  # Direct creation with an existing SnippetTree
+  # Direct creation with an existing ComponentTree
   # @returns { Livingdoc object }
   create: (componentTree) ->
     new Livingdoc({ componentTree })

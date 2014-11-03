@@ -1,5 +1,5 @@
 Renderer = require('../../../src/rendering/renderer')
-SnippetTree = require('../../../src/snippet_tree/snippet_tree')
+ComponentTree = require('../../../src/snippet_tree/snippet_tree')
 Page = require('../../../src/rendering_container/page')
 attr = config.attr
 css = config.css
