@@ -9,7 +9,7 @@ DirectiveCollection = require('../template/directive_collection')
 
 # ComponentModel
 # ------------
-# Each ComponentModel has a template which allows to generate a snippetView
+# Each ComponentModel has a template which allows to generate a componentView
 # from a componentModel
 #
 # Represents a node in a ComponentTree.

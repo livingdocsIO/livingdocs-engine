@@ -25,7 +25,7 @@ module.exports = class RenderingContainer
     $(@renderNode).html()
 
 
-  snippetViewWasInserted: (snippetView) ->
+  componentViewWasInserted: (componentView) ->
 
 
   # This is called before the semaphore is started to give subclasses a chance

@@ -8,41 +8,41 @@ describe 'SnippetView', ->
   describe 'title', ->
 
     beforeEach ->
-      @snippetView = test.getTemplate('title').createView()
+      @componentView = test.getTemplate('title').createView()
       @expected = $ """
         <h1 #{ test.editableAttr }="title"
           class="#{ css.editable } #{ css.snippet }"
             #{ attr.template }="test.title"
-            #{ attr.placeholder }="#{ @snippetView.template.defaults['title'] }">
+            #{ attr.placeholder }="#{ @componentView.template.defaults['title'] }">
         </h1>
         """
 
 
     it 'sets title', ->
-      @snippetView.set('title', 'Humble Bundle')
+      @componentView.set('title', 'Humble Bundle')
       @expected.addClass(css.noPlaceholder)
       @expected.html('Humble Bundle')
-      expect(@snippetView.$html).to.have.html(@expected)
+      expect(@componentView.$html).to.have.html(@expected)
 
 
     describe 'when clearing an existing value', ->
       it 'clears the html', ->
-        @snippetView.set('title', 'foobar')
-        @snippetView.set('title', undefined)
-        expect(@snippetView.$html[0]).to.have.html(@expected[0])
+        @componentView.set('title', 'foobar')
+        @componentView.set('title', undefined)
+        expect(@componentView.$html[0]).to.have.html(@expected[0])
 
 
     it 'renders content from the model', ->
-      @snippetView.model.set('title', 'Humble Bundle')
-      @snippetView.render()
+      @componentView.model.set('title', 'Humble Bundle')
+      @componentView.render()
       @expected.addClass(css.noPlaceholder)
       @expected.html('Humble Bundle')
-      expect(@snippetView.$html).to.have.html(@expected)
+      expect(@componentView.$html).to.have.html(@expected)
 
 
     it 'gets the title', ->
-      @snippetView.set('title', 'Games Galore')
-      expect( @snippetView.get('title') ).to.equal('Games Galore')
+      @componentView.set('title', 'Games Galore')
+      expect( @componentView.get('title') ).to.equal('Games Galore')
 
 
 describe 'SnippetView title set style', ->
@@ -59,15 +59,15 @@ describe 'SnippetView title set style', ->
 
   it 'sets "color" style to "color--blue"', ->
     @$expected.addClass('color--blue')
-    snippetView = @title.template.createView(@title)
-    expect(snippetView.$html).to.have.html(@$expected)
+    componentView = @title.template.createView(@title)
+    expect(componentView.$html).to.have.html(@$expected)
 
 
   it 'changes "color" style from "color--blue" to "color--red"', ->
     @$expected.addClass('color--red')
-    snippetView = @title.template.createView(@title)
-    snippetView.setStyle('color', 'color--red')
-    expect(snippetView.$html).to.have.html(@$expected)
+    componentView = @title.template.createView(@title)
+    componentView.setStyle('color', 'color--red')
+    expect(componentView.$html).to.have.html(@$expected)
 
 
 describe 'SnippetView hero', ->
@@ -77,46 +77,46 @@ describe 'SnippetView hero', ->
     snippet.set('title', 'Humble Bundle 2')
     snippet.set('tagline', 'Get it now!')
     template = test.getTemplate('hero')
-    @snippetView = template.createView(snippet)
+    @componentView = template.createView(snippet)
     @expected = $ """
       <div  class="#{ css.snippet }"
             #{ attr.template }="test.hero">
         <h1 #{ test.editableAttr }="title"
             class="#{ css.editable } #{ css.noPlaceholder }"
-            #{ attr.placeholder }="#{ @snippetView.template.defaults['title'] }">Humble Bundle 2</h1>
+            #{ attr.placeholder }="#{ @componentView.template.defaults['title'] }">Humble Bundle 2</h1>
         <p  #{ test.editableAttr }="tagline"
             class="#{ css.editable } #{ css.noPlaceholder }"
-            #{ attr.placeholder }="#{ @snippetView.template.defaults['tagline'] }">Get it now!</p>
+            #{ attr.placeholder }="#{ @componentView.template.defaults['tagline'] }">Get it now!</p>
       </div>"""
 
 
   it 'renders snippet content on creation', ->
-    expect(@snippetView.$html).to.have.html(@expected)
+    expect(@componentView.$html).to.have.html(@expected)
 
 
   it 'sets "extra-space"', ->
     @expected.addClass('extra-space')
-    @snippetView.setStyle('extra-space', 'extra-space')
-    expect(@snippetView.$html).to.have.html(@expected)
+    @componentView.setStyle('extra-space', 'extra-space')
+    expect(@componentView.$html).to.have.html(@expected)
 
 
   it 'resets "extra-space"', ->
-    @snippetView.setStyle('extra-space', 'extra-space')
-    @snippetView.setStyle('extra-space', '')
-    expect(@snippetView.$html).to.have.html(@expected)
+    @componentView.setStyle('extra-space', 'extra-space')
+    @componentView.setStyle('extra-space', '')
+    expect(@componentView.$html).to.have.html(@expected)
 
 
   describe 'empty optional', ->
 
     beforeEach ->
-      @snippetView.model.set('tagline', undefined)
-      @snippetView.render()
+      @componentView.model.set('tagline', undefined)
+      @componentView.render()
       @expected.find('p').hide().html('')
       @expected.find('p').removeClass(css.noPlaceholder)
 
 
     it 'is hidden by default', ->
-      expect(@snippetView.$html).to.have.html(@expected)
+      expect(@componentView.$html).to.have.html(@expected)
 
 
 describe 'SnippetView image', ->

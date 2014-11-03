@@ -64,7 +64,7 @@ module.exports = do ->
         return {
           node: node
           containerName: containerName
-          snippetView: view
+          componentView: view
         }
 
       node = node.parentNode
@@ -123,7 +123,7 @@ module.exports = do ->
 
   getSnippetTarget: (elem, { top, left, position }) ->
     target: 'snippet'
-    snippetView: @getSnippetView(elem)
+    componentView: @getSnippetView(elem)
     position: position || @getPositionOnSnippet(elem, { top, left })
 
 
@@ -139,7 +139,7 @@ module.exports = do ->
 
     target: 'container'
     node: node
-    snippetView: @findSnippetView(node)
+    componentView: @findSnippetView(node)
     containerName: containerName
 
 

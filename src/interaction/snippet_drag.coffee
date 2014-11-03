@@ -8,8 +8,8 @@ module.exports = class SnippetDrag
   wiggleSpace = 0
   startAndEndOffset = 0
 
-  constructor: ({ @componentModel, snippetView }) ->
-    @$view = snippetView.$html if snippetView
+  constructor: ({ @componentModel, componentView }) ->
+    @$view = componentView.$html if componentView
     @$highlightedContainer = {}
 
 
@@ -60,16 +60,16 @@ module.exports = class SnippetDrag
     target = dom.dropTarget(elem, coords) if elem?
     @undoMakeSpace()
 
-    if target? && target.snippetView?.model != @componentModel
+    if target? && target.componentView?.model != @componentModel
       @$placeholder.removeClass(css.noDrop)
       @markDropPosition(target)
 
       # if target.containerName
       #   dom.maximizeContainerHeight(target.parent)
       #   $container = $(target.node)
-      # else if target.snippetView
-      #   dom.maximizeContainerHeight(target.snippetView)
-      #   $container = target.snippetView.get$container()
+      # else if target.componentView
+      #   dom.maximizeContainerHeight(target.componentView)
+      #   $container = target.componentView.get$container()
 
       return target
     else
@@ -99,26 +99,26 @@ module.exports = class SnippetDrag
 
   snippetPosition: (target) ->
     if target.position == 'before'
-      before = target.snippetView.prev()
+      before = target.componentView.prev()
 
       if before?
         if before.model == @componentModel
           target.position = 'after'
           return @snippetPosition(target)
 
-        @showMarkerBetweenSnippets(before, target.snippetView)
+        @showMarkerBetweenSnippets(before, target.componentView)
       else
-        @showMarkerAtBeginningOfContainer(target.snippetView.$elem[0].parentNode)
+        @showMarkerAtBeginningOfContainer(target.componentView.$elem[0].parentNode)
     else
-      next = target.snippetView.next()
+      next = target.componentView.next()
       if next?
         if next.model == @componentModel
           target.position = 'before'
           return @snippetPosition(target)
 
-        @showMarkerBetweenSnippets(target.snippetView, next)
+        @showMarkerBetweenSnippets(target.componentView, next)
       else
-        @showMarkerAtEndOfContainer(target.snippetView.$elem[0].parentNode)
+        @showMarkerAtEndOfContainer(target.componentView.$elem[0].parentNode)
 
 
   showMarkerBetweenSnippets: (viewA, viewB) ->
@@ -284,13 +284,13 @@ module.exports = class SnippetDrag
   moveToTarget: (target) ->
     switch target.target
       when 'snippet'
-        snippetView = target.snippetView
+        componentView = target.componentView
         if target.position == 'before'
-          snippetView.model.before(@componentModel)
+          componentView.model.before(@componentModel)
         else
-          snippetView.model.after(@componentModel)
+          componentView.model.after(@componentModel)
       when 'container'
-        componentModel = target.snippetView.model
+        componentModel = target.componentView.model
         componentModel.append(target.containerName, @componentModel)
       when 'root'
         componentTree = target.componentTree

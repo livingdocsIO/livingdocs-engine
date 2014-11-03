@@ -118,5 +118,5 @@ describe 'DOM method', ->
       containerInfo = dom.findContainer(elem)
       expect(containerInfo.node).to.equal(containerElem)
       expect(containerInfo.containerName).to.equal('main')
-      expect(containerInfo.snippetView).to.equal(@row)
+      expect(containerInfo.componentView).to.equal(@row)
 

@@ -22,8 +22,8 @@ module.exports = class InteractivePage extends Page
     @editableController = new EditableController(this)
 
     # events
-    @imageClick = $.Callbacks() # (snippetView, fieldName, event) ->
-    @htmlElementClick = $.Callbacks() # (snippetView, fieldName, event) ->
+    @imageClick = $.Callbacks() # (componentView, fieldName, event) ->
+    @htmlElementClick = $.Callbacks() # (componentView, fieldName, event) ->
     @snippetWillBeDragged = $.Callbacks() # (componentModel) ->
     @snippetWasDropped = $.Callbacks() # (componentModel) ->
     @dragBase = new DragBase(this)
@@ -60,26 +60,26 @@ module.exports = class InteractivePage extends Page
     return if isControl
 
     # Identify the clicked snippet
-    snippetView = dom.findSnippetView(event.target)
+    componentView = dom.findSnippetView(event.target)
 
     # This is called in mousedown since editables get focus on mousedown
     # and only before the editables clear their placeholder can we safely
     # identify where the user has clicked.
-    @handleClickedSnippet(event, snippetView)
+    @handleClickedSnippet(event, componentView)
 
-    if snippetView
+    if componentView
       @startDrag
-        snippetView: snippetView
+        componentView: componentView
         event: event
 
 
-  startDrag: ({ componentModel, snippetView, event, config }) ->
-    return unless componentModel || snippetView
-    componentModel = snippetView.model if snippetView
+  startDrag: ({ componentModel, componentView, event, config }) ->
+    return unless componentModel || componentView
+    componentModel = componentView.model if componentView
 
     snippetDrag = new SnippetDrag
       componentModel: componentModel
-      snippetView: snippetView
+      componentView: componentView
 
     config ?=
       longpress:
@@ -94,17 +94,17 @@ module.exports = class InteractivePage extends Page
     @dragBase.cancel()
 
 
-  handleClickedSnippet: (event, snippetView) ->
-    if snippetView
-      @focus.snippetFocused(snippetView)
+  handleClickedSnippet: (event, componentView) ->
+    if componentView
+      @focus.snippetFocused(componentView)
 
       nodeContext = dom.findNodeContext(event.target)
       if nodeContext
         switch nodeContext.contextAttr
           when config.directives.image.renderedAttr
-            @imageClick.fire(snippetView, nodeContext.attrName, event)
+            @imageClick.fire(componentView, nodeContext.attrName, event)
           when config.directives.html.renderedAttr
-            @htmlElementClick.fire(snippetView, nodeContext.attrName, event)
+            @htmlElementClick.fire(componentView, nodeContext.attrName, event)
     else
       @focus.blur()
 
@@ -119,21 +119,21 @@ module.exports = class InteractivePage extends Page
     $(focusedElement).blur() if focusedElement
 
 
-  snippetViewWasInserted: (snippetView) ->
-    @initializeEditables(snippetView)
+  componentViewWasInserted: (componentView) ->
+    @initializeEditables(componentView)
 
 
-  initializeEditables: (snippetView) ->
-    if snippetView.directives.editable
-      editableNodes = for directive in snippetView.directives.editable
+  initializeEditables: (componentView) ->
+    if componentView.directives.editable
+      editableNodes = for directive in componentView.directives.editable
         directive.elem
 
       @editableController.add(editableNodes)
 
 
-  afterSnippetFocused: (snippetView) ->
-    snippetView.afterFocused()
+  afterSnippetFocused: (componentView) ->
+    componentView.afterFocused()
 
 
-  afterSnippetBlurred: (snippetView) ->
-    snippetView.afterBlurred()
+  afterSnippetBlurred: (componentView) ->
+    componentView.afterBlurred()

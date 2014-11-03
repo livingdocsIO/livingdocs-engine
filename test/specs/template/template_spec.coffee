@@ -41,8 +41,8 @@ describe 'Title Template', ->
   describe '#createView()', ->
 
     it 'returns a SnippetView instance', ->
-      snippetView = template.createView()
-      expect(snippetView instanceof SnippetView).to.equal(true)
+      componentView = template.createView()
+      expect(componentView instanceof SnippetView).to.equal(true)
 
 
 describe 'Template.parseIdentifier()', ->

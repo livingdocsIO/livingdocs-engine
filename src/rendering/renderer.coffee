@@ -11,7 +11,7 @@ module.exports = class Renderer
 
     @$root = $(@renderingContainer.renderNode)
     @$wrapperHtml = $wrapper
-    @snippetViews = {}
+    @componentViews = {}
 
     @readySemaphore = new Semaphore()
     @renderOncePageReady()
@@ -80,23 +80,23 @@ module.exports = class Renderer
 
 
   snippetContentChanged: (model) ->
-    @snippetViewForSnippet(model).updateContent()
+    @componentViewForSnippet(model).updateContent()
 
 
   snippetHtmlChanged: (model) ->
-    @snippetViewForSnippet(model).updateHtml()
+    @componentViewForSnippet(model).updateHtml()
 
 
   # Rendering
   # ---------
 
 
-  snippetViewForSnippet: (model) ->
-    @snippetViews[model.id] ||= model.createView(@renderingContainer.isReadOnly)
+  componentViewForSnippet: (model) ->
+    @componentViews[model.id] ||= model.createView(@renderingContainer.isReadOnly)
 
 
   deleteCachedSnippetViewForSnippet: (model) ->
-    delete @snippetViews[model.id]
+    delete @componentViews[model.id]
 
 
   render: ->
@@ -106,7 +106,7 @@ module.exports = class Renderer
 
   clear: ->
     @componentTree.each (model) =>
-      @snippetViewForSnippet(model).setAttachedToDom(false)
+      @componentViewForSnippet(model).setAttachedToDom(false)
 
     @$root.empty()
 
@@ -128,14 +128,14 @@ module.exports = class Renderer
     else
       log.error('Snippet could not be inserted by renderer.')
 
-    snippetView = @snippetViewForSnippet(model)
-    snippetView.setAttachedToDom(true)
-    @renderingContainer.snippetViewWasInserted(snippetView)
+    componentView = @componentViewForSnippet(model)
+    componentView.setAttachedToDom(true)
+    @renderingContainer.componentViewWasInserted(componentView)
     @attachChildSnippets(model)
 
 
   isSnippetAttached: (model) ->
-    model && @snippetViewForSnippet(model).isAttachedToDom
+    model && @componentViewForSnippet(model).isAttachedToDom
 
 
   attachChildSnippets: (model) ->
@@ -154,18 +154,18 @@ module.exports = class Renderer
 
 
   $nodeForSnippet: (model) ->
-    @snippetViewForSnippet(model).$html
+    @componentViewForSnippet(model).$html
 
 
   $nodeForContainer: (container) ->
     if container.isRoot
       @$root
     else
-      parentView = @snippetViewForSnippet(container.parentSnippet)
+      parentView = @componentViewForSnippet(container.parentSnippet)
       $(parentView.getDirectiveElement(container.name))
 
 
   removeSnippet: (model) ->
-    @snippetViewForSnippet(model).setAttachedToDom(false)
+    @componentViewForSnippet(model).setAttachedToDom(false)
     @$nodeForSnippet(model).detach()
 

@@ -53,7 +53,7 @@ module.exports = class Template
     $elem = @$template.clone()
     directives = @linkDirectives($elem[0])
 
-    snippetView = new SnippetView
+    componentView = new SnippetView
       model: componentModel
       $html: $elem
       directives: directives
