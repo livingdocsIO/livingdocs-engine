@@ -1,9 +1,12 @@
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
+words = require('../modules/words')
 
 module.exports = class CssModificatorProperty
 
-  constructor: ({ @name, @type, value, options }) ->
+  constructor: ({ @name, label, @type, value, options }) ->
+    @label = label || words.humanize( @name )
+
     switch @type
       when 'option'
         assert value, "TemplateStyle error: no 'value' provided"

@@ -116,7 +116,6 @@ module.exports = do ->
 
   componentProperties:
     'color':
-      name: 'color'
       type: 'select'
       options: [
         caption: 'Default'
@@ -131,11 +130,9 @@ module.exports = do ->
         value: 'color--green'
       ]
     'extra-space':
-      name: 'extra-space'
       type: 'option'
       value: 'extra-space'
     'capitalized':
-      name: 'capitalized'
       type: 'option'
       value: 'capitalized'
 

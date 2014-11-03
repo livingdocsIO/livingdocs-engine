@@ -42,7 +42,6 @@ describe 'designParser', ->
 
         componentProperties:
           'position':
-            name: 'position'
             label: 'Position'
             type: 'select'
             options: [
@@ -55,7 +54,6 @@ describe 'designParser', ->
               value: 'position-right'
             ]
           'extra-space':
-            name: 'extra-space'
             label: 'Extra Space'
             type: 'option'
             value: 'extra-space'
@@ -107,6 +105,11 @@ describe 'designParser', ->
     it 'parses the componentProperties', ->
       title = @design.get('title')
       expect(title.styles['position']).to.be.an.instanceof(CssModificatorProperty)
+
+
+    it 'parses componentProperty labels', ->
+      title = @design.get('title')
+      expect(title.styles['extra-space'].label).to.equal('Extra Space')
 
 
     it 'parses the groups', ->

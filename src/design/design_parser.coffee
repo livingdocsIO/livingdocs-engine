@@ -47,6 +47,7 @@ module.exports = designParser =
   parseComponentProperties: (componentProperties) ->
     @componentProperties = {}
     for name, config of componentProperties
+      config.name = name
       @componentProperties[name] = @createComponentProperty(config)
 
 

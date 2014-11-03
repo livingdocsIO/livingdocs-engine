@@ -7,7 +7,7 @@ describe 'CssModificatorProperty', ->
     it 'should throw an error for an unknown type', ->
       createStyle = =>
         new CssModificatorProperty
-          name: 'Invalid Style'
+          name: 'invalid-style'
           type: 'not-actually-a-type'
 
       expect(createStyle).to.throw()
@@ -16,7 +16,7 @@ describe 'CssModificatorProperty', ->
     it 'should throw an error if no value is provided', ->
       createStyle = =>
         new CssModificatorProperty
-          name: 'No Value'
+          name: 'no-value'
           type: 'option'
 
       expect(createStyle).to.throw()
@@ -25,7 +25,7 @@ describe 'CssModificatorProperty', ->
     it 'should throw an error if no options are provided', ->
       createStyle = =>
         new CssModificatorProperty
-          name: 'No Value'
+          name: 'no-value'
           type: 'select'
 
       expect(createStyle).to.throw()
@@ -44,6 +44,12 @@ describe 'CssModificatorProperty', ->
           caption: 'Blue'
           value: 'color--blue'
         ]
+
+
+    describe 'label', ->
+
+      it 'assigns a default one', ->
+        expect(@style.label).to.equal('Color')
 
 
     describe 'validateValue()', ->
@@ -69,8 +75,15 @@ describe 'CssModificatorProperty', ->
     beforeEach ->
       @style = new CssModificatorProperty
         name: 'watsonian'
+        label: 'What is on?'
         type: 'option'
         value: 'todo--code-review'
+
+
+    describe 'label', ->
+
+      it 'is set correctly', ->
+        expect(@style.label).to.equal('What is on?')
 
 
     describe 'validateValue()', ->
