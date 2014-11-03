@@ -2,7 +2,7 @@ assert = require('../modules/logging/assert')
 SnippetContainer = require('./snippet_container')
 SnippetArray = require('./snippet_array')
 SnippetModel = require('./snippet_model')
-snippetModelSerializer = require('./snippet_model_serializer')
+componentModelSerializer = require('./snippet_model_serializer')
 
 # SnippetTree
 # -----------
@@ -46,7 +46,7 @@ module.exports = class SnippetTree
 
 
   # Insert a snippet at the beginning.
-  # @param: snippetModel instance or snippet name e.g. 'title'
+  # @param: componentModel instance or snippet name e.g. 'title'
   prepend: (snippet) ->
     snippet = @getSnippet(snippet)
     @root.prepend(snippet) if snippet?
@@ -54,7 +54,7 @@ module.exports = class SnippetTree
 
 
   # Insert snippet at the end.
-  # @param: snippetModel instance or snippet name e.g. 'title'
+  # @param: componentModel instance or snippet name e.g. 'title'
   append: (snippet) ->
     snippet = @getSnippet(snippet)
     @root.append(snippet) if snippet?
@@ -280,7 +280,7 @@ module.exports = class SnippetTree
 
     if data.content
       for snippetData in data.content
-        snippet = snippetModelSerializer.fromJson(snippetData, design)
+        snippet = componentModelSerializer.fromJson(snippetData, design)
         @root.append(snippet)
 
     if silent
@@ -303,7 +303,7 @@ module.exports = class SnippetTree
       do =>
         content = snippetData
         setTimeout =>
-          snippet = snippetModelSerializer.fromJson(content, @design)
+          snippet = componentModelSerializer.fromJson(content, @design)
           @root.append(snippet)
         , timeout
 

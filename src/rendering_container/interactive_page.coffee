@@ -24,8 +24,8 @@ module.exports = class InteractivePage extends Page
     # events
     @imageClick = $.Callbacks() # (snippetView, fieldName, event) ->
     @htmlElementClick = $.Callbacks() # (snippetView, fieldName, event) ->
-    @snippetWillBeDragged = $.Callbacks() # (snippetModel) ->
-    @snippetWasDropped = $.Callbacks() # (snippetModel) ->
+    @snippetWillBeDragged = $.Callbacks() # (componentModel) ->
+    @snippetWasDropped = $.Callbacks() # (componentModel) ->
     @dragBase = new DragBase(this)
     @focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
     @focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )
@@ -73,12 +73,12 @@ module.exports = class InteractivePage extends Page
         event: event
 
 
-  startDrag: ({ snippetModel, snippetView, event, config }) ->
-    return unless snippetModel || snippetView
-    snippetModel = snippetView.model if snippetView
+  startDrag: ({ componentModel, snippetView, event, config }) ->
+    return unless componentModel || snippetView
+    componentModel = snippetView.model if snippetView
 
     snippetDrag = new SnippetDrag
-      snippetModel: snippetModel
+      componentModel: componentModel
       snippetView: snippetView
 
     config ?=

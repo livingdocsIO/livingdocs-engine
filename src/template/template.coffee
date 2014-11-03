@@ -48,13 +48,13 @@ module.exports = class Template
     new SnippetModel(template: this)
 
 
-  createView: (snippetModel, isReadOnly) ->
-    snippetModel ||= @createModel()
+  createView: (componentModel, isReadOnly) ->
+    componentModel ||= @createModel()
     $elem = @$template.clone()
     directives = @linkDirectives($elem[0])
 
     snippetView = new SnippetView
-      model: snippetModel
+      model: componentModel
       $html: $elem
       directives: directives
       isReadOnly: isReadOnly

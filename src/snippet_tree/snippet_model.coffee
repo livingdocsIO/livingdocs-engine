@@ -10,7 +10,7 @@ DirectiveCollection = require('../template/directive_collection')
 # SnippetModel
 # ------------
 # Each SnippetModel has a template which allows to generate a snippetView
-# from a snippetModel
+# from a componentModel
 #
 # Represents a node in a SnippetTree.
 # Every SnippetModel can have a parent (SnippetContainer),
@@ -70,40 +70,40 @@ module.exports = class SnippetModel
   # ----------------------
 
   # Insert a snippet before this one
-  before: (snippetModel) ->
-    if snippetModel
-      @parentContainer.insertBefore(this, snippetModel)
+  before: (componentModel) ->
+    if componentModel
+      @parentContainer.insertBefore(this, componentModel)
       this
     else
       @previous
 
 
   # Insert a snippet after this one
-  after: (snippetModel) ->
-    if snippetModel
-      @parentContainer.insertAfter(this, snippetModel)
+  after: (componentModel) ->
+    if componentModel
+      @parentContainer.insertAfter(this, componentModel)
       this
     else
       @next
 
 
   # Append a snippet to a container of this snippet
-  append: (containerName, snippetModel) ->
+  append: (containerName, componentModel) ->
     if arguments.length == 1
-      snippetModel = containerName
+      componentModel = containerName
       containerName = config.directives.container.defaultName
 
-    @containers[containerName].append(snippetModel)
+    @containers[containerName].append(componentModel)
     this
 
 
   # Prepend a snippet to a container of this snippet
-  prepend: (containerName, snippetModel) ->
+  prepend: (containerName, componentModel) ->
     if arguments.length == 1
-      snippetModel = containerName
+      componentModel = containerName
       containerName = config.directives.container.defaultName
 
-    @containers[containerName].prepend(snippetModel)
+    @containers[containerName].prepend(componentModel)
     this
 
 
@@ -134,26 +134,26 @@ module.exports = class SnippetModel
 
 
   parents: (callback) ->
-    snippetModel = this
-    while (snippetModel = snippetModel.getParent())
-      callback(snippetModel)
+    componentModel = this
+    while (componentModel = componentModel.getParent())
+      callback(componentModel)
 
 
   children: (callback) ->
     for name, snippetContainer of @containers
-      snippetModel = snippetContainer.first
-      while (snippetModel)
-        callback(snippetModel)
-        snippetModel = snippetModel.next
+      componentModel = snippetContainer.first
+      while (componentModel)
+        callback(componentModel)
+        componentModel = componentModel.next
 
 
   descendants: (callback) ->
     for name, snippetContainer of @containers
-      snippetModel = snippetContainer.first
-      while (snippetModel)
-        callback(snippetModel)
-        snippetModel.descendants(callback)
-        snippetModel = snippetModel.next
+      componentModel = snippetContainer.first
+      while (componentModel)
+        callback(componentModel)
+        componentModel.descendants(callback)
+        componentModel = componentModel.next
 
 
   descendantsAndSelf: (callback) ->
@@ -161,18 +161,18 @@ module.exports = class SnippetModel
     @descendants(callback)
 
 
-  # return all descendant containers (including those of this snippetModel)
+  # return all descendant containers (including those of this componentModel)
   descendantContainers: (callback) ->
-    @descendantsAndSelf (snippetModel) ->
-      for name, snippetContainer of snippetModel.containers
+    @descendantsAndSelf (componentModel) ->
+      for name, snippetContainer of componentModel.containers
         callback(snippetContainer)
 
 
   # return all descendant containers and snippets
   allDescendants: (callback) ->
-    @descendantsAndSelf (snippetModel) =>
-      callback(snippetModel) if snippetModel != this
-      for name, snippetContainer of snippetModel.containers
+    @descendantsAndSelf (componentModel) =>
+      callback(componentModel) if componentModel != this
+      for name, snippetContainer of componentModel.containers
         callback(snippetContainer)
 
 
@@ -185,7 +185,7 @@ module.exports = class SnippetModel
   # --------------------
   #
   # Example how to get an ImageDirective:
-  # imageDirective = snippetModel.directives.get('image')
+  # imageDirective = componentModel.directives.get('image')
 
   hasContainers: ->
     @directives.count('container') > 0
@@ -248,7 +248,7 @@ module.exports = class SnippetModel
   # Data Operations
   # ---------------
   #
-  # Set arbitrary data to be stored with this snippetModel.
+  # Set arbitrary data to be stored with this componentModel.
 
 
   # can be called with a string or a hash

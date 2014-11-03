@@ -8,7 +8,7 @@ module.exports = class SnippetDrag
   wiggleSpace = 0
   startAndEndOffset = 0
 
-  constructor: ({ @snippetModel, snippetView }) ->
+  constructor: ({ @componentModel, snippetView }) ->
     @$view = snippetView.$html if snippetView
     @$highlightedContainer = {}
 
@@ -60,7 +60,7 @@ module.exports = class SnippetDrag
     target = dom.dropTarget(elem, coords) if elem?
     @undoMakeSpace()
 
-    if target? && target.snippetView?.model != @snippetModel
+    if target? && target.snippetView?.model != @componentModel
       @$placeholder.removeClass(css.noDrop)
       @markDropPosition(target)
 
@@ -102,7 +102,7 @@ module.exports = class SnippetDrag
       before = target.snippetView.prev()
 
       if before?
-        if before.model == @snippetModel
+        if before.model == @componentModel
           target.position = 'after'
           return @snippetPosition(target)
 
@@ -112,7 +112,7 @@ module.exports = class SnippetDrag
     else
       next = target.snippetView.next()
       if next?
-        if next.model == @snippetModel
+        if next.model == @componentModel
           target.position = 'before'
           return @snippetPosition(target)
 
@@ -275,7 +275,7 @@ module.exports = class SnippetDrag
   drop: ->
     if @target?
       @moveToTarget(@target)
-      @page.snippetWasDropped.fire(@snippetModel)
+      @page.snippetWasDropped.fire(@componentModel)
     else
       #consider: maybe add a 'drop failed' effect
 
@@ -286,15 +286,15 @@ module.exports = class SnippetDrag
       when 'snippet'
         snippetView = target.snippetView
         if target.position == 'before'
-          snippetView.model.before(@snippetModel)
+          snippetView.model.before(@componentModel)
         else
-          snippetView.model.after(@snippetModel)
+          snippetView.model.after(@componentModel)
       when 'container'
-        snippetModel = target.snippetView.model
-        snippetModel.append(target.containerName, @snippetModel)
+        componentModel = target.snippetView.model
+        componentModel.append(target.containerName, @componentModel)
       when 'root'
         snippetTree = target.snippetTree
-        snippetTree.prepend(@snippetModel)
+        snippetTree.prepend(@componentModel)
 
 
 

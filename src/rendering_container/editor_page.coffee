@@ -18,12 +18,12 @@ module.exports = class EditorPage
     @blurFocusedElement = ->
 
 
-  startDrag: ({ snippetModel, snippetView, event, config }) ->
-    return unless snippetModel || snippetView
-    snippetModel = snippetView.model if snippetView
+  startDrag: ({ componentModel, snippetView, event, config }) ->
+    return unless componentModel || snippetView
+    componentModel = snippetView.model if snippetView
 
     snippetDrag = new SnippetDrag
-      snippetModel: snippetModel
+      componentModel: componentModel
       snippetView: snippetView
 
     config ?=
