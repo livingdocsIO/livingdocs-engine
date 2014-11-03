@@ -48,7 +48,7 @@ validator.add 'design',
 
 validator.add 'component',
   name: 'string'
-  title: 'string, optional'
+  label: 'string, optional'
   html: 'string'
   properties: 'array of string, optional'
   __additionalProperty: (key, value) -> false

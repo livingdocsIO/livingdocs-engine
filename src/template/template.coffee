@@ -31,7 +31,7 @@ module.exports = class Template
     @$template = $( @pruneHtml(html) ).wrap('<div>')
     @$wrap = @$template.parent()
 
-    @title = label || words.humanize( @name )
+    @label = label || words.humanize( @name )
     @styles = properties || {}
     @defaults = {}
 

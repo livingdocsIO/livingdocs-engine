@@ -19,7 +19,7 @@ module.exports = do ->
 
   components: [
       name:   'hero'
-      title: 'Hero'
+      label: 'Hero'
       properties: ['extra-space', 'capitalized', 'color']
       html:
         """
@@ -30,29 +30,29 @@ module.exports = do ->
         """
     ,
       name: 'title'
-      title: 'Title'
+      label: 'Title'
       properties: ['capitalized', 'color']
       html: """<h1 #{ editableAttr }="title"></h1>"""
     ,
       name: 'subtitle'
       properties: ['color']
-      title: 'Subtitle with a default value'
+      label: 'Subtitle with a default value'
       html: """<h2 #{ editableAttr }="title">Who's your Caddy?</h2>"""
     ,
       name: 'text'
-      title: 'Paragraph'
+      label: 'Paragraph'
       html: """<p #{ editableAttr }="text"></p>"""
     ,
       name: 'image'
-      title: 'Image'
+      label: 'Image'
       html: """<img #{ imageAttr }="image" src=""/>"""
     ,
       name: 'background-image'
-      title: 'Background Image'
+      label: 'Background Image'
       html: """<div #{ imageAttr }="image"></div>"""
     ,
       name: 'cover'
-      title: 'Cover'
+      label: 'Cover'
       properties: ['capitalized']
       html:
         """
@@ -66,7 +66,7 @@ module.exports = do ->
         """
     ,
       name: 'row'
-      title: 'Row with two columns'
+      label: 'Row with two columns'
       html:
         """
         <div class="row-fluid">
@@ -76,7 +76,7 @@ module.exports = do ->
         """
     ,
       name: 'container'
-      title: 'Container with no container name'
+      label: 'Container with no container name'
       html:
         """
         <div class="container">
@@ -85,7 +85,7 @@ module.exports = do ->
         """
     ,
       name: 'stuffedContainer'
-      title: 'Container with some stuff in it'
+      label: 'Container with some stuff in it'
       html:
         """
         <div class="stuffed">
@@ -99,7 +99,7 @@ module.exports = do ->
         """
     ,
       name: 'html'
-      title: 'Freeform html'
+      label: 'Freeform html'
       html:
         """
         <div #{ htmlAttr }="html">

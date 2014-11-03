@@ -66,6 +66,7 @@ describe 'designParser', ->
           properties: ['position', 'extra-space']
         ,
           name: 'paragraph'
+          label: 'Text'
           html: '<p doc-editable="title"></p>'
         ]
 
@@ -97,6 +98,10 @@ describe 'designParser', ->
 
     it 'parses the components', ->
       expect(@design.get('title')).to.be.an.instanceof(Template)
+
+
+    it 'sets a component label', ->
+      expect(@design.get('paragraph').label).to.equal('Text')
 
 
     it 'parses the componentProperties', ->

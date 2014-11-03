@@ -165,7 +165,7 @@ module.exports = class SnippetTree
 
     walker = (snippet, indentation = 0) ->
       template = snippet.template
-      addLine("- #{ template.title } (#{ template.identifier })", indentation)
+      addLine("- #{ template.label } (#{ template.name })", indentation)
 
       # traverse children
       for name, snippetContainer of snippet.containers

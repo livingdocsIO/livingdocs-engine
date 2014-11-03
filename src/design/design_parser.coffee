@@ -51,12 +51,12 @@ module.exports = designParser =
 
 
   parseComponents: (components=[]) ->
-    for { name, title, html, properties } in components
+    for { name, label, html, properties } in components
       properties = @lookupComponentProperties(properties)
 
       component = new Template
         name: name
-        label: title
+        label: label
         html: html
         properties: properties
 
