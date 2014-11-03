@@ -7,7 +7,7 @@ describe 'Component Directive', ->
 
 
     it 'has a component directive with its parent component set', ->
-      expect(@imgDirective.snippet).to.equal(@image)
+      expect(@imgDirective.component).to.equal(@image)
 
 
     describe 'getImageUrl()', ->
@@ -74,7 +74,7 @@ describe 'Component Directive', ->
 
 
     it 'has a component directive with its parent component set', ->
-      expect(@imgDirective.snippet).to.equal(@cover)
+      expect(@imgDirective.component).to.equal(@cover)
 
 
     describe 'isBackgroundImage()', ->

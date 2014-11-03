@@ -2,7 +2,7 @@ assert = require('../modules/logging/assert')
 
 module.exports = class HtmlDirective
 
-  constructor: ({ @snippet, @templateDirective }) ->
+  constructor: ({ @component, @templateDirective }) ->
     @name = @templateDirective.name
     @type = @templateDirective.type
 
@@ -11,5 +11,5 @@ module.exports = class HtmlDirective
 
 
   getContent: ->
-    @snippet.content[@name]
+    @component.content[@name]
 

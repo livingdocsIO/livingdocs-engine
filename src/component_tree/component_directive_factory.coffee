@@ -7,9 +7,9 @@ HtmlDirective = require('./html_directive')
 
 module.exports =
 
-  create: ({ snippet, templateDirective }) ->
+  create: ({ component, templateDirective }) ->
     Directive = @getDirectiveConstructor(templateDirective.type)
-    new Directive({ snippet, templateDirective })
+    new Directive({ component, templateDirective })
 
 
   getDirectiveConstructor: (directiveType) ->

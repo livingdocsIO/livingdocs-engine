@@ -3,7 +3,7 @@ imageService = require('../image_services/image_service')
 
 module.exports = class ImageDirective
 
-  constructor: ({ @snippet, @templateDirective }) ->
+  constructor: ({ @component, @templateDirective }) ->
     @name = @templateDirective.name
     @type = @templateDirective.type
 
@@ -32,12 +32,12 @@ module.exports = class ImageDirective
 
   setBase64Image: (base64String) ->
     @base64Image = base64String
-    @snippet.componentTree.contentChanging(@snippet, @name) if @snippet.componentTree
+    @component.componentTree.contentChanging(@component, @name) if @component.componentTree
 
 
   setImageUrl: (value) ->
-    @snippet.content[@name] ?= {}
-    @snippet.content[@name].url = value
+    @component.content[@name] ?= {}
+    @component.content[@name].url = value
 
     @resetCrop()
     @base64Image = undefined
@@ -45,7 +45,7 @@ module.exports = class ImageDirective
 
 
   getImageUrl: ->
-    image = @snippet.content[@name]
+    image = @component.content[@name]
     if image
       image.url
     else
@@ -53,15 +53,15 @@ module.exports = class ImageDirective
 
 
   getImageObject: ->
-    @snippet.content[@name]
+    @component.content[@name]
 
 
   getOriginalUrl: ->
-    @snippet.content[@name].originalUrl || @getImageUrl()
+    @component.content[@name].originalUrl || @getImageUrl()
 
 
   setCrop: ({ x, y, width, height, name }) ->
-    currentValue = @snippet.content[@name]
+    currentValue = @component.content[@name]
 
     if currentValue?.url?
       currentValue.crop =
@@ -72,11 +72,11 @@ module.exports = class ImageDirective
         name: name
 
       @processImageUrl(currentValue.originalUrl || currentValue.url)
-      @snippet.componentTree.contentChanging(@snippet, @name) if @snippet.componentTree
+      @component.componentTree.contentChanging(@component, @name) if @component.componentTree
 
 
   resetCrop: ->
-    currentValue = @snippet.content[@name]
+    currentValue = @component.content[@name]
     if currentValue?
       currentValue.crop = null
 
@@ -85,7 +85,7 @@ module.exports = class ImageDirective
     assert imageService.has(imageServiceName), "Error: could not load image service #{ imageServiceName }"
 
     imageUrl = @getImageUrl()
-    @snippet.content[@name] =
+    @component.content[@name] =
       url: imageUrl
       imageService: imageServiceName || null
 
@@ -99,7 +99,7 @@ module.exports = class ImageDirective
 
 
   getImageService: ->
-    serviceName = @snippet.content[@name]?.imageService
+    serviceName = @component.content[@name]?.imageService
     imageService.get(serviceName || undefined)
 
 

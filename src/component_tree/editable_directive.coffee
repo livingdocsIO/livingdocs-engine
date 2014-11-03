@@ -2,7 +2,7 @@ assert = require('../modules/logging/assert')
 
 module.exports = class EditableDirective
 
-  constructor: ({ @snippet, @templateDirective }) ->
+  constructor: ({ @component, @templateDirective }) ->
     @name = @templateDirective.name
     @type = @templateDirective.type
 
@@ -11,4 +11,4 @@ module.exports = class EditableDirective
 
 
   getContent: ->
-    @snippet.content[@name]
+    @component.content[@name]

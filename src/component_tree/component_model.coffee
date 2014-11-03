@@ -58,7 +58,7 @@ module.exports = class ComponentModel
   # Create a directive for 'editable', 'image', 'html' template directives
   createComponentDirective: (templateDirective) ->
     @directives.add directiveFactory.create
-      snippet: this
+      component: this
       templateDirective: templateDirective
 
 
