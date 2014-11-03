@@ -73,11 +73,11 @@ describe 'ComponentView title set style', ->
 describe 'ComponentView hero', ->
 
   beforeEach ->
-    snippet = test.getComponent('hero')
-    snippet.set('title', 'Humble Bundle 2')
-    snippet.set('tagline', 'Get it now!')
+    component = test.getComponent('hero')
+    component.set('title', 'Humble Bundle 2')
+    component.set('tagline', 'Get it now!')
     template = test.getTemplate('hero')
-    @componentView = template.createView(snippet)
+    @componentView = template.createView(component)
     @expected = $ """
       <div  class="#{ css.component }"
             #{ attr.template }="test.hero">
@@ -122,7 +122,7 @@ describe 'ComponentView hero', ->
 describe 'ComponentView image', ->
 
   beforeEach ->
-    @snippet = test.getComponent('image')
+    @component = test.getComponent('image')
 
 
   describe 'with the default image service', ->
@@ -136,7 +136,7 @@ describe 'ComponentView image', ->
 
 
     it 'sets the src', ->
-      @view = @snippet.createView()
+      @view = @component.createView()
       @view.set('image', 'http://images.com/1')
       expectSrc(@view, 'http://images.com/1')
 
@@ -144,7 +144,7 @@ describe 'ComponentView image', ->
   describe 'with the resrc.it image service', ->
 
     it 'sets the data-src attribute', ->
-      @view = @snippet.createView()
+      @view = @component.createView()
       @view.model.directives.get('image').setImageService('resrc.it')
       @view.set('image', 'http://images.com/1')
       expect(@view.$html).to.have.html """
@@ -159,7 +159,7 @@ describe 'ComponentView image', ->
   describe 'delayed placeholder insertion', ->
 
     beforeEach ->
-      @view = @snippet.createView()
+      @view = @component.createView()
       @view.set('image', undefined)
 
 
@@ -210,13 +210,13 @@ describe 'ComponentView image', ->
 describe 'ComponentView background image', ->
 
   beforeEach ->
-    @snippet = test.getComponent('background-image')
+    @component = test.getComponent('background-image')
 
 
   describe 'with the default image service', ->
 
     it 'sets the background-image in the style attribute', ->
-      @view = @snippet.createView()
+      @view = @component.createView()
       @view.set('image', 'http://images.com/1')
       expect(@view.$html).to.have.html """
         <div
@@ -229,9 +229,9 @@ describe 'ComponentView background image', ->
 describe 'ComponentView html', ->
 
   beforeEach ->
-    @snippet = test.getComponent('html')
-    @snippet.set('html', '<section>test</section>')
-    @view = @snippet.createView()
+    @component = test.getComponent('html')
+    @component.set('html', '<section>test</section>')
+    @view = @component.createView()
     # There is additional code by the interaction blocker element in there
     # which is not nice but hopefully works out just fine.
     @expected = $ """
@@ -253,18 +253,18 @@ describe 'ComponentView html', ->
 
     describe 'when clearing an existing value', ->
       it 'inserts the default value', ->
-        @snippet.set('html', undefined)
+        @component.set('html', undefined)
         @view.render()
-        @expected.html(@snippet.template.defaults['html'])
+        @expected.html(@component.template.defaults['html'])
         expect(@view.$html).to.have.html(@expected)
 
 
 describe 'using volatile values', ->
 
   beforeEach ->
-    @snippet = test.getComponent('image')
-    @snippet.directives.get('image').setBase64Image(base64Image)
-    @view = @snippet.createView()
+    @component = test.getComponent('image')
+    @component.directives.get('image').setBase64Image(base64Image)
+    @view = @component.createView()
 
 
   it 'uses a temporary base64 value if there is no image set', ->
@@ -273,14 +273,14 @@ describe 'using volatile values', ->
 
 
   it 'uses the image content if it is set after the temporary base64', ->
-    @snippet.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
+    @component.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
     @view.render()
     expect(@view.$html).to.have.attr('src', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
 
 
   it 'prefers a temporary value if it is set after the persisted url content', ->
-    @snippet.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
-    @snippet.directives.get('image').setBase64Image(base64Image)
+    @component.set('image', 'http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
+    @component.directives.get('image').setBase64Image(base64Image)
     @view.render()
     expect(@view.$html).to.have.attr('src', base64Image)
 

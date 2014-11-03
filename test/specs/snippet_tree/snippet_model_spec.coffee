@@ -77,7 +77,7 @@ describe 'Container Component', ->
     expect(@container.containers[defaultName]).to.exist
 
 
-describe 'Image snippet', ->
+describe 'Image component', ->
 
   beforeEach ->
     @image = test.getComponent('image')
@@ -146,7 +146,7 @@ describe 'Hero ComponentModel#style', ->
     expect(@hero.styles['conundrum']).to.be.undefined
 
 
-describe 'Html snippet', ->
+describe 'Html component', ->
 
   beforeEach ->
     @image = test.getComponent('html')

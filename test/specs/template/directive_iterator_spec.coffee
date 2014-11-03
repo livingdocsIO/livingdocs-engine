@@ -18,7 +18,7 @@ describe 'DirectiveIterator', ->
     @iterator = new DirectiveIterator(@html)
 
 
-  it 'searches only through snippet and not descendant nodes', ->
+  it 'searches only through component and not descendant nodes', ->
     visitedElements = 0
     visitedComments = 0
     while @iterator.next()
