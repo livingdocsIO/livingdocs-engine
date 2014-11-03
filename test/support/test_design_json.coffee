@@ -141,13 +141,13 @@ module.exports = do ->
 
 
   groups: [
-    name: 'Layout'
+    label: 'Layout'
     components: ['row', 'container', 'stuffedContainer']
   ,
-    name: 'Header'
+    label: 'Header'
     components: ['cover', 'hero', 'title']
   ,
-    name: 'Other'
+    label: 'Other'
     components: ['subtitle', 'text', 'image']
   ]
 

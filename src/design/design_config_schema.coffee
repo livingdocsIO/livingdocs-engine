@@ -39,7 +39,7 @@ validator.add 'design',
   componentProperties:
     __validate: 'optional'
     __additionalProperty: (key, value) -> validator.validate('componentProperty', value)
-  groups: 'array, optional'
+  groups: 'array of group, optional'
   defaultComponents:
     __validate: 'optional'
     paragraph: 'string, optional'
@@ -54,9 +54,14 @@ validator.add 'component',
   __additionalProperty: (key, value) -> false
 
 
+validator.add 'group',
+  label: 'string'
+  components: 'array of string'
+
+
 # todo: rename type and use type to identify the componentProperty type like cssClass
 validator.add 'componentProperty',
-  name: 'string'
+  label: 'string, optional'
   type: 'string, styleType'
   value: 'string, optional'
   options: 'array of styleOption, one empty option, optional'

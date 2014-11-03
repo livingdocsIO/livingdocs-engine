@@ -80,7 +80,7 @@ module.exports = designParser =
         @design.get(componentName)
 
       @design.groups.push
-        name: group.name
+        label: group.label
         components: components
 
 

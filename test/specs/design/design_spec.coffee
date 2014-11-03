@@ -77,7 +77,7 @@ describe 'Design', ->
 
     it 'are available through #groups', ->
       groups = @design.groups
-      expect(@design.groups[0]).to.have.property('name', 'Layout')
+      expect(@design.groups[0]).to.have.property('label', 'Layout')
 
 
   describe 'componentProperties', ->

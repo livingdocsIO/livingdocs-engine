@@ -71,10 +71,10 @@ describe 'designParser', ->
         ]
 
         groups: [
-          name: 'Headers'
+          label: 'Headers'
           components: ['title']
         ,
-          name: 'Text'
+          label: 'Text'
           components: ['paragraph']
         ]
 
