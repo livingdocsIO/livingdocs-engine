@@ -22,7 +22,7 @@ describe 'ComponentTree (Layout Events) ->', ->
 
     beforeEach ->
       @appendSnippet = =>
-        snippet = test.getSnippet('title')
+        snippet = test.getComponent('title')
         @componentTree.append(snippet)
 
 
@@ -41,8 +41,8 @@ describe 'ComponentTree (Layout Events) ->', ->
 
 
     beforeEach ->
-      @snippetA = test.getSnippet('title')
-      @snippetB = test.getSnippet('title')
+      @snippetA = test.getComponent('title')
+      @snippetB = test.getComponent('title')
       @componentTree.append(@snippetA).append(@snippetB)
 
 
@@ -103,9 +103,9 @@ describe 'ComponentTree (Content Events)', ->
     @expectContentChanged = monitor(@componentTree.componentContentChanged)
     @expectChanged = monitor(@componentTree.changed)
 
-    @snippetA = test.getSnippet('title')
-    @imageSnippet = test.getSnippet('image')
-    @coverSnippet = test.getSnippet('cover')
+    @snippetA = test.getComponent('title')
+    @imageSnippet = test.getComponent('image')
+    @coverSnippet = test.getComponent('cover')
     @componentTree.append(@snippetA)
     @componentTree.append(@imageSnippet)
     @componentTree.append(@coverSnippet)
@@ -167,7 +167,7 @@ describe 'ComponentTree (Html Events)', ->
     @expectHtlmChanged = monitor(@componentTree.componentHtmlChanged)
     @expectChanged = monitor(@componentTree.changed)
 
-    @hero = test.getSnippet('hero')
+    @hero = test.getComponent('hero')
     @componentTree.append(@hero)
 
 
@@ -205,7 +205,7 @@ describe 'ComponentTree (Html Events)', ->
       @expectDataChanged = monitor(@componentTree.componentDataChanged)
       @expectChanged = monitor(@componentTree.changed)
 
-      @hero = test.getSnippet('hero')
+      @hero = test.getComponent('hero')
       @componentTree.append(@hero)
 
 

@@ -108,7 +108,7 @@ module.exports = do ->
 
       # above snippet
       else if snippetRegex.test(node.className)
-        return @getSnippetTarget(node, { top, left })
+        return @getComponentTarget(node, { top, left })
 
       # above root container
       else if sectionRegex.test(node.className)
@@ -121,7 +121,7 @@ module.exports = do ->
       node = node.parentNode
 
 
-  getSnippetTarget: (elem, { top, left, position }) ->
+  getComponentTarget: (elem, { top, left, position }) ->
     target: 'snippet'
     componentView: @getComponentView(elem)
     position: position || @getPositionOnSnippet(elem, { top, left })
@@ -130,7 +130,7 @@ module.exports = do ->
   getClosestSnippetTarget: (closestSnippetData) ->
     elem = closestSnippetData.$elem[0]
     position = closestSnippetData.position
-    @getSnippetTarget(elem, { position })
+    @getComponentTarget(elem, { position })
 
 
   getContainerTarget: (node) ->

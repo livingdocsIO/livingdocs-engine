@@ -48,7 +48,7 @@ describe 'ComponentView', ->
 describe 'ComponentView title set style', ->
 
   beforeEach ->
-    @title = test.getSnippet('title')
+    @title = test.getComponent('title')
     @title.setStyle('color', 'color--blue')
     @$expected = $ """
       <h1 #{ test.editableAttr }="title"
@@ -73,7 +73,7 @@ describe 'ComponentView title set style', ->
 describe 'ComponentView hero', ->
 
   beforeEach ->
-    snippet = test.getSnippet('hero')
+    snippet = test.getComponent('hero')
     snippet.set('title', 'Humble Bundle 2')
     snippet.set('tagline', 'Get it now!')
     template = test.getTemplate('hero')
@@ -122,7 +122,7 @@ describe 'ComponentView hero', ->
 describe 'ComponentView image', ->
 
   beforeEach ->
-    @snippet = test.getSnippet('image')
+    @snippet = test.getComponent('image')
 
 
   describe 'with the default image service', ->
@@ -210,7 +210,7 @@ describe 'ComponentView image', ->
 describe 'ComponentView background image', ->
 
   beforeEach ->
-    @snippet = test.getSnippet('background-image')
+    @snippet = test.getComponent('background-image')
 
 
   describe 'with the default image service', ->
@@ -229,7 +229,7 @@ describe 'ComponentView background image', ->
 describe 'ComponentView html', ->
 
   beforeEach ->
-    @snippet = test.getSnippet('html')
+    @snippet = test.getComponent('html')
     @snippet.set('html', '<section>test</section>')
     @view = @snippet.createView()
     # There is additional code by the interaction blocker element in there
@@ -262,7 +262,7 @@ describe 'ComponentView html', ->
 describe 'using volatile values', ->
 
   beforeEach ->
-    @snippet = test.getSnippet('image')
+    @snippet = test.getComponent('image')
     @snippet.directives.get('image').setBase64Image(base64Image)
     @view = @snippet.createView()
 

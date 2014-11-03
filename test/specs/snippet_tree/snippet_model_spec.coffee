@@ -3,7 +3,7 @@ base64Image = require('../../support/test_base64_image')
 describe 'Title Snippet', ->
 
   beforeEach ->
-    @title = test.getSnippet('title')
+    @title = test.getComponent('title')
 
 
   it 'instantiates from template', ->
@@ -49,7 +49,7 @@ describe 'Title Snippet', ->
 describe 'Row Snippet', ->
 
   beforeEach ->
-    @row = test.getSnippet('row')
+    @row = test.getComponent('row')
 
 
   it 'has a componentName', ->
@@ -69,7 +69,7 @@ describe 'Row Snippet', ->
 describe 'Container Snippet', ->
 
   beforeEach ->
-    @container = test.getSnippet('container')
+    @container = test.getComponent('container')
 
 
   it 'has named its unnamed container to the default', ->
@@ -80,7 +80,7 @@ describe 'Container Snippet', ->
 describe 'Image snippet', ->
 
   beforeEach ->
-    @image = test.getSnippet('image')
+    @image = test.getComponent('image')
 
 
   it 'has one image', ->
@@ -103,7 +103,7 @@ describe 'Image snippet', ->
 describe 'Hero ComponentModel#style', ->
 
   beforeEach ->
-    @hero = test.getSnippet('hero')
+    @hero = test.getComponent('hero')
 
 
   it 'gets style "extra-space"', ->
@@ -149,7 +149,7 @@ describe 'Hero ComponentModel#style', ->
 describe 'Html snippet', ->
 
   beforeEach ->
-    @image = test.getSnippet('html')
+    @image = test.getComponent('html')
 
 
   it 'has one html field', ->

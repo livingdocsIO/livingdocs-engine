@@ -29,7 +29,7 @@ module.exports = testHelpers =
     @getDesign().get(id)
 
 
-  getSnippet: (id) ->
+  getComponent: (id) ->
     @getTemplate(id).createModel()
 
 
@@ -41,7 +41,7 @@ module.exports = testHelpers =
 
     for entry in contentArray
       for key, content of entry
-        model = @getSnippet(key)
+        model = @getComponent(key)
         for field, value of content
           model.set(field, value)
         @componentTree.append(model)
@@ -51,7 +51,7 @@ module.exports = testHelpers =
 
   # helper to create snippets with one directive easier
   createComponent: (id, value) ->
-    snippet = @getSnippet(id)
+    snippet = @getComponent(id)
     firstDirective = snippet.template.directives[0]
     snippet.set(firstDirective.name, value)
     snippet

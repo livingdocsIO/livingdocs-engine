@@ -15,13 +15,13 @@ describe 'ComponentTree', ->
   describe 'append()', ->
 
     it 'sets componentTree property of the appended snippet', ->
-      snippet = test.getSnippet('title')
+      snippet = test.getComponent('title')
       @componentTree.append(snippet)
       expect(snippet.componentTree).to.equal(@componentTree)
 
 
     it 'appends a snippet to root', ->
-      snippet = test.getSnippet('title')
+      snippet = test.getComponent('title')
       @componentTree.append(snippet)
       expect(@componentTree.first()).to.equal(snippet)
       expect(@componentTree.root.last).to.equal(snippet)
@@ -116,7 +116,7 @@ describe 'ComponentTree with a single-column row snippet', ->
 
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
-    @container = test.getSnippet('container')
+    @container = test.getComponent('container')
     @defaultName = config.directives.container.defaultName
     @componentTree.append(@container)
 
@@ -124,21 +124,21 @@ describe 'ComponentTree with a single-column row snippet', ->
   describe 'append()', ->
 
     it 'adds a snippet to the single column via the componentContainer', ->
-      titleSnippet = test.getSnippet('title')
+      titleSnippet = test.getComponent('title')
       mainContainer = @container.containers[@defaultName]
       mainContainer.append(titleSnippet)
       expect(mainContainer.first).to.equal(titleSnippet)
 
 
     it 'adds a snippet to the main column via snippet', ->
-      titleSnippet = test.getSnippet('title')
+      titleSnippet = test.getComponent('title')
       @container.append(titleSnippet)
       mainContainer = @container.containers[@defaultName]
       expect(mainContainer.first).to.equal(titleSnippet)
 
 
     it 'the appended snippet has a parent snippet', ->
-      titleSnippet = test.getSnippet('title')
+      titleSnippet = test.getComponent('title')
       @container.append(titleSnippet)
       expect( titleSnippet.getParent() ).to.equal(@container)
 
@@ -148,21 +148,21 @@ describe 'ComponentTree with a multi-column row snippet', ->
 
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
-    @rowSnippet = test.getSnippet('row')
+    @rowSnippet = test.getComponent('row')
     @componentTree.append(@rowSnippet)
 
 
   describe 'append()', ->
 
     it 'adds a snippet to the main column via the componentContainer', ->
-      titleSnippet = test.getSnippet('title')
+      titleSnippet = test.getComponent('title')
       mainContainer = @rowSnippet.containers['main']
       mainContainer.append(titleSnippet)
       expect(mainContainer.first).to.equal(titleSnippet)
 
 
     it 'adds a snippet to the main column via snippet', ->
-      titleSnippet = test.getSnippet('title')
+      titleSnippet = test.getComponent('title')
       @rowSnippet.append('main', titleSnippet)
 
       mainContainer = @rowSnippet.containers['main']
@@ -170,7 +170,7 @@ describe 'ComponentTree with a multi-column row snippet', ->
 
 
     it 'the appended snippet has a parent snippet', ->
-      titleSnippet = test.getSnippet('title')
+      titleSnippet = test.getComponent('title')
       @rowSnippet.append('main', titleSnippet)
       expect( titleSnippet.getParent() ).to.equal(@rowSnippet)
 
@@ -187,11 +187,11 @@ describe 'ComponentTree with a multi-column row snippet', ->
     it 'visits the row snippet and its children', ->
       # add 2 snippets to main container
       for num in [0..2]
-        @rowSnippet.append('main', test.getSnippet('title'))
+        @rowSnippet.append('main', test.getComponent('title'))
 
       # add 3 snippets to sidebar container
       for num in [0..1]
-        @rowSnippet.append('sidebar', test.getSnippet('title'))
+        @rowSnippet.append('sidebar', test.getComponent('title'))
 
       visits = 0
       @componentTree.each ->
@@ -230,10 +230,10 @@ describe 'ComponentTree with three levels', ->
 
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
-    @row = test.getSnippet('row')
-    @rowInMain = test.getSnippet('row')
-    @title = test.getSnippet('title')
-    @text = test.getSnippet('text')
+    @row = test.getComponent('row')
+    @rowInMain = test.getComponent('row')
+    @title = test.getComponent('title')
+    @text = test.getComponent('text')
 
     @componentTree.append(@row)
     @row.append('main', @rowInMain)
@@ -270,7 +270,7 @@ describe 'ComponentTree with three snippets', ->
     { @componentTree } = getInstances('componentTree')
     @snippets = []
     for index in [0..2]
-      @snippets[index] = test.getSnippet('text')
+      @snippets[index] = test.getComponent('text')
       @componentTree.append(@snippets[index])
 
 

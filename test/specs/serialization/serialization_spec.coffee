@@ -8,14 +8,14 @@ describe 'Snippet Serialization', ->
   describe 'empty snippet', ->
 
     it 'gets saved', ->
-      json = test.getSnippet('title').toJson()
+      json = test.getComponent('title').toJson()
       expect(json.identifier).to.equal('test.title')
 
 
   describe 'title snippet', ->
 
     it 'saves the titles value', ->
-      title = test.getSnippet('title')
+      title = test.getComponent('title')
       title.set('title', 'This is it!')
       json = title.toJson()
       expect(json).to.deep.equal
@@ -28,7 +28,7 @@ describe 'Snippet Serialization', ->
   describe 'of styles', ->
 
     it 'saves all styles', ->
-      hero = test.getSnippet('hero')
+      hero = test.getComponent('hero')
       hero.setStyle('extra-space', 'extra-space')
       hero.setStyle('color', 'color--blue')
       json = hero.toJson()
@@ -48,7 +48,7 @@ describe 'Snippet Serialization', ->
           'text': 'secondTest'
         ]
 
-      hero = test.getSnippet('hero')
+      hero = test.getComponent('hero')
       hero.data(
         'center':
           'zoom': 12
@@ -78,14 +78,14 @@ describe 'ComponentTree Serialization', ->
 
 
   it 'saves a componentTree with one snippet', ->
-    @tree.append( test.getSnippet('title') )
+    @tree.append( test.getComponent('title') )
     json = @tree.toJson()
     expect(json.content[0].identifier).to.equal('test.title')
 
 
   it 'saves a componentTree with nested snippets', ->
-    row = test.getSnippet('row')
-    row.append('main', test.getSnippet('title'))
+    row = test.getComponent('row')
+    row.append('main', test.getComponent('title'))
     @tree.append(row)
     json = @tree.toJson()
     first = json.content[0]
@@ -261,8 +261,8 @@ describe 'Serialize and Deserialize', ->
   beforeEach ->
     { @design, componentTree } = getInstances('componentTree')
     @before = componentTree
-    @row = test.getSnippet('row')
-    @title = test.getSnippet('title')
+    @row = test.getComponent('row')
+    @title = test.getComponent('title')
     @title.set('title', 'What we have here is a failure to communicate')
     @row.append('sidebar', @title)
     @before.append(@row)

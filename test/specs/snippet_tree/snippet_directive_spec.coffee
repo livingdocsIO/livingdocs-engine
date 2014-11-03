@@ -2,7 +2,7 @@ describe 'Snippet Directive', ->
 
   describe 'snippet with inline image', ->
     beforeEach ->
-      @image = test.getSnippet('image')
+      @image = test.getComponent('image')
       @imgDirective = @image.directives.get('image')
 
 
@@ -69,7 +69,7 @@ describe 'Snippet Directive', ->
 
   describe 'snippet with background image', ->
     beforeEach ->
-      @cover = test.getSnippet('cover')
+      @cover = test.getComponent('cover')
       @imgDirective = @cover.directives.get('image')
 
 

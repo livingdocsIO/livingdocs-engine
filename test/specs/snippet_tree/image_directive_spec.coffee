@@ -5,7 +5,7 @@ describe 'ImageDirective', ->
   describe 'setImageService()', ->
 
     beforeEach ->
-      @imageSnippet = test.getSnippet('image')
+      @imageSnippet = test.getComponent('image')
       @directive = @imageSnippet.directives.get('image')
 
 

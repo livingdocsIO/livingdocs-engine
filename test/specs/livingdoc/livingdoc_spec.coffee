@@ -19,7 +19,7 @@ describe 'livingdoc', ->
       @doc.on 'change', ->
         done()
 
-      snippet = test.getSnippet('title')
+      snippet = test.getComponent('title')
       @componentTree.append(snippet)
 
 
@@ -33,7 +33,7 @@ describe 'livingdoc', ->
 
 
     it 'serializes a minimal livingdoc', ->
-      model = test.getSnippet('title')
+      model = test.getComponent('title')
       model.set('title', 'It Works')
       @componentTree.append(model)
       data = @doc.serialize()
@@ -47,7 +47,7 @@ describe 'livingdoc', ->
 
 
     it 'renders a minimal livingdoc', ->
-      model = test.getSnippet('title')
+      model = test.getComponent('title')
       model.set('title', 'It Works')
       @componentTree.append(model)
       expect(@doc.toHtml()).to.have.same.html """

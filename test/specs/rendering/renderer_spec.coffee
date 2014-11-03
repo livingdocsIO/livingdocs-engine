@@ -48,7 +48,7 @@ describe 'Renderer', ->
       @renderer.ready -> done()
 
     it 'insertes the already appended snippets of an inserted snippet', ->
-      container = test.getSnippet('container')
+      container = test.getComponent('container')
       title = test.createComponent('title', 'A')
       container.append(config.directives.container.defaultName, title)
       @componentTree.append(container)
@@ -128,12 +128,12 @@ describe 'Renderer', ->
     describe 'with three nested snippets', ->
 
       beforeEach ->
-        row = test.getSnippet('row')
+        row = test.getComponent('row')
         @componentTree.append(row)
-        @title = test.getSnippet('title')
+        @title = test.getComponent('title')
         @title.set('title', 'Title')
         row.append('main', @title)
-        @cover = test.getSnippet('cover')
+        @cover = test.getComponent('cover')
         @cover.set('title', 'Cover')
         @cover.set('uppertitle', 'Uppertitle')
         @cover.set('maintitle', 'Maintitle')

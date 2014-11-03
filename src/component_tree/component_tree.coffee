@@ -16,12 +16,12 @@ componentModelSerializer = require('./component_model_serializer')
 #
 # ### Example:
 #     - ComponentContainer (root)
-#       - Snippet 'Hero'
-#       - Snippet '2 Columns'
+#       - Component 'Hero'
+#       - Component '2 Columns'
 #         - ComponentContainer 'main'
-#           - Snippet 'Title'
+#           - Component 'Title'
 #         - ComponentContainer 'sidebar'
-#           - Snippet 'Info-Box''
+#           - Component 'Info-Box''
 #
 # ### Events:
 # The first set of ComponentTree Events are concerned with layout changes like
@@ -48,7 +48,7 @@ module.exports = class ComponentTree
   # Insert a component at the beginning.
   # @param: componentModel instance or component name e.g. 'title'
   prepend: (component) ->
-    component = @getSnippet(component)
+    component = @getComponent(component)
     @root.prepend(component) if component?
     this
 
@@ -56,12 +56,12 @@ module.exports = class ComponentTree
   # Insert component at the end.
   # @param: componentModel instance or component name e.g. 'title'
   append: (component) ->
-    component = @getSnippet(component)
+    component = @getComponent(component)
     @root.append(component) if component?
     this
 
 
-  getSnippet: (componentName) ->
+  getComponent: (componentName) ->
     if typeof componentName == 'string'
       @createModel(componentName)
     else
