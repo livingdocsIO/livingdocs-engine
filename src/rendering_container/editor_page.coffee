@@ -1,7 +1,7 @@
 config = require('../configuration/config')
 css = config.css
 DragBase = require('../interaction/drag_base')
-SnippetDrag = require('../interaction/snippet_drag')
+ComponentDrag = require('../interaction/component_drag')
 
 module.exports = class EditorPage
 
@@ -22,7 +22,7 @@ module.exports = class EditorPage
     return unless componentModel || componentView
     componentModel = componentView.model if componentView
 
-    snippetDrag = new SnippetDrag
+    componentDrag = new ComponentDrag
       componentModel: componentModel
       componentView: componentView
 
@@ -32,7 +32,7 @@ module.exports = class EditorPage
         delay: 400
         tolerance: 3
 
-    @dragBase.init(snippetDrag, event, config)
+    @dragBase.init(componentDrag, event, config)
 
 
   setWindow: ->

@@ -4,7 +4,7 @@ dom = require('../interaction/dom')
 Focus = require('../interaction/focus')
 EditableController = require('../interaction/editable_controller')
 DragBase = require('../interaction/drag_base')
-SnippetDrag = require('../interaction/snippet_drag')
+ComponentDrag = require('../interaction/component_drag')
 
 # An InteractivePage is a subclass of Page which allows for manipulation of the
 # rendered ComponentTree.
@@ -77,7 +77,7 @@ module.exports = class InteractivePage extends Page
     return unless componentModel || componentView
     componentModel = componentView.model if componentView
 
-    snippetDrag = new SnippetDrag
+    componentDrag = new ComponentDrag
       componentModel: componentModel
       componentView: componentView
 
@@ -87,7 +87,7 @@ module.exports = class InteractivePage extends Page
         delay: 400
         tolerance: 3
 
-    @dragBase.init(snippetDrag, event, config)
+    @dragBase.init(componentDrag, event, config)
 
 
   cancelDrag: ->

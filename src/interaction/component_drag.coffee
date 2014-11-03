@@ -3,7 +3,7 @@ isSupported = require('../modules/feature_detection/is_supported')
 config = require('../configuration/config')
 css = config.css
 
-module.exports = class SnippetDrag
+module.exports = class ComponentDrag
 
   wiggleSpace = 0
   startAndEndOffset = 0

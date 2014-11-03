@@ -214,15 +214,15 @@ describe 'ComponentTree with a multi-column row snippet', ->
   describe 'all()', ->
 
     it 'visits all snippets and containers', ->
-      visitedSnippets = 0
+      visitedComponents = 0
       visitedContainers = 0
       @componentTree.all (snippetOrContainer) ->
         if snippetOrContainer instanceof ComponentModel
-          visitedSnippets += 1
+          visitedComponents += 1
         else if snippetOrContainer instanceof ComponentContainer
           visitedContainers += 1
 
-      expect(visitedSnippets).to.equal(1)
+      expect(visitedComponents).to.equal(1)
       expect(visitedContainers).to.equal(3)
 
 
@@ -252,16 +252,16 @@ describe 'ComponentTree with three levels', ->
   describe 'each()', ->
 
     it 'visits all containers in the right order', ->
-      visitedSnippets = []
+      visitedComponents = []
       @componentTree.each (snippet) ->
-        visitedSnippets.push(snippet)
+        visitedComponents.push(snippet)
 
       # snippets should be traversed in order of appearance
-      expect(visitedSnippets.length).to.equal(4)
-      expect(visitedSnippets[0]).to.equal(@row)
-      expect(visitedSnippets[1]).to.equal(@rowInMain)
-      expect(visitedSnippets[2]).to.equal(@text)
-      expect(visitedSnippets[3]).to.equal(@title)
+      expect(visitedComponents.length).to.equal(4)
+      expect(visitedComponents[0]).to.equal(@row)
+      expect(visitedComponents[1]).to.equal(@rowInMain)
+      expect(visitedComponents[2]).to.equal(@text)
+      expect(visitedComponents[3]).to.equal(@title)
 
 
 describe 'ComponentTree with three snippets', ->
@@ -277,11 +277,11 @@ describe 'ComponentTree with three snippets', ->
   # regression test for https://github.com/upfrontIO/livingdocs-engine/issues/13
   it 'moving the last snippet one up does not currupt the componentTree', ->
     @snippets[2].up()
-    visitedSnippets = []
+    visitedComponents = []
     @componentTree.each (snippet) ->
-      visitedSnippets.push(snippet)
+      visitedComponents.push(snippet)
 
-    expect(visitedSnippets.length).to.equal(3)
-    expect(visitedSnippets[0]).to.equal(@snippets[0])
-    expect(visitedSnippets[1]).to.equal(@snippets[2])
-    expect(visitedSnippets[2]).to.equal(@snippets[1])
+    expect(visitedComponents.length).to.equal(3)
+    expect(visitedComponents[0]).to.equal(@snippets[0])
+    expect(visitedComponents[1]).to.equal(@snippets[2])
+    expect(visitedComponents[2]).to.equal(@snippets[1])
