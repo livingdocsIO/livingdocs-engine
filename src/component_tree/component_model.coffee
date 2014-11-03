@@ -14,7 +14,7 @@ DirectiveCollection = require('../template/directive_collection')
 #
 # Represents a node in a ComponentTree.
 # Every ComponentModel can have a parent (ComponentContainer),
-# siblings (other snippets) and multiple containers (ComponentContainers).
+# siblings (other components) and multiple containers (ComponentContainers).
 #
 # The containers are the parents of the child ComponentModels.
 # E.g. a grid row would have as many containers as it has
@@ -24,7 +24,7 @@ DirectiveCollection = require('../template/directive_collection')
 module.exports = class ComponentModel
 
   constructor: ({ @template, id } = {}) ->
-    assert @template, 'cannot instantiate snippet without template reference'
+    assert @template, 'cannot instantiate component without template reference'
 
     @initializeDirectives()
     @styles = {}
@@ -69,7 +69,7 @@ module.exports = class ComponentModel
   # ComponentTree operations
   # ----------------------
 
-  # Insert a snippet before this one
+  # Insert a component before this one
   before: (componentModel) ->
     if componentModel
       @parentContainer.insertBefore(this, componentModel)
@@ -78,7 +78,7 @@ module.exports = class ComponentModel
       @previous
 
 
-  # Insert a snippet after this one
+  # Insert a component after this one
   after: (componentModel) ->
     if componentModel
       @parentContainer.insertAfter(this, componentModel)
@@ -87,7 +87,7 @@ module.exports = class ComponentModel
       @next
 
 
-  # Append a snippet to a container of this snippet
+  # Append a component to a container of this component
   append: (containerName, componentModel) ->
     if arguments.length == 1
       componentModel = containerName
@@ -97,7 +97,7 @@ module.exports = class ComponentModel
     this
 
 
-  # Prepend a snippet to a container of this snippet
+  # Prepend a component to a container of this component
   prepend: (containerName, componentModel) ->
     if arguments.length == 1
       componentModel = containerName
@@ -107,19 +107,19 @@ module.exports = class ComponentModel
     this
 
 
-  # Move this snippet up (previous)
+  # Move this component up (previous)
   up: ->
     @parentContainer.up(this)
     this
 
 
-  # Move this snippet down (next)
+  # Move this component down (next)
   down: ->
     @parentContainer.down(this)
     this
 
 
-  # Remove this snippet from its container and ComponentTree
+  # Remove this component from its container and ComponentTree
   remove: ->
     @parentContainer.remove(this)
 
@@ -127,7 +127,7 @@ module.exports = class ComponentModel
   # ComponentTree Iterators
   # ---------------------
   #
-  # Navigate and query the componentTree relative to this snippet.
+  # Navigate and query the componentTree relative to this component.
 
   getParent: ->
      @parentContainer?.parentComponent
@@ -168,7 +168,7 @@ module.exports = class ComponentModel
         callback(componentContainer)
 
 
-  # return all descendant containers and snippets
+  # return all descendant containers and components
   allDescendants: (callback) ->
     @descendantsAndSelf (componentModel) =>
       callback(componentModel) if componentModel != this
@@ -203,7 +203,7 @@ module.exports = class ComponentModel
     @directives.count('image') > 0
 
 
-  # set the content data field of the snippet
+  # set the content data field of the component
   setContent: (name, value) ->
     if not value
       if @content[name]

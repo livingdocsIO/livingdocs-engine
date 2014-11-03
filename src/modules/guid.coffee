@@ -6,7 +6,7 @@ module.exports = do ->
   # Guarantees a unique id in this runtime.
   # Across runtimes its likely but not guaranteed to be unique
   # Use the user prefix to almost guarantee uniqueness,
-  # assuming the same user cannot generate snippets in
+  # assuming the same user cannot generate components in
   # multiple runtimes at the same time (and that clocks are in sync)
   next: (user = 'doc') ->
 

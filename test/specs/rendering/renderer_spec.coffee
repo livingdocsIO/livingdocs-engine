@@ -47,7 +47,7 @@ describe 'Renderer', ->
       { @componentTree, @page, @renderer } = getInstances('page', 'renderer')
       @renderer.ready -> done()
 
-    it 'insertes the already appended snippets of an inserted snippet', ->
+    it 'insertes the already appended components of an inserted snippet', ->
       container = test.getComponent('container')
       title = test.createComponent('title', 'A')
       container.append(config.directives.container.defaultName, title)
@@ -125,7 +125,7 @@ describe 'Renderer', ->
             </section>"""
 
 
-    describe 'with three nested snippets', ->
+    describe 'with three nested components', ->
 
       beforeEach ->
         row = test.getComponent('row')

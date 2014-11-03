@@ -4,24 +4,24 @@
 module.exports = class ComponentArray
 
 
-  # @param snippets: array of components
-  constructor: (@snippets) ->
-    @snippets = [] unless @snippets?
+  # @param components: array of components
+  constructor: (@components) ->
+    @components ?= []
     @createPseudoArray()
 
 
   createPseudoArray: () ->
-    for result, index in @snippets
+    for result, index in @components
       @[index] = result
 
-    @length = @snippets.length
-    if @snippets.length
+    @length = @components.length
+    if @components.length
       @first = @[0]
-      @last = @[@snippets.length - 1]
+      @last = @[@components.length - 1]
 
 
   each: (callback) ->
-    for component in @snippets
+    for component in @components
       callback(component)
 
     this

@@ -21,5 +21,5 @@ module.exports =
       when 'html'
         HtmlDirective
       else
-        assert false, "Unsupported snippet directive: #{ directiveType }"
+        assert false, "Unsupported component directive: #{ directiveType }"
 
