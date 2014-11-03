@@ -122,7 +122,7 @@ module.exports = do ->
 
 
   getComponentTarget: (elem, { top, left, position }) ->
-    target: 'snippet'
+    target: 'component'
     componentView: @getComponentView(elem)
     position: position || @getPositionOnComponent(elem, { top, left })
 

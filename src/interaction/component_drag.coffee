@@ -86,7 +86,7 @@ module.exports = class ComponentDrag
 
   markDropPosition: (target) ->
     switch target.target
-      when 'snippet'
+      when 'component'
         @componentPosition(target)
         @removeContainerHighlight()
       when 'container'
@@ -283,7 +283,7 @@ module.exports = class ComponentDrag
   # Move the component after a successful drop
   moveToTarget: (target) ->
     switch target.target
-      when 'snippet'
+      when 'component'
         componentView = target.componentView
         if target.position == 'before'
           componentView.model.before(@componentModel)
