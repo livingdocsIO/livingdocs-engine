@@ -41,14 +41,14 @@ module.exports = config = do ->
     section: 'doc-section'
 
     # snippet classes
-    snippet: 'doc-snippet'
+    snippet: 'doc-component'
     editable: 'doc-editable'
     noPlaceholder: 'doc-no-placeholder'
     emptyImage: 'doc-image-empty'
     interface: 'doc-ui'
 
     # highlight classes
-    snippetHighlight: 'doc-snippet-highlight'
+    snippetHighlight: 'doc-component-highlight'
     containerHighlight: 'doc-container-highlight'
 
     # drag & drop
