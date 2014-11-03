@@ -25,7 +25,7 @@ module.exports = class InteractivePage extends Page
     @imageClick = $.Callbacks() # (componentView, fieldName, event) ->
     @htmlElementClick = $.Callbacks() # (componentView, fieldName, event) ->
     @snippetWillBeDragged = $.Callbacks() # (componentModel) ->
-    @snippetWasDropped = $.Callbacks() # (componentModel) ->
+    @componentWasDropped = $.Callbacks() # (componentModel) ->
     @dragBase = new DragBase(this)
     @focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
     @focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )

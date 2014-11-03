@@ -13,7 +13,7 @@ module.exports = class EditorPage
     @editableController =
       disableAll: ->
       reenableAll: ->
-    @snippetWasDropped =
+    @componentWasDropped =
       fire: ->
     @blurFocusedElement = ->
 

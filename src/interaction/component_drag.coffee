@@ -31,7 +31,7 @@ module.exports = class ComponentDrag
       .append(@$placeholder)
       .css('cursor', 'pointer')
 
-    # mark dragged snippet
+    # mark dragged component
     @$view.addClass(css.dragged) if @$view?
 
     # position the placeholder
@@ -87,7 +87,7 @@ module.exports = class ComponentDrag
   markDropPosition: (target) ->
     switch target.target
       when 'snippet'
-        @snippetPosition(target)
+        @componentPosition(target)
         @removeContainerHighlight()
       when 'container'
         @showMarkerAtBeginningOfContainer(target.node)
@@ -97,16 +97,16 @@ module.exports = class ComponentDrag
         @highlighContainer($(target.node))
 
 
-  snippetPosition: (target) ->
+  componentPosition: (target) ->
     if target.position == 'before'
       before = target.componentView.prev()
 
       if before?
         if before.model == @componentModel
           target.position = 'after'
-          return @snippetPosition(target)
+          return @componentPosition(target)
 
-        @showMarkerBetweenSnippets(before, target.componentView)
+        @showMarkerBetweenComponents(before, target.componentView)
       else
         @showMarkerAtBeginningOfContainer(target.componentView.$elem[0].parentNode)
     else
@@ -114,14 +114,14 @@ module.exports = class ComponentDrag
       if next?
         if next.model == @componentModel
           target.position = 'before'
-          return @snippetPosition(target)
+          return @componentPosition(target)
 
-        @showMarkerBetweenSnippets(target.componentView, next)
+        @showMarkerBetweenComponents(target.componentView, next)
       else
         @showMarkerAtEndOfContainer(target.componentView.$elem[0].parentNode)
 
 
-  showMarkerBetweenSnippets: (viewA, viewB) ->
+  showMarkerBetweenComponents: (viewA, viewB) ->
     boxA = dom.getAbsoluteBoundingClientRect(viewA.$elem[0])
     boxB = dom.getAbsoluteBoundingClientRect(viewB.$elem[0])
 
@@ -275,12 +275,12 @@ module.exports = class ComponentDrag
   drop: ->
     if @target?
       @moveToTarget(@target)
-      @page.snippetWasDropped.fire(@componentModel)
+      @page.componentWasDropped.fire(@componentModel)
     else
       #consider: maybe add a 'drop failed' effect
 
 
-  # Move the snippet after a successful drop
+  # Move the component after a successful drop
   moveToTarget: (target) ->
     switch target.target
       when 'snippet'
