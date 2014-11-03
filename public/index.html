@@ -67,10 +67,10 @@
 
         function draggableSnippet (document, id, $elem) {
           $elem.on('mousedown', function(event) {
-            var newSnippet = document.model.createModel(id);
+            var newComponent = document.model.createModel(id);
 
             doc.startDrag({
-              snippetModel: newSnippet,
+              componentModel: newComponent,
               event: event,
               config: {
                 preventDefault: true,
@@ -83,10 +83,10 @@
 
         function addDefaultContent (document) {
           document.model.append('mainAndSidebar');
-          var snippet = document.model.createComponent('hero');
-          document.model.first().append('main', snippet);
+          var component = document.model.createComponent('hero');
+          document.model.first().append('main', component);
           var text = document.model.createComponent('text');
-          snippet.after(text);
+          component.after(text);
         }
       });
     </script>
