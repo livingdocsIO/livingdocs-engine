@@ -1,5 +1,5 @@
 ComponentTree = require('../../../src/snippet_tree/snippet_tree')
-ComponentModel = require('../../../src/snippet_tree/snippet_model')
+ComponentModel = require('../../../src/snippet_tree/component_model')
 SnippetContainer = require('../../../src/snippet_tree/snippet_container')
 
 describe 'ComponentTree', ->

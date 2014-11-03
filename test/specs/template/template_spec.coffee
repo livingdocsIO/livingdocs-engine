@@ -1,5 +1,5 @@
 Template = require('../../../src/template/template')
-ComponentModel = require('../../../src/snippet_tree/snippet_model')
+ComponentModel = require('../../../src/snippet_tree/component_model')
 SnippetContainer = require('../../../src/snippet_tree/snippet_container')
 SnippetView = require('../../../src/rendering/snippet_view')
 css = config.css
