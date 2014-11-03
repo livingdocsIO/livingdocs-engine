@@ -1,6 +1,6 @@
 Template = require('../../../src/template/template')
 ComponentModel = require('../../../src/component_tree/component_model')
-ComponentContainer = require('../../../src/component_tree/snippet_container')
+ComponentContainer = require('../../../src/component_tree/component_container')
 ComponentView = require('../../../src/rendering/component_view')
 css = config.css
 

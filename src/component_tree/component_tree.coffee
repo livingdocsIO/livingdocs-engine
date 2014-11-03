@@ -1,5 +1,5 @@
 assert = require('../modules/logging/assert')
-ComponentContainer = require('./snippet_container')
+ComponentContainer = require('./component_container')
 SnippetArray = require('./snippet_array')
 ComponentModel = require('./component_model')
 componentModelSerializer = require('./component_model_serializer')

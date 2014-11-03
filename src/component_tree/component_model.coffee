@@ -1,6 +1,6 @@
 deepEqual = require('deep-equal')
 config = require('../configuration/config')
-ComponentContainer = require('./snippet_container')
+ComponentContainer = require('./component_container')
 guid = require('../modules/guid')
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
