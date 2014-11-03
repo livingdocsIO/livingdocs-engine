@@ -18,7 +18,7 @@ module.exports = do ->
 
 
   components: [
-      id:   'hero'
+      name:   'hero'
       title: 'Hero'
       properties: ['extra-space', 'capitalized', 'color']
       html:
@@ -29,29 +29,29 @@ module.exports = do ->
           </div>
         """
     ,
-      id: 'title'
+      name: 'title'
       title: 'Title'
       properties: ['capitalized', 'color']
       html: """<h1 #{ editableAttr }="title"></h1>"""
     ,
-      id: 'subtitle'
+      name: 'subtitle'
       properties: ['color']
       title: 'Subtitle with a default value'
       html: """<h2 #{ editableAttr }="title">Who's your Caddy?</h2>"""
     ,
-      id: 'text'
+      name: 'text'
       title: 'Paragraph'
       html: """<p #{ editableAttr }="text"></p>"""
     ,
-      id: 'image'
+      name: 'image'
       title: 'Image'
       html: """<img #{ imageAttr }="image" src=""/>"""
     ,
-      id: 'background-image'
+      name: 'background-image'
       title: 'Background Image'
       html: """<div #{ imageAttr }="image"></div>"""
     ,
-      id: 'cover'
+      name: 'cover'
       title: 'Cover'
       properties: ['capitalized']
       html:
@@ -65,7 +65,7 @@ module.exports = do ->
         </div>
         """
     ,
-      id: 'row'
+      name: 'row'
       title: 'Row with two columns'
       html:
         """
@@ -75,7 +75,7 @@ module.exports = do ->
         </div>
         """
     ,
-      id: 'container'
+      name: 'container'
       title: 'Container with no container name'
       html:
         """
@@ -84,7 +84,7 @@ module.exports = do ->
         </div>
         """
     ,
-      id: 'stuffedContainer'
+      name: 'stuffedContainer'
       title: 'Container with some stuff in it'
       html:
         """
@@ -98,7 +98,7 @@ module.exports = do ->
         </div>
         """
     ,
-      id: 'html'
+      name: 'html'
       title: 'Freeform html'
       html:
         """

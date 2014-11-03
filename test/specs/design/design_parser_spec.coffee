@@ -13,7 +13,7 @@ describe 'designParser', ->
           name: 'minimal'
           version: '0.0.1'
         components: [
-          id: 'title'
+          name: 'title'
           html: '<h1 doc-editable="title"></h1>'
         ]
 
@@ -61,11 +61,11 @@ describe 'designParser', ->
             value: 'extra-space'
 
         components: [
-          id: 'title'
+          name: 'title'
           html: '<h1 doc-editable="title"></h1>'
           properties: ['position', 'extra-space']
         ,
-          id: 'paragraph'
+          name: 'paragraph'
           html: '<p doc-editable="title"></p>'
         ]
 
@@ -126,7 +126,7 @@ describe 'designParser', ->
           name: 'minimal'
           version: '0.0.1'
         components: [
-          id: 'title'
+          name: 'title'
         ]
 
       expect( -> designParser.parse(json) )
@@ -139,7 +139,7 @@ describe 'designParser', ->
           name: 'minimal'
           version: '0.0.1'
         components: [
-          id: 'title'
+          name: 'title'
           html: '<h1 doc-editable="title"></h1>'
         ]
         defaultComponents:

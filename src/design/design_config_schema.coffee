@@ -47,10 +47,11 @@ validator.add 'design',
 
 
 validator.add 'component',
-  id: 'string'
+  name: 'string'
   title: 'string, optional'
   html: 'string'
   properties: 'array of string, optional'
+  __additionalProperty: (key, value) -> false
 
 
 # todo: rename type and use type to identify the componentProperty type like cssClass
