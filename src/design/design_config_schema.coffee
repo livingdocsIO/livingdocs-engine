@@ -1,3 +1,4 @@
+config = require('../configuration/config')
 Scheme = require('../modules/object_schema/scheme')
 module.exports = validator = new Scheme()
 
@@ -9,7 +10,8 @@ validator.add 'styleType', (value) ->
 
 
 validator.add 'semVer', (value) ->
-  /\d\.\d\.\d/.test(value)
+  config.semVer.test(value)
+
 
 # cssClassModificator properties need one 'Default' option
 # with an undefined value. Otherwise users cannot reset the
