@@ -70,14 +70,14 @@ module.exports = do ->
 
     model.data(json.data) if json.data
 
-    for containerName, snippetArray of json.containers
+    for containerName, componentArray of json.containers
       assert model.containers.hasOwnProperty(containerName),
         "error while deserializing snippet: unknown container #{ containerName }"
 
-      if snippetArray
-        assert $.isArray(snippetArray),
+      if componentArray
+        assert $.isArray(componentArray),
           "error while deserializing snippet: container is not array #{ containerName }"
-        for child in snippetArray
+        for child in componentArray
           model.append( containerName, @fromJson(child, design) )
 
     model

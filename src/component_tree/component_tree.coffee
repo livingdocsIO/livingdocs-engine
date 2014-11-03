@@ -1,6 +1,6 @@
 assert = require('../modules/logging/assert')
 ComponentContainer = require('./component_container')
-SnippetArray = require('./snippet_array')
+ComponentArray = require('./component_array')
 ComponentModel = require('./component_model')
 componentModelSerializer = require('./component_model_serializer')
 
@@ -125,9 +125,9 @@ module.exports = class ComponentTree
         if snippet.componentName == search
           res.push(snippet)
 
-      new SnippetArray(res)
+      new ComponentArray(res)
     else
-      new SnippetArray()
+      new ComponentArray()
 
 
   detach: ->
