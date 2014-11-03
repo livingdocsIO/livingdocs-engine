@@ -1,7 +1,7 @@
 Template = require('../../../src/template/template')
 ComponentModel = require('../../../src/component_tree/component_model')
 SnippetContainer = require('../../../src/component_tree/snippet_container')
-ComponentView = require('../../../src/rendering/snippet_view')
+ComponentView = require('../../../src/rendering/component_view')
 css = config.css
 
 describe 'Title Template', ->

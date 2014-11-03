@@ -9,7 +9,7 @@ directiveCompiler = require('./directive_compiler')
 directiveFinder = require('./directive_finder')
 
 ComponentModel = require('../component_tree/component_model')
-ComponentView = require('../rendering/snippet_view')
+ComponentView = require('../rendering/component_view')
 
 sortByName = (a, b) ->
   if (a.name > b.name)
