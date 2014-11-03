@@ -1,5 +1,5 @@
 SnippetTree = require('../../../src/snippet_tree/snippet_tree')
-SnippetModel = require('../../../src/snippet_tree/snippet_model')
+ComponentModel = require('../../../src/snippet_tree/snippet_model')
 SnippetContainer = require('../../../src/snippet_tree/snippet_container')
 
 describe 'SnippetTree', ->
@@ -217,7 +217,7 @@ describe 'SnippetTree with a multi-column row snippet', ->
       visitedSnippets = 0
       visitedContainers = 0
       @componentTree.all (snippetOrContainer) ->
-        if snippetOrContainer instanceof SnippetModel
+        if snippetOrContainer instanceof ComponentModel
           visitedSnippets += 1
         else if snippetOrContainer instanceof SnippetContainer
           visitedContainers += 1

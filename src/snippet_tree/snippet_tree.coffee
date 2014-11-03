@@ -1,7 +1,7 @@
 assert = require('../modules/logging/assert')
 SnippetContainer = require('./snippet_container')
 SnippetArray = require('./snippet_array')
-SnippetModel = require('./snippet_model')
+ComponentModel = require('./snippet_model')
 componentModelSerializer = require('./snippet_model_serializer')
 
 # SnippetTree

@@ -8,7 +8,7 @@ DirectiveCollection = require('./directive_collection')
 directiveCompiler = require('./directive_compiler')
 directiveFinder = require('./directive_finder')
 
-SnippetModel = require('../snippet_tree/snippet_model')
+ComponentModel = require('../snippet_tree/snippet_model')
 SnippetView = require('../rendering/snippet_view')
 
 sortByName = (a, b) ->
@@ -21,7 +21,7 @@ sortByName = (a, b) ->
 
 # Template
 # --------
-# Parses snippet templates and creates SnippetModels and SnippetViews.
+# Parses snippet templates and creates ComponentModels and SnippetViews.
 module.exports = class Template
 
 
@@ -43,9 +43,9 @@ module.exports = class Template
     @identifier = "#{ design.name }.#{ @name }"
 
 
-  # create a new SnippetModel instance from this template
+  # create a new ComponentModel instance from this template
   createModel: () ->
-    new SnippetModel(template: this)
+    new ComponentModel(template: this)
 
 
   createView: (componentModel, isReadOnly) ->

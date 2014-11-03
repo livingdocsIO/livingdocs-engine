@@ -7,21 +7,21 @@ assert = require('../modules/logging/assert')
 directiveFactory = require('./snippet_directive_factory')
 DirectiveCollection = require('../template/directive_collection')
 
-# SnippetModel
+# ComponentModel
 # ------------
-# Each SnippetModel has a template which allows to generate a snippetView
+# Each ComponentModel has a template which allows to generate a snippetView
 # from a componentModel
 #
 # Represents a node in a SnippetTree.
-# Every SnippetModel can have a parent (SnippetContainer),
+# Every ComponentModel can have a parent (SnippetContainer),
 # siblings (other snippets) and multiple containers (SnippetContainers).
 #
-# The containers are the parents of the child SnippetModels.
+# The containers are the parents of the child ComponentModels.
 # E.g. a grid row would have as many containers as it has
 # columns
 #
 # # @prop parentContainer: parent SnippetContainer
-module.exports = class SnippetModel
+module.exports = class ComponentModel
 
   constructor: ({ @template, id } = {}) ->
     assert @template, 'cannot instantiate snippet without template reference'
@@ -52,7 +52,7 @@ module.exports = class SnippetModel
           @content ||= {}
           @content[directive.name] = undefined
         else
-          log.error "Template directive type '#{ directive.type }' not implemented in SnippetModel"
+          log.error "Template directive type '#{ directive.type }' not implemented in ComponentModel"
 
 
   # Create a directive for 'editable', 'image', 'html' template directives
@@ -283,9 +283,9 @@ module.exports = class SnippetModel
   setStyle: (name, value) ->
     style = @template.styles[name]
     if not style
-      log.warn "Unknown style '#{ name }' in SnippetModel #{ @componentName }"
+      log.warn "Unknown style '#{ name }' in ComponentModel #{ @componentName }"
     else if not style.validateValue(value)
-      log.warn "Invalid value '#{ value }' for style '#{ name }' in SnippetModel #{ @componentName }"
+      log.warn "Invalid value '#{ value }' for style '#{ name }' in ComponentModel #{ @componentName }"
     else
       if @styles[name] != value
         @styles[name] = value
@@ -296,23 +296,23 @@ module.exports = class SnippetModel
   # @deprecated
   # Getter and Setter in one.
   style: (name, value) ->
-    console.log("SnippetModel#style() is deprecated. Please use #getStyle() and #setStyle().")
+    console.log("ComponentModel#style() is deprecated. Please use #getStyle() and #setStyle().")
     if arguments.length == 1
       @styles[name]
     else
       @setStyle(name, value)
 
 
-  # SnippetModel Operations
+  # ComponentModel Operations
   # -----------------------
 
   copy: ->
-    log.warn("SnippetModel#copy() is not implemented yet.")
+    log.warn("ComponentModel#copy() is not implemented yet.")
 
     # serializing/deserializing should work but needs to get some tests first
     # json = @toJson()
     # json.id = guid.next()
-    # SnippetModel.fromJson(json)
+    # ComponentModel.fromJson(json)
 
 
   copyWithoutContent: ->

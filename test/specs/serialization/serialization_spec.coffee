@@ -1,5 +1,5 @@
 SnippetTree = require('../../../src/snippet_tree/snippet_tree')
-SnippetModel = require('../../../src/snippet_tree/snippet_model')
+ComponentModel = require('../../../src/snippet_tree/snippet_model')
 componentModelSerializer = require('../../../src/snippet_tree/snippet_model_serializer')
 base64Image = require('../../support/test_base64_image')
 
@@ -136,14 +136,14 @@ describe 'Deserialization', ->
 
     it 'returns a snippet instance', ->
       snippet = componentModelSerializer.fromJson(@json, @design)
-      expect(snippet).to.be.an.instanceof(SnippetModel)
+      expect(snippet).to.be.an.instanceof(ComponentModel)
       expect(snippet.get('title')).to.equal('Baby Geniuses')
 
 
     it 'works with an identifier without a namespace', ->
       @json.identifier = 'title'
       snippet = componentModelSerializer.fromJson(@json, @design)
-      expect(snippet).to.be.an.instanceof(SnippetModel)
+      expect(snippet).to.be.an.instanceof(ComponentModel)
 
 
   describe 'of a snippet with styles', ->

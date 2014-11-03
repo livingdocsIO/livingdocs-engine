@@ -10,7 +10,7 @@ assert = require('../modules/logging/assert')
 #
 # @prop first: first snippet in the container
 # @prop last: last snippet in the container
-# @prop parentSnippet: parent SnippetModel
+# @prop parentSnippet: parent ComponentModel
 module.exports = class SnippetContainer
 
 

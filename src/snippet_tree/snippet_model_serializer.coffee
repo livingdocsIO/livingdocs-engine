@@ -3,7 +3,7 @@ config = require('../configuration/config')
 guid = require('../modules/guid')
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
-SnippetModel = require('./snippet_model')
+ComponentModel = require('./snippet_model')
 serialization = require('../modules/serialization')
 
 module.exports = do ->
@@ -11,9 +11,9 @@ module.exports = do ->
   # Public Methods
   # --------------
 
-  # Serialize a SnippetModel
+  # Serialize a ComponentModel
   #
-  # Extends the prototype of SnippetModel
+  # Extends the prototype of ComponentModel
   #
   # Example Result:
   # id: 'akk7hjuue2'
@@ -22,7 +22,7 @@ module.exports = do ->
   # styles: { ... }
   # data: { ... }
   # containers: { ... }
-  SnippetModel::toJson = (snippet) ->
+  ComponentModel::toJson = (snippet) ->
     snippet ?= this
 
     json =
@@ -52,7 +52,7 @@ module.exports = do ->
     assert template,
       "error while deserializing snippet: unknown template identifier '#{ json.identifier }'"
 
-    model = new SnippetModel({ template, id: json.id })
+    model = new ComponentModel({ template, id: json.id })
 
     for name, value of json.content
       assert model.content.hasOwnProperty(name),

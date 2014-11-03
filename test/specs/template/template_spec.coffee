@@ -1,5 +1,5 @@
 Template = require('../../../src/template/template')
-SnippetModel = require('../../../src/snippet_tree/snippet_model')
+ComponentModel = require('../../../src/snippet_tree/snippet_model')
 SnippetContainer = require('../../../src/snippet_tree/snippet_container')
 SnippetView = require('../../../src/rendering/snippet_view')
 css = config.css
@@ -33,9 +33,9 @@ describe 'Title Template', ->
 
   describe '#createModel()', ->
 
-    it 'returns a SnippetModel', ->
+    it 'returns a ComponentModel', ->
       model = template.createModel()
-      expect(model instanceof SnippetModel).to.equal(true)
+      expect(model instanceof ComponentModel).to.equal(true)
 
 
   describe '#createView()', ->

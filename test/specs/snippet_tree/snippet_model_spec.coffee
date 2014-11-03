@@ -100,7 +100,7 @@ describe 'Image snippet', ->
     expect(@image.get('image')).to.equal('http://www.lolcats.com/images/u/12/24/lolcatsdotcompromdate.jpg')
 
 
-describe 'Hero SnippetModel#style', ->
+describe 'Hero ComponentModel#style', ->
 
   beforeEach ->
     @hero = test.getSnippet('hero')
