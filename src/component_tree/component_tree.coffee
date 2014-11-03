@@ -146,8 +146,8 @@ module.exports = class ComponentTree
 
   #   # traverse
   #   parents = parents.push(snippet)
-  #   for name, snippetContainer of snippet.containers
-  #     snippet = snippetContainer.first
+  #   for name, componentContainer of snippet.containers
+  #     snippet = componentContainer.first
 
   #     while (snippet)
   #       @eachWithParents(snippet, parents)
@@ -168,9 +168,9 @@ module.exports = class ComponentTree
       addLine("- #{ template.label } (#{ template.name })", indentation)
 
       # traverse children
-      for name, snippetContainer of snippet.containers
+      for name, componentContainer of snippet.containers
         addLine("#{ name }:", indentation + 2)
-        walker(snippetContainer.first, indentation + 4) if snippetContainer.first
+        walker(componentContainer.first, indentation + 4) if componentContainer.first
 
       # traverse siblings
       walker(snippet.next, indentation) if snippet.next
@@ -182,7 +182,7 @@ module.exports = class ComponentTree
   # Tree Change Events
   # ------------------
   # Raise events for Add, Remove and Move of snippets
-  # These functions should only be called by snippetContainers
+  # These functions should only be called by componentContainers
 
   attachingSnippet: (snippet, attachSnippetFunc) ->
     if snippet.componentTree == this
@@ -192,7 +192,7 @@ module.exports = class ComponentTree
     else
       if snippet.componentTree?
         # remove from other snippet tree
-        snippet.snippetContainer.detachSnippet(snippet)
+        snippet.componentContainer.detachSnippet(snippet)
 
       snippet.descendantsAndSelf (descendant) =>
         descendant.componentTree = this
@@ -252,9 +252,9 @@ module.exports = class ComponentTree
       snippetData = snippetToData(snippet, level, dataObj)
 
       # traverse children
-      for name, snippetContainer of snippet.containers
-        containerArray = snippetData.containers[snippetContainer.name] = []
-        walker(snippetContainer.first, level + 1, containerArray) if snippetContainer.first
+      for name, componentContainer of snippet.containers
+        containerArray = snippetData.containers[componentContainer.name] = []
+        walker(componentContainer.first, level + 1, containerArray) if componentContainer.first
 
       # traverse siblings
       walker(snippet.next, level, dataObj) if snippet.next

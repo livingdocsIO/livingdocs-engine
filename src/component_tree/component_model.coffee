@@ -140,16 +140,16 @@ module.exports = class ComponentModel
 
 
   children: (callback) ->
-    for name, snippetContainer of @containers
-      componentModel = snippetContainer.first
+    for name, componentContainer of @containers
+      componentModel = componentContainer.first
       while (componentModel)
         callback(componentModel)
         componentModel = componentModel.next
 
 
   descendants: (callback) ->
-    for name, snippetContainer of @containers
-      componentModel = snippetContainer.first
+    for name, componentContainer of @containers
+      componentModel = componentContainer.first
       while (componentModel)
         callback(componentModel)
         componentModel.descendants(callback)
@@ -164,16 +164,16 @@ module.exports = class ComponentModel
   # return all descendant containers (including those of this componentModel)
   descendantContainers: (callback) ->
     @descendantsAndSelf (componentModel) ->
-      for name, snippetContainer of componentModel.containers
-        callback(snippetContainer)
+      for name, componentContainer of componentModel.containers
+        callback(componentContainer)
 
 
   # return all descendant containers and snippets
   allDescendants: (callback) ->
     @descendantsAndSelf (componentModel) =>
       callback(componentModel) if componentModel != this
-      for name, snippetContainer of componentModel.containers
-        callback(snippetContainer)
+      for name, componentContainer of componentModel.containers
+        callback(componentContainer)
 
 
   childrenAndSelf: (callback) ->

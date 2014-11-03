@@ -123,7 +123,7 @@ describe 'ComponentTree with a single-column row snippet', ->
 
   describe 'append()', ->
 
-    it 'adds a snippet to the single column via the snippetContainer', ->
+    it 'adds a snippet to the single column via the componentContainer', ->
       titleSnippet = test.getSnippet('title')
       mainContainer = @container.containers[@defaultName]
       mainContainer.append(titleSnippet)
@@ -154,7 +154,7 @@ describe 'ComponentTree with a multi-column row snippet', ->
 
   describe 'append()', ->
 
-    it 'adds a snippet to the main column via the snippetContainer', ->
+    it 'adds a snippet to the main column via the componentContainer', ->
       titleSnippet = test.getSnippet('title')
       mainContainer = @rowSnippet.containers['main']
       mainContainer.append(titleSnippet)

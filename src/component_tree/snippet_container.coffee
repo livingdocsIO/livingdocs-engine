@@ -5,7 +5,7 @@ assert = require('../modules/logging/assert')
 # A SnippetContainer contains and manages a linked list
 # of snippets.
 #
-# The snippetContainer is responsible for keeping its componentTree
+# The componentContainer is responsible for keeping its componentTree
 # informed about changes (only if they are attached to one).
 #
 # @prop first: first snippet in the container
@@ -89,8 +89,8 @@ module.exports = class SnippetContainer
   eachContainer: (callback) ->
     callback(this)
     @each (snippet) ->
-      for name, snippetContainer of snippet.containers
-        callback(snippetContainer)
+      for name, componentContainer of snippet.containers
+        callback(componentContainer)
 
 
   # Traverse all snippets and containers
@@ -98,8 +98,8 @@ module.exports = class SnippetContainer
     callback(this)
     @each (snippet) ->
       callback(snippet)
-      for name, snippetContainer of snippet.containers
-        callback(snippetContainer)
+      for name, componentContainer of snippet.containers
+        callback(componentContainer)
 
 
   remove: (snippet) ->
