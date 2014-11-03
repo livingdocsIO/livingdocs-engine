@@ -2,15 +2,15 @@ dom = require('./dom')
 
 # Component Focus
 # ---------------
-# Manage the snippet or editable that is currently focused
+# Manage the component or editable that is currently focused
 module.exports = class Focus
 
   constructor: ->
     @editableNode = undefined
     @componentView = undefined
 
-    @snippetFocus = $.Callbacks()
-    @snippetBlur = $.Callbacks()
+    @componentFocus = $.Callbacks()
+    @componentBlur = $.Callbacks()
 
 
   setFocus: (componentView, editableNode) ->
@@ -22,7 +22,7 @@ module.exports = class Focus
       @resetComponentView()
       if componentView
         @componentView = componentView
-        @snippetFocus.fire(@componentView)
+        @componentFocus.fire(@componentView)
 
 
   # call after browser focus change
@@ -39,7 +39,7 @@ module.exports = class Focus
 
 
   # call after click
-  snippetFocused: (componentView) ->
+  componentFocused: (componentView) ->
     if @componentView != componentView
       @setFocus(componentView, undefined)
 
@@ -62,6 +62,6 @@ module.exports = class Focus
     if @componentView
       previous = @componentView
       @componentView = undefined
-      @snippetBlur.fire(previous)
+      @componentBlur.fire(previous)
 
 

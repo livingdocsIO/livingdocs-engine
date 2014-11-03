@@ -27,8 +27,8 @@ module.exports = class InteractivePage extends Page
     @snippetWillBeDragged = $.Callbacks() # (componentModel) ->
     @componentWasDropped = $.Callbacks() # (componentModel) ->
     @dragBase = new DragBase(this)
-    @focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
-    @focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )
+    @focus.componentFocus.add( $.proxy(@afterSnippetFocused, this) )
+    @focus.componentBlur.add( $.proxy(@afterSnippetBlurred, this) )
     @beforeInteractivePageReady()
     @$document
       .on('mousedown.livingdocs', $.proxy(@mousedown, this))
@@ -65,7 +65,7 @@ module.exports = class InteractivePage extends Page
     # This is called in mousedown since editables get focus on mousedown
     # and only before the editables clear their placeholder can we safely
     # identify where the user has clicked.
-    @handleClickedSnippet(event, componentView)
+    @handleClickedComponent(event, componentView)
 
     if componentView
       @startDrag
@@ -94,9 +94,9 @@ module.exports = class InteractivePage extends Page
     @dragBase.cancel()
 
 
-  handleClickedSnippet: (event, componentView) ->
+  handleClickedComponent: (event, componentView) ->
     if componentView
-      @focus.snippetFocused(componentView)
+      @focus.componentFocused(componentView)
 
       nodeContext = dom.findNodeContext(event.target)
       if nodeContext

@@ -18,7 +18,7 @@ describe 'Focus', ->
 
 
     it 'focuses a snippet view', ->
-      @focus.snippetFocused(@componentView)
+      @focus.componentFocused(@componentView)
       expect(@focus.componentView).to.equal(@componentView)
       expect(@focus.editableNode).to.be.undefined
 
@@ -49,32 +49,32 @@ describe 'Focus', ->
       @componentView = test.getTemplate('title').createView()
 
 
-    it 'fires snippetFocus()', (done) ->
-      @focus.snippetFocus.add (componentView) =>
+    it 'fires componentFocus()', (done) ->
+      @focus.componentFocus.add (componentView) =>
         expect(componentView).to.equal(@componentView)
         done()
 
-      @focus.snippetFocused(@componentView)
+      @focus.componentFocused(@componentView)
 
 
-    it 'does not fire snippetFocus() a second time for the same snippet', ->
-      eventSpy = sinon.spy(@focus.snippetFocus, 'fire')
-      @focus.snippetFocused(@componentView)
-      @focus.snippetFocused(@componentView)
+    it 'does not fire componentFocus() a second time for the same snippet', ->
+      eventSpy = sinon.spy(@focus.componentFocus, 'fire')
+      @focus.componentFocused(@componentView)
+      @focus.componentFocused(@componentView)
       expect(eventSpy.callCount).to.equal(1)
 
 
-    it 'fires snippetBlur()', (done) ->
-      @focus.snippetFocused(@componentView)
+    it 'fires componentBlur()', (done) ->
+      @focus.componentFocused(@componentView)
 
-      @focus.snippetBlur.add (componentView) =>
+      @focus.componentBlur.add (componentView) =>
         expect(componentView).to.equal(@componentView)
         done()
 
       @focus.blur()
 
 
-    it 'does not fire snippetBlur() when noting is selected', ->
-      eventSpy = sinon.spy(@focus.snippetBlur, 'fire')
+    it 'does not fire componentBlur() when noting is selected', ->
+      eventSpy = sinon.spy(@focus.componentBlur, 'fire')
       @focus.blur()
       expect(eventSpy.callCount).to.equal(0)
