@@ -16,7 +16,7 @@ module.exports = class ComponentView
     unless @isReadOnly
       # add attributes and references to the html
       @$html
-        .data('snippet', this)
+        .data('componentView', this)
         .addClass(css.component)
         .attr(attr.template, @template.identifier)
 
@@ -71,11 +71,11 @@ module.exports = class ComponentView
 
 
   next: ->
-    @$html.next().data('snippet')
+    @$html.next().data('componentView')
 
 
   prev: ->
-    @$html.prev().data('snippet')
+    @$html.prev().data('componentView')
 
 
   afterFocused: () ->

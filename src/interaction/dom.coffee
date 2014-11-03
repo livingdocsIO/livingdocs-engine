@@ -225,7 +225,7 @@ module.exports = do ->
   # Components store a reference of themselves in their Dom node
   # consider: store reference directly without jQuery
   getComponentView: (node) ->
-    $(node).data('snippet')
+    $(node).data('componentView')
 
 
   # GetAbsoluteBoundingClientRect with top and left relative to the document
