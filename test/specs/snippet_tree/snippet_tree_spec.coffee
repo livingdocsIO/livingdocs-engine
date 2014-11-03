@@ -1,6 +1,6 @@
 ComponentTree = require('../../../src/component_tree/component_tree')
 ComponentModel = require('../../../src/component_tree/component_model')
-SnippetContainer = require('../../../src/component_tree/snippet_container')
+ComponentContainer = require('../../../src/component_tree/snippet_container')
 
 describe 'ComponentTree', ->
 
@@ -8,8 +8,8 @@ describe 'ComponentTree', ->
     { @componentTree } = getInstances('componentTree')
 
 
-  it 'has a SnippetContainer as root', ->
-    expect(@componentTree.root).to.be.an.instanceof(SnippetContainer)
+  it 'has a ComponentContainer as root', ->
+    expect(@componentTree.root).to.be.an.instanceof(ComponentContainer)
 
 
   describe 'append()', ->
@@ -219,7 +219,7 @@ describe 'ComponentTree with a multi-column row snippet', ->
       @componentTree.all (snippetOrContainer) ->
         if snippetOrContainer instanceof ComponentModel
           visitedSnippets += 1
-        else if snippetOrContainer instanceof SnippetContainer
+        else if snippetOrContainer instanceof ComponentContainer
           visitedContainers += 1
 
       expect(visitedSnippets).to.equal(1)

@@ -1,6 +1,6 @@
 deepEqual = require('deep-equal')
 config = require('../configuration/config')
-SnippetContainer = require('./snippet_container')
+ComponentContainer = require('./snippet_container')
 guid = require('../modules/guid')
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
@@ -13,14 +13,14 @@ DirectiveCollection = require('../template/directive_collection')
 # from a componentModel
 #
 # Represents a node in a ComponentTree.
-# Every ComponentModel can have a parent (SnippetContainer),
-# siblings (other snippets) and multiple containers (SnippetContainers).
+# Every ComponentModel can have a parent (ComponentContainer),
+# siblings (other snippets) and multiple containers (ComponentContainers).
 #
 # The containers are the parents of the child ComponentModels.
 # E.g. a grid row would have as many containers as it has
 # columns
 #
-# # @prop parentContainer: parent SnippetContainer
+# # @prop parentContainer: parent ComponentContainer
 module.exports = class ComponentModel
 
   constructor: ({ @template, id } = {}) ->
@@ -32,8 +32,8 @@ module.exports = class ComponentModel
     @id = id || guid.next()
     @componentName = @template.name
 
-    @next = undefined # set by SnippetContainer
-    @previous = undefined # set by SnippetContainer
+    @next = undefined # set by ComponentContainer
+    @previous = undefined # set by ComponentContainer
     @componentTree = undefined # set by ComponentTree
 
 
@@ -44,7 +44,7 @@ module.exports = class ComponentModel
       switch directive.type
         when 'container'
           @containers ||= {}
-          @containers[directive.name] = new SnippetContainer
+          @containers[directive.name] = new ComponentContainer
             name: directive.name
             parentSnippet: this
         when 'editable', 'image', 'html'

@@ -1,6 +1,6 @@
 Template = require('../../../src/template/template')
 ComponentModel = require('../../../src/component_tree/component_model')
-SnippetContainer = require('../../../src/component_tree/snippet_container')
+ComponentContainer = require('../../../src/component_tree/snippet_container')
 ComponentView = require('../../../src/rendering/component_view')
 css = config.css
 
@@ -87,11 +87,11 @@ describe 'Row Template', ->
     template = test.getTemplate('row')
 
 
-  it 'initializes SnippetContainers', ->
+  it 'initializes ComponentContainers', ->
     snippet = template.createModel()
     expect(snippet).to.exist
-    expect(snippet.containers.main instanceof SnippetContainer).to.equal(true)
-    expect(snippet.containers.sidebar instanceof SnippetContainer).to.equal(true)
+    expect(snippet.containers.main instanceof ComponentContainer).to.equal(true)
+    expect(snippet.containers.sidebar instanceof ComponentContainer).to.equal(true)
 
 
 describe 'Subtitle Template', ->

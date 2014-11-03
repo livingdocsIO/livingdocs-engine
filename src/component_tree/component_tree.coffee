@@ -1,5 +1,5 @@
 assert = require('../modules/logging/assert')
-SnippetContainer = require('./snippet_container')
+ComponentContainer = require('./snippet_container')
 SnippetArray = require('./snippet_array')
 ComponentModel = require('./component_model')
 componentModelSerializer = require('./component_model_serializer')
@@ -9,18 +9,18 @@ componentModelSerializer = require('./component_model_serializer')
 # Livingdocs equivalent to the DOM tree.
 # A snippet tree containes all the snippets of a page in hierarchical order.
 #
-# The root of the ComponentTree is a SnippetContainer. A SnippetContainer
+# The root of the ComponentTree is a ComponentContainer. A ComponentContainer
 # contains a list of snippets.
 #
-# snippets can have multible SnippetContainers themselves.
+# snippets can have multible ComponentContainers themselves.
 #
 # ### Example:
-#     - SnippetContainer (root)
+#     - ComponentContainer (root)
 #       - Snippet 'Hero'
 #       - Snippet '2 Columns'
-#         - SnippetContainer 'main'
+#         - ComponentContainer 'main'
 #           - Snippet 'Title'
-#         - SnippetContainer 'sidebar'
+#         - ComponentContainer 'sidebar'
 #           - Snippet 'Info-Box''
 #
 # ### Events:
@@ -35,7 +35,7 @@ module.exports = class ComponentTree
 
   constructor: ({ content, @design } = {}) ->
     assert @design?, "Error instantiating ComponentTree: design param is misssing."
-    @root = new SnippetContainer(isRoot: true)
+    @root = new ComponentContainer(isRoot: true)
 
     # initialize content before we set the snippet tree to the root
     # otherwise all the events will be triggered while building the tree
@@ -136,7 +136,7 @@ module.exports = class ComponentTree
       snippet.componentTree = undefined
 
     oldRoot = @root
-    @root = new SnippetContainer(isRoot: true)
+    @root = new ComponentContainer(isRoot: true)
 
     oldRoot
 
