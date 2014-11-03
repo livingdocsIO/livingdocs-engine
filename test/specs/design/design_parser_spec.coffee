@@ -129,7 +129,8 @@ describe 'designParser', ->
           id: 'title'
         ]
 
-      expect( -> designParser.parse(json) ).to.throw()
+      expect( -> designParser.parse(json) )
+        .to.throw('design.components[0].html: required property missing')
 
 
     it 'returns a parse error for a wrongly linked default paragraph', ->
@@ -144,5 +145,6 @@ describe 'designParser', ->
         defaultComponents:
           paragraph: 'title-xxx'
 
-      expect( -> designParser.parse(json) ).to.throw()
+      expect( -> designParser.parse(json) )
+        .to.throw('Error creating the design: Error: Could not find component title-xxx')
 
