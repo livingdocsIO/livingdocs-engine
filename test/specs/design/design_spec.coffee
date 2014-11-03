@@ -7,7 +7,7 @@ describe 'Design', ->
 
   describe 'with no params', ->
 
-    it 'adds a default namespace', ->
+    it 'throws an error', ->
       test = -> new Design()
       expect(test).to.throw()
 
@@ -45,11 +45,11 @@ describe 'Design', ->
       @design = new Design(name: 'test')
 
       @design.add new Template
-        id: 'title'
+        name: 'title'
         html: """<h1 #{ editableAttr }="title"></h1>"""
 
       @design.add new Template
-        id: 'text'
+        name: 'text'
         html: """<p #{ editableAttr }="text"></p>"""
 
 
@@ -59,16 +59,10 @@ describe 'Design', ->
 
     describe 'get()', ->
 
-      it 'gets the template by identifier', ->
-        title = @design.get('test.title')
-        expect(title).to.be.an.instanceof(Template)
-        expect(title.identifier).to.equal('test.title')
-
-
       it 'gets the template by name', ->
         title = @design.get('title')
         expect(title).to.be.an.instanceof(Template)
-        expect(title.identifier).to.equal('test.title')
+        expect(title.name).to.equal('title')
 
 
       it 'returns undefined for a non-existing template', ->

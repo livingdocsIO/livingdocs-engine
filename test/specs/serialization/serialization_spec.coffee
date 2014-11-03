@@ -15,11 +15,14 @@ describe 'Snippet Serialization', ->
   describe 'title snippet', ->
 
     it 'saves the titles value', ->
-      expectedValue = 'This is it!'
       title = test.getSnippet('title')
-      title.set('title', expectedValue)
+      title.set('title', 'This is it!')
       json = title.toJson()
-      expect(json.content['title']).to.equal(expectedValue)
+      expect(json).to.deep.equal
+        id: json.id
+        identifier: 'test.title'
+        content:
+          title: 'This is it!'
 
 
   describe 'of styles', ->

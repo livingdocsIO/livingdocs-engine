@@ -68,8 +68,8 @@ module.exports = class SnippetTree
       snippetName
 
 
-  createModel: (identifier) ->
-    template = @getTemplate(identifier)
+  createModel: (componentName) ->
+    template = @getTemplate(componentName)
     template.createModel() if template
 
 
@@ -77,9 +77,9 @@ module.exports = class SnippetTree
     @createModel.apply(this, arguments)
 
 
-  getTemplate: (identifier) ->
-    template = @design.get(identifier)
-    assert template, "Could not find template #{ identifier }"
+  getTemplate: (componentName) ->
+    template = @design.get(componentName)
+    assert template, "Could not find template #{ componentName }"
     template
 
 
@@ -122,7 +122,7 @@ module.exports = class SnippetTree
     if typeof search == 'string'
       res = []
       @each (snippet) ->
-        if snippet.identifier == search || snippet.template.id == search
+        if snippet.componentName == search
           res.push(snippet)
 
       new SnippetArray(res)

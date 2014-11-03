@@ -10,8 +10,8 @@ describe 'Title Snippet', ->
     expect(@title).to.exist
 
 
-  it 'has an identifier', ->
-    expect(@title.identifier).to.equal('test.title')
+  it 'has a componentName', ->
+    expect(@title.componentName).to.equal('title')
 
 
   it 'has an id', ->
@@ -52,8 +52,8 @@ describe 'Row Snippet', ->
     @row = test.getSnippet('row')
 
 
-  it 'has an identifier', ->
-    expect(@row.identifier).to.equal('test.row')
+  it 'has a componentName', ->
+    expect(@row.componentName).to.equal('row')
 
 
   it 'has two containers named main and sidebar', ->

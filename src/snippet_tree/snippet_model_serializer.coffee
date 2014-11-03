@@ -27,7 +27,7 @@ module.exports = do ->
 
     json =
       id: snippet.id
-      identifier: snippet.identifier
+      identifier: snippet.template.identifier
 
     unless serialization.isEmpty(snippet.content)
       json.content = serialization.flatCopy(snippet.content)

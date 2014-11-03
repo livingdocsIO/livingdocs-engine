@@ -39,12 +39,12 @@ module.exports = class Design
 
   add: (template) ->
     template.setDesign(this)
-    @components.push(template.id, template)
+    @components.push(template.name, template)
 
 
   getComponentNameFromIdentifier: (identifier) ->
-    { namespace, id } = Template.parseIdentifier(identifier)
-    id
+    { name } = Template.parseIdentifier(identifier)
+    name
 
 
   @getIdentifier: (name, version) ->

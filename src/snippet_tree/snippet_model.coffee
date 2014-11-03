@@ -30,7 +30,7 @@ module.exports = class SnippetModel
     @styles = {}
     @dataValues = {}
     @id = id || guid.next()
-    @identifier = @template.identifier
+    @componentName = @template.name
 
     @next = undefined # set by SnippetContainer
     @previous = undefined # set by SnippetContainer
@@ -221,7 +221,7 @@ module.exports = class SnippetModel
 
   set: (name, value) ->
     assert @content?.hasOwnProperty(name),
-      "set error: #{ @identifier } has no content named #{ name }"
+      "set error: #{ @componentName } has no content named #{ name }"
 
     directive = @directives.get(name)
     if directive.isImage
@@ -234,7 +234,7 @@ module.exports = class SnippetModel
 
   get: (name) ->
     assert @content?.hasOwnProperty(name),
-      "get error: #{ @identifier } has no content named #{ name }"
+      "get error: #{ @componentName } has no content named #{ name }"
 
     @directives.get(name).getContent()
 
@@ -283,9 +283,9 @@ module.exports = class SnippetModel
   setStyle: (name, value) ->
     style = @template.styles[name]
     if not style
-      log.warn "Unknown style '#{ name }' in SnippetModel #{ @identifier }"
+      log.warn "Unknown style '#{ name }' in SnippetModel #{ @componentName }"
     else if not style.validateValue(value)
-      log.warn "Invalid value '#{ value }' for style '#{ name }' in SnippetModel #{ @identifier }"
+      log.warn "Invalid value '#{ value }' for style '#{ name }' in SnippetModel #{ @componentName }"
     else
       if @styles[name] != value
         @styles[name] = value

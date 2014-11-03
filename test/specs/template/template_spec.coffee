@@ -9,7 +9,7 @@ describe 'Title Template', ->
   template = undefined
   beforeEach ->
     template = new Template
-      id: 'h1'
+      name: 'h1'
       html: """<h1 #{ test.editableAttr }="title"></h1>"""
 
 
@@ -17,8 +17,8 @@ describe 'Title Template', ->
     expect(template.$template).to.exist
 
 
-  it 'has an id', ->
-    expect(template.id).to.equal('h1')
+  it 'has a name', ->
+    expect(template.name).to.equal('h1')
 
 
   it 'has one directive', ->
@@ -49,14 +49,14 @@ describe 'Template.parseIdentifier()', ->
 
   it 'parses "bootstrap.title"', ->
     identifier = Template.parseIdentifier('bootstrap.title')
-    expect(identifier.namespace).to.equal('bootstrap')
-    expect(identifier.id).to.equal('title')
+    expect(identifier.designName).to.equal('bootstrap')
+    expect(identifier.name).to.equal('title')
 
 
   it 'does not parse "bootstrap"', ->
     identifier = Template.parseIdentifier('title')
-    expect(identifier.namespace).to.be.undefined
-    expect(identifier.id).to.equal('title')
+    expect(identifier.designName).to.be.undefined
+    expect(identifier.name).to.equal('title')
 
 
   it 'does not parse emtpy string', ->
@@ -73,21 +73,10 @@ describe 'Template with default value', ->
 
   it 'trims the default value', ->
     template = new Template
-      identifier: 'bootstrap.title'
+      name: 'title'
       html: """<h1 #{ test.editableAttr }="title">\n\t your title\t </h1>"""
 
     expect(template.defaults['title']).to.equal('your title')
-
-
-describe 'new Template()', ->
-
-  it 'accepts idenfitier param', ->
-    template = new Template
-      identifier: 'bootstrap.title'
-      html: """<h1 #{ test.editableAttr }="title"></h1>"""
-
-    expect(template.namespace).to.equal('bootstrap')
-    expect(template.id).to.equal('title')
 
 
 # Snippet with snippet containers

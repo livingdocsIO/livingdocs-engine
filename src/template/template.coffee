@@ -25,19 +25,13 @@ sortByName = (a, b) ->
 module.exports = class Template
 
 
-  constructor: ({ html, @namespace, @id, identifier, title, properties } = {}) ->
+  constructor: ({ @name, html, label, properties } = {}) ->
     assert html, 'Template: param html missing'
-
-    if identifier
-      { @namespace, @id } = Template.parseIdentifier(identifier)
-
-    @identifier = if @namespace && @id
-      "#{ @namespace }.#{ @id }"
 
     @$template = $( @pruneHtml(html) ).wrap('<div>')
     @$wrap = @$template.parent()
 
-    @title = title || words.humanize( @id )
+    @title = label || words.humanize( @name )
     @styles = properties || {}
     @defaults = {}
 
@@ -46,8 +40,7 @@ module.exports = class Template
 
   setDesign: (design) ->
     @design = design
-    @namespace = design.name
-    @identifier = "#{ @namespace }.#{ @id }"
+    @identifier = "#{ design.name }.#{ @name }"
 
 
   # create a new SnippetModel instance from this template
@@ -74,7 +67,7 @@ module.exports = class Template
       @nodeType !=8
 
     # only allow one root element
-    assert html.length == 1, "Templates must contain one root element. The Template \"#{@identifier}\" contains #{ html.length }"
+    assert html.length == 1, "Templates must contain one root element. The Template \"#{ @identifier }\" contains #{ html.length }"
 
     html
 
@@ -143,8 +136,8 @@ module.exports = class Template
   #   not change since directives and properties are sorted.
   info: () ->
     doc =
-      name: @id
-      design: @namespace
+      name: @name
+      design: @design?.name
       directives: []
       properties: []
 
@@ -170,8 +163,8 @@ Template.parseIdentifier = (identifier) ->
 
   parts = identifier.split('.')
   if parts.length == 1
-    { namespace: undefined, id: parts[0] }
+    { designName: undefined, name: parts[0] }
   else if parts.length == 2
-    { namespace: parts[0], id: parts[1] }
+    { designName: parts[0], name: parts[1] }
   else
     log.error("could not parse snippet template identifier: #{ identifier }")

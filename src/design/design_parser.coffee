@@ -55,8 +55,8 @@ module.exports = designParser =
       properties = @lookupComponentProperties(properties)
 
       component = new Template
-        id: name
-        title: title
+        name: name
+        label: title
         html: html
         properties: properties
 
