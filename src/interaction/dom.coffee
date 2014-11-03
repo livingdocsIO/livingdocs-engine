@@ -11,12 +11,12 @@ module.exports = do ->
 
   # Find the snippet this node is contained within.
   # Snippets are marked by a class at the moment.
-  findSnippetView: (node) ->
+  findComponentView: (node) ->
     node = @getElementNode(node)
 
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
       if snippetRegex.test(node.className)
-        view = @getSnippetView(node)
+        view = @getComponentView(node)
         return view
 
       node = node.parentNode
@@ -59,7 +59,7 @@ module.exports = do ->
       if node.hasAttribute(containerAttr)
         containerName = node.getAttribute(containerAttr)
         if not sectionRegex.test(node.className)
-          view = @findSnippetView(node)
+          view = @findComponentView(node)
 
         return {
           node: node
@@ -123,7 +123,7 @@ module.exports = do ->
 
   getSnippetTarget: (elem, { top, left, position }) ->
     target: 'snippet'
-    componentView: @getSnippetView(elem)
+    componentView: @getComponentView(elem)
     position: position || @getPositionOnSnippet(elem, { top, left })
 
 
@@ -139,7 +139,7 @@ module.exports = do ->
 
     target: 'container'
     node: node
-    componentView: @findSnippetView(node)
+    componentView: @findComponentView(node)
     containerName: containerName
 
 
@@ -224,7 +224,7 @@ module.exports = do ->
 
   # Snippets store a reference of themselves in their Dom node
   # consider: store reference directly without jQuery
-  getSnippetView: (node) ->
+  getComponentView: (node) ->
     $(node).data('snippet')
 
 

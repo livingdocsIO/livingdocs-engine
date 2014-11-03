@@ -50,7 +50,7 @@ module.exports = class EditableController
   # Example: listener(view, editableName, otherParams...)
   withContext: (func) ->
     (element, args...) =>
-      view = dom.findSnippetView(element)
+      view = dom.findComponentView(element)
       editableName = element.getAttribute(@editableAttr)
       args.unshift(view, editableName)
       func.apply(this, args)

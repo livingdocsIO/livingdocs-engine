@@ -71,7 +71,7 @@ module.exports = class Renderer
 
   snippetRemoved: (model) ->
     @removeSnippet(model)
-    @deleteCachedSnippetViewForSnippet(model)
+    @deleteCachedComponentViewForSnippet(model)
 
 
   snippetMoved: (model) ->
@@ -95,7 +95,7 @@ module.exports = class Renderer
     @componentViews[model.id] ||= model.createView(@renderingContainer.isReadOnly)
 
 
-  deleteCachedSnippetViewForSnippet: (model) ->
+  deleteCachedComponentViewForSnippet: (model) ->
     delete @componentViews[model.id]
 
 

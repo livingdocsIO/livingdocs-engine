@@ -1,7 +1,7 @@
 Template = require('../../../src/template/template')
 ComponentModel = require('../../../src/component_tree/component_model')
 SnippetContainer = require('../../../src/component_tree/snippet_container')
-SnippetView = require('../../../src/rendering/snippet_view')
+ComponentView = require('../../../src/rendering/snippet_view')
 css = config.css
 
 describe 'Title Template', ->
@@ -40,9 +40,9 @@ describe 'Title Template', ->
 
   describe '#createView()', ->
 
-    it 'returns a SnippetView instance', ->
+    it 'returns a ComponentView instance', ->
       componentView = template.createView()
-      expect(componentView instanceof SnippetView).to.equal(true)
+      expect(componentView instanceof ComponentView).to.equal(true)
 
 
 describe 'Template.parseIdentifier()', ->

@@ -19,7 +19,7 @@ module.exports = class Focus
       @editableNode = editableNode
 
     if componentView != @componentView
-      @resetSnippetView()
+      @resetComponentView()
       if componentView
         @componentView = componentView
         @snippetFocus.fire(@componentView)
@@ -28,7 +28,7 @@ module.exports = class Focus
   # call after browser focus change
   editableFocused: (editableNode, componentView) ->
     if @editableNode != editableNode
-      componentView ||= dom.findSnippetView(editableNode)
+      componentView ||= dom.findComponentView(editableNode)
       @setFocus(componentView, editableNode)
 
 
@@ -58,7 +58,7 @@ module.exports = class Focus
 
 
   # @api private
-  resetSnippetView: ->
+  resetComponentView: ->
     if @componentView
       previous = @componentView
       @componentView = undefined

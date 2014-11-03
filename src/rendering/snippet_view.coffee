@@ -5,7 +5,7 @@ DirectiveIterator = require('../template/directive_iterator')
 eventing = require('../modules/eventing')
 dom = require('../interaction/dom')
 
-module.exports = class SnippetView
+module.exports = class ComponentView
 
   constructor: ({ @model, @$html, @directives, @isReadOnly }) ->
     @$elem = @$html

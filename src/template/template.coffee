@@ -9,7 +9,7 @@ directiveCompiler = require('./directive_compiler')
 directiveFinder = require('./directive_finder')
 
 ComponentModel = require('../component_tree/component_model')
-SnippetView = require('../rendering/snippet_view')
+ComponentView = require('../rendering/snippet_view')
 
 sortByName = (a, b) ->
   if (a.name > b.name)
@@ -21,7 +21,7 @@ sortByName = (a, b) ->
 
 # Template
 # --------
-# Parses snippet templates and creates ComponentModels and SnippetViews.
+# Parses snippet templates and creates ComponentModels and ComponentViews.
 module.exports = class Template
 
 
@@ -53,7 +53,7 @@ module.exports = class Template
     $elem = @$template.clone()
     directives = @linkDirectives($elem[0])
 
-    componentView = new SnippetView
+    componentView = new ComponentView
       model: componentModel
       $html: $elem
       directives: directives
@@ -98,7 +98,7 @@ module.exports = class Template
     directives
 
 
-  # For every new SnippetView the directives are cloned
+  # For every new ComponentView the directives are cloned
   # and linked with the elements from the new view.
   linkDirectives: (elem) ->
     iterator = new DirectiveIterator(elem)

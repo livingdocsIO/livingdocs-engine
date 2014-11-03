@@ -60,7 +60,7 @@ module.exports = class InteractivePage extends Page
     return if isControl
 
     # Identify the clicked snippet
-    componentView = dom.findSnippetView(event.target)
+    componentView = dom.findComponentView(event.target)
 
     # This is called in mousedown since editables get focus on mousedown
     # and only before the editables clear their placeholder can we safely

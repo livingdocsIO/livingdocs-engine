@@ -3,7 +3,7 @@ base64Image = require('../../support/test_base64_image')
 css = config.css
 attr = config.attr
 
-describe 'SnippetView', ->
+describe 'ComponentView', ->
 
   describe 'title', ->
 
@@ -45,7 +45,7 @@ describe 'SnippetView', ->
       expect( @componentView.get('title') ).to.equal('Games Galore')
 
 
-describe 'SnippetView title set style', ->
+describe 'ComponentView title set style', ->
 
   beforeEach ->
     @title = test.getSnippet('title')
@@ -70,7 +70,7 @@ describe 'SnippetView title set style', ->
     expect(componentView.$html).to.have.html(@$expected)
 
 
-describe 'SnippetView hero', ->
+describe 'ComponentView hero', ->
 
   beforeEach ->
     snippet = test.getSnippet('hero')
@@ -119,7 +119,7 @@ describe 'SnippetView hero', ->
       expect(@componentView.$html).to.have.html(@expected)
 
 
-describe 'SnippetView image', ->
+describe 'ComponentView image', ->
 
   beforeEach ->
     @snippet = test.getSnippet('image')
@@ -207,7 +207,7 @@ describe 'SnippetView image', ->
           #{ attr.template }="test.image">"""
 
 
-describe 'SnippetView background image', ->
+describe 'ComponentView background image', ->
 
   beforeEach ->
     @snippet = test.getSnippet('background-image')
@@ -226,7 +226,7 @@ describe 'SnippetView background image', ->
           #{ attr.template }="test.background-image">"""
 
 
-describe 'SnippetView html', ->
+describe 'ComponentView html', ->
 
   beforeEach ->
     @snippet = test.getSnippet('html')
