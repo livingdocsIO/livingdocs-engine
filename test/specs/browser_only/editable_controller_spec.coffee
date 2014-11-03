@@ -42,7 +42,7 @@ describe 'editableController', ->
   describe 'enter event', ->
 
     beforeEach ->
-      @title = test.createSnippet('title', 'A')
+      @title = test.createComponent('title', 'A')
       @componentTree.append(@title)
       @design = @componentTree.design
 
@@ -67,7 +67,7 @@ describe 'editableController', ->
   describe 'split event', ->
 
     beforeEach ->
-      @title = test.createSnippet('title', 'A')
+      @title = test.createComponent('title', 'A')
       @componentTree.append(@title)
 
       @before = document.createDocumentFragment()

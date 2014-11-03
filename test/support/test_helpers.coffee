@@ -50,7 +50,7 @@ module.exports = testHelpers =
 
 
   # helper to create snippets with one directive easier
-  createSnippet: (id, value) ->
+  createComponent: (id, value) ->
     snippet = @getSnippet(id)
     firstDirective = snippet.template.directives[0]
     snippet.set(firstDirective.name, value)

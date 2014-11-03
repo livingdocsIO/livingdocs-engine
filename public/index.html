@@ -83,9 +83,9 @@
 
         function addDefaultContent (document) {
           document.model.append('mainAndSidebar');
-          var snippet = document.model.createSnippet('hero');
+          var snippet = document.model.createComponent('hero');
           document.model.first().append('main', snippet);
-          var text = document.model.createSnippet('text');
+          var text = document.model.createComponent('text');
           snippet.after(text);
         }
       });

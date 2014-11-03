@@ -73,7 +73,7 @@ module.exports = class ComponentTree
     template.createModel() if template
 
 
-  createSnippet: ->
+  createComponent: ->
     @createModel.apply(this, arguments)
 
 

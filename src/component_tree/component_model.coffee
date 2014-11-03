@@ -48,7 +48,7 @@ module.exports = class ComponentModel
             name: directive.name
             parentSnippet: this
         when 'editable', 'image', 'html'
-          @createSnippetDirective(directive)
+          @createComponentDirective(directive)
           @content ||= {}
           @content[directive.name] = undefined
         else
@@ -56,7 +56,7 @@ module.exports = class ComponentModel
 
 
   # Create a directive for 'editable', 'image', 'html' template directives
-  createSnippetDirective: (templateDirective) ->
+  createComponentDirective: (templateDirective) ->
     @directives.add directiveFactory.create
       snippet: this
       templateDirective: templateDirective

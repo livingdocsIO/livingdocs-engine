@@ -21,7 +21,7 @@ describe 'Renderer', ->
     describe 'with a single title snippet', ->
 
       beforeEach ->
-        @title = test.createSnippet('title', 'A')
+        @title = test.createComponent('title', 'A')
         @componentTree.append(@title)
 
 
@@ -49,7 +49,7 @@ describe 'Renderer', ->
 
     it 'insertes the already appended snippets of an inserted snippet', ->
       container = test.getSnippet('container')
-      title = test.createSnippet('title', 'A')
+      title = test.createComponent('title', 'A')
       container.append(config.directives.container.defaultName, title)
       @componentTree.append(container)
       expect(@page.renderNode).to.have.html """
@@ -71,7 +71,7 @@ describe 'Renderer', ->
     describe 'with a title', ->
 
       beforeEach ->
-        @title = test.createSnippet('title', 'A')
+        @title = test.createComponent('title', 'A')
         @componentTree.append(@title)
 
 
@@ -95,7 +95,7 @@ describe 'Renderer', ->
     describe 'with a hero', ->
 
       beforeEach ->
-        @hero = test.createSnippet('hero')
+        @hero = test.createComponent('hero')
         @componentTree.append(@hero)
 
 
@@ -163,7 +163,7 @@ describe 'Renderer', ->
     describe 'with a doc-html directive', ->
 
       beforeEach ->
-        html = test.createSnippet('html', '<article>html</article>')
+        html = test.createComponent('html', '<article>html</article>')
         @componentTree.append(html)
 
 
@@ -202,7 +202,7 @@ describe 'Renderer', ->
 
 
     it 'appends content wrapper to the wrapper', (done) ->
-      title = test.createSnippet('title', 'ABC')
+      title = test.createComponent('title', 'ABC')
       @componentTree.append(title)
 
       @renderer.ready =>
