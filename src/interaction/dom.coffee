@@ -6,16 +6,16 @@ css = config.css
 # Methods to parse and update the Dom tree in accordance to
 # the ComponentTree and Livingdocs classes and attributes
 module.exports = do ->
-  snippetRegex = new RegExp("(?: |^)#{ css.snippet }(?: |$)")
+  componentRegex = new RegExp("(?: |^)#{ css.snippet }(?: |$)")
   sectionRegex = new RegExp("(?: |^)#{ css.section }(?: |$)")
 
-  # Find the snippet this node is contained within.
-  # Snippets are marked by a class at the moment.
+  # Find the component this node is contained within.
+  # Components are marked by a class at the moment.
   findComponentView: (node) ->
     node = @getElementNode(node)
 
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
-      if snippetRegex.test(node.className)
+      if componentRegex.test(node.className)
         view = @getComponentView(node)
         return view
 
@@ -100,21 +100,21 @@ module.exports = do ->
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
       # above container
       if node.hasAttribute(containerAttr)
-        closestSnippetData = @getClosestSnippet(node, { top, left })
-        if closestSnippetData?
-          return @getClosestSnippetTarget(closestSnippetData)
+        closestComponentData = @getClosestComponent(node, { top, left })
+        if closestComponentData?
+          return @getClosestComponentTarget(closestComponentData)
         else
           return @getContainerTarget(node)
 
-      # above snippet
-      else if snippetRegex.test(node.className)
+      # above component
+      else if componentRegex.test(node.className)
         return @getComponentTarget(node, { top, left })
 
       # above root container
       else if sectionRegex.test(node.className)
-        closestSnippetData = @getClosestSnippet(node, { top, left })
-        if closestSnippetData?
-          return @getClosestSnippetTarget(closestSnippetData)
+        closestComponentData = @getClosestComponent(node, { top, left })
+        if closestComponentData?
+          return @getClosestComponentTarget(closestComponentData)
         else
           return @getRootTarget(node)
 
@@ -124,12 +124,12 @@ module.exports = do ->
   getComponentTarget: (elem, { top, left, position }) ->
     target: 'snippet'
     componentView: @getComponentView(elem)
-    position: position || @getPositionOnSnippet(elem, { top, left })
+    position: position || @getPositionOnComponent(elem, { top, left })
 
 
-  getClosestSnippetTarget: (closestSnippetData) ->
-    elem = closestSnippetData.$elem[0]
-    position = closestSnippetData.position
+  getClosestComponentTarget: (closestComponentData) ->
+    elem = closestComponentData.$elem[0]
+    position = closestComponentData.position
     @getComponentTarget(elem, { position })
 
 
@@ -151,9 +151,9 @@ module.exports = do ->
     componentTree: componentTree
 
 
-  # Figure out if we should insert before or after a snippet
+  # Figure out if we should insert before or after a component
   # based on the cursor position.
-  getPositionOnSnippet: (elem, { top, left }) ->
+  getPositionOnComponent: (elem, { top, left }) ->
     $elem = $(elem)
     elemTop = $elem.offset().top
     elemHeight = $elem.outerHeight()
@@ -165,13 +165,13 @@ module.exports = do ->
       'after'
 
 
-  # Get the closest snippet in a container for a top left position
-  getClosestSnippet: (container, { top, left }) ->
-    $snippets = $(container).find(".#{ css.snippet }")
+  # Get the closest component in a container for a top left position
+  getClosestComponent: (container, { top, left }) ->
+    $components = $(container).find(".#{ css.snippet }")
     closest = undefined
-    closestSnippet = undefined
+    closestComponent = undefined
 
-    $snippets.each (index, elem) =>
+    $components.each (index, elem) =>
       $elem = $(elem)
       elemTop = $elem.offset().top
       elemHeight = $elem.outerHeight()
@@ -179,19 +179,19 @@ module.exports = do ->
 
       if not closest? || @distance(top, elemTop) < closest
         closest = @distance(top, elemTop)
-        closestSnippet = { $elem, position: 'before'}
+        closestComponent = { $elem, position: 'before'}
       if not closest? || @distance(top, elemBottom) < closest
         closest = @distance(top, elemBottom)
-        closestSnippet = { $elem, position: 'after'}
+        closestComponent = { $elem, position: 'after'}
 
-    closestSnippet
+    closestComponent
 
 
   distance: (a, b) ->
     if a > b then a - b else b - a
 
 
-  # force all containers of a snippet to be as high as they can be
+  # force all containers of a component to be as high as they can be
   # sets css style height
   maximizeContainerHeight: (view) ->
     if view.template.containerCount > 1
@@ -222,7 +222,7 @@ module.exports = do ->
       node
 
 
-  # Snippets store a reference of themselves in their Dom node
+  # Components store a reference of themselves in their Dom node
   # consider: store reference directly without jQuery
   getComponentView: (node) ->
     $(node).data('snippet')

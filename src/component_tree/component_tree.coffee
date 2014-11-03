@@ -191,8 +191,7 @@ module.exports = class ComponentTree
       @fireEvent('componentMoved', component)
     else
       if component.componentTree?
-        # remove from other componentTree
-        component.componentContainer.detachSnippet(component)
+        component.remove() # remove from other componentTree
 
       component.descendantsAndSelf (descendant) =>
         descendant.componentTree = this
@@ -206,14 +205,14 @@ module.exports = class ComponentTree
     @changed.fire()
 
 
-  detachingComponent: (component, detachSnippetFunc) ->
+  detachingComponent: (component, detachComponentFunc) ->
     assert component.componentTree is this,
       'cannot remove component from another ComponentTree'
 
     component.descendantsAndSelf (descendants) ->
       descendants.componentTree = undefined
 
-    detachSnippetFunc()
+    detachComponentFunc()
     @fireEvent('componentRemoved', component)
 
 
