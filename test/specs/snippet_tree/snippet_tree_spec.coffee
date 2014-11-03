@@ -14,20 +14,20 @@ describe 'ComponentTree', ->
 
   describe 'append()', ->
 
-    it 'sets componentTree property of the appended snippet', ->
-      snippet = test.getComponent('title')
-      @componentTree.append(snippet)
-      expect(snippet.componentTree).to.equal(@componentTree)
+    it 'sets componentTree property of the appended component', ->
+      component = test.getComponent('title')
+      @componentTree.append(component)
+      expect(component.componentTree).to.equal(@componentTree)
 
 
-    it 'appends a snippet to root', ->
-      snippet = test.getComponent('title')
-      @componentTree.append(snippet)
-      expect(@componentTree.first()).to.equal(snippet)
-      expect(@componentTree.root.last).to.equal(snippet)
+    it 'appends a component to root', ->
+      component = test.getComponent('title')
+      @componentTree.append(component)
+      expect(@componentTree.first()).to.equal(component)
+      expect(@componentTree.root.last).to.equal(component)
 
 
-describe 'ComponentTree with two snippets', ->
+describe 'ComponentTree with two components', ->
 
   beforeEach ->
     @componentTree = test.createComponentTree [
@@ -35,84 +35,84 @@ describe 'ComponentTree with two snippets', ->
     ,
       title: undefined
     ]
-    @snippetA = @componentTree.first()
-    @snippetB = @snippetA.next
+    @componentA = @componentTree.first()
+    @componentB = @componentA.next
 
 
-  it 'has previous and next properties of snippet set', ->
-    expect(@snippetA.previous).to.be.undefined
-    expect(@snippetA.next).to.equal(@snippetB)
+  it 'has previous and next properties of component set', ->
+    expect(@componentA.previous).to.be.undefined
+    expect(@componentA.next).to.equal(@componentB)
 
 
   it 'has first and last pointer of root set', ->
-    expect(@componentTree.first()).to.equal(@snippetA)
-    expect(@componentTree.root.last).to.equal(@snippetB)
+    expect(@componentTree.first()).to.equal(@componentA)
+    expect(@componentTree.root.last).to.equal(@componentB)
 
 
-  it 'has linked snippets correctly', ->
+  it 'has linked components correctly', ->
     expect(@componentTree.first().previous).to.be.undefined
-    expect(@componentTree.first().next).to.equal(@snippetB)
-    expect(@componentTree.root.last.previous).to.equal(@snippetA)
+    expect(@componentTree.first().next).to.equal(@componentB)
+    expect(@componentTree.root.last.previous).to.equal(@componentA)
     expect(@componentTree.root.last.next).to.be.undefined
 
 
   describe 'up()', ->
 
-    it 'moves the second snippet up', ->
-      @snippetB.up()
+    it 'moves the second component up', ->
+      @componentB.up()
 
-      expect(@snippetB.previous).to.be.undefined
-      expect(@snippetB.next).to.equal(@snippetA)
+      expect(@componentB.previous).to.be.undefined
+      expect(@componentB.next).to.equal(@componentA)
 
-      expect(@snippetA.previous).to.equal(@snippetB)
-      expect(@snippetA.next).to.be.undefined
+      expect(@componentA.previous).to.equal(@componentB)
+      expect(@componentA.next).to.be.undefined
 
 
     it 'updates the first and last pointers of the container', ->
-      @snippetB.up()
+      @componentB.up()
 
-      expect(@componentTree.first()).to.equal(@snippetB)
-      expect(@componentTree.root.last).to.equal(@snippetA)
+      expect(@componentTree.first()).to.equal(@componentB)
+      expect(@componentTree.root.last).to.equal(@componentA)
 
 
   describe 'remove()', ->
 
-    it 'removes the second Snippet', ->
-      @snippetB.remove()
+    it 'removes the second component', ->
+      @componentB.remove()
 
-      expect(@snippetA.previous).to.be.undefined
-      expect(@snippetA.next).to.be.undefined
+      expect(@componentA.previous).to.be.undefined
+      expect(@componentA.next).to.be.undefined
 
-      expect(@componentTree.first()).to.equal(@snippetA)
-      expect(@componentTree.root.last).to.equal(@snippetA)
+      expect(@componentTree.first()).to.equal(@componentA)
+      expect(@componentTree.root.last).to.equal(@componentA)
 
-      expect(@snippetB.parentContainer).to.be.undefined
-      expect(@snippetB.componentTree).to.be.undefined
-      expect(@snippetB.previous).to.be.undefined
-      expect(@snippetB.next).to.be.undefined
-
-
-  describe 'inserting the second snippet after the first', ->
-
-    it 'is ignored', ->
-      @snippetA.after(@snippetB)
-      expect(@snippetA.previous).to.be.undefined
-      expect(@snippetA.next).to.equal(@snippetB)
-      expect(@snippetB.previous).to.equal(@snippetA)
-      expect(@snippetB.next).to.be.undefined
+      expect(@componentB.parentContainer).to.be.undefined
+      expect(@componentB.componentTree).to.be.undefined
+      expect(@componentB.previous).to.be.undefined
+      expect(@componentB.next).to.be.undefined
 
 
-  describe 'inserting the first snippet before the second', ->
+  describe 'inserting the second component after the first', ->
 
     it 'is ignored', ->
-      @snippetB.before(@snippetA)
-      expect(@snippetA.previous).to.be.undefined
-      expect(@snippetA.next).to.equal(@snippetB)
-      expect(@snippetB.previous).to.equal(@snippetA)
-      expect(@snippetB.next).to.be.undefined
+      @componentA.after(@componentB)
+      expect(@componentA.previous).to.be.undefined
+      expect(@componentA.next).to.equal(@componentB)
+      expect(@componentB.previous).to.equal(@componentA)
+      expect(@componentB.next).to.be.undefined
 
 
-describe 'ComponentTree with a single-column row snippet', ->
+  describe 'inserting the first component before the second', ->
+
+    it 'is ignored', ->
+      @componentB.before(@componentA)
+      expect(@componentA.previous).to.be.undefined
+      expect(@componentA.next).to.equal(@componentB)
+      expect(@componentB.previous).to.equal(@componentA)
+      expect(@componentB.next).to.be.undefined
+
+
+describe 'ComponentTree with a single-column row component', ->
 
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
@@ -123,81 +123,81 @@ describe 'ComponentTree with a single-column row snippet', ->
 
   describe 'append()', ->
 
-    it 'adds a snippet to the single column via the componentContainer', ->
-      titleSnippet = test.getComponent('title')
+    it 'adds a component to the single column via the componentContainer', ->
+      titleComponent = test.getComponent('title')
       mainContainer = @container.containers[@defaultName]
-      mainContainer.append(titleSnippet)
-      expect(mainContainer.first).to.equal(titleSnippet)
+      mainContainer.append(titleComponent)
+      expect(mainContainer.first).to.equal(titleComponent)
 
 
-    it 'adds a snippet to the main column via snippet', ->
-      titleSnippet = test.getComponent('title')
-      @container.append(titleSnippet)
+    it 'adds a component to the main column via component', ->
+      titleComponent = test.getComponent('title')
+      @container.append(titleComponent)
       mainContainer = @container.containers[@defaultName]
-      expect(mainContainer.first).to.equal(titleSnippet)
+      expect(mainContainer.first).to.equal(titleComponent)
 
 
-    it 'the appended snippet has a parent snippet', ->
-      titleSnippet = test.getComponent('title')
-      @container.append(titleSnippet)
-      expect( titleSnippet.getParent() ).to.equal(@container)
+    it 'the appended component has a parent component', ->
+      titleComponent = test.getComponent('title')
+      @container.append(titleComponent)
+      expect( titleComponent.getParent() ).to.equal(@container)
 
 
 
-describe 'ComponentTree with a multi-column row snippet', ->
+describe 'ComponentTree with a multi-column row component', ->
 
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
-    @rowSnippet = test.getComponent('row')
-    @componentTree.append(@rowSnippet)
+    @rowComponent = test.getComponent('row')
+    @componentTree.append(@rowComponent)
 
 
   describe 'append()', ->
 
-    it 'adds a snippet to the main column via the componentContainer', ->
-      titleSnippet = test.getComponent('title')
-      mainContainer = @rowSnippet.containers['main']
-      mainContainer.append(titleSnippet)
-      expect(mainContainer.first).to.equal(titleSnippet)
+    it 'adds a component to the main column via the componentContainer', ->
+      titleComponent = test.getComponent('title')
+      mainContainer = @rowComponent.containers['main']
+      mainContainer.append(titleComponent)
+      expect(mainContainer.first).to.equal(titleComponent)
 
 
-    it 'adds a snippet to the main column via snippet', ->
-      titleSnippet = test.getComponent('title')
-      @rowSnippet.append('main', titleSnippet)
+    it 'adds a component to the main column via component', ->
+      titleComponent = test.getComponent('title')
+      @rowComponent.append('main', titleComponent)
 
-      mainContainer = @rowSnippet.containers['main']
-      expect(mainContainer.first).to.equal(titleSnippet)
+      mainContainer = @rowComponent.containers['main']
+      expect(mainContainer.first).to.equal(titleComponent)
 
 
-    it 'the appended snippet has a parent snippet', ->
-      titleSnippet = test.getComponent('title')
-      @rowSnippet.append('main', titleSnippet)
-      expect( titleSnippet.getParent() ).to.equal(@rowSnippet)
+    it 'the appended component has a parent component', ->
+      titleComponent = test.getComponent('title')
+      @rowComponent.append('main', titleComponent)
+      expect( titleComponent.getParent() ).to.equal(@rowComponent)
 
 
   describe 'each()', ->
 
-    it 'visits the row snippet', ->
+    it 'visits the row component', ->
       visits = 0
       @componentTree.each ->
         visits += 1
       expect(visits).to.equal(1)
 
 
-    it 'visits the row snippet and its children', ->
-      # add 2 snippets to main container
+    it 'visits the row component and its children', ->
+      # add 2 components to main container
       for num in [0..2]
-        @rowSnippet.append('main', test.getComponent('title'))
+        @rowComponent.append('main', test.getComponent('title'))
 
-      # add 3 snippets to sidebar container
+      # add 3 components to sidebar container
       for num in [0..1]
-        @rowSnippet.append('sidebar', test.getComponent('title'))
+        @rowComponent.append('sidebar', test.getComponent('title'))
 
       visits = 0
       @componentTree.each ->
         visits += 1
 
-      # check that all 6 snippets where visited by each
+      # check that all 6 components where visited by each
       expect(visits).to.equal(6)
 
 
@@ -213,13 +213,13 @@ describe 'ComponentTree with a multi-column row snippet', ->
 
   describe 'all()', ->
 
-    it 'visits all snippets and containers', ->
+    it 'visits all components and containers', ->
       visitedComponents = 0
       visitedContainers = 0
-      @componentTree.all (snippetOrContainer) ->
-        if snippetOrContainer instanceof ComponentModel
+      @componentTree.all (componentOrContainer) ->
+        if componentOrContainer instanceof ComponentModel
           visitedComponents += 1
-        else if snippetOrContainer instanceof ComponentContainer
+        else if componentOrContainer instanceof ComponentContainer
           visitedContainers += 1
 
       expect(visitedComponents).to.equal(1)
@@ -253,10 +253,10 @@ describe 'ComponentTree with three levels', ->
 
     it 'visits all containers in the right order', ->
       visitedComponents = []
-      @componentTree.each (snippet) ->
-        visitedComponents.push(snippet)
+      @componentTree.each (component) ->
+        visitedComponents.push(component)
 
-      # snippets should be traversed in order of appearance
+      # components should be traversed in order of appearance
       expect(visitedComponents.length).to.equal(4)
       expect(visitedComponents[0]).to.equal(@row)
       expect(visitedComponents[1]).to.equal(@rowInMain)
@@ -264,24 +264,24 @@ describe 'ComponentTree with three levels', ->
       expect(visitedComponents[3]).to.equal(@title)
 
 
-describe 'ComponentTree with three snippets', ->
+describe 'ComponentTree with three components', ->
 
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
-    @snippets = []
+    @components = []
     for index in [0..2]
-      @snippets[index] = test.getComponent('text')
-      @componentTree.append(@snippets[index])
+      @components[index] = test.getComponent('text')
+      @componentTree.append(@components[index])
 
 
   # regression test for https://github.com/upfrontIO/livingdocs-engine/issues/13
-  it 'moving the last snippet one up does not currupt the componentTree', ->
-    @snippets[2].up()
+  it 'moving the last component one up does not currupt the componentTree', ->
+    @components[2].up()
     visitedComponents = []
-    @componentTree.each (snippet) ->
-      visitedComponents.push(snippet)
+    @componentTree.each (component) ->
+      visitedComponents.push(component)
 
     expect(visitedComponents.length).to.equal(3)
-    expect(visitedComponents[0]).to.equal(@snippets[0])
-    expect(visitedComponents[1]).to.equal(@snippets[2])
-    expect(visitedComponents[2]).to.equal(@snippets[1])
+    expect(visitedComponents[0]).to.equal(@components[0])
+    expect(visitedComponents[1]).to.equal(@components[2])
+    expect(visitedComponents[2]).to.equal(@components[1])

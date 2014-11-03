@@ -8,8 +8,8 @@ describe 'testHelpers', ->
       componentTree = test.createComponentTree
         title: { title: 'It Works' }
 
-      firstSnippet = componentTree.first()
-      expect(firstSnippet.get('title')).to.equal('It Works')
+      firstComponent = componentTree.first()
+      expect(firstComponent.get('title')).to.equal('It Works')
 
 
     it 'creates a componentTree with two titles', ->
@@ -18,6 +18,6 @@ describe 'testHelpers', ->
       ,
         title: { title: 'B' }
       ]
-      firstSnippet = componentTree.first()
-      expect(firstSnippet.get('title')).to.equal('A')
-      expect(firstSnippet.next.get('title')).to.equal('B')
+      firstComponent = componentTree.first()
+      expect(firstComponent.get('title')).to.equal('A')
+      expect(firstComponent.next.get('title')).to.equal('B')

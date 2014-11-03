@@ -5,8 +5,8 @@ describe 'ImageDirective', ->
   describe 'setImageService()', ->
 
     beforeEach ->
-      @imageSnippet = test.getComponent('image')
-      @directive = @imageSnippet.directives.get('image')
+      @imageComponent = test.getComponent('image')
+      @directive = @imageComponent.directives.get('image')
 
 
     it 'sets the imageService to "undefined"', ->

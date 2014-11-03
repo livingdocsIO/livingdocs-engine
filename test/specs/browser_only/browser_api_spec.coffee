@@ -42,14 +42,14 @@ describe 'Browser API', ->
 
     it 'creates a new empty livingdoc', ->
       livingdoc = doc.new(design: 'test')
-      firstSnippet = livingdoc.componentTree.first()
-      expect(firstSnippet).to.be.undefined
+      firstComponent = livingdoc.componentTree.first()
+      expect(firstComponent).to.be.undefined
 
 
     it 'creates a new livingdoc from data', ->
       livingdoc = doc.new(data: @data)
-      firstSnippet = livingdoc.componentTree.first()
-      expect(firstSnippet.get('title')).to.equal('It Works')
+      firstComponent = livingdoc.componentTree.first()
+      expect(firstComponent.get('title')).to.equal('It Works')
 
 
     it 'creates a new livingdoc from json data', ->

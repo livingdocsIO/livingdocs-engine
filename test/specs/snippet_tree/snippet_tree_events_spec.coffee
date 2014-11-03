@@ -11,51 +11,51 @@ describe 'ComponentTree (Layout Events) ->', ->
   beforeEach ->
     { @componentTree } = getInstances('componentTree')
     monitor = test.createCallbackMonitor
-    @expectSnippetAdded = monitor(@componentTree.componentAdded)
-    @expectSnippetRemoved = monitor(@componentTree.componentRemoved)
-    @expectSnippetMoved = monitor(@componentTree.componentMoved)
+    @expectComponentAdded = monitor(@componentTree.componentAdded)
+    @expectComponentRemoved = monitor(@componentTree.componentRemoved)
+    @expectComponentMoved = monitor(@componentTree.componentMoved)
     @expectChanged = monitor(@componentTree.changed)
 
 
-  describe 'appending a snippet', ->
+  describe 'appending a component', ->
 
 
     beforeEach ->
-      @appendSnippet = =>
-        snippet = test.getComponent('title')
-        @componentTree.append(snippet)
+      @appendComponent = =>
+        component = test.getComponent('title')
+        @componentTree.append(component)
 
 
     it 'fires componentAdded event', ->
-      @expectSnippetRemoved 0, =>
-        @expectSnippetMoved 0, =>
-          @expectSnippetAdded 1, =>
-            @appendSnippet()
+      @expectComponentRemoved 0, =>
+        @expectComponentMoved 0, =>
+          @expectComponentAdded 1, =>
+            @appendComponent()
 
 
     it 'fires changed event', ->
-      @expectChanged 1, => @appendSnippet()
+      @expectChanged 1, => @appendComponent()
 
 
-  describe 'with two snippets (Events) ->', ->
+  describe 'with two components (Events) ->', ->
 
 
     beforeEach ->
-      @snippetA = test.getComponent('title')
-      @snippetB = test.getComponent('title')
-      @componentTree.append(@snippetA).append(@snippetB)
+      @componentA = test.getComponent('title')
+      @componentB = test.getComponent('title')
+      @componentTree.append(@componentA).append(@componentB)
 
 
-    describe 'removing a snippet', ->
+    describe 'removing a component', ->
       beforeEach ->
         @removeComponent = =>
-          @snippetB.remove()
+          @componentB.remove()
 
 
       it 'fires componentRemoved event', ->
-        @expectSnippetAdded 0, =>
-          @expectSnippetMoved 0, =>
-            @expectSnippetRemoved 1, =>
+        @expectComponentAdded 0, =>
+          @expectComponentMoved 0, =>
+            @expectComponentRemoved 1, =>
               @removeComponent()
 
 
@@ -63,36 +63,36 @@ describe 'ComponentTree (Layout Events) ->', ->
         @expectChanged 1, => @removeComponent()
 
 
-    describe 'moving a snippet', ->
+    describe 'moving a component', ->
 
 
       beforeEach ->
-        @moveSnippets = =>
-          @snippetB.up()
-          @snippetA.up()
+        @moveComponents = =>
+          @componentB.up()
+          @componentA.up()
 
 
       it 'fires componentMoved event', ->
-        @expectSnippetMoved 2, => @moveSnippets()
+        @expectComponentMoved 2, => @moveComponents()
 
 
       it 'fires changed event', ->
-        @expectChanged 2, => @moveSnippets()
+        @expectChanged 2, => @moveComponents()
 
 
       describe "that can't be moved", ->
 
 
         beforeEach ->
-          @unsuccessfullyMoveSnippet = => @snippetA.up()
+          @unsuccessfullyMoveComponent = => @componentA.up()
 
 
         it 'does not fire componentMoved event', ->
-          @expectSnippetMoved 0, => @unsuccessfullyMoveSnippet()
+          @expectComponentMoved 0, => @unsuccessfullyMoveComponent()
 
 
         it 'does not fire changed event', ->
-          @expectChanged 0, => @unsuccessfullyMoveSnippet()
+          @expectChanged 0, => @unsuccessfullyMoveComponent()
 
 
 describe 'ComponentTree (Content Events)', ->
@@ -103,60 +103,60 @@ describe 'ComponentTree (Content Events)', ->
     @expectContentChanged = monitor(@componentTree.componentContentChanged)
     @expectChanged = monitor(@componentTree.changed)
 
-    @snippetA = test.getComponent('title')
-    @imageSnippet = test.getComponent('image')
-    @coverSnippet = test.getComponent('cover')
-    @componentTree.append(@snippetA)
-    @componentTree.append(@imageSnippet)
-    @componentTree.append(@coverSnippet)
+    @componentA = test.getComponent('title')
+    @imageComponent = test.getComponent('image')
+    @coverComponent = test.getComponent('cover')
+    @componentTree.append(@componentA)
+    @componentTree.append(@imageComponent)
+    @componentTree.append(@coverComponent)
 
 
   describe 'changing the title content', ->
 
     beforeEach ->
-      @changeSnippetContent = =>
-        @snippetA.set('title', 'Talk to the hand')
+      @changeComponentContent = =>
+        @componentA.set('title', 'Talk to the hand')
 
 
     it 'fires componentContentChanged event', ->
-      @expectContentChanged 1, => @changeSnippetContent()
+      @expectContentChanged 1, => @changeComponentContent()
 
 
     it 'fires changed event', ->
-      @expectChanged 1, => @changeSnippetContent()
+      @expectChanged 1, => @changeComponentContent()
 
 
   describe 'changing the image src', ->
 
     beforeEach ->
-      @changeSnippetContent = =>
-        @imageSnippet.set('image', 'http://www.lolcats.com/images/1.jpg')
+      @changeComponentContent = =>
+        @imageComponent.set('image', 'http://www.lolcats.com/images/1.jpg')
 
 
     it 'fires componentContentChanged event', ->
-      @expectContentChanged 1, => @changeSnippetContent()
+      @expectContentChanged 1, => @changeComponentContent()
 
 
   describe 'changing the background image', ->
 
     beforeEach ->
-      @changeSnippetContent = =>
-        @coverSnippet.set('image', 'http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg')
+      @changeComponentContent = =>
+        @coverComponent.set('image', 'http://www.lolcats.com/images/u/11/39/lolcatsdotcomaptplf8mvc1o2ldb.jpg')
 
 
     it 'fires componentContentChanged event', ->
-      @expectContentChanged 1, => @changeSnippetContent()
+      @expectContentChanged 1, => @changeComponentContent()
 
 
   describe 'changing the img src to a volatile base64 string', ->
 
     beforeEach ->
-      @changeSnippetContent = =>
-        @imageSnippet.directives.get('image').setBase64Image(base64Image)
+      @changeComponentContent = =>
+        @imageComponent.directives.get('image').setBase64Image(base64Image)
 
 
     it 'fires componentContentChanged event', ->
-      @expectContentChanged 1, => @changeSnippetContent()
+      @expectContentChanged 1, => @changeComponentContent()
 
 
 describe 'ComponentTree (Html Events)', ->

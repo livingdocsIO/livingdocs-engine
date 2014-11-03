@@ -29,14 +29,14 @@ describe 'editableController', ->
 
 
     it 'fires and finds snippet event', ->
-      foundSnippet = undefined
+      foundComponent = undefined
 
       @editableController.selection.add (snippet, element, selection) ->
-        foundSnippet = snippet
+        foundComponent = snippet
         expect.element
 
       @editableController.triggerEditableEvent('selectionChanged', @elem, undefined)
-      expect(foundSnippet.model).to.equal(@title.model)
+      expect(foundComponent.model).to.equal(@title.model)
 
 
   describe 'enter event', ->

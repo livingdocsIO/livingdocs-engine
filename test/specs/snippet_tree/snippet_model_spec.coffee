@@ -1,6 +1,6 @@
 base64Image = require('../../support/test_base64_image')
 
-describe 'Title Snippet', ->
+describe 'Title Component', ->
 
   beforeEach ->
     @title = test.getComponent('title')
@@ -46,7 +46,7 @@ describe 'Title Snippet', ->
       expect(@title.get('title')).to.equal(caption)
 
 
-describe 'Row Snippet', ->
+describe 'Row Component', ->
 
   beforeEach ->
     @row = test.getComponent('row')
@@ -66,7 +66,7 @@ describe 'Row Snippet', ->
     expect(@row.content).not.to.exist
 
 
-describe 'Container Snippet', ->
+describe 'Container Component', ->
 
   beforeEach ->
     @container = test.getComponent('container')

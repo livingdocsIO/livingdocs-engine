@@ -79,7 +79,7 @@ describe 'Template with default value', ->
     expect(template.defaults['title']).to.equal('your title')
 
 
-# Snippet with snippet containers
+# Component with snippet containers
 describe 'Row Template', ->
 
   template = null

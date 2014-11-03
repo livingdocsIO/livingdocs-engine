@@ -3,16 +3,16 @@ ComponentModel = require('../../../src/component_tree/component_model')
 componentModelSerializer = require('../../../src/component_tree/component_model_serializer')
 base64Image = require('../../support/test_base64_image')
 
-describe 'Snippet Serialization', ->
+describe 'Component Serialization', ->
 
-  describe 'empty snippet', ->
+  describe 'empty component', ->
 
     it 'gets saved', ->
       json = test.getComponent('title').toJson()
       expect(json.identifier).to.equal('test.title')
 
 
-  describe 'title snippet', ->
+  describe 'title component', ->
 
     it 'saves the titles value', ->
       title = test.getComponent('title')
@@ -77,13 +77,13 @@ describe 'ComponentTree Serialization', ->
     expect(json.content).to.deep.equal([])
 
 
-  it 'saves a componentTree with one snippet', ->
+  it 'saves a componentTree with one component', ->
     @tree.append( test.getComponent('title') )
     json = @tree.toJson()
     expect(json.content[0].identifier).to.equal('test.title')
 
 
-  it 'saves a componentTree with nested snippets', ->
+  it 'saves a componentTree with nested components', ->
     row = test.getComponent('row')
     row.append('main', test.getComponent('title'))
     @tree.append(row)
@@ -100,13 +100,13 @@ describe 'Deserialization', ->
     @design = test.getDesign()
 
 
-  describe 'of an in-exstistant snippet', ->
+  describe 'of an in-exstistant component', ->
 
     it 'throws an error', ->
-      json = { identifier: 'unknown-snippet' }
+      json = { identifier: 'unknown-component' }
 
       deserialize = =>
-        snippet = componentModelSerializer.fromJson(json, @design)
+        componentModelSerializer.fromJson(json, @design)
 
       expect(deserialize).to.throw()
 
@@ -120,12 +120,12 @@ describe 'Deserialization', ->
           'title-misspelled': 'Baby Geniusses'
 
       deserialize = =>
-        snippet = componentModelSerializer.fromJson(json, @design)
+        componentModelSerializer.fromJson(json, @design)
 
       expect(deserialize).to.throw()
 
 
-  describe 'of a single snippet', ->
+  describe 'of a single component', ->
 
     beforeEach ->
       @json = test.localstore
@@ -134,19 +134,19 @@ describe 'Deserialization', ->
           'title': 'Baby Geniuses'
 
 
-    it 'returns a snippet instance', ->
-      snippet = componentModelSerializer.fromJson(@json, @design)
-      expect(snippet).to.be.an.instanceof(ComponentModel)
-      expect(snippet.get('title')).to.equal('Baby Geniuses')
+    it 'returns a component instance', ->
+      component = componentModelSerializer.fromJson(@json, @design)
+      expect(component).to.be.an.instanceof(ComponentModel)
+      expect(component.get('title')).to.equal('Baby Geniuses')
 
 
     it 'works with an identifier without a namespace', ->
       @json.identifier = 'title'
-      snippet = componentModelSerializer.fromJson(@json, @design)
-      expect(snippet).to.be.an.instanceof(ComponentModel)
+      component = componentModelSerializer.fromJson(@json, @design)
+      expect(component).to.be.an.instanceof(ComponentModel)
 
 
-  describe 'of a snippet with styles', ->
+  describe 'of a component with styles', ->
 
     beforeEach ->
       @json = test.localstore
@@ -155,12 +155,12 @@ describe 'Deserialization', ->
           'color': 'color--blue'
 
 
-    it 'returns a snippet with its styles', ->
-      snippet = componentModelSerializer.fromJson(@json, @design)
-      expect(snippet.getStyle('color')).to.equal('color--blue')
+    it 'returns a component with its styles', ->
+      component = componentModelSerializer.fromJson(@json, @design)
+      expect(component.getStyle('color')).to.equal('color--blue')
 
 
-  describe 'of a snippet with invalid styles', ->
+  describe 'of a component with invalid styles', ->
 
     beforeEach ->
       @json = test.localstore
@@ -169,12 +169,12 @@ describe 'Deserialization', ->
           'color': 'no-color-at-all'
 
 
-    it 'returns a snippet with its styles', ->
-      snippet = componentModelSerializer.fromJson(@json, @design)
-      expect(snippet.getStyle('color')).to.be.undefined
+    it 'returns a component with its styles', ->
+      component = componentModelSerializer.fromJson(@json, @design)
+      expect(component.getStyle('color')).to.be.undefined
 
 
-  describe 'of a snippet with data', ->
+  describe 'of a component with data', ->
 
     beforeEach ->
       @json = test.localstore
@@ -189,17 +189,17 @@ describe 'Deserialization', ->
           ]
 
 
-    it 'returns a snippet with its center data', ->
-      snippet = componentModelSerializer.fromJson(@json, @design)
-      expect(snippet.data('center')).to.deep.equal({'zoom': 12})
+    it 'returns a component with its center data', ->
+      component = componentModelSerializer.fromJson(@json, @design)
+      expect(component.data('center')).to.deep.equal({'zoom': 12})
 
 
-    it 'returns a snippet with its markers data', ->
-      snippet = componentModelSerializer.fromJson(@json, @design)
-      expect(snippet.data('markers')).to.deep.equal([{'text': 'test'}, {'text': 'test2'}])
+    it 'returns a component with its markers data', ->
+      component = componentModelSerializer.fromJson(@json, @design)
+      expect(component.data('markers')).to.deep.equal([{'text': 'test'}, {'text': 'test2'}])
 
 
-  describe 'of a snippet with children', ->
+  describe 'of a component with children', ->
 
     beforeEach ->
       @rowJson = test.localstore
@@ -215,7 +215,7 @@ describe 'Deserialization', ->
           sidebar : []
 
 
-    it 'returns a snippet instance', ->
+    it 'returns a component instance', ->
       row = componentModelSerializer.fromJson(@rowJson, @design)
       firstChild = row.containers['main'].first
       secondChild = firstChild.next
@@ -235,7 +235,7 @@ describe 'Deserialization', ->
     it 'ignores null containers', ->
       @rowJson.containers.sidebar = null
       deserialize = =>
-        snippet = componentModelSerializer.fromJson(@rowJson, @design)
+        componentModelSerializer.fromJson(@rowJson, @design)
 
       expect(deserialize).not.to.throw()
 
@@ -243,7 +243,7 @@ describe 'Deserialization', ->
     it 'throws an error if container is not an array', ->
       @rowJson.containers.sidebar = 'this makes no sense at all'
       deserialize = =>
-        snippet = componentModelSerializer.fromJson(@rowJson, @design)
+        componentModelSerializer.fromJson(@rowJson, @design)
 
       expect(deserialize).to.throw()
 
@@ -251,7 +251,7 @@ describe 'Deserialization', ->
     it 'throws an error if it encouters an unknown containerName', ->
       @rowJson.containers.sidebarExtra = []
       deserialize = =>
-        snippet = componentModelSerializer.fromJson(@rowJson, @design)
+        componentModelSerializer.fromJson(@rowJson, @design)
 
       expect(deserialize).to.throw()
 
@@ -275,7 +275,7 @@ describe 'Serialize and Deserialize', ->
     expect(@afterTitle.get('title')).to.equal('What we have here is a failure to communicate')
 
 
-  it 'preserves snippet ids', ->
+  it 'preserves component ids', ->
     expect(@afterTitle.id.length).to.be.above(10)
     expect(@title.id).to.equal(@afterTitle.id)
 

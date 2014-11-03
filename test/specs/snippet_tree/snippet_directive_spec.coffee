@@ -1,12 +1,12 @@
-describe 'Snippet Directive', ->
+describe 'Component Directive', ->
 
-  describe 'snippet with inline image', ->
+  describe 'component with inline image', ->
     beforeEach ->
       @image = test.getComponent('image')
       @imgDirective = @image.directives.get('image')
 
 
-    it 'has a snippet directive with its parent snippet set', ->
+    it 'has a component directive with its parent component set', ->
       expect(@imgDirective.snippet).to.equal(@image)
 
 
@@ -67,13 +67,13 @@ describe 'Snippet Directive', ->
         expect(@imgDirective.isBackgroundImage()).to.equal(false)
 
 
-  describe 'snippet with background image', ->
+  describe 'component with background image', ->
     beforeEach ->
       @cover = test.getComponent('cover')
       @imgDirective = @cover.directives.get('image')
 
 
-    it 'has a snippet directive with its parent snippet set', ->
+    it 'has a component directive with its parent component set', ->
       expect(@imgDirective.snippet).to.equal(@cover)
 
 

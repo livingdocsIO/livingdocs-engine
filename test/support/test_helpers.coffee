@@ -49,7 +49,7 @@ module.exports = testHelpers =
     @componentTree
 
 
-  # helper to create snippets with one directive easier
+  # helper to create components with one directive easier
   createComponent: (id, value) ->
     snippet = @getComponent(id)
     firstDirective = snippet.template.directives[0]
