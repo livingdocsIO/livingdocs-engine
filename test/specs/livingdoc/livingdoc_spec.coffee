@@ -3,8 +3,8 @@ Livingdoc = require('../../../src/livingdoc')
 describe 'livingdoc', ->
 
   beforeEach ->
-    { @snippetTree } = getInstances('snippetTree')
-    @doc = new Livingdoc({ @snippetTree })
+    { @componentTree } = getInstances('componentTree')
+    @doc = new Livingdoc({ @componentTree })
 
 
   describe 'instantiation', ->
@@ -20,7 +20,7 @@ describe 'livingdoc', ->
         done()
 
       snippet = test.getSnippet('title')
-      @snippetTree.append(snippet)
+      @componentTree.append(snippet)
 
 
   describe 'serialize()', ->
@@ -35,7 +35,7 @@ describe 'livingdoc', ->
     it 'serializes a minimal livingdoc', ->
       model = test.getSnippet('title')
       model.set('title', 'It Works')
-      @snippetTree.append(model)
+      @componentTree.append(model)
       data = @doc.serialize()
       expect(data.content.length).to.equal(1)
 
@@ -49,7 +49,7 @@ describe 'livingdoc', ->
     it 'renders a minimal livingdoc', ->
       model = test.getSnippet('title')
       model.set('title', 'It Works')
-      @snippetTree.append(model)
+      @componentTree.append(model)
       expect(@doc.toHtml()).to.have.same.html """
         <h1>It Works</h1>"""
 

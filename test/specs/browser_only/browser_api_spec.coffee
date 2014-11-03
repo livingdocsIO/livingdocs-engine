@@ -35,20 +35,20 @@ describe 'Browser API', ->
   describe 'new', ->
     beforeEach ->
       doc.design.load(test.designJson)
-      @snippetTree = test.createSnippetTree
+      @componentTree = test.createSnippetTree
         title: { title: 'It Works' }
-      @data = @snippetTree.serialize()
+      @data = @componentTree.serialize()
 
 
     it 'creates a new empty livingdoc', ->
       livingdoc = doc.new(design: 'test')
-      firstSnippet = livingdoc.snippetTree.first()
+      firstSnippet = livingdoc.componentTree.first()
       expect(firstSnippet).to.be.undefined
 
 
     it 'creates a new livingdoc from data', ->
       livingdoc = doc.new(data: @data)
-      firstSnippet = livingdoc.snippetTree.first()
+      firstSnippet = livingdoc.componentTree.first()
       expect(firstSnippet.get('title')).to.equal('It Works')
 
 
@@ -68,7 +68,7 @@ describe 'Browser API', ->
           }
         }
       })
-      expect(livingdoc.snippetTree.first().get('title')).to.equal('This is it!')
+      expect(livingdoc.componentTree.first().get('title')).to.equal('This is it!')
 
 
   describe 'config', ->

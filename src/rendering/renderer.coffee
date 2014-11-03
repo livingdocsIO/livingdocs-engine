@@ -5,8 +5,8 @@ config = require('../configuration/config')
 
 module.exports = class Renderer
 
-  constructor: ({ @snippetTree, @renderingContainer, $wrapper }) ->
-    assert @snippetTree, 'no snippet tree specified'
+  constructor: ({ @componentTree, @renderingContainer, $wrapper }) ->
+    assert @componentTree, 'no snippet tree specified'
     assert @renderingContainer, 'no rendering container specified'
 
     @$root = $(@renderingContainer.renderNode)
@@ -27,9 +27,9 @@ module.exports = class Renderer
         @$wrapper.append(@$wrapperHtml)
         @$root = $insert
 
-    # Store a reference to the snippetTree in the $root node.
+    # Store a reference to the componentTree in the $root node.
     # Some dom.coffee methods need it to get hold of the snippet tree
-    @$root.data('snippetTree', @snippetTree)
+    @$root.data('componentTree', @componentTree)
 
 
   renderOncePageReady: ->
@@ -58,11 +58,11 @@ module.exports = class Renderer
   # ---------------------------
 
   setupSnippetTreeListeners: ->
-    @snippetTree.snippetAdded.add( $.proxy(@snippetAdded, this) )
-    @snippetTree.snippetRemoved.add( $.proxy(@snippetRemoved, this) )
-    @snippetTree.snippetMoved.add( $.proxy(@snippetMoved, this) )
-    @snippetTree.snippetContentChanged.add( $.proxy(@snippetContentChanged, this) )
-    @snippetTree.snippetHtmlChanged.add( $.proxy(@snippetHtmlChanged, this) )
+    @componentTree.snippetAdded.add( $.proxy(@snippetAdded, this) )
+    @componentTree.snippetRemoved.add( $.proxy(@snippetRemoved, this) )
+    @componentTree.snippetMoved.add( $.proxy(@snippetMoved, this) )
+    @componentTree.snippetContentChanged.add( $.proxy(@snippetContentChanged, this) )
+    @componentTree.snippetHtmlChanged.add( $.proxy(@snippetHtmlChanged, this) )
 
 
   snippetAdded: (model) ->
@@ -100,12 +100,12 @@ module.exports = class Renderer
 
 
   render: ->
-    @snippetTree.each (model) =>
+    @componentTree.each (model) =>
       @insertSnippet(model)
 
 
   clear: ->
-    @snippetTree.each (model) =>
+    @componentTree.each (model) =>
       @snippetViewForSnippet(model).setAttachedToDom(false)
 
     @$root.empty()

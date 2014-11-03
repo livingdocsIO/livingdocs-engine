@@ -9,12 +9,12 @@ describe 'Renderer', ->
   describe 'in interactive mode', ->
 
     beforeEach (done) ->
-      { @snippetTree } = getInstances('snippetTree')
+      { @componentTree } = getInstances('componentTree')
       @page = new Page
         renderNode: $('<section>')
         readOnly: false
 
-      @renderer = new Renderer(snippetTree: @snippetTree, renderingContainer: @page)
+      @renderer = new Renderer(componentTree: @componentTree, renderingContainer: @page)
       @renderer.ready -> done()
 
 
@@ -22,7 +22,7 @@ describe 'Renderer', ->
 
       beforeEach ->
         @title = test.createSnippet('title', 'A')
-        @snippetTree.append(@title)
+        @componentTree.append(@title)
 
 
       it 'renders the title', ->
@@ -44,14 +44,14 @@ describe 'Renderer', ->
 
   describe 'insertSnippet()', ->
     beforeEach (done) ->
-      { @snippetTree, @page, @renderer } = getInstances('page', 'renderer')
+      { @componentTree, @page, @renderer } = getInstances('page', 'renderer')
       @renderer.ready -> done()
 
     it 'insertes the already appended snippets of an inserted snippet', ->
       container = test.getSnippet('container')
       title = test.createSnippet('title', 'A')
       container.append(config.directives.container.defaultName, title)
-      @snippetTree.append(container)
+      @componentTree.append(container)
       expect(@page.renderNode).to.have.html """
         <section>
           <div class="container">
@@ -64,7 +64,7 @@ describe 'Renderer', ->
 
   describe 'in readonly mode', ->
     beforeEach (done) ->
-      { @snippetTree, @page, @renderer } = getInstances('page', 'renderer')
+      { @componentTree, @page, @renderer } = getInstances('page', 'renderer')
       @renderer.ready -> done()
 
 
@@ -72,7 +72,7 @@ describe 'Renderer', ->
 
       beforeEach ->
         @title = test.createSnippet('title', 'A')
-        @snippetTree.append(@title)
+        @componentTree.append(@title)
 
 
       it 'renders the title into the page', ->
@@ -96,7 +96,7 @@ describe 'Renderer', ->
 
       beforeEach ->
         @hero = test.createSnippet('hero')
-        @snippetTree.append(@hero)
+        @componentTree.append(@hero)
 
 
       describe 'with no content', ->
@@ -129,7 +129,7 @@ describe 'Renderer', ->
 
       beforeEach ->
         row = test.getSnippet('row')
-        @snippetTree.append(row)
+        @componentTree.append(row)
         @title = test.getSnippet('title')
         @title.set('title', 'Title')
         row.append('main', @title)
@@ -164,7 +164,7 @@ describe 'Renderer', ->
 
       beforeEach ->
         html = test.createSnippet('html', '<article>html</article>')
-        @snippetTree.append(html)
+        @componentTree.append(html)
 
 
       it 'does not block interaction in readOnly mode', ->
@@ -178,9 +178,9 @@ describe 'Renderer', ->
 
   describe 'with a wrapper', ->
     beforeEach ->
-      { @snippetTree, @page, @renderer } = getInstances('snippetTree', 'page')
+      { @componentTree, @page, @renderer } = getInstances('componentTree', 'page')
       @renderer = new Renderer
-        snippetTree: @snippetTree
+        componentTree: @componentTree
         renderingContainer: @page
         $wrapper: $ """
           <div>
@@ -203,7 +203,7 @@ describe 'Renderer', ->
 
     it 'appends content wrapper to the wrapper', (done) ->
       title = test.createSnippet('title', 'ABC')
-      @snippetTree.append(title)
+      @componentTree.append(title)
 
       @renderer.ready =>
         expect(@page.renderNode).to.have.html """

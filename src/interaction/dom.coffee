@@ -144,11 +144,11 @@ module.exports = do ->
 
 
   getRootTarget: (node) ->
-    snippetTree = $(node).data('snippetTree')
+    componentTree = $(node).data('componentTree')
 
     target: 'root'
     node: node
-    snippetTree: snippetTree
+    componentTree: componentTree
 
 
   # Figure out if we should insert before or after a snippet

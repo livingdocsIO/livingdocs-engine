@@ -5,7 +5,7 @@ assert = require('../modules/logging/assert')
 # A SnippetContainer contains and manages a linked list
 # of snippets.
 #
-# The snippetContainer is responsible for keeping its snippetTree
+# The snippetContainer is responsible for keeping its componentTree
 # informed about changes (only if they are attached to one).
 #
 # @prop first: first snippet in the container
@@ -75,7 +75,7 @@ module.exports = class SnippetContainer
 
 
   getSnippetTree: ->
-    @snippetTree || @parentSnippet?.snippetTree
+    @componentTree || @parentSnippet?.componentTree
 
 
   # Traverse all snippets
@@ -111,23 +111,23 @@ module.exports = class SnippetContainer
   # -------
 
   # Every snippet added or moved most come through here.
-  # Notifies the snippetTree if the parent snippet is
+  # Notifies the componentTree if the parent snippet is
   # attached to one.
   # @api private
   attachSnippet: (snippet, position = {}) ->
     func = =>
       @link(snippet, position)
 
-    if snippetTree = @getSnippetTree()
-      snippetTree.attachingSnippet(snippet, func)
+    if componentTree = @getSnippetTree()
+      componentTree.attachingSnippet(snippet, func)
     else
       func()
 
 
   # Every snippet that is removed must come through here.
-  # Notifies the snippetTree if the parent snippet is
+  # Notifies the componentTree if the parent snippet is
   # attached to one.
-  # Snippets that are moved inside a snippetTree should not
+  # Snippets that are moved inside a componentTree should not
   # call _detachSnippet since we don't want to fire
   # SnippetRemoved events on the snippet tree, in these
   # cases unlink can be used
@@ -136,8 +136,8 @@ module.exports = class SnippetContainer
     func = =>
       @unlink(snippet)
 
-    if snippetTree = @getSnippetTree()
-      snippetTree.detachingSnippet(snippet, func)
+    if componentTree = @getSnippetTree()
+      componentTree.detachingSnippet(snippet, func)
     else
       func()
 

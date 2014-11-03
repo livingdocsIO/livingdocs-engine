@@ -34,7 +34,7 @@ module.exports = testHelpers =
 
 
   createSnippetTree: (contentArray) ->
-    { @snippetTree } = getInstances('snippetTree')
+    { @componentTree } = getInstances('componentTree')
 
     if not $.isArray(contentArray)
       contentArray = [contentArray]
@@ -44,9 +44,9 @@ module.exports = testHelpers =
         model = @getSnippet(key)
         for field, value of content
           model.set(field, value)
-        @snippetTree.append(model)
+        @componentTree.append(model)
 
-    @snippetTree
+    @componentTree
 
 
   # helper to create snippets with one directive easier

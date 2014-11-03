@@ -293,8 +293,8 @@ module.exports = class SnippetDrag
         componentModel = target.snippetView.model
         componentModel.append(target.containerName, @componentModel)
       when 'root'
-        snippetTree = target.snippetTree
-        snippetTree.prepend(@componentModel)
+        componentTree = target.componentTree
+        componentTree.prepend(@componentModel)
 
 
 

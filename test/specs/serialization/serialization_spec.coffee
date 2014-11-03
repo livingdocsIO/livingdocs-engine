@@ -68,8 +68,8 @@ describe 'Snippet Serialization', ->
 describe 'SnippetTree Serialization', ->
 
   beforeEach ->
-    { snippetTree } = getInstances('snippetTree')
-    @tree = snippetTree
+    { componentTree } = getInstances('componentTree')
+    @tree = componentTree
 
 
   it 'saves an empty SnippetTree', ->
@@ -223,7 +223,7 @@ describe 'Deserialization', ->
       expect(secondChild.get('text')).to.equal('Well, do ya punk?')
 
 
-    it 'fits as content for a snippetTree', ->
+    it 'fits as content for a componentTree', ->
       json =
         content: [@rowJson]
 
@@ -259,8 +259,8 @@ describe 'Deserialization', ->
 describe 'Serialize and Deserialize', ->
 
   beforeEach ->
-    { @design, snippetTree } = getInstances('snippetTree')
-    @before = snippetTree
+    { @design, componentTree } = getInstances('componentTree')
+    @before = componentTree
     @row = test.getSnippet('row')
     @title = test.getSnippet('title')
     @title.set('title', 'What we have here is a failure to communicate')

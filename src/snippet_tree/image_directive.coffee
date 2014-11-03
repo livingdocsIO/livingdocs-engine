@@ -32,7 +32,7 @@ module.exports = class ImageDirective
 
   setBase64Image: (base64String) ->
     @base64Image = base64String
-    @snippet.snippetTree.contentChanging(@snippet, @name) if @snippet.snippetTree
+    @snippet.componentTree.contentChanging(@snippet, @name) if @snippet.componentTree
 
 
   setImageUrl: (value) ->
@@ -72,7 +72,7 @@ module.exports = class ImageDirective
         name: name
 
       @processImageUrl(currentValue.originalUrl || currentValue.url)
-      @snippet.snippetTree.contentChanging(@snippet, @name) if @snippet.snippetTree
+      @snippet.componentTree.contentChanging(@snippet, @name) if @snippet.componentTree
 
 
   resetCrop: ->

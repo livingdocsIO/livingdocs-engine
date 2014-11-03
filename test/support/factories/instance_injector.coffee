@@ -24,10 +24,10 @@ module.exports = class InstanceInjector
     @instances[name] = switch name
       when 'renderer'
         new Renderer
-          snippetTree: @create('snippetTree')
+          componentTree: @create('componentTree')
           renderingContainer: @requireContainer()
 
-      when 'snippetTree'
+      when 'componentTree'
         new SnippetTree
           design: @create('design')
 

@@ -14,7 +14,7 @@ describe 'editableController', ->
   # ----
 
   beforeEach ->
-    { @renderer, @snippetTree } = getInstances('page', 'renderer')
+    { @renderer, @componentTree } = getInstances('page', 'renderer')
 
     @editableController = new EditableController(@renderer.renderingContainer)
     @editableController.triggerEditableEvent = triggerEditableEvent
@@ -43,32 +43,32 @@ describe 'editableController', ->
 
     beforeEach ->
       @title = test.createSnippet('title', 'A')
-      @snippetTree.append(@title)
-      @design = @snippetTree.design
+      @componentTree.append(@title)
+      @design = @componentTree.design
 
 
     it 'inserts a second element', ->
       @editableController.insert(@title.createView())
-      expect(@snippetTree.toJson().content.length).to.equal(2)
+      expect(@componentTree.toJson().content.length).to.equal(2)
 
 
     it 'inserts the default paragraph element', ->
       expect(@design.defaultParagraph.name).to.equal('text')
       @editableController.insert(@title.createView())
-      expect(@renderer.snippetTree.toJson().content[1].identifier).to.equal('test.text')
+      expect(@renderer.componentTree.toJson().content[1].identifier).to.equal('test.text')
 
 
     it 'inserts the paragraph snippet defined by the design', ->
       @design.defaultParagraph = test.getTemplate('title')
       @editableController.insert(@title.createView())
-      expect(@renderer.snippetTree.toJson().content[1].identifier).to.equal('test.title')
+      expect(@renderer.componentTree.toJson().content[1].identifier).to.equal('test.title')
 
 
   describe 'split event', ->
 
     beforeEach ->
       @title = test.createSnippet('title', 'A')
-      @snippetTree.append(@title)
+      @componentTree.append(@title)
 
       @before = document.createDocumentFragment()
       @before.appendChild( $('<span>hey</span>')[0] )
@@ -78,7 +78,7 @@ describe 'editableController', ->
 
     it 'inserts a second element', ->
       @editableController.split(@title.createView(), 'title', @before, @after)
-      content = @snippetTree.toJson().content
+      content = @componentTree.toJson().content
       expect(content.length).to.equal(2)
       expect(content[0].content.title).to.equal('<span>hey</span>')
       expect(content[1].content.title).to.equal('<span>there</span>')

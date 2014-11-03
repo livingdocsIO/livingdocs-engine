@@ -4,7 +4,7 @@ InteractivePage = require('../rendering_container/interactive_page')
 
 module.exports = class View
 
-  constructor: (@snippetTree, @parent) ->
+  constructor: (@componentTree, @parent) ->
     @parent ?= window.document.body
     @isInteractive = false
 
@@ -47,13 +47,13 @@ module.exports = class View
   createRenderer: ({ renderNode, options }={}) ->
     params =
       renderNode: renderNode || @parent
-      design: @snippetTree.design
+      design: @componentTree.design
 
     @page = @createPage(params, options)
 
     new Renderer
       renderingContainer: @page
-      snippetTree: @snippetTree
+      componentTree: @componentTree
       $wrapper: options.$wrapper
 
 

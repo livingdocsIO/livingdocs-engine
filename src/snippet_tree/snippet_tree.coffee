@@ -41,7 +41,7 @@ module.exports = class SnippetTree
     # otherwise all the events will be triggered while building the tree
     @fromJson(content, @design) if content?
 
-    @root.snippetTree = this
+    @root.componentTree = this
     @initializeEvents()
 
 
@@ -131,9 +131,9 @@ module.exports = class SnippetTree
 
 
   detach: ->
-    @root.snippetTree = undefined
+    @root.componentTree = undefined
     @each (snippet) ->
-      snippet.snippetTree = undefined
+      snippet.componentTree = undefined
 
     oldRoot = @root
     @root = new SnippetContainer(isRoot: true)
@@ -185,17 +185,17 @@ module.exports = class SnippetTree
   # These functions should only be called by snippetContainers
 
   attachingSnippet: (snippet, attachSnippetFunc) ->
-    if snippet.snippetTree == this
+    if snippet.componentTree == this
       # move snippet
       attachSnippetFunc()
       @fireEvent('snippetMoved', snippet)
     else
-      if snippet.snippetTree?
+      if snippet.componentTree?
         # remove from other snippet tree
         snippet.snippetContainer.detachSnippet(snippet)
 
       snippet.descendantsAndSelf (descendant) =>
-        descendant.snippetTree = this
+        descendant.componentTree = this
 
       attachSnippetFunc()
       @fireEvent('snippetAdded', snippet)
@@ -207,11 +207,11 @@ module.exports = class SnippetTree
 
 
   detachingSnippet: (snippet, detachSnippetFunc) ->
-    assert snippet.snippetTree is this,
+    assert snippet.componentTree is this,
       'cannot remove snippet from another SnippetTree'
 
     snippet.descendantsAndSelf (descendants) ->
-      descendants.snippetTree = undefined
+      descendants.componentTree = undefined
 
     detachSnippetFunc()
     @fireEvent('snippetRemoved', snippet)
@@ -264,19 +264,19 @@ module.exports = class SnippetTree
     data
 
 
-  # Initialize a snippetTree
-  # This method suppresses change events in the snippetTree.
+  # Initialize a componentTree
+  # This method suppresses change events in the componentTree.
   #
   # Consider to change params:
   # fromData({ content, design, silent }) # silent [boolean]: suppress change events
   fromData: (data, design, silent=true) ->
     if design?
-      assert not @design? || design.equals(@design), 'Error loading data. Specified design is different from current snippetTree design'
+      assert not @design? || design.equals(@design), 'Error loading data. Specified design is different from current componentTree design'
     else
       design = @design
 
     if silent
-      @root.snippetTree = undefined
+      @root.componentTree = undefined
 
     if data.content
       for snippetData in data.content
@@ -284,12 +284,12 @@ module.exports = class SnippetTree
         @root.append(snippet)
 
     if silent
-      @root.snippetTree = this
+      @root.componentTree = this
       @root.each (snippet) =>
-        snippet.snippetTree = this
+        snippet.componentTree = this
 
 
-  # Append data to this snippetTree
+  # Append data to this componentTree
   # Fires snippetAdded event for every snippet
   addData: (data, design) ->
     @fromData(data, design, false)

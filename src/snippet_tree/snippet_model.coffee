@@ -34,7 +34,7 @@ module.exports = class SnippetModel
 
     @next = undefined # set by SnippetContainer
     @previous = undefined # set by SnippetContainer
-    @snippetTree = undefined # set by SnippetTree
+    @componentTree = undefined # set by SnippetTree
 
 
   initializeDirectives: ->
@@ -208,15 +208,15 @@ module.exports = class SnippetModel
     if not value
       if @content[name]
         @content[name] = undefined
-        @snippetTree.contentChanging(this, name) if @snippetTree
+        @componentTree.contentChanging(this, name) if @componentTree
     else if typeof value == 'string'
       if @content[name] != value
         @content[name] = value
-        @snippetTree.contentChanging(this, name) if @snippetTree
+        @componentTree.contentChanging(this, name) if @componentTree
     else
       if not deepEqual(@content[name], value)
         @content[name] = value
-        @snippetTree.contentChanging(this, name) if @snippetTree
+        @componentTree.contentChanging(this, name) if @componentTree
 
 
   set: (name, value) ->
@@ -227,7 +227,7 @@ module.exports = class SnippetModel
     if directive.isImage
       if directive.getImageUrl() != value
         directive.setImageUrl(value)
-        @snippetTree.contentChanging(this, name) if @snippetTree
+        @componentTree.contentChanging(this, name) if @componentTree
     else
       @setContent(name, value)
 
@@ -258,8 +258,8 @@ module.exports = class SnippetModel
       for name, value of arg
         if @changeData(name, value)
           changedDataProperties.push(name)
-      if @snippetTree && changedDataProperties.length > 0
-        @snippetTree.dataChanging(this, changedDataProperties)
+      if @componentTree && changedDataProperties.length > 0
+        @componentTree.dataChanging(this, changedDataProperties)
     else
       @dataValues[arg]
 
@@ -289,8 +289,8 @@ module.exports = class SnippetModel
     else
       if @styles[name] != value
         @styles[name] = value
-        if @snippetTree
-          @snippetTree.htmlChanging(this, 'style', { name, value })
+        if @componentTree
+          @componentTree.htmlChanging(this, 'style', { name, value })
 
 
   # @deprecated

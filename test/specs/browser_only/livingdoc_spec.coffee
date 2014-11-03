@@ -3,8 +3,8 @@ Livingdoc = require('../../../src/livingdoc')
 describe 'livingdoc', ->
 
   beforeEach ->
-    { @snippetTree } = getInstances('snippetTree')
-    @doc = new Livingdoc({ @snippetTree })
+    { @componentTree } = getInstances('componentTree')
+    @doc = new Livingdoc({ @componentTree })
 
 
   describe 'createView()', ->

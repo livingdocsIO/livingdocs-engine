@@ -32,7 +32,7 @@ module.exports = doc = do ->
   #
   # @returns { Livingdoc object }
   new: ({ data, design }) ->
-    snippetTree = if data?
+    componentTree = if data?
       designName = data.design?.name
       assert designName?, 'Error creating livingdoc: No design is specified.'
       design = @design.get(designName)
@@ -42,13 +42,13 @@ module.exports = doc = do ->
       design = @design.get(designName)
       new SnippetTree(design: design)
 
-    @create(snippetTree)
+    @create(componentTree)
 
 
   # Direct creation with an existing SnippetTree
   # @returns { Livingdoc object }
-  create: (snippetTree) ->
-    new Livingdoc({ snippetTree })
+  create: (componentTree) ->
+    new Livingdoc({ componentTree })
 
 
   # Todo: add async api (async because of the loading of the design)

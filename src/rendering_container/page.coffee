@@ -7,7 +7,7 @@ config = require('../configuration/config')
 # page.
 module.exports = class Page extends RenderingContainer
 
-  constructor: ({ renderNode, readOnly, hostWindow, @design, @snippetTree, @loadResources }={}) ->
+  constructor: ({ renderNode, readOnly, hostWindow, @design, @componentTree, @loadResources }={}) ->
     @isReadOnly = readOnly if readOnly?
     @renderNode = if renderNode?.jquery then renderNode[0] else renderNode
     @setWindow(hostWindow)

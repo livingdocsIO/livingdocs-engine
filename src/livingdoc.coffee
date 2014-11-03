@@ -11,9 +11,9 @@ dom = require('./interaction/dom')
 module.exports = class Livingdoc extends EventEmitter
 
 
-  constructor: ({ snippetTree }) ->
-    @design = snippetTree.design
-    @setSnippetTree(snippetTree)
+  constructor: ({ componentTree }) ->
+    @design = componentTree.design
+    @setSnippetTree(componentTree)
     @views = {}
     @interactiveView = undefined
 
@@ -28,16 +28,16 @@ module.exports = class Livingdoc extends EventEmitter
       target = dom.dropTarget(elem, coords)
 
 
-  setSnippetTree: (snippetTree) ->
-    assert snippetTree.design == @design,
+  setSnippetTree: (componentTree) ->
+    assert componentTree.design == @design,
       'SnippetTree must have the same design as the document'
 
-    @model = @snippetTree = snippetTree
+    @model = @componentTree = componentTree
     @forwardSnippetTreeEvents()
 
 
   forwardSnippetTreeEvents: ->
-    @snippetTree.changed.add =>
+    @componentTree.changed.add =>
       @emit 'change', arguments
 
 
@@ -50,7 +50,7 @@ module.exports = class Livingdoc extends EventEmitter
     options.$wrapper ?= @findWrapper($parent)
     $parent.html('') # empty container
 
-    view = new View(@snippetTree, $parent[0])
+    view = new View(@componentTree, $parent[0])
     promise = view.create(options)
 
     if view.isInteractive
@@ -73,7 +73,7 @@ module.exports = class Livingdoc extends EventEmitter
     options.$wrapper ?= @findWrapper($parent)
     $parent.html('') # empty container
 
-    view = new View(@snippetTree, $parent[0])
+    view = new View(@componentTree, $parent[0])
     view.createRenderer({ options })
 
 
@@ -101,13 +101,13 @@ module.exports = class Livingdoc extends EventEmitter
 
   toHtml: ->
     new Renderer(
-      snippetTree: @snippetTree
+      componentTree: @componentTree
       renderingContainer: new RenderingContainer()
     ).html()
 
 
   serialize: ->
-    @snippetTree.serialize()
+    @componentTree.serialize()
 
 
   toJson: (prettify) ->
@@ -125,7 +125,7 @@ module.exports = class Livingdoc extends EventEmitter
 
   # Print the SnippetTree.
   printModel: () ->
-    @snippetTree.print()
+    @componentTree.print()
 
 
   Livingdoc.dom = dom
