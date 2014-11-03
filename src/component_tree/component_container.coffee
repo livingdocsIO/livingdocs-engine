@@ -3,18 +3,18 @@ assert = require('../modules/logging/assert')
 # ComponentContainer
 # ----------------
 # A ComponentContainer contains and manages a linked list
-# of snippets.
+# of components.
 #
 # The componentContainer is responsible for keeping its componentTree
 # informed about changes (only if they are attached to one).
 #
-# @prop first: first snippet in the container
-# @prop last: last snippet in the container
-# @prop parentSnippet: parent ComponentModel
+# @prop first: first component in the container
+# @prop last: last component in the container
+# @prop parentComponent: parent ComponentModel
 module.exports = class ComponentContainer
 
 
-  constructor: ({ @parentSnippet, @name, isRoot }) ->
+  constructor: ({ @parentComponent, @name, isRoot }) ->
     @isRoot = isRoot?
     @first = @last = undefined
 
@@ -29,8 +29,8 @@ module.exports = class ComponentContainer
 
 
   append: (snippet) ->
-    if @parentSnippet
-      assert snippet isnt @parentSnippet, 'cannot append snippet to itself'
+    if @parentComponent
+      assert snippet isnt @parentComponent, 'cannot append snippet to itself'
 
     if @last
       @insertAfter(@last, snippet)
@@ -75,7 +75,7 @@ module.exports = class ComponentContainer
 
 
   getComponentTree: ->
-    @componentTree || @parentSnippet?.componentTree
+    @componentTree || @parentComponent?.componentTree
 
 
   # Traverse all snippets

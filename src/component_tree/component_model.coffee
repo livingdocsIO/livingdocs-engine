@@ -46,7 +46,7 @@ module.exports = class ComponentModel
           @containers ||= {}
           @containers[directive.name] = new ComponentContainer
             name: directive.name
-            parentSnippet: this
+            parentComponent: this
         when 'editable', 'image', 'html'
           @createComponentDirective(directive)
           @content ||= {}
@@ -130,7 +130,7 @@ module.exports = class ComponentModel
   # Navigate and query the snippet tree relative to this snippet.
 
   getParent: ->
-     @parentContainer?.parentSnippet
+     @parentContainer?.parentComponent
 
 
   parents: (callback) ->

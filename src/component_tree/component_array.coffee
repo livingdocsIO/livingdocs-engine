@@ -1,10 +1,10 @@
-# jQuery like results when searching for snippets.
+# jQuery like results when searching for components.
 # `doc("hero")` will return a ComponentArray that works similar to a jQuery object.
 # For extensibility via plugins we expose the prototype of ComponentArray via `doc.fn`.
 module.exports = class ComponentArray
 
 
-  # @param snippets: array of snippets
+  # @param snippets: array of components
   constructor: (@snippets) ->
     @snippets = [] unless @snippets?
     @createPseudoArray()
@@ -21,14 +21,14 @@ module.exports = class ComponentArray
 
 
   each: (callback) ->
-    for snippet in @snippets
-      callback(snippet)
+    for component in @snippets
+      callback(component)
 
     this
 
 
   remove: () ->
-    @each (snippet) ->
-      snippet.remove()
+    @each (component) ->
+      component.remove()
 
     this

@@ -161,7 +161,7 @@ module.exports = class Renderer
     if container.isRoot
       @$root
     else
-      parentView = @componentViewForSnippet(container.parentSnippet)
+      parentView = @componentViewForSnippet(container.parentComponent)
       $(parentView.getDirectiveElement(container.name))
 
 
