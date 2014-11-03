@@ -24,11 +24,11 @@ module.exports = class InteractivePage extends Page
     # events
     @imageClick = $.Callbacks() # (componentView, fieldName, event) ->
     @htmlElementClick = $.Callbacks() # (componentView, fieldName, event) ->
-    @snippetWillBeDragged = $.Callbacks() # (componentModel) ->
+    @componentWillBeDragged = $.Callbacks() # (componentModel) ->
     @componentWasDropped = $.Callbacks() # (componentModel) ->
     @dragBase = new DragBase(this)
-    @focus.componentFocus.add( $.proxy(@afterSnippetFocused, this) )
-    @focus.componentBlur.add( $.proxy(@afterSnippetBlurred, this) )
+    @focus.componentFocus.add( $.proxy(@afterComponentFocused, this) )
+    @focus.componentBlur.add( $.proxy(@afterComponentBlurred, this) )
     @beforeInteractivePageReady()
     @$document
       .on('mousedown.livingdocs', $.proxy(@mousedown, this))
@@ -59,7 +59,7 @@ module.exports = class InteractivePage extends Page
     isControl = $(event.target).closest(config.ignoreInteraction).length
     return if isControl
 
-    # Identify the clicked snippet
+    # Identify the clicked component
     componentView = dom.findComponentView(event.target)
 
     # This is called in mousedown since editables get focus on mousedown
@@ -131,9 +131,9 @@ module.exports = class InteractivePage extends Page
       @editableController.add(editableNodes)
 
 
-  afterSnippetFocused: (componentView) ->
+  afterComponentFocused: (componentView) ->
     componentView.afterFocused()
 
 
-  afterSnippetBlurred: (componentView) ->
+  afterComponentBlurred: (componentView) ->
     componentView.afterBlurred()
