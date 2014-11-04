@@ -17,15 +17,15 @@ module.exports = do ->
   # Load from a custom server:
   # doc.design.load('http://yourserver.io/designs/ghibli/design.json')
   load: (designSpec) ->
-    if typeof designSpec == 'string'
-      assert false, 'Load design by name is not implemented yet.'
+    assert designSpec?, 'design.load() was called with undefined.'
+    assert not (typeof designSpec == 'string'), 'design.load() loading a design by name is not implemented.'
+    return if @has(designSpec.design?.name)
+
+    design = Design.parser.parse(designSpec)
+    if design
+      @add(design)
     else
-      return if @has(designSpec.design?.name)
-      design = Design.parser.parse(designSpec)
-      if design
-        @add(design)
-      else
-        throw new Error(Design.parser.errors)
+      throw new Error(Design.parser.errors)
 
 
   # Add an already parsed design.
