@@ -1,8 +1,15 @@
-# v0.x.x
+# v0.4.0
 
 #### Features:
 
+- Improved design configuration and structure [119](https://github.com/upfrontIO/livingdocs-engine/pull/119)
 - Add option to exclude components in Renderer [#128](https://github.com/upfrontIO/livingdocs-engine/pull/128)
+- Rename snippet to component everywhere [129](https://github.com/upfrontIO/livingdocs-engine/pull/129)
+- Update design in index.html [#130](https://github.com/upfrontIO/livingdocs-engine/pull/130)
+
+#### Bugfixes:
+
+- Accept absolute css paths [#125](https://github.com/upfrontIO/livingdocs-engine/pull/125)
 
 
 # v0.3.0
