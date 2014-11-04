@@ -63,7 +63,7 @@ module.exports = class ComponentTree
 
   getComponent: (componentName) ->
     if typeof componentName == 'string'
-      @createModel(componentName)
+      @createComponent(componentName)
     else
       componentName
 
@@ -71,10 +71,6 @@ module.exports = class ComponentTree
   createComponent: (componentName) ->
     template = @getTemplate(componentName)
     template.createModel() if template
-
-
-  createModel: ->
-    @createComponent.apply(this, arguments)
 
 
   getTemplate: (componentName) ->
