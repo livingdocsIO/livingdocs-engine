@@ -6,6 +6,11 @@ Assets = require('./assets')
 
 module.exports = class Design
 
+  # @param
+  #  - name { String } The name of the design.
+  #  - version { String } e.g. '1.0.0'
+  #  - author { String }
+  #  - description { String }
   constructor: ({ @name, @version, @author, @description }) ->
     assert @name?, 'Design needs a name'
     @identifier = Design.getIdentifier(@name, @version)
@@ -48,7 +53,7 @@ module.exports = class Design
 
 
   @getIdentifier: (name, version) ->
-    if version?
+    if version
       "#{ name }@#{ version }"
     else
       "#{ name }"

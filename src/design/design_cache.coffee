@@ -1,5 +1,6 @@
 assert = require('../modules/logging/assert')
 Design = require('./design')
+Version = require('./version')
 
 module.exports = do ->
 
@@ -19,7 +20,10 @@ module.exports = do ->
   load: (designSpec) ->
     assert designSpec?, 'design.load() was called with undefined.'
     assert not (typeof designSpec == 'string'), 'design.load() loading a design by name is not implemented.'
-    return if @has(designSpec.design?.name)
+
+    version = Version.parse(designSpec.version)
+    designIdentifier = Design.getIdentifier(designSpec.name, version)
+    return if @has(designIdentifier)
 
     design = Design.parser.parse(designSpec)
     if design
@@ -31,19 +35,24 @@ module.exports = do ->
   # Add an already parsed design.
   # @param { Design object }
   add: (design) ->
-    @designs[design.name] = design
+    if @designs[design.name]?
+      if design.version > @designs[design.name].version
+        @designs[design.name] = design
+    else
+      @designs[design.name] = design
+    @designs[design.identifier] = design
 
 
   # Check if a design is loaded
-  has: (name) ->
-    @designs[name]?
+  has: (designIdentifier) ->
+    @designs[designIdentifier]?
 
 
   # Get a loaded design
   # @return { Design object }
-  get: (name) ->
-    assert @has(name), "Error: design '#{ name }' is not loaded."
-    @designs[name]
+  get: (designIdentifier) ->
+    assert @has(designIdentifier), "Error: design '#{ designIdentifier }' is not loaded."
+    @designs[designIdentifier]
 
 
   # Clear the cache if you want to reload designs
