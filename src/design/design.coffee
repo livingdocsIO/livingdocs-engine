@@ -33,6 +33,13 @@ module.exports = class Design
     design.name == @name && design.version == @version
 
 
+  # Simple implementation with string comparison
+  # Caution: won't work for '1.10.0' > '1.9.0'
+  isNewerThan: (design) ->
+    return true unless design?
+    @version > (design.version || '')
+
+
   get: (identifier) ->
     componentName = @getComponentNameFromIdentifier(identifier)
     @components.get(componentName)

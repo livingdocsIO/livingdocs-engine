@@ -35,10 +35,7 @@ module.exports = do ->
   # Add an already parsed design.
   # @param { Design object }
   add: (design) ->
-    if @designs[design.name]?
-      if design.version > @designs[design.name].version
-        @designs[design.name] = design
-    else
+    if design.isNewerThan(@designs[design.name])
       @designs[design.name] = design
     @designs[design.identifier] = design
 
