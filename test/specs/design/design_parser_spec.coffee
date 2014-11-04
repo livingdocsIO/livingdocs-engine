@@ -9,9 +9,8 @@ describe 'designParser', ->
 
     before ->
       @design = designParser.parse
-        design:
-          name: 'minimal'
-          version: '0.0.1'
+        name: 'minimal'
+        version: '0.0.1'
         components: [
           name: 'title'
           html: '<h1 doc-editable="title"></h1>'
@@ -31,11 +30,9 @@ describe 'designParser', ->
     # Here we just use multiple specs to test all aspects of the returned design
     before ->
       @design = designParser.parse
-
-        design:
-          name: 'complete'
-          version: '1.0.0'
-          author: 'Peter Pan'
+        name: 'complete'
+        version: 'v1.0.0-eternal-bliss'
+        author: 'Peter Pan'
 
         assets:
           css: ["/stylesheets/test.css"]
@@ -86,7 +83,7 @@ describe 'designParser', ->
 
     it 'sets the designs name and version', ->
       expect(@design.name).to.equal('complete')
-      expect(@design.version).to.equal('1.0.0')
+      expect(@design.version).to.equal('1.0.0-eternal-bliss')
 
 
     it 'parses the assets', ->
@@ -130,9 +127,8 @@ describe 'designParser', ->
 
     it 'returns a parse error for an invalid component', ->
       json =
-        design:
-          name: 'minimal'
-          version: '0.0.1'
+        name: 'minimal'
+        version: '0.0.1'
         components: [
           name: 'title'
         ]
@@ -143,9 +139,8 @@ describe 'designParser', ->
 
     it 'returns a parse error for a wrongly linked default paragraph', ->
       json =
-        design:
-          name: 'minimal'
-          version: '0.0.1'
+        name: 'minimal'
+        version: '0.0.1'
         components: [
           name: 'title'
           html: '<h1 doc-editable="title"></h1>'

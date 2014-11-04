@@ -4,6 +4,7 @@ designConfigSchema = require('./design_config_schema')
 CssModificatorProperty = require('./css_modificator_property')
 Template = require('../template/template')
 Design = require('./design')
+Version = require('./version')
 
 
 module.exports = designParser =
@@ -17,9 +18,10 @@ module.exports = designParser =
       throw new Error(errors)
 
 
-  createDesign: ({ design, assets, components, componentProperties, groups, defaultComponents }) ->
+  createDesign: (designConfig) ->
+    { assets, components, componentProperties, groups, defaultComponents } = designConfig
     try
-      @design = @parseDesign(design)
+      @design = @parseDesignInfo(designConfig)
       @parseAssets(assets)
       @parseComponentProperties(componentProperties)
       @parseComponents(components)
@@ -31,10 +33,11 @@ module.exports = designParser =
     @design
 
 
-  parseDesign: (design) ->
+  parseDesignInfo: (design) ->
+    version = new Version(design.version)
     new Design
       name: design.name
-      version: design.version
+      version: version.toString()
 
 
   parseAssets: (assets) ->

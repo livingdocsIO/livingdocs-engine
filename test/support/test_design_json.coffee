@@ -12,10 +12,9 @@ module.exports = do ->
   # Configuration
   # -------------
 
-  design:
-    name: 'test'
-    version: '0.0.1'
-
+  name: 'test'
+  version: '0.0.1'
+  author: 'upfront.io'
 
   components: [
       name:   'hero'
