@@ -38,16 +38,7 @@ module.exports = class Page extends RenderingContainer
   # todo: move path resolutions to design.assets
   beforePageReady: =>
     return unless @design
-    @design.css = [@design.css] if typeof @design.css == 'string'
-    @design.css = $.map @design.css||[], (path) =>
-      # URLs are absolute when they contain two `//` or begin with a `/`
-      return path if /\/\//.test(path) || /^\//.test(path)
-
-      # Normalize paths that begin with a `./
-      path = path.replace(/^[\.\/]*/, '')
-      "#{ config.designPath }/#{ @design.namespace }/#{ path }"
-
-    @cssLoader.load(@design.css, @readySemaphore.wait())
+    @design.assets.loadCss(@cssLoader, @readySemaphore.wait())
 
 
   setWindow: (hostWindow) ->
@@ -63,3 +54,4 @@ module.exports = class Page extends RenderingContainer
       elem.ownerDocument.defaultView
     else
       window
+

@@ -1,12 +1,28 @@
+config = require('../configuration/config')
+
 module.exports = class Assets
 
-
-  hasCss: ->
-    @css?
+  constructor: ({ @design }) ->
 
 
-  hasJs: ->
-    @js?
+  loadCss: (cssLoader, cb) ->
+    return cb() unless @css?
+    cssUrls = @convertToAbsolutePaths(@css)
+    cssLoader.load(cssUrls, cb)
+
+
+  getAssetPath: ->
+    "#{ config.designPath }/#{ @design.name }"
+
+
+  convertToAbsolutePaths: (urls) ->
+    $.map urls, (path) =>
+      # URLs are absolute when they contain two `//` or begin with a `/`
+      return path if /\/\//.test(path) || /^\//.test(path)
+
+      # Normalize paths that begin with a `./
+      path = path.replace(/^[\.\/]*/, '')
+      "#{ @getAssetPath() }/#{ path }"
 
 
   # @param { String or Array of Strings }
@@ -30,3 +46,13 @@ module.exports = class Assets
     else
       for url in urls
         this[type].push(url)
+
+
+  hasCss: ->
+    @css?
+
+
+  hasJs: ->
+    @js?
+
+

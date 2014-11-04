@@ -4,7 +4,7 @@
   "author": "Peter Pan",
   "assets": {
     "css": [
-      "/stylesheets/boilerplate.css"
+      "./stylesheets/boilerplate.css"
     ]
   },
   "componentProperties": {

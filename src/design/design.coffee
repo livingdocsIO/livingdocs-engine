@@ -22,7 +22,7 @@ module.exports = class Design
     @components = new OrderedHash()
 
     # assets required by the design
-    @assets = new Assets()
+    @assets = new Assets(design: this)
 
     # default components
     @defaultParagraph = undefined
