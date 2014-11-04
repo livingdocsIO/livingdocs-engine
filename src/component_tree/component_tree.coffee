@@ -68,13 +68,13 @@ module.exports = class ComponentTree
       componentName
 
 
-  createModel: (componentName) ->
+  createComponent: (componentName) ->
     template = @getTemplate(componentName)
     template.createModel() if template
 
 
-  createComponent: ->
-    @createModel.apply(this, arguments)
+  createModel: ->
+    @createComponent.apply(this, arguments)
 
 
   getTemplate: (componentName) ->

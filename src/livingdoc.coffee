@@ -59,6 +59,10 @@ module.exports = class Livingdoc extends EventEmitter
     promise
 
 
+  createComponent: ->
+    @componentTree.createComponent.apply(@componentTree, arguments)
+
+
   # Append the article to the DOM.
   #
   # @param { DOM Node, jQuery object or CSS selector string } Where to append the article in the document.
