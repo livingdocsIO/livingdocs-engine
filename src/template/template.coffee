@@ -8,47 +8,53 @@ DirectiveCollection = require('./directive_collection')
 directiveCompiler = require('./directive_compiler')
 directiveFinder = require('./directive_finder')
 
-SnippetModel = require('../snippet_tree/snippet_model')
-SnippetView = require('../rendering/snippet_view')
+ComponentModel = require('../component_tree/component_model')
+ComponentView = require('../rendering/component_view')
+
+sortByName = (a, b) ->
+  if (a.name > b.name)
+    1
+  else if (a.name < b.name)
+    -1
+  else
+    0
 
 # Template
 # --------
-# Parses snippet templates and creates SnippetModels and SnippetViews.
+# Parses component templates and creates ComponentModels and ComponentViews.
 module.exports = class Template
 
 
-  constructor: ({ html, @namespace, @id, identifier, title, styles, weight } = {}) ->
+  constructor: ({ @name, html, label, properties } = {}) ->
     assert html, 'Template: param html missing'
-
-    if identifier
-      { @namespace, @id } = Template.parseIdentifier(identifier)
-
-    @identifier = if @namespace && @id
-      "#{ @namespace }.#{ @id }"
 
     @$template = $( @pruneHtml(html) ).wrap('<div>')
     @$wrap = @$template.parent()
 
-    @title = title || words.humanize( @id )
-    @styles = styles || {}
-    @weight = weight
+    @label = label || words.humanize( @name )
+    @styles = properties || {}
     @defaults = {}
 
     @parseTemplate()
 
 
-  # create a new SnippetModel instance from this template
+  setDesign: (design) ->
+    @design = design
+    @identifier = "#{ design.name }.#{ @name }"
+
+
+  # create a new ComponentModel instance from this template
   createModel: () ->
-    new SnippetModel(template: this)
+    new ComponentModel(template: this)
 
 
-  createView: (snippetModel, isReadOnly) ->
-    snippetModel ||= @createModel()
+  createView: (componentModel, isReadOnly) ->
+    componentModel ||= @createModel()
     $elem = @$template.clone()
     directives = @linkDirectives($elem[0])
 
-    snippetView = new SnippetView
-      model: snippetModel
+    componentView = new ComponentView
+      model: componentModel
       $html: $elem
       directives: directives
       isReadOnly: isReadOnly
@@ -61,7 +67,7 @@ module.exports = class Template
       @nodeType !=8
 
     # only allow one root element
-    assert html.length == 1, "Templates must contain one root element. The Template \"#{@identifier}\" contains #{ html.length }"
+    assert html.length == 1, "Templates must contain one root element. The Template \"#{ @identifier }\" contains #{ html.length }"
 
     html
 
@@ -92,16 +98,16 @@ module.exports = class Template
     directives
 
 
-  # For every new SnippetView the directives are cloned
+  # For every new ComponentView the directives are cloned
   # and linked with the elements from the new view.
   linkDirectives: (elem) ->
     iterator = new DirectiveIterator(elem)
-    snippetDirectives = @directives.clone()
+    componentDirectives = @directives.clone()
 
     while elem = iterator.nextElement()
-      directiveFinder.link(elem, snippetDirectives)
+      directiveFinder.link(elem, componentDirectives)
 
-    snippetDirectives
+    componentDirectives
 
 
   formatEditable: (name, elem) ->
@@ -124,16 +130,29 @@ module.exports = class Template
     elem.innerHTML = ''
 
 
-  # output the accepted content of the snippet
-  # that can be passed to create
-  # e.g: { title: "Itchy and Scratchy" }
-  printDoc: () ->
+  # Return an object describing the interface of this template
+  # @returns { Object } An object wich contains the interface description
+  #   of this template. This object will be the same if the interface does
+  #   not change since directives and properties are sorted.
+  info: () ->
     doc =
-      identifier: @identifier
-      # editables: Object.keys @editables if @editables
-      # containers: Object.keys @containers if @containers
+      name: @name
+      design: @design?.name
+      directives: []
+      properties: []
 
-    words.readableJson(doc)
+    @directives.each (directive) =>
+      { name, type } = directive
+      doc.directives.push({ name, type })
+
+
+    for name, style of @styles
+      doc.properties.push({ name, type: 'cssModificator' })
+
+    doc.directives.sort(sortByName)
+    doc.properties.sort(sortByName)
+    doc
+
 
 
 # Static functions
@@ -144,8 +163,8 @@ Template.parseIdentifier = (identifier) ->
 
   parts = identifier.split('.')
   if parts.length == 1
-    { namespace: undefined, id: parts[0] }
+    { designName: undefined, name: parts[0] }
   else if parts.length == 2
-    { namespace: parts[0], id: parts[1] }
+    { designName: parts[0], name: parts[1] }
   else
-    log.error("could not parse snippet template identifier: #{ identifier }")
+    log.error("could not parse component template identifier: #{ identifier }")

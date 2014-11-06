@@ -4,10 +4,10 @@ dom = require('../interaction/dom')
 Focus = require('../interaction/focus')
 EditableController = require('../interaction/editable_controller')
 DragBase = require('../interaction/drag_base')
-SnippetDrag = require('../interaction/snippet_drag')
+ComponentDrag = require('../interaction/component_drag')
 
 # An InteractivePage is a subclass of Page which allows for manipulation of the
-# rendered SnippetTree.
+# rendered ComponentTree.
 module.exports = class InteractivePage extends Page
 
   LEFT_MOUSE_BUTTON = 1
@@ -22,13 +22,13 @@ module.exports = class InteractivePage extends Page
     @editableController = new EditableController(this)
 
     # events
-    @imageClick = $.Callbacks() # (snippetView, fieldName, event) ->
-    @htmlElementClick = $.Callbacks() # (snippetView, fieldName, event) ->
-    @snippetWillBeDragged = $.Callbacks() # (snippetModel) ->
-    @snippetWasDropped = $.Callbacks() # (snippetModel) ->
+    @imageClick = $.Callbacks() # (componentView, fieldName, event) ->
+    @htmlElementClick = $.Callbacks() # (componentView, fieldName, event) ->
+    @componentWillBeDragged = $.Callbacks() # (componentModel) ->
+    @componentWasDropped = $.Callbacks() # (componentModel) ->
     @dragBase = new DragBase(this)
-    @focus.snippetFocus.add( $.proxy(@afterSnippetFocused, this) )
-    @focus.snippetBlur.add( $.proxy(@afterSnippetBlurred, this) )
+    @focus.componentFocus.add( $.proxy(@afterComponentFocused, this) )
+    @focus.componentBlur.add( $.proxy(@afterComponentBlurred, this) )
     @beforeInteractivePageReady()
     @$document
       .on('mousedown.livingdocs', $.proxy(@mousedown, this))
@@ -37,7 +37,7 @@ module.exports = class InteractivePage extends Page
 
 
   beforeInteractivePageReady: ->
-    if config.livingdocsCssFile?
+    if config.livingdocsCssFile
       @cssLoader.load(config.livingdocsCssFile, @readySemaphore.wait())
 
 
@@ -59,27 +59,27 @@ module.exports = class InteractivePage extends Page
     isControl = $(event.target).closest(config.ignoreInteraction).length
     return if isControl
 
-    # Identify the clicked snippet
-    snippetView = dom.findSnippetView(event.target)
+    # Identify the clicked component
+    componentView = dom.findComponentView(event.target)
 
     # This is called in mousedown since editables get focus on mousedown
     # and only before the editables clear their placeholder can we safely
     # identify where the user has clicked.
-    @handleClickedSnippet(event, snippetView)
+    @handleClickedComponent(event, componentView)
 
-    if snippetView
+    if componentView
       @startDrag
-        snippetView: snippetView
+        componentView: componentView
         event: event
 
 
-  startDrag: ({ snippetModel, snippetView, event, config }) ->
-    return unless snippetModel || snippetView
-    snippetModel = snippetView.model if snippetView
+  startDrag: ({ componentModel, componentView, event, config }) ->
+    return unless componentModel || componentView
+    componentModel = componentView.model if componentView
 
-    snippetDrag = new SnippetDrag
-      snippetModel: snippetModel
-      snippetView: snippetView
+    componentDrag = new ComponentDrag
+      componentModel: componentModel
+      componentView: componentView
 
     config ?=
       longpress:
@@ -87,24 +87,24 @@ module.exports = class InteractivePage extends Page
         delay: 400
         tolerance: 3
 
-    @dragBase.init(snippetDrag, event, config)
+    @dragBase.init(componentDrag, event, config)
 
 
   cancelDrag: ->
     @dragBase.cancel()
 
 
-  handleClickedSnippet: (event, snippetView) ->
-    if snippetView
-      @focus.snippetFocused(snippetView)
+  handleClickedComponent: (event, componentView) ->
+    if componentView
+      @focus.componentFocused(componentView)
 
       nodeContext = dom.findNodeContext(event.target)
       if nodeContext
         switch nodeContext.contextAttr
           when config.directives.image.renderedAttr
-            @imageClick.fire(snippetView, nodeContext.attrName, event)
+            @imageClick.fire(componentView, nodeContext.attrName, event)
           when config.directives.html.renderedAttr
-            @htmlElementClick.fire(snippetView, nodeContext.attrName, event)
+            @htmlElementClick.fire(componentView, nodeContext.attrName, event)
     else
       @focus.blur()
 
@@ -119,21 +119,21 @@ module.exports = class InteractivePage extends Page
     $(focusedElement).blur() if focusedElement
 
 
-  snippetViewWasInserted: (snippetView) ->
-    @initializeEditables(snippetView)
+  componentViewWasInserted: (componentView) ->
+    @initializeEditables(componentView)
 
 
-  initializeEditables: (snippetView) ->
-    if snippetView.directives.editable
-      editableNodes = for directive in snippetView.directives.editable
+  initializeEditables: (componentView) ->
+    if componentView.directives.editable
+      editableNodes = for directive in componentView.directives.editable
         directive.elem
 
       @editableController.add(editableNodes)
 
 
-  afterSnippetFocused: (snippetView) ->
-    snippetView.afterFocused()
+  afterComponentFocused: (componentView) ->
+    componentView.afterFocused()
 
 
-  afterSnippetBlurred: (snippetView) ->
-    snippetView.afterBlurred()
+  afterComponentBlurred: (componentView) ->
+    componentView.afterBlurred()

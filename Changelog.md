@@ -1,9 +1,22 @@
+# v0.4.0
+
+#### Features:
+
+- Improved design configuration and structure [119](https://github.com/upfrontIO/livingdocs-engine/pull/119)
+- Add option to exclude components in Renderer [#128](https://github.com/upfrontIO/livingdocs-engine/pull/128)
+- Rename snippet to component everywhere [129](https://github.com/upfrontIO/livingdocs-engine/pull/129)
+- Update design in index.html [#130](https://github.com/upfrontIO/livingdocs-engine/pull/130)
+
+#### Bugfixes:
+
+- Accept absolute css paths [#125](https://github.com/upfrontIO/livingdocs-engine/pull/125)
+
 
 # v0.3.0
 
 #### Features:
 
-- Store image object. Use snippetModelDirective to provide an easier API to work with directives of different types. [#114](https://github.com/upfrontIO/livingdocs-engine/pull/114)
+- Store image object. Use componentModelDirective to provide an easier API to work with directives of different types. [#114](https://github.com/upfrontIO/livingdocs-engine/pull/114)
 - Add document.appendTo method [#117](https://github.com/upfrontIO/livingdocs-engine/pull/117)
 
 
@@ -25,8 +38,8 @@
 - Support editable.js change event [#104](https://github.com/upfrontIO/livingdocs-engine/pull/104)
 - Improved Drag and Drop [#89](https://github.com/upfrontIO/livingdocs-engine/pull/89)
 - Add a css class on images that contain the placeholder, i.e., are empty [#91](https://github.com/upfrontIO/livingdocs-engine/pull/91)
-- Read the default paragraph snippet (gets repeated on pressing Enter) from the design's configuration [#90](https://github.com/upfrontIO/livingdocs-engine/pull/90)
-- Add a data property to the snippetModel to persist structured JSON data (https://github.com/upfrontIO/livingdocs-engine/commit/6524654aabacf05b04e7bbbecc40f205fa01cc86)
+- Read the default paragraph component (gets repeated on pressing Enter) from the design's configuration [#90](https://github.com/upfrontIO/livingdocs-engine/pull/90)
+- Add a data property to the componentModel to persist structured JSON data (https://github.com/upfrontIO/livingdocs-engine/commit/6524654aabacf05b04e7bbbecc40f205fa01cc86)
 - Support resrc.it image service URL creation [#94](https://github.com/upfrontIO/livingdocs-engine/pull/94)
 - Support resetting of temporary values [#98](https://github.com/upfrontIO/livingdocs-engine/pull/98)
 

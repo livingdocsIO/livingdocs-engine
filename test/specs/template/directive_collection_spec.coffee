@@ -10,7 +10,7 @@ describe 'DirectiveCollection', ->
       @list.add(@directive)
 
 
-    it 'adds the snippet', ->
+    it 'adds the component', ->
       expect(@list.all['foo']).to.equal(@directive)
 
 
@@ -30,11 +30,11 @@ describe 'DirectiveCollection', ->
       expect(@list.get('foo')).to.equal(@directive)
 
 
-    it 'makes the snippet available by its type', ->
+    it 'makes the component available by its type', ->
       expect(@list.editable['foo']).to.equal(@directive.elem)
 
 
-    describe 'adding a snippet with a name that is used by another snippet', ->
+    describe 'adding a component with a name that is used by another component', ->
 
       it 'throws an error', ->
         node = name: @directive.name, type: 'image'

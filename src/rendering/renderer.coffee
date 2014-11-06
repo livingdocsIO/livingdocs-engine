@@ -5,17 +5,37 @@ config = require('../configuration/config')
 
 module.exports = class Renderer
 
-  constructor: ({ @snippetTree, @renderingContainer, $wrapper }) ->
-    assert @snippetTree, 'no snippet tree specified'
+  # @param { Object }
+  # - componentTree { ComponentTree }
+  # - renderingContainer { RenderingContainer }
+  # - $wrapper { jQuery object } A wrapper with a node with a 'doc-section' css class where to insert the content.
+  # - excludeComponents { String or Array } componentModel.id or an array of such.
+  constructor: ({ @componentTree, @renderingContainer, $wrapper, excludeComponents }) ->
+    assert @componentTree, 'no componentTree specified'
     assert @renderingContainer, 'no rendering container specified'
 
     @$root = $(@renderingContainer.renderNode)
     @$wrapperHtml = $wrapper
-    @snippetViews = {}
+    @componentViews = {}
 
+    @excludedComponentIds = {}
+    @excludeComponent(excludeComponents)
     @readySemaphore = new Semaphore()
     @renderOncePageReady()
     @readySemaphore.start()
+
+
+  # @param { String or Array } componentModel.id or an array of such.
+  excludeComponent: (componentId) ->
+    return unless componentId?
+    if $.isArray(componentId)
+      for compId in componentId
+        @excludeComponent(compId)
+    else
+      @excludedComponentIds[componentId] = true
+      view = @componentViews[componentId]
+      if view? and view.isAttachedToDom
+        @removeComponent(view.model)
 
 
   setRoot: () ->
@@ -27,9 +47,9 @@ module.exports = class Renderer
         @$wrapper.append(@$wrapperHtml)
         @$root = $insert
 
-    # Store a reference to the snippetTree in the $root node.
-    # Some dom.coffee methods need it to get hold of the snippet tree
-    @$root.data('snippetTree', @snippetTree)
+    # Store a reference to the componentTree in the $root node.
+    # Some dom.coffee methods need it to get hold of the componentTree
+    @$root.data('componentTree', @componentTree)
 
 
   renderOncePageReady: ->
@@ -37,7 +57,7 @@ module.exports = class Renderer
     @renderingContainer.ready =>
       @setRoot()
       @render()
-      @setupSnippetTreeListeners()
+      @setupComponentTreeListeners()
       @readySemaphore.decrement()
 
 
@@ -54,59 +74,59 @@ module.exports = class Renderer
     @renderingContainer.html()
 
 
-  # Snippet Tree Event Handling
-  # ---------------------------
+  # ComponentTree Event Handling
+  # ----------------------------
 
-  setupSnippetTreeListeners: ->
-    @snippetTree.snippetAdded.add( $.proxy(@snippetAdded, this) )
-    @snippetTree.snippetRemoved.add( $.proxy(@snippetRemoved, this) )
-    @snippetTree.snippetMoved.add( $.proxy(@snippetMoved, this) )
-    @snippetTree.snippetContentChanged.add( $.proxy(@snippetContentChanged, this) )
-    @snippetTree.snippetHtmlChanged.add( $.proxy(@snippetHtmlChanged, this) )
-
-
-  snippetAdded: (model) ->
-    @insertSnippet(model)
+  setupComponentTreeListeners: ->
+    @componentTree.componentAdded.add( $.proxy(@componentAdded, this) )
+    @componentTree.componentRemoved.add( $.proxy(@componentRemoved, this) )
+    @componentTree.componentMoved.add( $.proxy(@componentMoved, this) )
+    @componentTree.componentContentChanged.add( $.proxy(@componentContentChanged, this) )
+    @componentTree.componentHtmlChanged.add( $.proxy(@componentHtmlChanged, this) )
 
 
-  snippetRemoved: (model) ->
-    @removeSnippet(model)
-    @deleteCachedSnippetViewForSnippet(model)
+  componentAdded: (model) ->
+    @insertComponent(model)
 
 
-  snippetMoved: (model) ->
-    @removeSnippet(model)
-    @insertSnippet(model)
+  componentRemoved: (model) ->
+    @removeComponent(model)
+    @deleteCachedComponentViewForComponent(model)
 
 
-  snippetContentChanged: (model) ->
-    @snippetViewForSnippet(model).updateContent()
+  componentMoved: (model) ->
+    @removeComponent(model)
+    @insertComponent(model)
 
 
-  snippetHtmlChanged: (model) ->
-    @snippetViewForSnippet(model).updateHtml()
+  componentContentChanged: (model) ->
+    @componentViewForComponent(model).updateContent()
+
+
+  componentHtmlChanged: (model) ->
+    @componentViewForComponent(model).updateHtml()
 
 
   # Rendering
   # ---------
 
 
-  snippetViewForSnippet: (model) ->
-    @snippetViews[model.id] ||= model.createView(@renderingContainer.isReadOnly)
+  componentViewForComponent: (model) ->
+    @componentViews[model.id] ||= model.createView(@renderingContainer.isReadOnly)
 
 
-  deleteCachedSnippetViewForSnippet: (model) ->
-    delete @snippetViews[model.id]
+  deleteCachedComponentViewForComponent: (model) ->
+    delete @componentViews[model.id]
 
 
   render: ->
-    @snippetTree.each (model) =>
-      @insertSnippet(model)
+    @componentTree.each (model) =>
+      @insertComponent(model)
 
 
   clear: ->
-    @snippetTree.each (model) =>
-      @snippetViewForSnippet(model).setAttachedToDom(false)
+    @componentTree.each (model) =>
+      @componentViewForComponent(model).setAttachedToDom(false)
 
     @$root.empty()
 
@@ -116,56 +136,56 @@ module.exports = class Renderer
     @render()
 
 
-  insertSnippet: (model) ->
-    return if @isSnippetAttached(model)
+  insertComponent: (model) ->
+    return if @isComponentAttached(model) || @excludedComponentIds[model.id] == true
 
-    if @isSnippetAttached(model.previous)
-      @insertSnippetAsSibling(model.previous, model)
-    else if @isSnippetAttached(model.next)
-      @insertSnippetAsSibling(model.next, model)
+    if @isComponentAttached(model.previous)
+      @insertComponentAsSibling(model.previous, model)
+    else if @isComponentAttached(model.next)
+      @insertComponentAsSibling(model.next, model)
     else if model.parentContainer
-      @appendSnippetToParentContainer(model)
+      @appendComponentToParentContainer(model)
     else
-      log.error('Snippet could not be inserted by renderer.')
+      log.error('Component could not be inserted by renderer.')
 
-    snippetView = @snippetViewForSnippet(model)
-    snippetView.setAttachedToDom(true)
-    @renderingContainer.snippetViewWasInserted(snippetView)
-    @attachChildSnippets(model)
-
-
-  isSnippetAttached: (model) ->
-    model && @snippetViewForSnippet(model).isAttachedToDom
+    componentView = @componentViewForComponent(model)
+    componentView.setAttachedToDom(true)
+    @renderingContainer.componentViewWasInserted(componentView)
+    @attachChildComponents(model)
 
 
-  attachChildSnippets: (model) ->
+  isComponentAttached: (model) ->
+    model && @componentViewForComponent(model).isAttachedToDom
+
+
+  attachChildComponents: (model) ->
     model.children (childModel) =>
-      if not @isSnippetAttached(childModel)
-        @insertSnippet(childModel)
+      if not @isComponentAttached(childModel)
+        @insertComponent(childModel)
 
 
-  insertSnippetAsSibling: (sibling, model) ->
+  insertComponentAsSibling: (sibling, model) ->
     method = if sibling == model.previous then 'after' else 'before'
-    @$nodeForSnippet(sibling)[method](@$nodeForSnippet(model))
+    @$nodeForComponent(sibling)[method](@$nodeForComponent(model))
 
 
-  appendSnippetToParentContainer: (model) ->
-    @$nodeForSnippet(model).appendTo(@$nodeForContainer(model.parentContainer))
+  appendComponentToParentContainer: (model) ->
+    @$nodeForComponent(model).appendTo(@$nodeForContainer(model.parentContainer))
 
 
-  $nodeForSnippet: (model) ->
-    @snippetViewForSnippet(model).$html
+  $nodeForComponent: (model) ->
+    @componentViewForComponent(model).$html
 
 
   $nodeForContainer: (container) ->
     if container.isRoot
       @$root
     else
-      parentView = @snippetViewForSnippet(container.parentSnippet)
+      parentView = @componentViewForComponent(container.parentComponent)
       $(parentView.getDirectiveElement(container.name))
 
 
-  removeSnippet: (model) ->
-    @snippetViewForSnippet(model).setAttachedToDom(false)
-    @$nodeForSnippet(model).detach()
+  removeComponent: (model) ->
+    @componentViewForComponent(model).setAttachedToDom(false)
+    @$nodeForComponent(model).detach()
 

@@ -5,12 +5,12 @@ describe 'DirectiveIterator', ->
 
   beforeEach ->
     @html = test.createElem """
-      <div class="#{ css.snippet }">
+      <div class="#{ css.component }">
         <!-- Adding a comment node so we have another nodeType in play -->
         <h1 #{ test.editableAttr }="title"></h1>
         <div #{ test.containerAttr }="children">
           <!-- This should not be traversed -->
-          <h1 class="#{ css.snippet }" #{ test.editableAttr }="title"></h1>
+          <h1 class="#{ css.component }" #{ test.editableAttr }="title"></h1>
         </div>
       </div>
       """
@@ -18,7 +18,7 @@ describe 'DirectiveIterator', ->
     @iterator = new DirectiveIterator(@html)
 
 
-  it 'searches only through snippet and not descendant nodes', ->
+  it 'searches only through component and not descendant nodes', ->
     visitedElements = 0
     visitedComments = 0
     while @iterator.next()

@@ -50,7 +50,7 @@ module.exports = class EditableController
   # Example: listener(view, editableName, otherParams...)
   withContext: (func) ->
     (element, args...) =>
-      view = dom.findSnippetView(element)
+      view = dom.findComponentView(element)
       editableName = element.getAttribute(@editableAttr)
       args.unshift(view, editableName)
       func.apply(this, args)
@@ -93,11 +93,9 @@ module.exports = class EditableController
   # Usually triggered by pressing enter at the end of a block
   # or by pressing delete at the beginning of a block.
   insert: (view, editableName, direction, cursor) ->
-    if @hasSingleEditable(view)
-
-      snippetName = @page.design.paragraphSnippet
-      template = @page.design.get(snippetName)
-      copy = template.createModel()
+    defaultParagraph = @page.design.defaultParagraph
+    if @hasSingleEditable(view) && defaultParagraph?
+      copy = defaultParagraph.createModel()
 
       newView = if direction == 'before'
         view.model.before(copy)
@@ -148,7 +146,7 @@ module.exports = class EditableController
   split: (view, editableName, before, after, cursor) ->
     if @hasSingleEditable(view)
 
-      # append and focus copy of snippet
+      # append and focus copy of component
       copy = view.template.createModel()
       copy.set(editableName, @extractContent(after))
       view.model.after(copy)

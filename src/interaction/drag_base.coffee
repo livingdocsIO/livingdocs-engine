@@ -160,7 +160,7 @@ module.exports = class DragBase
       @drop(event)
 
 
-  # These events are possibly initialized with a delay in snippetDrag#onStart
+  # These events are possibly initialized with a delay in componentDrag#onStart
   addMoveListeners: (event) ->
     if event.type == 'touchstart'
       @page.$document.on 'touchmove.livingdocs-drag', (event) =>

@@ -7,7 +7,7 @@
 }
 
 .doc-section {
-  /* Allow for some space at the end of the document to drop snippets in */
+  /* Allow for some space at the end of the document to drop components in */
   padding-bottom: 150px;
 }
 
@@ -28,8 +28,8 @@
  * Highlighting
  */
 
-.doc-editable.doc-snippet-highlight,
-.doc-snippet-highlight {
+.doc-editable.doc-component-highlight,
+.doc-component-highlight {
   /* Default */
   /*outline: thin dotted #333;*/
   box-shadow: 0 0 1px 2px rgba(123, 215, 253, 0.5);

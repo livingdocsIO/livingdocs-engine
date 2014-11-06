@@ -2,10 +2,10 @@ dom = require('../../../src/interaction/dom')
 
 describe 'DOM method', ->
 
-  describe 'findSnippetView()', ->
+  describe 'findComponentView()', ->
 
     it 'returns undefined when called with undefined', ->
-      expect( dom.findSnippetView(undefined) ).to.be.undefined
+      expect( dom.findComponentView(undefined) ).to.be.undefined
 
 
   describe 'findContainer()', ->
@@ -20,34 +20,34 @@ describe 'DOM method', ->
       expect( dom.dropTarget(undefined, {}) ).to.be.undefined
 
 
-  describe 'findSnippetView() on title snippet', ->
+  describe 'findComponentView() on title component', ->
 
     beforeEach ->
       @view = test.getTemplate('title').createView()
       @$html = @view.$html
 
 
-    it 'finds snippet from jQuery node', ->
-      expect( dom.findSnippetView(@$html) ).to.equal(@view)
+    it 'finds component from jQuery node', ->
+      expect( dom.findComponentView(@$html) ).to.equal(@view)
 
 
-    it 'finds snippet from DOM node', ->
-      expect( dom.findSnippetView(@$html[0]) ).to.equal(@view)
+    it 'finds component from DOM node', ->
+      expect( dom.findComponentView(@$html[0]) ).to.equal(@view)
 
 
-  describe 'findSnippetView() on row snippet', ->
+  describe 'findComponentView() on row component', ->
 
     beforeEach ->
       @view = test.getTemplate('row').createView()
       @$html = @view.$html
 
 
-    it 'finds row snippet from child node ', ->
+    it 'finds row component from child node ', ->
       $node = @$html.find('.span8').first()
-      expect( dom.findSnippetView($node) ).to.equal(@view)
+      expect( dom.findComponentView($node) ).to.equal(@view)
 
 
-  describe 'findNodeContext() on image snippet', ->
+  describe 'findNodeContext() on image component', ->
 
     beforeEach ->
       @view = test.getTemplate('image').createView()
@@ -60,7 +60,7 @@ describe 'DOM method', ->
         attrName: 'image'
 
 
-  describe 'findNodeContext() on cover snippet', ->
+  describe 'findNodeContext() on cover component', ->
 
     beforeEach ->
       @view = test.getTemplate('cover').createView()
@@ -81,7 +81,7 @@ describe 'DOM method', ->
         attrName: 'image'
 
 
-  describe 'findNodeContext() on html snippet', ->
+  describe 'findNodeContext() on html component', ->
 
     beforeEach ->
       @view = test.getTemplate('html').createView()
@@ -118,5 +118,5 @@ describe 'DOM method', ->
       containerInfo = dom.findContainer(elem)
       expect(containerInfo.node).to.equal(containerElem)
       expect(containerInfo.containerName).to.equal('main')
-      expect(containerInfo.snippetView).to.equal(@row)
+      expect(containerInfo.componentView).to.equal(@row)
 

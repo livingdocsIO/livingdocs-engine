@@ -1,7 +1,7 @@
 Page = require('../../../src/rendering_container/page')
 RenderingContainer = require('../../../src/rendering_container/rendering_container')
 Design = require('../../../src/design/design')
-SnippetTree = require('../../../src/snippet_tree/snippet_tree')
+ComponentTree = require('../../../src/component_tree/component_tree')
 Renderer = require('../../../src/rendering/renderer')
 
 module.exports = class InstanceInjector
@@ -24,15 +24,15 @@ module.exports = class InstanceInjector
     @instances[name] = switch name
       when 'renderer'
         new Renderer
-          snippetTree: @create('snippetTree')
+          componentTree: @create('componentTree')
           renderingContainer: @requireContainer()
 
-      when 'snippetTree'
-        new SnippetTree
+      when 'componentTree'
+        new ComponentTree
           design: @create('design')
 
       when 'design'
-        new Design(test.designJson)
+        test.getDesign()
 
       when 'renderingContainer', 'page', 'interactivePage'
         @createContainer(name)

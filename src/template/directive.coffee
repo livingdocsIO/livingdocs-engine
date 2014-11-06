@@ -22,7 +22,7 @@ module.exports = class Directive
     @elem.nodeName.toLowerCase()
 
 
-  # For every new SnippetView the directives are cloned from the
+  # For every new ComponentView the directives are cloned from the
   # template and linked with the elements from the new view
   clone: ->
     newDirective = new Directive(name: @name, type: @type)

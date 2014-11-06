@@ -1,47 +1,47 @@
 dom = require('./dom')
 
-# Document Focus
-# --------------
-# Manage the snippet or editable that is currently focused
+# Component Focus
+# ---------------
+# Manage the component or editable that is currently focused
 module.exports = class Focus
 
   constructor: ->
     @editableNode = undefined
-    @snippetView = undefined
+    @componentView = undefined
 
-    @snippetFocus = $.Callbacks()
-    @snippetBlur = $.Callbacks()
+    @componentFocus = $.Callbacks()
+    @componentBlur = $.Callbacks()
 
 
-  setFocus: (snippetView, editableNode) ->
+  setFocus: (componentView, editableNode) ->
     if editableNode != @editableNode
       @resetEditable()
       @editableNode = editableNode
 
-    if snippetView != @snippetView
-      @resetSnippetView()
-      if snippetView
-        @snippetView = snippetView
-        @snippetFocus.fire(@snippetView)
+    if componentView != @componentView
+      @resetComponentView()
+      if componentView
+        @componentView = componentView
+        @componentFocus.fire(@componentView)
 
 
   # call after browser focus change
-  editableFocused: (editableNode, snippetView) ->
+  editableFocused: (editableNode, componentView) ->
     if @editableNode != editableNode
-      snippetView ||= dom.findSnippetView(editableNode)
-      @setFocus(snippetView, editableNode)
+      componentView ||= dom.findComponentView(editableNode)
+      @setFocus(componentView, editableNode)
 
 
   # call after browser focus change
   editableBlurred: (editableNode) ->
     if @editableNode == editableNode
-      @setFocus(@snippetView, undefined)
+      @setFocus(@componentView, undefined)
 
 
   # call after click
-  snippetFocused: (snippetView) ->
-    if @snippetView != snippetView
-      @setFocus(snippetView, undefined)
+  componentFocused: (componentView) ->
+    if @componentView != componentView
+      @setFocus(componentView, undefined)
 
 
   blur: ->
@@ -58,10 +58,10 @@ module.exports = class Focus
 
 
   # @api private
-  resetSnippetView: ->
-    if @snippetView
-      previous = @snippetView
-      @snippetView = undefined
-      @snippetBlur.fire(previous)
+  resetComponentView: ->
+    if @componentView
+      previous = @componentView
+      @componentView = undefined
+      @componentBlur.fire(previous)
 
 

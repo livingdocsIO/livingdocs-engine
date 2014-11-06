@@ -1,7 +1,7 @@
 config = require('../configuration/config')
 css = config.css
 DragBase = require('../interaction/drag_base')
-SnippetDrag = require('../interaction/snippet_drag')
+ComponentDrag = require('../interaction/component_drag')
 
 module.exports = class EditorPage
 
@@ -13,18 +13,18 @@ module.exports = class EditorPage
     @editableController =
       disableAll: ->
       reenableAll: ->
-    @snippetWasDropped =
+    @componentWasDropped =
       fire: ->
     @blurFocusedElement = ->
 
 
-  startDrag: ({ snippetModel, snippetView, event, config }) ->
-    return unless snippetModel || snippetView
-    snippetModel = snippetView.model if snippetView
+  startDrag: ({ componentModel, componentView, event, config }) ->
+    return unless componentModel || componentView
+    componentModel = componentView.model if componentView
 
-    snippetDrag = new SnippetDrag
-      snippetModel: snippetModel
-      snippetView: snippetView
+    componentDrag = new ComponentDrag
+      componentModel: componentModel
+      componentView: componentView
 
     config ?=
       longpress:
@@ -32,7 +32,7 @@ module.exports = class EditorPage
         delay: 400
         tolerance: 3
 
-    @dragBase.init(snippetDrag, event, config)
+    @dragBase.init(componentDrag, event, config)
 
 
   setWindow: ->

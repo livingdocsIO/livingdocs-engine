@@ -12,65 +12,14 @@ module.exports = do ->
   # Configuration
   # -------------
 
-  config:
-    namespace: 'test'
-    paragraph: 'text'
+  name: 'test'
+  version: '0.0.1'
+  author: 'upfront.io'
 
-    groups:
-      layout:
-        title: 'Layout'
-        templates: [
-          'row'
-          'container'
-          'stuffedContainer'
-        ]
-      header:
-        title: 'Header'
-        styles: [
-          name: 'Capitalized'
-          type: 'option'
-          value: 'capitalized'
-        ]
-        templates: [
-          'cover'
-          'hero'
-          'title'
-        ]
-      other:
-        title: 'Other'
-        templates: [
-          'subtitle'
-          'text'
-          'image'
-        ]
-
-    styles: [
-      name: 'Color'
-      type: 'select'
-      options: [
-        caption: 'Red'
-        value: 'color--red'
-      ,
-        caption: 'Blue'
-        value: 'color--blue'
-      ,
-        caption: 'Green'
-        value: 'color--green'
-      ]
-    ]
-
-  # Snippets
-  # --------
-
-  templates: [
-      id:   'hero'
-      title: 'Hero'
-      weight: 10
-      styles: [
-        name: 'Extra Space'
-        type: 'option'
-        value: 'extra-space'
-      ]
+  components: [
+      name:   'hero'
+      label: 'Hero'
+      properties: ['extra-space', 'capitalized', 'color']
       html:
         """
           <div>
@@ -79,29 +28,31 @@ module.exports = do ->
           </div>
         """
     ,
-      id: 'title'
-      weight: 9
-      title: 'Title'
+      name: 'title'
+      label: 'Title'
+      properties: ['capitalized', 'color']
       html: """<h1 #{ editableAttr }="title"></h1>"""
     ,
-      id: 'subtitle'
-      title: 'Subtitle with a default value'
+      name: 'subtitle'
+      properties: ['color']
+      label: 'Subtitle with a default value'
       html: """<h2 #{ editableAttr }="title">Who's your Caddy?</h2>"""
     ,
-      id: 'text'
-      title: 'Paragraph'
+      name: 'text'
+      label: 'Paragraph'
       html: """<p #{ editableAttr }="text"></p>"""
     ,
-      id: 'image'
-      title: 'Image'
+      name: 'image'
+      label: 'Image'
       html: """<img #{ imageAttr }="image" src=""/>"""
     ,
-      id: 'background-image'
-      title: 'Background Image'
+      name: 'background-image'
+      label: 'Background Image'
       html: """<div #{ imageAttr }="image"></div>"""
     ,
-      id: 'cover'
-      title: 'Cover'
+      name: 'cover'
+      label: 'Cover'
+      properties: ['capitalized']
       html:
         """
         <div>
@@ -113,8 +64,8 @@ module.exports = do ->
         </div>
         """
     ,
-      id: 'row'
-      title: 'Row with two columns'
+      name: 'row'
+      label: 'Row with two columns'
       html:
         """
         <div class="row-fluid">
@@ -123,8 +74,8 @@ module.exports = do ->
         </div>
         """
     ,
-      id: 'container'
-      title: 'Container with no container name'
+      name: 'container'
+      label: 'Container with no container name'
       html:
         """
         <div class="container">
@@ -132,8 +83,8 @@ module.exports = do ->
         </div>
         """
     ,
-      id: 'stuffedContainer'
-      title: 'Container with some stuff in it'
+      name: 'stuffedContainer'
+      label: 'Container with some stuff in it'
       html:
         """
         <div class="stuffed">
@@ -146,8 +97,8 @@ module.exports = do ->
         </div>
         """
     ,
-      id: 'html'
-      title: 'Freeform html'
+      name: 'html'
+      label: 'Freeform html'
       html:
         """
         <div #{ htmlAttr }="html">
@@ -155,3 +106,44 @@ module.exports = do ->
         </div>
         """
     ]
+
+
+  defaultComponents:
+    paragraph: 'text'
+    image: 'image'
+
+
+  componentProperties:
+    'color':
+      type: 'select'
+      options: [
+        caption: 'Default'
+      ,
+        caption: 'Red'
+        value: 'color--red'
+      ,
+        caption: 'Blue'
+        value: 'color--blue'
+      ,
+        caption: 'Green'
+        value: 'color--green'
+      ]
+    'extra-space':
+      type: 'option'
+      value: 'extra-space'
+    'capitalized':
+      type: 'option'
+      value: 'capitalized'
+
+
+  groups: [
+    label: 'Layout'
+    components: ['row', 'container', 'stuffedContainer']
+  ,
+    label: 'Header'
+    components: ['cover', 'hero', 'title']
+  ,
+    label: 'Other'
+    components: ['subtitle', 'text', 'image']
+  ]
+

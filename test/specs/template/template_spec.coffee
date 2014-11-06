@@ -1,7 +1,7 @@
 Template = require('../../../src/template/template')
-SnippetModel = require('../../../src/snippet_tree/snippet_model')
-SnippetContainer = require('../../../src/snippet_tree/snippet_container')
-SnippetView = require('../../../src/rendering/snippet_view')
+ComponentModel = require('../../../src/component_tree/component_model')
+ComponentContainer = require('../../../src/component_tree/component_container')
+ComponentView = require('../../../src/rendering/component_view')
 css = config.css
 
 describe 'Title Template', ->
@@ -9,7 +9,7 @@ describe 'Title Template', ->
   template = undefined
   beforeEach ->
     template = new Template
-      id: 'h1'
+      name: 'h1'
       html: """<h1 #{ test.editableAttr }="title"></h1>"""
 
 
@@ -17,8 +17,8 @@ describe 'Title Template', ->
     expect(template.$template).to.exist
 
 
-  it 'has an id', ->
-    expect(template.id).to.equal('h1')
+  it 'has a name', ->
+    expect(template.name).to.equal('h1')
 
 
   it 'has one directive', ->
@@ -33,30 +33,30 @@ describe 'Title Template', ->
 
   describe '#createModel()', ->
 
-    it 'returns a SnippetModel', ->
+    it 'returns a ComponentModel', ->
       model = template.createModel()
-      expect(model instanceof SnippetModel).to.equal(true)
+      expect(model instanceof ComponentModel).to.equal(true)
 
 
   describe '#createView()', ->
 
-    it 'returns a SnippetView instance', ->
-      snippetView = template.createView()
-      expect(snippetView instanceof SnippetView).to.equal(true)
+    it 'returns a ComponentView instance', ->
+      componentView = template.createView()
+      expect(componentView instanceof ComponentView).to.equal(true)
 
 
 describe 'Template.parseIdentifier()', ->
 
   it 'parses "bootstrap.title"', ->
     identifier = Template.parseIdentifier('bootstrap.title')
-    expect(identifier.namespace).to.equal('bootstrap')
-    expect(identifier.id).to.equal('title')
+    expect(identifier.designName).to.equal('bootstrap')
+    expect(identifier.name).to.equal('title')
 
 
   it 'does not parse "bootstrap"', ->
     identifier = Template.parseIdentifier('title')
-    expect(identifier.namespace).to.be.undefined
-    expect(identifier.id).to.equal('title')
+    expect(identifier.designName).to.be.undefined
+    expect(identifier.name).to.equal('title')
 
 
   it 'does not parse emtpy string', ->
@@ -73,24 +73,13 @@ describe 'Template with default value', ->
 
   it 'trims the default value', ->
     template = new Template
-      identifier: 'bootstrap.title'
+      name: 'title'
       html: """<h1 #{ test.editableAttr }="title">\n\t your title\t </h1>"""
 
     expect(template.defaults['title']).to.equal('your title')
 
 
-describe 'new Template()', ->
-
-  it 'accepts idenfitier param', ->
-    template = new Template
-      identifier: 'bootstrap.title'
-      html: """<h1 #{ test.editableAttr }="title"></h1>"""
-
-    expect(template.namespace).to.equal('bootstrap')
-    expect(template.id).to.equal('title')
-
-
-# Snippet with snippet containers
+# Component with containers
 describe 'Row Template', ->
 
   template = null
@@ -98,11 +87,11 @@ describe 'Row Template', ->
     template = test.getTemplate('row')
 
 
-  it 'initializes SnippetContainers', ->
-    snippet = template.createModel()
-    expect(snippet).to.exist
-    expect(snippet.containers.main instanceof SnippetContainer).to.equal(true)
-    expect(snippet.containers.sidebar instanceof SnippetContainer).to.equal(true)
+  it 'initializes componentContainers', ->
+    component = template.createModel()
+    expect(component).to.exist
+    expect(component.containers.main instanceof ComponentContainer).to.equal(true)
+    expect(component.containers.sidebar instanceof ComponentContainer).to.equal(true)
 
 
 describe 'Subtitle Template', ->
@@ -115,6 +104,21 @@ describe 'Subtitle Template', ->
   it 'removes the default value from the template', ->
     subtitle = test.getTemplate('subtitle')
     expect(subtitle.$template[0].innerHTML).to.equal('')
+
+
+  it 'prints the info', ->
+    subtitle = test.getTemplate('subtitle')
+    expect(subtitle.info()).to.deep.equal
+      name: 'subtitle'
+      design: 'test'
+      directives: [
+        name: 'title'
+        type: 'editable'
+      ]
+      properties: [
+        name: 'color'
+        type: 'cssModificator'
+      ]
 
 
 describe 'Container', ->

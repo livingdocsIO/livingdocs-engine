@@ -7,7 +7,7 @@ config = require('../configuration/config')
 # page.
 module.exports = class Page extends RenderingContainer
 
-  constructor: ({ renderNode, readOnly, hostWindow, @design, @snippetTree, @loadResources }={}) ->
+  constructor: ({ renderNode, readOnly, hostWindow, @design, @componentTree, @loadResources }={}) ->
     @isReadOnly = readOnly if readOnly?
     @renderNode = if renderNode?.jquery then renderNode[0] else renderNode
     @setWindow(hostWindow)
@@ -35,16 +35,10 @@ module.exports = class Page extends RenderingContainer
       Boolean(config.loadResources)
 
 
+  # todo: move path resolutions to design.assets
   beforePageReady: =>
-    if @design?
-      designPath = "#{ config.designPath }/#{ @design.namespace }"
-      cssLocation = if @design.css?
-        @design.css
-      else
-        '/css/style.css'
-
-      path = "#{ designPath }#{ cssLocation }"
-      @cssLoader.load(path, @readySemaphore.wait())
+    return unless @design
+    @design.assets.loadCss(@cssLoader, @readySemaphore.wait())
 
 
   setWindow: (hostWindow) ->
@@ -60,3 +54,4 @@ module.exports = class Page extends RenderingContainer
       elem.ownerDocument.defaultView
     else
       window
+

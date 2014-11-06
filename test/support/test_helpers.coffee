@@ -22,39 +22,39 @@ module.exports = testHelpers =
 
 
   getDesign: () ->
-    cachedDesign ||= new Design(designJson)
+    cachedDesign ||= Design.parser.parse(designJson)
 
 
   getTemplate: (id) ->
     @getDesign().get(id)
 
 
-  getSnippet: (id) ->
+  getComponent: (id) ->
     @getTemplate(id).createModel()
 
 
-  createSnippetTree: (contentArray) ->
-    { @snippetTree } = getInstances('snippetTree')
+  createComponentTree: (contentArray) ->
+    { @componentTree } = getInstances('componentTree')
 
     if not $.isArray(contentArray)
       contentArray = [contentArray]
 
     for entry in contentArray
       for key, content of entry
-        model = @getSnippet(key)
+        model = @getComponent(key)
         for field, value of content
           model.set(field, value)
-        @snippetTree.append(model)
+        @componentTree.append(model)
 
-    @snippetTree
+    @componentTree
 
 
-  # helper to create snippets with one directive easier
-  createSnippet: (id, value) ->
-    snippet = @getSnippet(id)
-    firstDirective = snippet.template.directives[0]
-    snippet.set(firstDirective.name, value)
-    snippet
+  # helper to create components with one directive easier
+  createComponent: (id, value) ->
+    component = @getComponent(id)
+    firstDirective = component.template.directives[0]
+    component.set(firstDirective.name, value)
+    component
 
 
   # use this to test serialization and deserialization

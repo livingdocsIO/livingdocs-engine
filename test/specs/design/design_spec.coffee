@@ -1,137 +1,106 @@
 Design = require('../../../src/design/design')
-DesignStyle = require('../../../src/design/design_style')
+CssModificatorProperty = require('../../../src/design/css_modificator_property')
 Template = require('../../../src/template/template')
+editableAttr = config.directives.editable.attr
 
 describe 'Design', ->
 
   describe 'with no params', ->
 
-    beforeEach ->
-      @design = new Design
-        templates: []
-        config: {}
+    it 'throws an error', ->
+      test = -> new Design()
+      expect(test).to.throw()
 
 
-    it 'adds a default namespace', ->
-      expect(@design.namespace).to.equal('livingdocs-templates')
-
-
-  describe 'with no templates', ->
+  describe 'with just a name', ->
 
     beforeEach ->
-      @design = new Design
-        templates: []
-        config: { namespace: 'test' }
+      @design = new Design(name: 'test')
 
 
-    it 'has a namespace', ->
-      expect(@design.namespace).to.equal('test')
+    it 'has a name', ->
+      expect(@design.name).to.equal('test')
 
 
-    it 'has the default paragraph element', ->
-      expect(@design.paragraphSnippet).to.equal('text')
+    it 'has an identifier', ->
+      expect(@design.identifier).to.equal('test')
 
 
     describe 'equals()', ->
 
       it 'recognizes the same design as equal', ->
-        sameDesign = new Design
-          templates: []
-          config: { namespace: 'test' }
-
+        sameDesign = new Design(name: 'test')
         expect(@design.equals(sameDesign)).to.equal(true)
 
 
       it 'recognizes a different design', ->
-        otherDesign = new Design
-          templates: []
-          config: { namespace: 'xxx' }
-
+        otherDesign = new Design(name: 'other')
         expect(@design.equals(otherDesign)).to.equal(false)
+
+
+      it 'recognizes different versions', ->
+        differentVersion = new Design(name: 'test', version: '1.0.0')
+        expect(@design.equals(differentVersion)).to.equal(false)
+
+
+  describe 'with a name and a version', ->
+
+    beforeEach ->
+      @design = new Design(name: 'test', version: '1.0.0')
+
+
+    it 'has an identifier', ->
+      expect(@design.identifier).to.equal('test@1.0.0')
 
 
   describe 'with a template and paragraph element', ->
 
     beforeEach ->
-      @design = new Design
-        templates: test.designJson.templates
-        config: { namespace: 'test', paragraph: 'p' }
+      @design = new Design(name: 'test')
+
+      @design.add new Template
+        name: 'title'
+        html: """<h1 #{ editableAttr }="title"></h1>"""
+
+      @design.add new Template
+        name: 'text'
+        html: """<p #{ editableAttr }="text"></p>"""
 
 
     it 'stores the template as Template', ->
-      expect(@design.templates[0]).to.be.an.instanceof(Template)
-
-
-    it 'has a paragraph element', ->
-      expect(@design.paragraphSnippet).to.equal('p')
+      expect(@design.components[0]).to.be.an.instanceof(Template)
 
 
     describe 'get()', ->
 
-      it 'gets the template by identifier', ->
-        title = @design.get('test.title')
-        expect(title).to.be.an.instanceof(Template)
-        expect(title.identifier).to.equal('test.title')
-
-
       it 'gets the template by name', ->
         title = @design.get('title')
         expect(title).to.be.an.instanceof(Template)
-        expect(title.identifier).to.equal('test.title')
+        expect(title.name).to.equal('title')
 
 
       it 'returns undefined for a non-existing template', ->
         expect( @design.get('something-ludicrous') ).to.equal(undefined)
 
 
-    describe 'remove()', ->
-
-      it 'removes the template', ->
-        @design.remove('title')
-        expect( @design.get('title') ).to.be.undefined
-
-
   describe 'groups', ->
 
     beforeEach ->
-      @design = new Design(test.designJson)
+      @design = test.getDesign()
 
 
     it 'are available through #groups', ->
-      groups = Object.keys @design.groups
-      expect(groups).to.contain('layout')
-      expect(groups).to.contain('header')
-      expect(groups).to.contain('other')
+      groups = @design.groups
+      expect(@design.groups[0]).to.have.property('label', 'Layout')
 
 
-    it 'contain templates', ->
-      container = @design.get('container')
-      expect(@design.groups['layout'].templates['container']).to.equal(container)
-
-
-  describe 'styles configuration', ->
+  describe 'componentProperties', ->
 
     beforeEach ->
-      @design = new Design(test.designJson)
+      @design = test.getDesign()
 
 
-    it 'has global style Color', ->
-      expect(@design.globalStyles['Color']).to.be.an.instanceof(DesignStyle)
-
-
-    it 'merges global, group and template styles', ->
-      template = @design.get('hero')
-      templateStyles = Object.keys template.styles
-      expect(templateStyles).to.contain('Color') # global style
-      expect(templateStyles).to.contain('Capitalized') # group style
-      expect(templateStyles).to.contain('Extra Space') # template style
-
-
-    it 'assigns global styles to a template with no other styles', ->
-      template = @design.get('container')
-      templateStyles = Object.keys template.styles
-      expect(templateStyles).to.contain('Color') # global style
-      expect(templateStyles).not.to.contain('Capitalized') # group style
-      expect(templateStyles).not.to.contain('Extra Space') # template style
-
+    it 'hero component has properties "extra-space" and "capitalized"', ->
+      hero = @design.get('hero')
+      expect(hero.styles).to.have.keys('capitalized', 'extra-space', 'color')
 

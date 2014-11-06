@@ -1,5 +1,5 @@
 Renderer = require('../../../src/rendering/renderer')
-SnippetTree = require('../../../src/snippet_tree/snippet_tree')
+ComponentTree = require('../../../src/component_tree/component_tree')
 Page = require('../../../src/rendering_container/page')
 attr = config.attr
 css = config.css
@@ -9,27 +9,27 @@ describe 'Renderer', ->
   describe 'in interactive mode', ->
 
     beforeEach (done) ->
-      { @snippetTree } = getInstances('snippetTree')
+      { @componentTree } = getInstances('componentTree')
       @page = new Page
         renderNode: $('<section>')
         readOnly: false
 
-      @renderer = new Renderer(snippetTree: @snippetTree, renderingContainer: @page)
+      @renderer = new Renderer(componentTree: @componentTree, renderingContainer: @page)
       @renderer.ready -> done()
 
 
-    describe 'with a single title snippet', ->
+    describe 'with a single title component', ->
 
       beforeEach ->
-        @title = test.createSnippet('title', 'A')
-        @snippetTree.append(@title)
+        @title = test.createComponent('title', 'A')
+        @componentTree.append(@title)
 
 
       it 'renders the title', ->
         expect(@page.renderNode).to.have.html """
           <section>
             <h1
-              class="#{ css.snippet } #{ css.editable } #{ css.noPlaceholder }"
+              class="#{ css.component } #{ css.editable } #{ css.noPlaceholder }"
               #{ attr.template }="test.title"
               #{ test.editableAttr }="title"
               #{ attr.placeholder }="#{ @title.template.defaults['title'] }">A</h1>
@@ -42,16 +42,16 @@ describe 'Renderer', ->
           <section></section>"""
 
 
-  describe 'insertSnippet()', ->
+  describe 'insertComponent()', ->
     beforeEach (done) ->
-      { @snippetTree, @page, @renderer } = getInstances('page', 'renderer')
+      { @componentTree, @page, @renderer } = getInstances('page', 'renderer')
       @renderer.ready -> done()
 
-    it 'insertes the already appended snippets of an inserted snippet', ->
-      container = test.getSnippet('container')
-      title = test.createSnippet('title', 'A')
+    it 'insertes the already appended components of an inserted component', ->
+      container = test.getComponent('container')
+      title = test.createComponent('title', 'A')
       container.append(config.directives.container.defaultName, title)
-      @snippetTree.append(container)
+      @componentTree.append(container)
       expect(@page.renderNode).to.have.html """
         <section>
           <div class="container">
@@ -64,15 +64,15 @@ describe 'Renderer', ->
 
   describe 'in readonly mode', ->
     beforeEach (done) ->
-      { @snippetTree, @page, @renderer } = getInstances('page', 'renderer')
+      { @componentTree, @page, @renderer } = getInstances('page', 'renderer')
       @renderer.ready -> done()
 
 
     describe 'with a title', ->
 
       beforeEach ->
-        @title = test.createSnippet('title', 'A')
-        @snippetTree.append(@title)
+        @title = test.createComponent('title', 'A')
+        @componentTree.append(@title)
 
 
       it 'renders the title into the page', ->
@@ -84,7 +84,7 @@ describe 'Renderer', ->
 
       describe 'renderer.html()', ->
 
-        it 'returns the documents html', (done) ->
+        it 'returns the html', (done) ->
           @renderer.ready =>
             expect(@renderer.html()).to.have.html """
               <h1>A</h1>
@@ -95,8 +95,8 @@ describe 'Renderer', ->
     describe 'with a hero', ->
 
       beforeEach ->
-        @hero = test.createSnippet('hero')
-        @snippetTree.append(@hero)
+        @hero = test.createComponent('hero')
+        @componentTree.append(@hero)
 
 
       describe 'with no content', ->
@@ -125,15 +125,15 @@ describe 'Renderer', ->
             </section>"""
 
 
-    describe 'with three nested snippets', ->
+    describe 'with three nested components', ->
 
       beforeEach ->
-        row = test.getSnippet('row')
-        @snippetTree.append(row)
-        @title = test.getSnippet('title')
+        row = test.getComponent('row')
+        @componentTree.append(row)
+        @title = test.getComponent('title')
         @title.set('title', 'Title')
         row.append('main', @title)
-        @cover = test.getSnippet('cover')
+        @cover = test.getComponent('cover')
         @cover.set('title', 'Cover')
         @cover.set('uppertitle', 'Uppertitle')
         @cover.set('maintitle', 'Maintitle')
@@ -141,7 +141,7 @@ describe 'Renderer', ->
         row.append('main', @cover)
 
 
-      it 'renders row, title and cover snippet', ->
+      it 'renders row, title and cover component', ->
         expect(@page.renderNode).to.have.html """
           <section>
             <div class="row-fluid">
@@ -163,8 +163,8 @@ describe 'Renderer', ->
     describe 'with a doc-html directive', ->
 
       beforeEach ->
-        html = test.createSnippet('html', '<article>html</article>')
-        @snippetTree.append(html)
+        html = test.createComponent('html', '<article>html</article>')
+        @componentTree.append(html)
 
 
       it 'does not block interaction in readOnly mode', ->
@@ -176,11 +176,12 @@ describe 'Renderer', ->
           </section>
           """
 
+
   describe 'with a wrapper', ->
     beforeEach ->
-      { @snippetTree, @page, @renderer } = getInstances('snippetTree', 'page')
+      { @componentTree, @page, @renderer } = getInstances('componentTree', 'page')
       @renderer = new Renderer
-        snippetTree: @snippetTree
+        componentTree: @componentTree
         renderingContainer: @page
         $wrapper: $ """
           <div>
@@ -202,8 +203,8 @@ describe 'Renderer', ->
 
 
     it 'appends content wrapper to the wrapper', (done) ->
-      title = test.createSnippet('title', 'ABC')
-      @snippetTree.append(title)
+      title = test.createComponent('title', 'ABC')
+      @componentTree.append(title)
 
       @renderer.ready =>
         expect(@page.renderNode).to.have.html """
@@ -217,3 +218,49 @@ describe 'Renderer', ->
           """
         done()
 
+
+  describe 'exclude components', ->
+
+    beforeEach (done) ->
+      { @componentTree, @page, @renderer } = getInstances('page', 'renderer')
+      @renderer.ready -> done()
+
+
+    it 'excludes the title before it is appended to the componentTree', ->
+      @title = test.createComponent('title', 'A')
+      @renderer.excludeComponent(@title.id)
+      @componentTree.append(@title)
+      expect(@page.renderNode).to.have.html('<section></section>')
+
+
+    it 'excludes the second title before it is appended to the componentTree', ->
+      @titleA = test.createComponent('title', 'A')
+      @componentTree.append(@titleA)
+      @titleB = test.createComponent('title', 'B')
+      @renderer.excludeComponent(@titleB.id)
+      @componentTree.append(@titleB)
+      expect(@page.renderNode).to.have.html '
+        <section>
+          <h1>A</h1>
+        </section>'
+
+
+    it 'excludes two components at once before they are appended to the componentTree', ->
+      @titleA = test.createComponent('title', 'A')
+      @titleB = test.createComponent('title', 'B')
+      @renderer.excludeComponent([@titleA.id, @titleB.id])
+      @componentTree.append(@titleA)
+      @componentTree.append(@titleB)
+      expect(@page.renderNode).to.have.html '<section></section>'
+
+
+    it 'excludes the title after it is appended to the componentTree', ->
+      @title = test.createComponent('title', 'A')
+      @componentTree.append(@title)
+      expect(@page.renderNode).to.have.html '
+        <section>
+          <h1>A</h1>
+        </section>'
+
+      @renderer.excludeComponent(@title.id)
+      expect(@page.renderNode).to.have.html '<section></section>'
