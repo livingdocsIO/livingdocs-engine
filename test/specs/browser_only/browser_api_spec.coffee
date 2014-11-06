@@ -32,6 +32,25 @@ describe 'Browser API', ->
       expect(spy.callCount).to.equal(1)
 
 
+    describe 'with two versions', ->
+
+      beforeEach ->
+        newerDesignJson = $.extend({}, test.designJson, { version: '0.0.2'})
+        doc.design.load(newerDesignJson)
+        doc.design.load(test.designJson)
+
+
+      it 'saves versioned designs', ->
+        expect(doc.design.has('test@0.0.1')).to.equal(true)
+        expect(doc.design.has('test@0.0.2')).to.equal(true)
+        expect(doc.design.has('test')).to.equal(true)
+
+
+      it 'saves the newest design under its name only', ->
+        newestDesign = doc.design.get('test')
+        expect(newestDesign.version).to.equal('0.0.2')
+
+
   describe 'new', ->
     beforeEach ->
       doc.design.load(test.designJson)

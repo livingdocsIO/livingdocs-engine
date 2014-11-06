@@ -22,8 +22,6 @@ module.exports = config = do ->
 
   attributePrefix: 'data'
 
-  semVer: /\d+\.\d+\.\d+/
-
   # Editable configuration
   editable:
     allowNewline: true # Allow to insert newlines with Shift+Enter

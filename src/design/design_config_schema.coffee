@@ -1,5 +1,6 @@
 config = require('../configuration/config')
 Scheme = require('../modules/object_schema/scheme')
+Version = require('./version')
 module.exports = validator = new Scheme()
 
 # Custom Validators
@@ -10,7 +11,7 @@ validator.add 'styleType', (value) ->
 
 
 validator.add 'semVer', (value) ->
-  config.semVer.test(value)
+  Version.semVer.test(value)
 
 
 # cssClassModificator properties need one 'Default' option
@@ -28,11 +29,10 @@ validator.add 'one empty option', (value) ->
 # -------
 
 validator.add 'design',
-  design:
-    name: 'string'
-    version: 'string, semVer'
-    author: 'string, optional'
-    description: 'string, optional'
+  name: 'string'
+  version: 'string, semVer'
+  author: 'string, optional'
+  description: 'string, optional'
   assets:
     __validate: 'optional'
     css: 'array of string'

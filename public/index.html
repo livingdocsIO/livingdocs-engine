@@ -30,7 +30,7 @@
     <script src="/editable/editable.js"></script>
 
     <!-- designs for manual testing -->
-    <script src="/designs/bootstrap/design.js"></script>
+    <script src="/designs/boilerplate/design.js"></script>
 
     <!-- livingdocs-engine. yeah! -->
     <script src="/livingdocs-engine.js"></script>
@@ -39,35 +39,29 @@
 
       $(document).ready(function() {
 
-        // var json = doc.stash.get();
-
-        // Setup the design and the document
-        doc.design.load(design.bootstrap);
-        var document = doc.new({
-          design: 'bootstrap'
-        });
-
-        // Add some content
-        addDefaultContent(document);
+        // Setup the design and the livingdoc
+        doc.design.load(design.boilerplate);
+        content = getDefaultContent();
+        var livingdoc = doc.new(content);
 
         // Create Views
-        viewReady = document.createView('.editor-section', { interactive: true });
-        previewReady = document.createView('.editor-preview');
+        viewReady = livingdoc.createView('.editor-section', { interactive: true });
+        previewReady = livingdoc.createView('.editor-preview');
 
         // Create Components
         var $toolbar = $('.doc-toolbar');
-        for (var i = 0; i < document.design.templates.length; i++) {
-          var template = document.design.templates[i];
+        for (var i = 0; i < livingdoc.design.components.length; i++) {
+          var template = livingdoc.design.components[i];
           $entry = $('<div class="toolbar-entry">');
-          $entry.html(template.title);
+          $entry.html(template.label);
           $toolbar.append($entry);
-          draggableComponent(document, template.id, $entry);
+          draggableComponent(livingdoc, template.name, $entry);
         }
 
 
-        function draggableComponent (document, id, $elem) {
+        function draggableComponent (livingdoc, name, $elem) {
           $elem.on('mousedown', function(event) {
-            var newComponent = document.model.createModel(id);
+            var newComponent = livingdoc.createComponent(name);
 
             doc.startDrag({
               componentModel: newComponent,
@@ -81,12 +75,20 @@
         }
 
 
-        function addDefaultContent (document) {
-          document.model.append('mainAndSidebar');
-          var component = document.model.createComponent('hero');
-          document.model.first().append('main', component);
-          var text = document.model.createComponent('text');
-          component.after(text);
+        function getDefaultContent () {
+          return {
+            data: {
+              content: [
+                {
+                  component: 'head',
+                  content: { title: 'This is it' }
+                }
+              ],
+              design: {
+                name: 'boilerplate'
+              }
+            }
+          }
         }
       });
     </script>

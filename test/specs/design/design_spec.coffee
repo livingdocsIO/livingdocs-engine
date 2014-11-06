@@ -22,6 +22,10 @@ describe 'Design', ->
       expect(@design.name).to.equal('test')
 
 
+    it 'has an identifier', ->
+      expect(@design.identifier).to.equal('test')
+
+
     describe 'equals()', ->
 
       it 'recognizes the same design as equal', ->
@@ -37,6 +41,16 @@ describe 'Design', ->
       it 'recognizes different versions', ->
         differentVersion = new Design(name: 'test', version: '1.0.0')
         expect(@design.equals(differentVersion)).to.equal(false)
+
+
+  describe 'with a name and a version', ->
+
+    beforeEach ->
+      @design = new Design(name: 'test', version: '1.0.0')
+
+
+    it 'has an identifier', ->
+      expect(@design.identifier).to.equal('test@1.0.0')
 
 
   describe 'with a template and paragraph element', ->

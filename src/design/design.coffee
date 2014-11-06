@@ -6,6 +6,11 @@ Assets = require('./assets')
 
 module.exports = class Design
 
+  # @param
+  #  - name { String } The name of the design.
+  #  - version { String } e.g. '1.0.0'
+  #  - author { String }
+  #  - description { String }
   constructor: ({ @name, @version, @author, @description }) ->
     assert @name?, 'Design needs a name'
     @identifier = Design.getIdentifier(@name, @version)
@@ -28,6 +33,13 @@ module.exports = class Design
     design.name == @name && design.version == @version
 
 
+  # Simple implementation with string comparison
+  # Caution: won't work for '1.10.0' > '1.9.0'
+  isNewerThan: (design) ->
+    return true unless design?
+    @version > (design.version || '')
+
+
   get: (identifier) ->
     componentName = @getComponentNameFromIdentifier(identifier)
     @components.get(componentName)
@@ -48,7 +60,7 @@ module.exports = class Design
 
 
   @getIdentifier: (name, version) ->
-    if version?
+    if version
       "#{ name }@#{ version }"
     else
       "#{ name }"
