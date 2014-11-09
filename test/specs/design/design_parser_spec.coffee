@@ -118,19 +118,18 @@ describe 'designParser', ->
 
     it 'parses the imageRatios', ->
       ratio = @design.imageRatios["16:9"]
-      expect(ratio).to.deep.equal
-        name: "16:9"
-        label: "16:9 Cinemascope"
-        ratio: "16/9"
+      expect(ratio.name).to.equal('16:9')
+      expect(ratio.label).to.equal('16:9 Cinemascope')
+      expect(ratio.ratio).to.be.closeTo(1.77, .01)
 
 
     it 'assigns the ratios to the right directive', ->
       image = @design.get('image')
       imageDirective = image.directives.get('image')
-      expect(imageDirective.config.imageRatios[0]).to.deep.equal
-        name: "16:9"
-        label: "16:9 Cinemascope"
-        ratio: "16/9"
+      ratio = imageDirective.config.imageRatios[0]
+      expect(ratio.name).to.equal('16:9')
+      expect(ratio.label).to.equal('16:9 Cinemascope')
+      expect(ratio.ratio).to.be.closeTo(1.77, .01)
 
 
     it 'parses componentProperty labels', ->

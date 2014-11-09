@@ -5,6 +5,7 @@ CssModificatorProperty = require('./css_modificator_property')
 Template = require('../template/template')
 Design = require('./design')
 Version = require('./version')
+ImageRatio = require('./image_ratio')
 
 
 module.exports = designParser =
@@ -57,9 +58,9 @@ module.exports = designParser =
 
   parseImageRatios: (ratios) ->
     for name, ratio of ratios
-      @design.imageRatios[name] =
+      @design.imageRatios[name] = new ImageRatio
         name: name
-        label: ratio.label || name
+        label: ratio.label
         ratio: ratio.ratio
 
 
