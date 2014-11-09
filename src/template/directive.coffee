@@ -4,13 +4,13 @@ dom = require('../interaction/dom')
 module.exports = class Directive
 
   constructor: ({ name, @type, @elem, config }) ->
-    @name = name || editorConfig.directives[@type].defaultName
+    @config = Object.create(editorConfig.directives[@type])
+    @name = name || @config.defaultName
     @setConfig(config)
     @optional = false
 
 
   setConfig: (config) ->
-    @config ?= Object.create(editorConfig.directives[@type])
     $.extend(@config, config)
 
 
