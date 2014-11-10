@@ -2,9 +2,10 @@
 
 #### Features:
 
-- Improved design configuration and structure [119](https://github.com/upfrontIO/livingdocs-engine/pull/119)
+- Improved design configuration and structure [#119](https://github.com/upfrontIO/livingdocs-engine/pull/119)
+- Add image ratios to design configuration [#120](https://github.com/upfrontIO/livingdocs-engine/pull/120)
 - Add option to exclude components in Renderer [#128](https://github.com/upfrontIO/livingdocs-engine/pull/128)
-- Rename snippet to component everywhere [129](https://github.com/upfrontIO/livingdocs-engine/pull/129)
+- Rename snippet to component everywhere [#129](https://github.com/upfrontIO/livingdocs-engine/pull/129)
 - Update design in index.html [#130](https://github.com/upfrontIO/livingdocs-engine/pull/130)
 
 #### Bugfixes:
