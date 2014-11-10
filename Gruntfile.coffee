@@ -191,4 +191,4 @@ module.exports = (grunt) ->
     grunt.task.run('bump:' + type)
 
 
-  grunt.registerTask('default', ['server'])
+  grunt.registerTask('default', ['dev'])
