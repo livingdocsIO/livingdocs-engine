@@ -1,12 +1,17 @@
-config = require('../configuration/config')
+editorConfig = require('../configuration/config')
 dom = require('../interaction/dom')
 
 module.exports = class Directive
 
-  constructor: ({ name, @type, @elem }) ->
-    @name = name || config.directives[@type].defaultName
-    @config = config.directives[@type]
+  constructor: ({ name, @type, @elem, config }) ->
+    @config = Object.create(editorConfig.directives[@type])
+    @name = name || @config.defaultName
+    @setConfig(config)
     @optional = false
+
+
+  setConfig: (config) ->
+    $.extend(@config, config)
 
 
   renderedAttr: ->
@@ -25,7 +30,7 @@ module.exports = class Directive
   # For every new ComponentView the directives are cloned from the
   # template and linked with the elements from the new view
   clone: ->
-    newDirective = new Directive(name: @name, type: @type)
+    newDirective = new Directive(name: @name, type: @type, config: @config)
     newDirective.optional = @optional
     newDirective
 

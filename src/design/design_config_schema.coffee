@@ -46,12 +46,16 @@ validator.add 'design',
     __validate: 'optional'
     paragraph: 'string, optional'
     image: 'string, optional'
+  imageRatios:
+    __validate: 'optional'
+    __additionalProperty: (key, value) -> validator.validate('imageRatio', value)
 
 
 validator.add 'component',
   name: 'string'
   label: 'string, optional'
   html: 'string'
+  directives: 'object, optional'
   properties: 'array of string, optional'
   __additionalProperty: (key, value) -> false
 
@@ -67,6 +71,11 @@ validator.add 'componentProperty',
   type: 'string, styleType'
   value: 'string, optional'
   options: 'array of styleOption, one empty option, optional'
+
+
+validator.add 'imageRatio',
+  label: 'string, optional'
+  ratio: 'string'
 
 
 validator.add 'styleOption',

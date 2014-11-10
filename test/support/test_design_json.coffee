@@ -53,6 +53,9 @@ module.exports = do ->
       name: 'cover'
       label: 'Cover'
       properties: ['capitalized']
+      directives:
+        image:
+          imageRatios: ["16:9"]
       html:
         """
         <div>
@@ -134,6 +137,12 @@ module.exports = do ->
     'capitalized':
       type: 'option'
       value: 'capitalized'
+
+
+  imageRatios:
+    "16:9":
+      label: "16:9"
+      ratio: "16/9"
 
 
   groups: [

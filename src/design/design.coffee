@@ -20,6 +20,7 @@ module.exports = class Design
 
     # templates by id and sorted
     @components = new OrderedHash()
+    @imageRatios = {}
 
     # assets required by the design
     @assets = new Assets(design: this)
