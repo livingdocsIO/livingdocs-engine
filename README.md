@@ -1,13 +1,13 @@
 # Livingdocs Engine
 
-
 The engine is the central piece of livingdocs and defines the APIs for manipulating, displaying and storing the document.
+
+For a more detailed documentation see our [livingdocs documentation](https://github.com/upfrontIO/livingdocs). For a quick overview stay right here.
 
 
 ## Usage
 
 Load the necessary scripts into your browser.
-
 
 ```html
 <!-- dependencies of livingdocs-engine -->
@@ -58,10 +58,15 @@ var preview = livingdoc.createView('.editor-preview');
 With the iframe technique you can isolate CSS or Javascript that is needed in your documents and also generate views that will work properly with responsive designs. There can only be one interactive view where the user can edit, but you can have as many readOnly views as you want to preview the content at different screen sizes at the same time.
 
 
-Add content programmatically:
+#### Add content programmatically:
+
 ```javascript
-livingdoc.model.append('title');
-livingdoc.model.append('text');
+// Create a component
+var titleComponent = livingdoc.createComponent('title');
+titleComponent.set('title', "My Title");
+
+// Appned the component to the livingdoc
+livingdoc.componentTree.append(titleComponent);
 ```
 
 ## Build (and Release)
