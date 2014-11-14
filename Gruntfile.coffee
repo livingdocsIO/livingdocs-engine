@@ -136,10 +136,9 @@ module.exports = (grunt) ->
 
     bump:
       options:
-        files: ['package.json', 'bower.json']
+        files: ['package.json', 'bower.json', 'version.json']
         commitFiles: ['-a'], # '-a' for all files
         pushTo: 'origin'
-        push: true
 
 
   # Tasks
@@ -161,19 +160,16 @@ module.exports = (grunt) ->
     'mochaTest'
   ])
 
-  grunt.registerTask('devbuild', [
+  grunt.registerTask('full-test', [
     'clean:dist'
-    'browserify:build'
-    'uglify'
-    'autoprefixer:dist'
+    'browserify:test'
+    'karma:build'
+    'mochaTest'
   ])
 
   grunt.registerTask('build', [
     'clean:dist'
-    'browserify:test'
     'browserify:build'
-    'karma:build'
-    'mochaTest'
     'uglify'
     'autoprefixer:dist'
   ])
@@ -187,8 +183,9 @@ module.exports = (grunt) ->
   # release:major
   grunt.registerTask 'release', (type) ->
     type ?= 'patch'
+    grunt.task.run('full-test')
+    grunt.task.run('bump-only:' + type)
     grunt.task.run('build')
-    grunt.task.run('bump:' + type)
-
+    grunt.task.run('bump-commit')
 
   grunt.registerTask('default', ['dev'])
