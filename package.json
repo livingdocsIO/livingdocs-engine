@@ -2,14 +2,16 @@
   "name": "livingdocs-engine",
   "version": "0.3.0",
   "main": "src/node_api.js",
+  "browser": "src/browser_api.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/upfrontIO/livingdocs-engine.git"
   },
   "dependencies": {
-    "wolfy87-eventemitter": "~4.2.6",
     "deep-equal": "~0.2.1",
-    "jsdom": "~0.10.1"
+    "jscheme": "^0.2.0",
+    "jsdom": "~0.10.1",
+    "wolfy87-eventemitter": "~4.2.6"
   },
   "devDependencies": {
     "grunt": "~0.4.2",
