@@ -16,6 +16,8 @@ module.exports = doc = do ->
 
   # Set the current version
   version: version.version
+  revision: version.revision
+
 
   # Load and access designs.
   #

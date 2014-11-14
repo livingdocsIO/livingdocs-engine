@@ -140,6 +140,21 @@ module.exports = (grunt) ->
         commitFiles: ['-a'], # '-a' for all files
         pushTo: 'origin'
 
+    revision:
+      options:
+        property: 'git.revision'
+        ref: 'HEAD'
+        short: true
+
+    replace:
+      revision:
+        options:
+          patterns: [
+            match: /\"revision\": ?\"[a-z0-9]+\"/
+            replacement: '"revision": "<%= git.revision %>"'
+          ]
+        files:
+          'version.json': ['version.json']
 
   # Tasks
   # -----
@@ -169,9 +184,15 @@ module.exports = (grunt) ->
 
   grunt.registerTask('build', [
     'clean:dist'
+    'add-revision'
     'browserify:build'
     'uglify'
     'autoprefixer:dist'
+  ])
+
+  grunt.registerTask('add-revision', [
+    'revision'
+    'replace:revision'
   ])
 
   # Release a new version
