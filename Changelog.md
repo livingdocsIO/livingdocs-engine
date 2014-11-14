@@ -1,3 +1,10 @@
+# v0.4.x
+
+#### Improvements:
+
+- Expose current version and revision [#134](https://github.com/upfrontIO/livingdocs-engine/pull/134)
+
+
 # v0.4.0
 
 #### Features:
