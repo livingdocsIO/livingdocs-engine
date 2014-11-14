@@ -12,6 +12,9 @@
 
 - Accept absolute css paths [#125](https://github.com/upfrontIO/livingdocs-engine/pull/125)
 
+#### Improvements:
+
+- Use jscheme through npm [#132](https://github.com/upfrontIO/livingdocs-engine/pull/132)
 
 # v0.3.0
 
