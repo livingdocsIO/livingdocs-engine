@@ -1,7 +1,7 @@
 config = require('../configuration/config')
-Scheme = require('../modules/object_schema/scheme')
+jScheme = require('jscheme')
 Version = require('./version')
-module.exports = validator = new Scheme()
+module.exports = validator = jScheme.new()
 
 # Custom Validators
 # -----------------
