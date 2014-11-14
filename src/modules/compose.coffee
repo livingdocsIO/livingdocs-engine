@@ -15,9 +15,11 @@ module.exports = (constructorFunctions...) ->
 
     undefined
 
+  #earlier mixins override later ones
+  constructorFunctions.reverse()
 
   # add all objects of the constructorFunctions to the prototype of Composite
-  for constructor in constructorFunctions by -1 #earlier mixins override later ones
+  for constructor in constructorFunctions
     for name, method of constructor::
       Composite::[name] = method
 

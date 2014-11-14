@@ -10,8 +10,11 @@ module.exports = (mixins...) ->
   # create an empty function
   Mixed = ->
 
+  #earlier mixins override later ones
+  mixins.reverse()
+
   # add all objects of the mixins to the prototype of Mixed
-  for mixin in mixins by -1 #earlier mixins override later ones
+  for mixin in mixins
     for name, method of mixin
       Mixed::[name] = method
 
