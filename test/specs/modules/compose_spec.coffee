@@ -13,7 +13,6 @@ class Flying
 
 
 describe "compose util", ->
-  beforeEach ->
 
   describe 'compose a Hero class', ->
     beforeEach ->
