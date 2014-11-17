@@ -1,5 +1,3 @@
-assert = require('./modules/logging/assert')
-
 config = require('./configuration/config')
 augmentConfig = require('./configuration/augment_config')
 Livingdoc = require('./livingdoc')
@@ -30,39 +28,37 @@ module.exports = doc = do ->
   design: designCache
 
 
+  # Direct access to models
+  Livingdoc: Livingdoc
+  ComponentTree: ComponentTree
+
+
   # Load a livingdoc from serialized data in a synchronous way.
   # The design must be loaded first.
   #
-  # @returns { Livingdoc object }
-  new: ({ data, design }) ->
-    componentTree = if data?
-      designName = data.design?.name
-      assert designName?, 'Error creating livingdoc: No design is specified.'
-      design = @design.get(designName)
-      new ComponentTree(content: data, design: design)
-    else
-      designName = design
-      design = @design.get(designName)
-      new ComponentTree(design: design)
-
-    @create(componentTree)
-
-
-  # Direct creation with an existing ComponentTree
-  # @returns { Livingdoc object }
-  create: (componentTree) ->
-    new Livingdoc({ componentTree })
-
-
-  # Todo: add async api (async because of the loading of the design)
-  # Move the design loading code from the editor into the enigne.
+  # Call Options:
+  # - new({ data })
+  #   Load a livingdoc with JSON data
   #
-  # Example:
-  # doc.load(jsonFromServer)
-  #  .then (livingdoc) ->
-  #    livingdoc.createView('.container', { interactive: true })
-  #  .then (view) ->
-  #    # view is ready
+  # - new({ design })
+  #   This will create a new empty livingdoc with your
+  #   specified design
+  #
+  # - new({ componentTree })
+  #   This will create a new livingdoc from a
+  #   componentTree
+  #
+  # @param data { json string } Serialized Livingdoc
+  # @param designName { string } Name of a design
+  # @param componentTree { ComponentTree } A componentTree instance
+  # @returns { Livingdoc object }
+  createLivingdoc: ({ data, design, componentTree }) ->
+    Livingdoc.create({ data, designName: design, componentTree })
+
+
+  # Alias for backwards compatibility
+  new: -> @createLivingdoc.apply(this, arguments)
+  create: -> @createLivingdoc.apply(this, arguments)
 
 
   # Start drag & drop
