@@ -1,3 +1,5 @@
+$ = require('jquery')
+
 # String Helpers
 # --------------
 # inspired by [https://github.com/epeli/underscore.string]()

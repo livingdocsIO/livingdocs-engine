@@ -1,3 +1,4 @@
+$ = require('jquery')
 base64Image = require('../../support/test_base64_image')
 
 css = config.css

@@ -20,7 +20,7 @@ describe "compose util", ->
 
 
     it "returns a function with a prototype", ->
-      expect( $.isFunction(@Hero) ).to.be.true
+      expect(@Hero).to.be.an.instanceof(Function)
       expect( @Hero::fly ).to.exist
       expect( @Hero::isInvincible ).to.exist
 

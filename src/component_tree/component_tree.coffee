@@ -1,3 +1,4 @@
+$ = require('jquery')
 assert = require('../modules/logging/assert')
 ComponentContainer = require('./component_container')
 ComponentArray = require('./component_array')

@@ -1,3 +1,4 @@
+$ = require('jquery')
 config = require('../configuration/config')
 
 module.exports = class Assets

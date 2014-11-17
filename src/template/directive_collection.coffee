@@ -1,3 +1,4 @@
+$ = require('jquery')
 assert = require('../modules/logging/assert')
 config = require('../configuration/config')
 Directive = require('./directive')

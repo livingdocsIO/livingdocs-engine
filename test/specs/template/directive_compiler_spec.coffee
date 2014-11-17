@@ -1,3 +1,4 @@
+$ = require('jquery')
 directiveCompiler = require('../../../src/template/directive_compiler')
 
 describe 'DirectiveCompiler', ->

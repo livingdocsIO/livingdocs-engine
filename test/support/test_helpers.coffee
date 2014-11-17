@@ -1,5 +1,5 @@
+$ = require('jquery')
 config = require('../../src/configuration/config')
-$ = require('../../components/jquery/jquery')
 Design = require('../../src/design/design')
 designJson = require('./test_design_json')
 localstore = require('../../src/modules/localstore')

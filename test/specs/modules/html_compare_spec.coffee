@@ -1,3 +1,5 @@
+$ = require('jquery')
+
 htmlCompare = require('../../../src/modules/html_compare/html_compare')
 
 describe 'htmlCompare', ->

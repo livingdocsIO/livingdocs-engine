@@ -177,5 +177,5 @@ describe 'designParser', ->
           paragraph: 'title-xxx'
 
       expect( -> designParser.parse(json) )
-        .to.throw('Error creating the design: Error: Could not find component title-xxx')
+        .to.throw('Error creating the design: Could not find component title-xxx')
 

@@ -1,3 +1,4 @@
+$ = require('jquery')
 CssLoader = require('../../../src/rendering_container/css_loader')
 
 describe 'CssLoader', ->

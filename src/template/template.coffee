@@ -1,3 +1,4 @@
+$ = require('jquery')
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
 words = require('../modules/words')

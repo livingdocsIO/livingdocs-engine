@@ -1,3 +1,4 @@
+$ = require('jquery')
 Page = require('../../../src/rendering_container/page')
 RenderingContainer = require('../../../src/rendering_container/rendering_container')
 Design = require('../../../src/design/design')

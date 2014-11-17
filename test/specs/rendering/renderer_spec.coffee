@@ -1,3 +1,4 @@
+$ = require('jquery')
 Renderer = require('../../../src/rendering/renderer')
 ComponentTree = require('../../../src/component_tree/component_tree')
 Page = require('../../../src/rendering_container/page')

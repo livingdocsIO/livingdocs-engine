@@ -1,3 +1,4 @@
+$ = require('jquery')
 deepEqual = require('deep-equal')
 config = require('../configuration/config')
 guid = require('../modules/guid')
@@ -56,7 +57,7 @@ module.exports = do ->
 
     for name, value of json.content
       assert model.content.hasOwnProperty(name),
-        "error while deserializing component: unknown content '#{ name }'"
+        "error while deserializing component #{ model.componentName }: unknown content '#{ name }'"
 
       # Transform string into object: Backwards compatibility for old image values.
       if model.directives.get(name).type == 'image' && typeof value == 'string'
