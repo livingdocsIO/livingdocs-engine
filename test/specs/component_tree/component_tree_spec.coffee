@@ -1,11 +1,12 @@
 ComponentTree = require('../../../src/component_tree/component_tree')
 ComponentModel = require('../../../src/component_tree/component_model')
 ComponentContainer = require('../../../src/component_tree/component_container')
+config = test.config
 
 describe 'ComponentTree', ->
 
   beforeEach ->
-    { @componentTree } = getInstances('componentTree')
+    { @componentTree } = test.get('componentTree')
 
 
   it 'has a ComponentContainer as root', ->
@@ -115,7 +116,7 @@ describe 'ComponentTree with two components', ->
 describe 'ComponentTree with a single-column row component', ->
 
   beforeEach ->
-    { @componentTree } = getInstances('componentTree')
+    { @componentTree } = test.get('componentTree')
     @container = test.getComponent('container')
     @defaultName = config.directives.container.defaultName
     @componentTree.append(@container)
@@ -147,7 +148,7 @@ describe 'ComponentTree with a single-column row component', ->
 describe 'ComponentTree with a multi-column row component', ->
 
   beforeEach ->
-    { @componentTree } = getInstances('componentTree')
+    { @componentTree } = test.get('componentTree')
     @rowComponent = test.getComponent('row')
     @componentTree.append(@rowComponent)
 
@@ -229,7 +230,7 @@ describe 'ComponentTree with a multi-column row component', ->
 describe 'ComponentTree with three levels', ->
 
   beforeEach ->
-    { @componentTree } = getInstances('componentTree')
+    { @componentTree } = test.get('componentTree')
     @row = test.getComponent('row')
     @rowInMain = test.getComponent('row')
     @title = test.getComponent('title')
@@ -267,7 +268,7 @@ describe 'ComponentTree with three levels', ->
 describe 'ComponentTree with three components', ->
 
   beforeEach ->
-    { @componentTree } = getInstances('componentTree')
+    { @componentTree } = test.get('componentTree')
     @components = []
     for index in [0..2]
       @components[index] = test.getComponent('text')

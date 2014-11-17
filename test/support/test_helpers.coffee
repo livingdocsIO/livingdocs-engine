@@ -3,6 +3,7 @@ config = require('../../src/configuration/config')
 Design = require('../../src/design/design')
 designJson = require('./test_design_json')
 localstore = require('../../src/modules/localstore')
+getInstances = require('../support/factories/instance_injector').get
 
 # Local variables
 cachedDesign = undefined
@@ -13,6 +14,9 @@ module.exports = testHelpers =
 
   $: $
   jQuery: $
+  get: getInstances
+  config: config
+
 
   createElem: (str) ->
     $(str)[0]

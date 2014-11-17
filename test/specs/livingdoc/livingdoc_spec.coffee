@@ -3,7 +3,7 @@ Livingdoc = require('../../../src/livingdoc')
 describe 'livingdoc', ->
 
   beforeEach ->
-    { @componentTree } = getInstances('componentTree')
+    { @componentTree } = test.get('componentTree')
     @doc = new Livingdoc({ @componentTree })
 
 

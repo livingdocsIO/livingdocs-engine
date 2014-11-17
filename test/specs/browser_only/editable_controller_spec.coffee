@@ -14,7 +14,7 @@ describe 'editableController', ->
   # ----
 
   beforeEach ->
-    { @renderer, @componentTree } = getInstances('page', 'renderer')
+    { @renderer, @componentTree } = test.get('page', 'renderer')
 
     @editableController = new EditableController(@renderer.renderingContainer)
     @editableController.triggerEditableEvent = triggerEditableEvent

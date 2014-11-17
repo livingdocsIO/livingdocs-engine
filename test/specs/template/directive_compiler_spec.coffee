@@ -1,5 +1,6 @@
 $ = require('jquery')
 directiveCompiler = require('../../../src/template/directive_compiler')
+config = test.config
 
 describe 'DirectiveCompiler', ->
 

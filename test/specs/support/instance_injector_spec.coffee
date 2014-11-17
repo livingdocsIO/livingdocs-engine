@@ -8,13 +8,13 @@ Renderer = require('../../../src/rendering/renderer')
 describe 'instanceInjector', ->
 
   it 'gets a componentTree', ->
-    instances = getInstances('componentTree')
+    instances = test.get('componentTree')
     expect(instances.design).to.be.an.instanceof(Design)
     expect(instances.componentTree).to.be.an.instanceof(ComponentTree)
 
 
   it 'gets a renderer with a page', ->
-    instances = getInstances('page', 'renderer')
+    instances = test.get('page', 'renderer')
     expect(instances.design).to.be.an.instanceof(Design)
     expect(instances.componentTree).to.be.an.instanceof(ComponentTree)
     expect(instances.page).to.be.an.instanceof(Page)
@@ -22,7 +22,7 @@ describe 'instanceInjector', ->
 
 
   it 'gets a renderer with a renderingContainer', ->
-    instances = getInstances('renderingContainer', 'renderer')
+    instances = test.get('renderingContainer', 'renderer')
     expect(instances.design).to.be.an.instanceof(Design)
     expect(instances.componentTree).to.be.an.instanceof(ComponentTree)
     expect(instances.renderingContainer).to.be.an.instanceof(RenderingContainer)

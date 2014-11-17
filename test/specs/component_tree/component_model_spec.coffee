@@ -1,4 +1,6 @@
+_ = require('underscore')
 base64Image = require('../../support/test_base64_image')
+config = test.config
 
 describe 'Title Component', ->
 

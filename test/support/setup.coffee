@@ -30,12 +30,6 @@ config.loadResources = false
 # Export globals in a browser environment
 exportGlobals = (global) ->
   global.test = testHelpers
-  global.$ = testHelpers.$
-  global._ = _
-  global.log = log
-  global.assert = assert
-  global.config = config
-  global.getInstances = InstanceInjector.get
 
 
 # Exports for node are done in test/node/test_globals

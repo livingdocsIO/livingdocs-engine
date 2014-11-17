@@ -5,7 +5,7 @@ describe 'Assets', ->
   describe 'from test design', ->
 
     beforeEach ->
-      { @design } = getInstances('design')
+      { @design } = test.get('design')
       @assets = new Assets(design: @design)
 
 

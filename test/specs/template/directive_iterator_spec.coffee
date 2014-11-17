@@ -1,5 +1,5 @@
 DirectiveIterator = require('../../../src/template/directive_iterator')
-css = config.css
+css = test.config.css
 
 describe 'DirectiveIterator', ->
 
