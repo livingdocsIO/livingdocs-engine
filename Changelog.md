@@ -1,7 +1,8 @@
-# v0.4.x
+# v0.4.1
 
-#### Improvements:
+#### Features:
 
+- Unify node and browser api [#135](https://github.com/upfrontIO/livingdocs-engine/pull/135)
 - Expose current version and revision [#134](https://github.com/upfrontIO/livingdocs-engine/pull/134)
 
 
