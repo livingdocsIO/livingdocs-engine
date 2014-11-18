@@ -7,8 +7,44 @@ View = require('./rendering/view')
 EventEmitter = require('wolfy87-eventemitter')
 config = require('./configuration/config')
 dom = require('./interaction/dom')
+designCache = require('./design/design_cache')
+ComponentTree = require('./component_tree/component_tree')
 
 module.exports = class Livingdoc extends EventEmitter
+
+
+  # Create a new livingdoc in a synchronous way.
+  # The design must be loaded first.
+  #
+  # Call Options:
+  # - new({ data })
+  #   Load a livingdoc with JSON data
+  #
+  # - new({ design })
+  #   This will create a new empty livingdoc with your
+  #   specified design
+  #
+  # - new({ componentTree })
+  #   This will create a new livingdoc from a
+  #   componentTree
+  #
+  # @param data { json string } Serialized Livingdoc
+  # @param designName { string } Name of a design
+  # @param componentTree { ComponentTree } A componentTree instance
+  # @returns { Livingdoc object }
+  @create: ({ data, designName, componentTree }) ->
+    componentTree = if data?
+      designName = data.design?.name
+      assert designName?, 'Error creating livingdoc: No design is specified.'
+      design = designCache.get(designName)
+      new ComponentTree(content: data, design: design)
+    else if designName?
+      design = designCache.get(designName)
+      new ComponentTree(design: design)
+    else
+      componentTree
+
+    new Livingdoc({ componentTree })
 
 
   constructor: ({ componentTree }) ->

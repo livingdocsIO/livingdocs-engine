@@ -1,8 +1,9 @@
+$ = require('jquery')
 config = require('../../src/configuration/config')
-$ = require('../../components/jquery/jquery')
 Design = require('../../src/design/design')
 designJson = require('./test_design_json')
 localstore = require('../../src/modules/localstore')
+getInstances = require('../support/factories/instance_injector').get
 
 # Local variables
 cachedDesign = undefined
@@ -13,6 +14,9 @@ module.exports = testHelpers =
 
   $: $
   jQuery: $
+  get: getInstances
+  config: config
+
 
   createElem: (str) ->
     $(str)[0]
@@ -92,6 +96,21 @@ module.exports = testHelpers =
       before = timesFired
       callback()
       expect(expectedEvents).to.equal(timesFired - before)
+
+
+  # Normalize css styles
+  # @param { String }
+  normalizeStyle: (style, { removeUrlQuotes }={}) ->
+
+    # For url() Firefox always inserts double quotes
+    #  e.g. 'background-image: url("http://image.com/1") ' -> 'background-image: url(http://image.com/1)'
+    style = if removeUrlQuotes
+      style.replace(/url\(['"]([^'"]*)['"]\)/g, 'url($1)')
+    else
+      style.replace(/url\(['"]([^'"]*)['"]\)/g, 'url(\'$1\')')
+
+    # Phantom puts a space at the end of a style string
+    style = style.trim()
 
 
 # Add properties to testHelpers

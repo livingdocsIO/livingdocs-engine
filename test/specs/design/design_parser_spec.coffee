@@ -3,7 +3,7 @@ Design = require('../../../src/design/design')
 Template = require('../../../src/template/template')
 CssModificatorProperty = require('../../../src/design/css_modificator_property')
 
-describe 'designParser', ->
+describe 'design_parser:', ->
 
   describe 'minimal design', ->
 
@@ -177,5 +177,5 @@ describe 'designParser', ->
           paragraph: 'title-xxx'
 
       expect( -> designParser.parse(json) )
-        .to.throw('Error creating the design: Error: Could not find component title-xxx')
+        .to.throw('Error creating the design: Could not find component title-xxx')
 

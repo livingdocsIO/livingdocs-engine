@@ -5,11 +5,11 @@ base64Image = require('../../support/test_base64_image')
 # ------------------
 # Check that ComponentTree fires events properly
 
-describe 'ComponentTree (Layout Events) ->', ->
+describe 'component_tree (events):', ->
 
 
   beforeEach ->
-    { @componentTree } = getInstances('componentTree')
+    { @componentTree } = test.get('componentTree')
     monitor = test.createCallbackMonitor
     @expectComponentAdded = monitor(@componentTree.componentAdded)
     @expectComponentRemoved = monitor(@componentTree.componentRemoved)
@@ -98,7 +98,7 @@ describe 'ComponentTree (Layout Events) ->', ->
 describe 'ComponentTree (Content Events)', ->
 
   beforeEach ->
-    { @componentTree } = getInstances('componentTree')
+    { @componentTree } = test.get('componentTree')
     monitor = test.createCallbackMonitor
     @expectContentChanged = monitor(@componentTree.componentContentChanged)
     @expectChanged = monitor(@componentTree.changed)
@@ -162,7 +162,7 @@ describe 'ComponentTree (Content Events)', ->
 describe 'ComponentTree (Html Events)', ->
 
   beforeEach ->
-    { @componentTree } = getInstances('componentTree')
+    { @componentTree } = test.get('componentTree')
     monitor = test.createCallbackMonitor
     @expectHtlmChanged = monitor(@componentTree.componentHtmlChanged)
     @expectChanged = monitor(@componentTree.changed)
@@ -200,7 +200,7 @@ describe 'ComponentTree (Html Events)', ->
   describe 'ComponentTree (Data Events)', ->
 
     beforeEach ->
-      { @componentTree } = getInstances('componentTree')
+      { @componentTree } = test.get('componentTree')
       monitor = test.createCallbackMonitor
       @expectDataChanged = monitor(@componentTree.componentDataChanged)
       @expectChanged = monitor(@componentTree.changed)

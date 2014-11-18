@@ -1,3 +1,4 @@
+$ = require('jquery')
 Semaphore = require('../modules/semaphore')
 
 # A RenderingContainer is used by the Renderer to generate HTML.

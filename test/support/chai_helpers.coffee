@@ -1,3 +1,5 @@
+_ = require('underscore')
+
 chai.use (_chai, utils) ->
 
   # Use: expect({ one: true }).to.be.of.size(1)

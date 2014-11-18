@@ -70,6 +70,7 @@ module.exports = (grunt) ->
         extensions: ['.coffee']
         transform: ['coffeeify']
         debug: true
+        alias: ['./src/modules/jquery_browserify:jquery']
       tmp:
         files:
           '.tmp/livingdocs-engine.js' : [
@@ -81,7 +82,7 @@ module.exports = (grunt) ->
         files:
           '.tmp/livingdocs-engine-test.js' : [
             'test/support/setup.coffee'
-            'test/specs/{,*/}*.coffee'
+            'test/specs/!(node_only)/*.coffee'
           ]
       build:
         options:
@@ -169,6 +170,12 @@ module.exports = (grunt) ->
   grunt.registerTask('test', [
     'browserify:test'
     'karma:unit'
+  ])
+
+  # quick-test: qt
+  grunt.registerTask('qt', [
+    'browserify:test'
+    'karma:unit_once'
   ])
 
   grunt.registerTask('node-test', [

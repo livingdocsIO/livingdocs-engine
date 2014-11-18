@@ -1,6 +1,6 @@
 CssModificatorProperty = require('../../../src/design/css_modificator_property')
 
-describe 'CssModificatorProperty', ->
+describe 'css_modificator_property:', ->
 
   describe 'instantion', ->
 

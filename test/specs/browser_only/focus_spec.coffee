@@ -1,6 +1,6 @@
 Focus = require('../../../src/interaction/focus')
 
-describe 'Focus', ->
+describe '(browser only) focus:', ->
 
   describe 'constructor()', ->
 

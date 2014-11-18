@@ -1,4 +1,4 @@
-$ = require('../../../components/jquery/jquery')
+$ = require('jquery')
 log = require('../logging/log')
 
 module.exports = do ->

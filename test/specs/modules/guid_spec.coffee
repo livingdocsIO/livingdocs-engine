@@ -1,6 +1,6 @@
 guid = require('../../../src/modules/guid')
 
-describe 'guid util', ->
+describe '(modules) guid:', ->
 
   it 'create a string', ->
     expect(typeof guid.next() == 'string').to.be.true

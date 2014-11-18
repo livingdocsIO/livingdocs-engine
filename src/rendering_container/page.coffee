@@ -1,3 +1,4 @@
+$ = require('jquery')
 RenderingContainer = require('./rendering_container')
 CssLoader = require('./css_loader')
 config = require('../configuration/config')

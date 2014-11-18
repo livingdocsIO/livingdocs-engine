@@ -1,7 +1,8 @@
+$ = require('jquery')
 resrcitImageService = require('../../../src/image_services/resrcit_image_service')
 base64Image = require('../../support/test_base64_image')
 
-describe 'resrcitImageService', ->
+describe 'resrcit_image_service:', ->
 
   beforeEach ->
     @imageService = resrcitImageService

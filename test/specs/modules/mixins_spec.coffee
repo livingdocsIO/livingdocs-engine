@@ -1,6 +1,6 @@
 mixins = require('../../../src/modules/mixins')
 
-describe "mixins util", ->
+describe "(modules) mixins:", ->
 
   beforeEach ->
     @Indestructible =
@@ -10,8 +10,8 @@ describe "mixins util", ->
 
   it "returns a function with a prototype", ->
     mixinClass = mixins @Indestructible
-    expect( $.isFunction(mixinClass) ).to.be.true
-    expect( mixinClass::destroy ).to.exist
+    expect(mixinClass).to.be.an.instanceof(Function)
+    expect(mixinClass::destroy).to.exist
 
 
   it "generally works", ->

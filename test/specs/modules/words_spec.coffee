@@ -1,6 +1,6 @@
 words = require('../../../src/modules/words')
 
-describe "words util", ->
+describe "(modules) words:", ->
 
   describe "humanize", ->
 

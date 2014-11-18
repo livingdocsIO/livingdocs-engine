@@ -1,3 +1,4 @@
+$ = require('jquery')
 editorConfig = require('../configuration/config')
 dom = require('../interaction/dom')
 

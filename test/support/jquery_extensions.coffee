@@ -1,4 +1,4 @@
-jQuery = require('../../components/jquery/jquery')
+jQuery = require('jquery')
 
 # Fetch the outerHTML of an Element
 # ---------------------------------

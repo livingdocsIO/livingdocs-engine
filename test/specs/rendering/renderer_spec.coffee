@@ -1,15 +1,16 @@
+$ = require('jquery')
 Renderer = require('../../../src/rendering/renderer')
 ComponentTree = require('../../../src/component_tree/component_tree')
 Page = require('../../../src/rendering_container/page')
-attr = config.attr
-css = config.css
+attr = test.config.attr
+css = test.config.css
 
-describe 'Renderer', ->
+describe 'renderer:', ->
 
   describe 'in interactive mode', ->
 
     beforeEach (done) ->
-      { @componentTree } = getInstances('componentTree')
+      { @componentTree } = test.get('componentTree')
       @page = new Page
         renderNode: $('<section>')
         readOnly: false
@@ -44,13 +45,13 @@ describe 'Renderer', ->
 
   describe 'insertComponent()', ->
     beforeEach (done) ->
-      { @componentTree, @page, @renderer } = getInstances('page', 'renderer')
+      { @componentTree, @page, @renderer } = test.get('page', 'renderer')
       @renderer.ready -> done()
 
     it 'insertes the already appended components of an inserted component', ->
       container = test.getComponent('container')
       title = test.createComponent('title', 'A')
-      container.append(config.directives.container.defaultName, title)
+      container.append(test.config.directives.container.defaultName, title)
       @componentTree.append(container)
       expect(@page.renderNode).to.have.html """
         <section>
@@ -64,7 +65,7 @@ describe 'Renderer', ->
 
   describe 'in readonly mode', ->
     beforeEach (done) ->
-      { @componentTree, @page, @renderer } = getInstances('page', 'renderer')
+      { @componentTree, @page, @renderer } = test.get('page', 'renderer')
       @renderer.ready -> done()
 
 
@@ -179,7 +180,7 @@ describe 'Renderer', ->
 
   describe 'with a wrapper', ->
     beforeEach ->
-      { @componentTree, @page, @renderer } = getInstances('componentTree', 'page')
+      { @componentTree, @page, @renderer } = test.get('componentTree', 'page')
       @renderer = new Renderer
         componentTree: @componentTree
         renderingContainer: @page
@@ -222,7 +223,7 @@ describe 'Renderer', ->
   describe 'exclude components', ->
 
     beforeEach (done) ->
-      { @componentTree, @page, @renderer } = getInstances('page', 'renderer')
+      { @componentTree, @page, @renderer } = test.get('page', 'renderer')
       @renderer.ready -> done()
 
 

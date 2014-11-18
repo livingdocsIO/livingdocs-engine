@@ -1,3 +1,4 @@
+$ = require('jquery')
 htmlCompare = require('./html_compare')
 _ = require('underscore')
 

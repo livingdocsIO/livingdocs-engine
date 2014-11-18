@@ -1,7 +1,7 @@
 imageService = require('../../../src/image_services/image_service')
 defaultImageService = require('../../../src/image_services/default_image_service')
 
-describe 'imageService', ->
+describe 'image_service:', ->
 
   describe 'has()', ->
 

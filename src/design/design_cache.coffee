@@ -1,5 +1,6 @@
 assert = require('../modules/logging/assert')
 Design = require('./design')
+designParser = require('./design_parser')
 Version = require('./version')
 
 module.exports = do ->
@@ -25,7 +26,7 @@ module.exports = do ->
     designIdentifier = Design.getIdentifier(designSpec.name, version)
     return if @has(designIdentifier)
 
-    design = Design.parser.parse(designSpec)
+    design = designParser.parse(designSpec)
     if design
       @add(design)
     else

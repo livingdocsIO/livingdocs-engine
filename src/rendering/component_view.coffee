@@ -1,3 +1,4 @@
+$ = require('jquery')
 config = require('../configuration/config')
 css = config.css
 attr = config.attr

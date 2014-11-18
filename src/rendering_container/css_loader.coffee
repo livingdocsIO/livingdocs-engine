@@ -1,3 +1,4 @@
+$ = require('jquery')
 Semaphore = require('../modules/semaphore')
 
 module.exports = class CssLoader

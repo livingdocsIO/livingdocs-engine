@@ -1,9 +1,9 @@
 Design = require('../../../src/design/design')
 CssModificatorProperty = require('../../../src/design/css_modificator_property')
 Template = require('../../../src/template/template')
-editableAttr = config.directives.editable.attr
+editableAttr = test.config.directives.editable.attr
 
-describe 'Design', ->
+describe 'design:', ->
 
   describe 'with no params', ->
 

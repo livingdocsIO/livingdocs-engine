@@ -1,4 +1,6 @@
-describe 'default config', ->
+config = test.config
+
+describe 'config:', ->
 
   describe 'singleLineBreak regex', ->
 

@@ -1,9 +1,10 @@
+$ = require('jquery')
 base64Image = require('../../support/test_base64_image')
 
-css = config.css
-attr = config.attr
+css = test.config.css
+attr = test.config.attr
 
-describe 'ComponentView', ->
+describe 'component_view:', ->
 
   describe 'title', ->
 

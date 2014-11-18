@@ -1,6 +1,8 @@
 require('../../../src/browser_api')
+config = test.config
 
-describe 'Browser API', ->
+describe 'browser_api:', ->
+
   afterEach ->
     doc.design.resetCache()
 
@@ -52,6 +54,7 @@ describe 'Browser API', ->
 
 
   describe 'new', ->
+
     beforeEach ->
       doc.design.load(test.designJson)
       @componentTree = test.createComponentTree

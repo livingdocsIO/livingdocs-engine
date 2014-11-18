@@ -1,6 +1,8 @@
+$ = require('jquery')
+
 htmlCompare = require('../../../src/modules/html_compare/html_compare')
 
-describe 'htmlCompare', ->
+describe '(modules) html_compare:', ->
   compare = $.proxy(htmlCompare, 'compare')
 
   describe 'iterateComparables()', ->

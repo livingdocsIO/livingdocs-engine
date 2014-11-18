@@ -3,7 +3,7 @@ ComponentModel = require('../../../src/component_tree/component_model')
 componentModelSerializer = require('../../../src/component_tree/component_model_serializer')
 base64Image = require('../../support/test_base64_image')
 
-describe 'Component Serialization', ->
+describe 'serialization:', ->
 
   describe 'empty component', ->
 
@@ -68,7 +68,7 @@ describe 'Component Serialization', ->
 describe 'ComponentTree Serialization', ->
 
   beforeEach ->
-    { componentTree } = getInstances('componentTree')
+    { componentTree } = test.get('componentTree')
     @tree = componentTree
 
 
@@ -259,7 +259,7 @@ describe 'Deserialization', ->
 describe 'Serialize and Deserialize', ->
 
   beforeEach ->
-    { @design, componentTree } = getInstances('componentTree')
+    { @design, componentTree } = test.get('componentTree')
     @before = componentTree
     @row = test.getComponent('row')
     @title = test.getComponent('title')

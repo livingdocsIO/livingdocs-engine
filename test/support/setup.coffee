@@ -1,3 +1,6 @@
+# Load jquery extensions for easier testing
+require('./jquery_extensions')
+
 config = require('../../src/configuration/config')
 log = require('../../src/modules/logging/log')
 assert = require('../../src/modules/logging/assert')
@@ -11,8 +14,6 @@ require('./chai_helpers')
 require('../../src/modules/html_compare/chai_extensions')
 
 
-# Load jquery extensions for easier testing
-require('./jquery_extensions')
 
 
 # Supress logs
@@ -29,12 +30,6 @@ config.loadResources = false
 # Export globals in a browser environment
 exportGlobals = (global) ->
   global.test = testHelpers
-  global.$ = testHelpers.$
-  global._ = _
-  global.log = log
-  global.assert = assert
-  global.config = config
-  global.getInstances = InstanceInjector.get
 
 
 # Exports for node are done in test/node/test_globals

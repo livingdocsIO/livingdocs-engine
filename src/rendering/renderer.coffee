@@ -1,3 +1,4 @@
+$ = require('jquery')
 assert = require('../modules/logging/assert')
 log = require('../modules/logging/log')
 Semaphore = require('../modules/semaphore')

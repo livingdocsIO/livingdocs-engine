@@ -1,6 +1,6 @@
 EditableController = require('../../../src/interaction/editable_controller')
 
-describe 'editableController', ->
+describe '(browser only) editable_controller:', ->
 
   # Helpers
   # -------
@@ -14,7 +14,7 @@ describe 'editableController', ->
   # ----
 
   beforeEach ->
-    { @renderer, @componentTree } = getInstances('page', 'renderer')
+    { @renderer, @componentTree } = test.get('page', 'renderer')
 
     @editableController = new EditableController(@renderer.renderingContainer)
     @editableController.triggerEditableEvent = triggerEditableEvent
