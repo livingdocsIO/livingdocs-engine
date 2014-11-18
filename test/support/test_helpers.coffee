@@ -98,6 +98,21 @@ module.exports = testHelpers =
       expect(expectedEvents).to.equal(timesFired - before)
 
 
+  # Normalize css styles
+  # @param { String }
+  normalizeStyle: (style, { removeUrlQuotes }={}) ->
+
+    # For url() Firefox always inserts double quotes
+    #  e.g. 'background-image: url("http://image.com/1") ' -> 'background-image: url(http://image.com/1)'
+    style = if removeUrlQuotes
+      style.replace(/url\(['"]([^'"]*)['"]\)/g, 'url($1)')
+    else
+      style.replace(/url\(['"]([^'"]*)['"]\)/g, 'url(\'$1\')')
+
+    # Phantom puts a space at the end of a style string
+    style = style.trim()
+
+
 # Add properties to testHelpers
 #
 # add a Attr property for every directive

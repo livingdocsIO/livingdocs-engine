@@ -1,7 +1,7 @@
 $ = require('jquery')
 defaultImageService = require('../../../src/image_services/default_image_service')
 
-describe 'Browser only: DefaultImageManager', ->
+describe '(browser only) default_image_service:', ->
 
   beforeEach ->
     @imageService = defaultImageService
@@ -15,8 +15,8 @@ describe 'Browser only: DefaultImageManager', ->
       $elem = $('<div>')
       $elem.css('background-image', "url(#{ escapedUri })")
 
-      # Firefox always returns the url in double quotes
-      attr = $elem[0].getAttribute('style')
-      attr = attr.replace(/"/g, '\'')
+      style = $elem[0].getAttribute('style')
+      style = test.normalizeStyle(style)
 
-      expect(attr).to.equal('background-image: url(\'http://test.com/(1)\');')
+      expect(style).to.equal('background-image: url(\'http://test.com/(1)\');')
+

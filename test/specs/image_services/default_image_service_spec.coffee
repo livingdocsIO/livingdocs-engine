@@ -33,8 +33,9 @@ describe 'defaultImageService', ->
       $elem = $('<div>')
       $elem.css('background-image', "url(#{ escapedUri })")
 
-      # Firefox always returns the url in double quotes
-      attr = $elem[0].getAttribute('style')
-      attr = attr.replace(/"/g, '')
+      style = $elem[0].getAttribute('style')
 
-      expect(attr).to.equal('background-image: url(http://test.com/1);')
+      # Firefox always returns the url in double quotes
+      style = test.normalizeStyle(style, removeUrlQuotes: true)
+
+      expect(style).to.equal('background-image: url(http://test.com/1);')

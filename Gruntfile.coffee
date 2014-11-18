@@ -172,6 +172,12 @@ module.exports = (grunt) ->
     'karma:unit'
   ])
 
+  # quick-test: qt
+  grunt.registerTask('qt', [
+    'browserify:test'
+    'karma:unit_once'
+  ])
+
   grunt.registerTask('node-test', [
     'mochaTest'
   ])
