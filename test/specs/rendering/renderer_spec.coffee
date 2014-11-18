@@ -5,7 +5,7 @@ Page = require('../../../src/rendering_container/page')
 attr = test.config.attr
 css = test.config.css
 
-describe 'Renderer', ->
+describe 'renderer:', ->
 
   describe 'in interactive mode', ->
 

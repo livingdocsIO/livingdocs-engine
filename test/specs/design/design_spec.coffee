@@ -3,7 +3,7 @@ CssModificatorProperty = require('../../../src/design/css_modificator_property')
 Template = require('../../../src/template/template')
 editableAttr = test.config.directives.editable.attr
 
-describe 'Design', ->
+describe 'design:', ->
 
   describe 'with no params', ->
 

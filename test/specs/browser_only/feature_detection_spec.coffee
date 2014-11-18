@@ -1,7 +1,7 @@
 detects = require('../../../src/modules/feature_detection/feature_detects')
 isSupported = require('../../../src/modules/feature_detection/is_supported')
 
-describe 'feature detection', ->
+describe '(browser only) feature_detection:', ->
 
   # do everything in one test since isSupported caches the results internally
   it 'detects pointerEvents and uses the cache on the second call', ->

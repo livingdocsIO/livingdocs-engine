@@ -1,6 +1,6 @@
 ImageRatio = require('../../../src/design/image_ratio')
 
-describe 'image_ratio', ->
+describe 'image_ratio:', ->
 
   describe 'with a ratio of "16:9"', ->
 

@@ -3,7 +3,7 @@ ComponentModel = require('../../../src/component_tree/component_model')
 ComponentContainer = require('../../../src/component_tree/component_container')
 config = test.config
 
-describe 'ComponentTree', ->
+describe 'component_tree:', ->
 
   beforeEach ->
     { @componentTree } = test.get('componentTree')

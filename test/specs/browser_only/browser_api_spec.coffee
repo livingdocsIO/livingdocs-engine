@@ -1,7 +1,7 @@
 require('../../../src/browser_api')
 config = test.config
 
-describe 'Browser API', ->
+describe 'browser_api:', ->
 
   afterEach ->
     doc.design.resetCache()

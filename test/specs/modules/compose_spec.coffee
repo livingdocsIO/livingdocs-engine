@@ -12,7 +12,7 @@ class Flying
   fly: -> @speed = 1000
 
 
-describe "compose util", ->
+describe "(modules) compose:", ->
 
   describe 'compose a Hero class', ->
     beforeEach ->

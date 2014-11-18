@@ -1,4 +1,4 @@
-describe 'testHelpers', ->
+describe '(spec support) test_helpers:', ->
 
   describe 'createComponentTree()', ->
 

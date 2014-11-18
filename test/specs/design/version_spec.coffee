@@ -1,6 +1,6 @@
 Version = require('../../../src/design/version')
 
-describe 'Version', ->
+describe 'version:', ->
 
   it 'parses "1.0.0"', ->
     v = new Version('1.0.0')

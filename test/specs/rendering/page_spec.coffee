@@ -2,7 +2,7 @@ $ = require('jquery')
 RenderingContainer = require('../../../src/rendering_container/rendering_container')
 Page = require('../../../src/rendering_container/page')
 
-describe 'Page', ->
+describe 'page:', ->
 
   describe 'simple page with only a renderNode', ->
 

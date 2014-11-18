@@ -1,7 +1,7 @@
 $ = require('jquery')
 CssLoader = require('../../../src/rendering_container/css_loader')
 
-describe 'CssLoader', ->
+describe 'css_loader:', ->
   beforeEach ->
     @window = document: head: $('<div>')[0]
     @loader = new CssLoader(@window)

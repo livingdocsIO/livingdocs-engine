@@ -1,7 +1,7 @@
 DirectiveCollection = require('../../../src/template/directive_collection')
 Directive = require('../../../src/template/directive')
 
-describe 'DirectiveCollection', ->
+describe 'directive_collection:', ->
 
   describe 'with one directive', ->
     beforeEach ->

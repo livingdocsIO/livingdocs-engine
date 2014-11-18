@@ -1,6 +1,6 @@
 base64Image = require('../../support/test_base64_image')
 
-describe 'ImageDirective', ->
+describe 'image_directive:', ->
 
   describe 'setImageService()', ->
 

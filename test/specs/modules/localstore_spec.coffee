@@ -1,7 +1,9 @@
 localstore = require('../../../src/modules/localstore')
 
 if localstore.isSupported()
-  describe 'localstore', ->
+
+  describe '(modules) localstore:', ->
+
     beforeEach ->
       localstore.clear()
 

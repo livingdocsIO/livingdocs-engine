@@ -3,7 +3,7 @@ ComponentModel = require('../../../src/component_tree/component_model')
 componentModelSerializer = require('../../../src/component_tree/component_model_serializer')
 base64Image = require('../../support/test_base64_image')
 
-describe 'Component Serialization', ->
+describe 'serialization:', ->
 
   describe 'empty component', ->
 

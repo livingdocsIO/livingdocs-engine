@@ -1,6 +1,6 @@
 Livingdoc = require('../../../src/livingdoc')
 
-describe 'livingdoc', ->
+describe '(browser only) livingdoc:', ->
 
   beforeEach ->
     { @componentTree } = test.get('componentTree')

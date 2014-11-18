@@ -1,6 +1,6 @@
 dom = require('../../../src/interaction/dom')
 
-describe 'DOM method', ->
+describe 'dom:', ->
 
   describe 'findComponentView()', ->
 

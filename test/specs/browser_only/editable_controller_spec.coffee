@@ -1,6 +1,6 @@
 EditableController = require('../../../src/interaction/editable_controller')
 
-describe 'editableController', ->
+describe '(browser only) editable_controller:', ->
 
   # Helpers
   # -------

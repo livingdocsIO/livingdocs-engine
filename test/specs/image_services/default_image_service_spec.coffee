@@ -1,7 +1,7 @@
 $ = require('jquery')
 defaultImageService = require('../../../src/image_services/default_image_service')
 
-describe 'defaultImageService', ->
+describe 'default_image_service:', ->
 
   beforeEach ->
     @imageService = defaultImageService

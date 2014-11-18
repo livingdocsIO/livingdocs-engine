@@ -1,6 +1,6 @@
 config = test.config
 
-describe 'default config', ->
+describe 'config:', ->
 
   describe 'singleLineBreak regex', ->
 

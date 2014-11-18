@@ -2,7 +2,7 @@ DirectiveCollection = require('../../../src/template/directive_collection')
 Directive = require('../../../src/template/directive')
 directiveFinder = require('../../../src/template/directive_finder')
 
-describe 'DirectiveFinder', ->
+describe 'directive_finder:', ->
 
   beforeEach ->
     @collection = new DirectiveCollection()

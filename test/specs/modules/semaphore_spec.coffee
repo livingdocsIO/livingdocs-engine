@@ -1,6 +1,6 @@
 Semaphore = require('../../../src/modules/semaphore')
 
-describe 'Semaphore', ->
+describe '(modules) semaphore:', ->
 
   beforeEach ->
     @waiter = new Semaphore()

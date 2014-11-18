@@ -1,7 +1,7 @@
 DragBase = require('../../../src/interaction/drag_base')
 Page = require('../../../src/rendering_container/page')
 
-describe 'DragBase', ->
+describe '(browser only) drag_base:', ->
   beforeEach ->
     @page = new Page(renderNode: $('div'))
     @$dragged = $('<div>')

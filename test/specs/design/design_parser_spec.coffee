@@ -3,7 +3,7 @@ Design = require('../../../src/design/design')
 Template = require('../../../src/template/template')
 CssModificatorProperty = require('../../../src/design/css_modificator_property')
 
-describe 'designParser', ->
+describe 'design_parser:', ->
 
   describe 'minimal design', ->
 

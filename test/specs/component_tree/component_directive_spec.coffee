@@ -1,4 +1,4 @@
-describe 'Component Directive', ->
+describe 'component_directive:', ->
 
   describe 'component with inline image', ->
     beforeEach ->

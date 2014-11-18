@@ -5,7 +5,7 @@ base64Image = require('../../support/test_base64_image')
 # ------------------
 # Check that ComponentTree fires events properly
 
-describe 'ComponentTree (Layout Events) ->', ->
+describe 'component_tree (events):', ->
 
 
   beforeEach ->

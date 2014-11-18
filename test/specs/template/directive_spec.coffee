@@ -1,6 +1,6 @@
 Directive = require('../../../src/template/directive')
 
-describe 'Directive', ->
+describe 'directive:', ->
 
   describe 'isElementDirective()', ->
 

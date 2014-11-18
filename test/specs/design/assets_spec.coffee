@@ -1,6 +1,6 @@
 Assets = require('../../../src/design/assets')
 
-describe 'Assets', ->
+describe 'assets:', ->
 
   describe 'from test design', ->
 

@@ -5,7 +5,7 @@ ComponentTree = require('../../../src/component_tree/component_tree')
 Renderer = require('../../../src/rendering/renderer')
 
 
-describe 'instanceInjector', ->
+describe '(spec support) instance_injector:', ->
 
   it 'gets a componentTree', ->
     instances = test.get('componentTree')

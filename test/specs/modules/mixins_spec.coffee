@@ -1,6 +1,6 @@
 mixins = require('../../../src/modules/mixins')
 
-describe "mixins util", ->
+describe "(modules) mixins:", ->
 
   beforeEach ->
     @Indestructible =

@@ -1,7 +1,7 @@
 DirectiveIterator = require('../../../src/template/directive_iterator')
 css = test.config.css
 
-describe 'DirectiveIterator', ->
+describe 'directive_iterator:', ->
 
   beforeEach ->
     @html = test.createElem """
