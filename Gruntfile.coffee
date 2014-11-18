@@ -82,7 +82,7 @@ module.exports = (grunt) ->
         files:
           '.tmp/livingdocs-engine-test.js' : [
             'test/support/setup.coffee'
-            'test/specs/{,*/}*.coffee'
+            'test/specs/!(node_only)/*.coffee'
           ]
       build:
         options:
