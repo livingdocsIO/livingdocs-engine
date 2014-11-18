@@ -136,11 +136,25 @@ module.exports = (grunt) ->
 
     bump:
       options:
-        files: ['package.json', 'bower.json']
+        files: ['package.json', 'bower.json', 'version.json']
         commitFiles: ['-a'], # '-a' for all files
         pushTo: 'origin'
-        push: true
 
+    revision:
+      options:
+        property: 'git.revision'
+        ref: 'HEAD'
+        short: true
+
+    replace:
+      revision:
+        options:
+          patterns: [
+            match: /\"revision\": ?\"[a-z0-9]+\"/
+            replacement: '"revision": "<%= git.revision %>"'
+          ]
+        files:
+          'version.json': ['version.json']
 
   # Tasks
   # -----
@@ -161,21 +175,24 @@ module.exports = (grunt) ->
     'mochaTest'
   ])
 
-  grunt.registerTask('devbuild', [
+  grunt.registerTask('full-test', [
     'clean:dist'
+    'browserify:test'
+    'karma:build'
+    'mochaTest'
+  ])
+
+  grunt.registerTask('build', [
+    'clean:dist'
+    'add-revision'
     'browserify:build'
     'uglify'
     'autoprefixer:dist'
   ])
 
-  grunt.registerTask('build', [
-    'clean:dist'
-    'browserify:test'
-    'browserify:build'
-    'karma:build'
-    'mochaTest'
-    'uglify'
-    'autoprefixer:dist'
+  grunt.registerTask('add-revision', [
+    'revision'
+    'replace:revision'
   ])
 
   # Release a new version
@@ -187,8 +204,9 @@ module.exports = (grunt) ->
   # release:major
   grunt.registerTask 'release', (type) ->
     type ?= 'patch'
+    grunt.task.run('full-test')
+    grunt.task.run('bump-only:' + type)
     grunt.task.run('build')
-    grunt.task.run('bump:' + type)
-
+    grunt.task.run('bump-commit')
 
   grunt.registerTask('default', ['dev'])

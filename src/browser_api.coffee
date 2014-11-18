@@ -8,10 +8,15 @@ designParser = require('./design/design_parser')
 Design = require('./design/design')
 designCache = require('./design/design_cache')
 EditorPage = require('./rendering_container/editor_page')
+version = require('../version')
 
 module.exports = doc = do ->
 
   editorPage = new EditorPage()
+
+  # Set the current version
+  version: version.version
+  revision: version.revision
 
 
   # Load and access designs.
@@ -75,3 +80,4 @@ module.exports = doc = do ->
 
 # Export global variable
 window.doc = doc
+
