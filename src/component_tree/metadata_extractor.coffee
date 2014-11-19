@@ -2,7 +2,7 @@ module.exports = class MetadataExtractor
 
   constructor: (@componentTree, config) ->
     @parseConfig(config)
-    @extractionCache = null
+    @metadata = null
 
 
   parseConfig: (metadataConfiguration) ->
@@ -22,49 +22,37 @@ module.exports = class MetadataExtractor
 
   # Todo: Listen to componentTree events to invalidate automatically
   invalidateCache: ->
-    @extractionCache = null
+    @metadata = null
 
 
   extract: ->
-    if @extractionCache
-      @extractWithCache_()
+    if @metadata
+      @updateContent_()
     else
-      @extractFromTree_()
+      @metadata = @extractMetadataFromTree_()
+
+    @metadata
 
 
-  extractFromTree_: ->
+  extractMetadataFromTree_: ->
     metadata = {}
     @extractionCache = {}
-    @componentTree.all (componentModel) =>
+    @componentTree.each (componentModel) =>
       for match in @matches
         if componentModel.componentName == match.templateId
           content = componentModel.get(match.templateField)
           if !metadata[match.field]
-            metadata[match.field] = content
-            @extractionCache[match.field] =
-              'componentId': componentModel.id
-              'templateField': match.templateField
+            metadata[match.field] =
+              'content': content,
+              'component': componentModel,
+              'field': match.templateField
 
     metadata
 
 
-  extractWithCache_: ->
-    metadata = {}
-    for field, pointer of @extractionCache
-      component = @getComponentByGuid(pointer.componentId)
+  updateContent_: ->
+    for field, value of @metadata
+      component = value.component
       if component
-        content = component.get(pointer.templateField)
-        metadata[field] = content
-
-    metadata
-
-
-  # Temporal hack as proof of concept
-  getComponentByGuid: (guid) ->
-    result = null
-    @componentTree.all (componentModel) ->
-      if componentModel.id == guid
-        result = componentModel
-
-    return result
-
+        content = component.get(value.field)
+        @metadata[field].content = content
