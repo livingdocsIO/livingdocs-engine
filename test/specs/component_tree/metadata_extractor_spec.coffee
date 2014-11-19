@@ -24,13 +24,13 @@ describe 'metadata_extractor:', ->
 
   it 'has found all metadata', ->
     metadata = @extractor.extract()
-    expect(metadata.title).to.equal('Hero Title')
-    expect(metadata.description).to.equal('Title Title')
+    expect(metadata.title.content).to.equal('Hero Title')
+    expect(metadata.description.content).to.equal('Title Title')
 
   it 'finds metadata when using the cache', ->
     # heat up the cache
     @extractor.extract()
     # do extraction from cache
     metadata = @extractor.extract()
-    expect(metadata.title).to.equal('Hero Title')
-    expect(metadata.description).to.equal('Title Title')
+    expect(metadata.title.content).to.equal('Hero Title')
+    expect(metadata.description.content).to.equal('Title Title')
