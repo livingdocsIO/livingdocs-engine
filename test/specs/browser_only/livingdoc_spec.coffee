@@ -21,4 +21,3 @@ describe '(browser only) livingdoc:', ->
       .then ({ iframe, renderer }) ->
         expect(renderer.$wrapperHtml).to.exist
         done()
-

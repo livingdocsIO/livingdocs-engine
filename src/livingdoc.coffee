@@ -54,6 +54,14 @@ module.exports = class Livingdoc extends EventEmitter
     @interactiveView = undefined
 
 
+  setComponentTree: (componentTree) ->
+    assert componentTree.design == @design,
+      'ComponentTree must have the same design as the document'
+
+    @model = @componentTree = componentTree
+    @forwardComponentTreeEvents()
+
+
   # Get a drop target for an event
   getDropTarget: ({ event }) ->
     document = event.target.ownerDocument
@@ -64,12 +72,8 @@ module.exports = class Livingdoc extends EventEmitter
       target = dom.dropTarget(elem, coords)
 
 
-  setComponentTree: (componentTree) ->
-    assert componentTree.design == @design,
-      'ComponentTree must have the same design as the document'
-
-    @model = @componentTree = componentTree
-    @forwardComponentTreeEvents()
+  extractMetadata: ->
+    @componentTree.extractMetadata()
 
 
   forwardComponentTreeEvents: ->

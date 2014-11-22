@@ -9,11 +9,11 @@ module.exports = class MetadataExtractor
     @matches = []
     for field, fieldValue of metadataConfiguration
       for pattern in fieldValue.matches
-        [templateId, templateField] = pattern.split('.')
+        [template, directive] = pattern.split('.')
         @matches.push
           'field': field
-          'templateId': templateId
-          'templateField': templateField
+          'template': template
+          'directive': directive
 
 
   getMatches: ->
@@ -36,16 +36,15 @@ module.exports = class MetadataExtractor
 
   extractMetadataFromTree_: ->
     metadata = {}
-    @extractionCache = {}
     @componentTree.each (componentModel) =>
       for match in @matches
-        if componentModel.componentName == match.templateId
-          content = componentModel.get(match.templateField)
+        if componentModel.componentName == match.template
+          content = componentModel.get(match.directive)
           if !metadata[match.field]
             metadata[match.field] =
               'content': content,
               'component': componentModel,
-              'field': match.templateField
+              'field': match.directive
 
     metadata
 

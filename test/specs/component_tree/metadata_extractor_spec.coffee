@@ -28,9 +28,11 @@ describe 'metadata_extractor:', ->
     expect(metadata.description.content).to.equal('Title Title')
 
   it 'finds metadata when using the cache', ->
+    cacheSpy = sinon.spy(@extractor, 'updateContent_')
     # heat up the cache
     @extractor.extract()
     # do extraction from cache
     metadata = @extractor.extract()
+    expect(cacheSpy.callCount).to.equal(1);
     expect(metadata.title.content).to.equal('Hero Title')
     expect(metadata.description.content).to.equal('Title Title')
