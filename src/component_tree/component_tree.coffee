@@ -4,6 +4,7 @@ ComponentContainer = require('./component_container')
 ComponentArray = require('./component_array')
 ComponentModel = require('./component_model')
 componentModelSerializer = require('./component_model_serializer')
+MetadataExtractor = require('./metadata_extractor')
 
 # ComponentTree
 # -----------
@@ -42,6 +43,7 @@ module.exports = class ComponentTree
     # initialize content before we set the componentTree to the root
     # otherwise all the events will be triggered while building the tree
     @fromJson(content, @design) if content?
+    @metadataExtractor = new MetadataExtractor(this, @design.metadata)
 
     @root.componentTree = this
     @initializeEvents()
@@ -152,6 +154,10 @@ module.exports = class ComponentTree
     assert view.renderer, 'componentTree.setMainView: view does not have an initialized renderer'
     assert view.renderer.componentTree == this, 'componentTree.setMainView: Cannot set renderer from different componentTree'
     @mainRenderer = view.renderer
+
+
+  extractMetadata: ->
+    @metadataExtractor.extract()
 
 
   # Get the componentView for a model
@@ -275,10 +281,12 @@ module.exports = class ComponentTree
 
 
   # Initialize a componentTree
-  # This method suppresses change events in the componentTree.
+  # This method suppresses change events in the componentTree by default, can
+  # be changed by setting silent = false
   #
   # Consider to change params:
-  # fromData({ content, design, silent }) # silent [boolean]: suppress change events
+  # fromData({ content, design, silent }) # silent [boolean]: suppress change
+  # events
   fromData: (data, design, silent=true) ->
     if design?
       assert not @design? || design.equals(@design), 'Error loading data. Specified design is different from current componentTree design'
@@ -306,6 +314,7 @@ module.exports = class ComponentTree
     @fromData(data, design, false)
 
 
+  # Consider extracting animation logic to another level
   addDataWithAnimation: (data, delay=200) ->
     assert @design?, 'Error adding data. ComponentTree has no design'
 

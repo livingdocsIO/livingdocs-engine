@@ -72,6 +72,10 @@ module.exports = class Livingdoc extends EventEmitter
       target = dom.dropTarget(elem, coords)
 
 
+  extractMetadata: ->
+    @componentTree.extractMetadata()
+
+
   forwardComponentTreeEvents: ->
     @componentTree.changed.add =>
       @emit 'change', arguments
