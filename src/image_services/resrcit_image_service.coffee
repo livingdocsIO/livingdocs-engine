@@ -28,9 +28,11 @@ module.exports = do ->
     imgService.setPlaceholder($elem)
 
 
-  getUrl: (value, { crop }) ->
-    cropParam = "C=W#{ crop.width },H#{ crop.height },X#{ crop.x },Y#{ crop.y }/" if crop?
-    "#{ @resrcitUrl }#{ cropParam || '' }#{ value }"
+  getUrl: (value, { crop, quality }={}) ->
+    style = ""
+    style += "/C=W#{ crop.width },H#{ crop.height },X#{ crop.x },Y#{ crop.y }" if crop?
+    style += "/O=#{quality}" if quality?
+    "#{ @resrcitUrl }#{ style }/#{ value }"
 
 
   # Image specific methods
