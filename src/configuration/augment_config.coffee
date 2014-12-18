@@ -28,3 +28,4 @@ module.exports = (config) ->
     config.docDirective[name] = value.renderedAttr
     config.templateAttrLookup[value.attr] = name
 
+  config
