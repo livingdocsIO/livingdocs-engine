@@ -33,7 +33,7 @@ describe 'component_directive:', ->
       it 'sets a URL with resrc.it as image service', ->
         @imgDirective.setImageService('resrc.it')
         @imgDirective.setImageUrl('http:://images.com/1.jpg')
-        expect( @imgDirective.getImageUrl() ).to.equal('http://app.resrc.it/O=75/http:://images.com/1.jpg')
+        expect( @imgDirective.getImageUrl() ).to.equal('https://app.resrc.it/O=75/http:://images.com/1.jpg')
         expect( @imgDirective.getOriginalUrl() ).to.equal('http:://images.com/1.jpg')
 
 
@@ -46,13 +46,13 @@ describe 'component_directive:', ->
 
       it 'updates the url with resrc.it as image service', ->
         @imgDirective.setCrop(x: 10, y: 20, width: 400, height: 300)
-        expect( @imgDirective.getImageUrl() ).to.equal('http://app.resrc.it/C=W400,H300,X10,Y20/O=75/http:://images.com/1.jpg')
+        expect( @imgDirective.getImageUrl() ).to.equal('https://app.resrc.it/C=W400,H300,X10,Y20/O=75/http:://images.com/1.jpg')
 
 
       it 'resets the crop after setting another url', ->
         @imgDirective.setCrop(x: 10, y: 20, width: 400, height: 300)
         @imgDirective.setImageUrl('http:://images.com/kitten.jpg')
-        expect( @imgDirective.getImageUrl() ).to.equal('http://app.resrc.it/O=75/http:://images.com/kitten.jpg')
+        expect( @imgDirective.getImageUrl() ).to.equal('https://app.resrc.it/O=75/http:://images.com/kitten.jpg')
 
 
     describe 'isInlineImage()', ->
