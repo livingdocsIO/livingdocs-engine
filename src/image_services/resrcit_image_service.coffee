@@ -1,9 +1,8 @@
+config = require('../configuration/config').imageServices['resrc.it']
 assert = require('../modules/logging/assert')
 imgService = require('./default_image_service')
 
 module.exports = do ->
-
-  resrcitUrl: 'http://app.resrc.it/'
 
   # Image Service Interface
   # -----------------------
@@ -31,8 +30,8 @@ module.exports = do ->
   getUrl: (value, { crop, quality }={}) ->
     style = ""
     style += "/C=W#{ crop.width },H#{ crop.height },X#{ crop.x },Y#{ crop.y }" if crop?
-    style += "/O=#{quality}" if quality?
-    "#{ @resrcitUrl }#{ style }/#{ value }"
+    style += "/O=#{ q }" if q = quality || config.quality
+    "#{ config.host }#{ style }/#{ value }"
 
 
   # Image specific methods

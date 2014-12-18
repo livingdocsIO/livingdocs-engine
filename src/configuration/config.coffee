@@ -2,7 +2,7 @@ augmentConfig = require('./augment_config')
 
 # Configuration
 # -------------
-module.exports = config = do ->
+module.exports =
 
   # Load css and js resources in pages and interactive pages
   loadResources: true
@@ -114,4 +114,10 @@ module.exports = config = do ->
         $elem.slideUp(250)
 
 
-augmentConfig(config)
+  imageServices:
+    'resrc.it':
+      quality: 75
+      host: 'http://app.resrc.it'
+
+
+augmentConfig(module.exports)
