@@ -1,3 +1,8 @@
+# vx.x.x
+
+- Shrinkwrap node modules [#138](https://github.com/upfrontIO/livingdocs-engine/pull/138)
+
+
 # v0.4.1
 
 #### Features:
