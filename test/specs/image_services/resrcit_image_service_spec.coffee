@@ -74,22 +74,20 @@ describe 'resrcit_image_service:', ->
 
       it 'with a custom quality parameter', ->
         url = @imageService.getUrl('http://www.lolcats.com/images/u/13/39/tastegood.jpg', quality: 65)
-        expect(url).to.equal('http://app.resrc.it/O=65/http://www.lolcats.com/images/u/13/39/tastegood.jpg')
+        expect(url).to.equal('https://app.resrc.it/O=65/http://www.lolcats.com/images/u/13/39/tastegood.jpg')
 
 
       it 'with a custom crop configuration', ->
         url = @imageService.getUrl('http://www.lolcats.com/images/u/13/39/tastegood.jpg', crop: {width: 100, height: 200, x: 10, y: 20})
-        expect(url).to.equal('http://app.resrc.it/C=W100,H200,X10,Y20/O=75/http://www.lolcats.com/images/u/13/39/tastegood.jpg')
+        expect(url).to.equal('https://app.resrc.it/C=W100,H200,X10,Y20/O=75/http://www.lolcats.com/images/u/13/39/tastegood.jpg')
 
 
     describe 'with a global configuration', ->
 
       before ->
-        @api = require('../../../src/browser_api')
         @config = require('../../../src/configuration/config')
-
         @originalConfig = $.extend(true, {}, @config.imageServices['resrc.it'])
-        @api.config
+        $.extend true, @config,
           imageServices:
             'resrc.it':
               quality: 90
@@ -97,7 +95,7 @@ describe 'resrcit_image_service:', ->
 
 
       after ->
-        @api.config(imageServices: 'resrc.it': @originalConfig)
+        $.extend(true, @config, imageServices: 'resrc.it': @originalConfig)
 
 
       it 'with a custom host defined in the imageService config', ->

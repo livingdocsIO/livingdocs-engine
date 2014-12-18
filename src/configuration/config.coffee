@@ -117,5 +117,5 @@ module.exports = augmentConfig(
   imageServices:
     'resrc.it':
       quality: 75
-      host: 'http://app.resrc.it'
+      host: 'https://app.resrc.it'
 )
