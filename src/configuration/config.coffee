@@ -2,7 +2,7 @@ augmentConfig = require('./augment_config')
 
 # Configuration
 # -------------
-module.exports =
+module.exports = augmentConfig(
 
   # Load css and js resources in pages and interactive pages
   loadResources: true
@@ -118,6 +118,4 @@ module.exports =
     'resrc.it':
       quality: 75
       host: 'http://app.resrc.it'
-
-
-augmentConfig(module.exports)
+)
