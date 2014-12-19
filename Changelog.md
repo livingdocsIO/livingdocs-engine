@@ -1,5 +1,8 @@
-# vx.x.x
+# v0.4.2
 
+#### Improvements:
+
+- Expose the configuration of the resrc.it image service [#139](https://github.com/upfrontIO/livingdocs-engine/pull/1398)
 - Shrinkwrap node modules [#138](https://github.com/upfrontIO/livingdocs-engine/pull/138)
 
 

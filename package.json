@@ -1,6 +1,6 @@
 {
   "name": "livingdocs-engine",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "main": "src/node_api.coffee",
   "browser": "src/browser_api.coffee",
   "repository": {
