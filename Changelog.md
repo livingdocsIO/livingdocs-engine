@@ -1,3 +1,10 @@
+# v0.4.3
+
+#### Improvements:
+
+- Add getText() to editable directive [#141](https://github.com/upfrontIO/livingdocs-engine/pull/141)
+
+
 # v0.4.2
 
 #### Improvements:
