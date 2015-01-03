@@ -12,3 +12,16 @@ module.exports = class EditableDirective
 
   getContent: ->
     @component.content[@name]
+
+
+  setContent: (value) ->
+    @component.setContent(@name, value)
+
+
+  getText: ->
+    content = @getContent()
+    return '' unless content
+    div = window.document.createElement('div')
+    div.innerHTML = content
+    div.textContent
+
