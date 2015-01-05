@@ -1,4 +1,5 @@
 assert = require('../modules/logging/assert')
+words = require('../modules/words')
 
 module.exports = class EditableDirective
 
@@ -21,7 +22,5 @@ module.exports = class EditableDirective
   getText: ->
     content = @getContent()
     return '' unless content
-    div = window.document.createElement('div')
-    div.innerHTML = content
-    div.textContent
+    words.extractTextFromHtml(content)
 

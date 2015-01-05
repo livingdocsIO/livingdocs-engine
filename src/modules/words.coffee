@@ -45,6 +45,7 @@ module.exports = do ->
   readableJson: (obj) ->
     JSON.stringify(obj, null, 2) # "\t"
 
+
   camelize: (str) ->
     $.trim(str).replace(/[-_\s]+(.)?/g, (match, c) ->
       c.toUpperCase()
@@ -54,12 +55,10 @@ module.exports = do ->
     str.replace(/^\s+|\s+$/g, '')
 
 
-  # camelize: (str) ->
-  #   $.trim(str).replace(/[-_\s]+(.)?/g, (match, c) ->
-  #     c.toUpperCase()
-
-  # classify: (str) ->
-  #   $.titleize(String(str).replace(/[\W_]/g, ' ')).replace(/\s/g, '')
-
-
+  # Extract only the text from an HTML string
+  # '<div>A &amp; B</div>' -> 'A & B'
+  extractTextFromHtml: (str) ->
+    div = window.document.createElement('div')
+    div.innerHTML = str
+    div.textContent
 
