@@ -2,16 +2,18 @@ assert = require('../modules/logging/assert')
 
 module.exports = class Dependency
 
-  constructor: ({ @name, @source, @type, @inline, @async }) ->
-    assert @source, 'Dependency: No source provided'
+  constructor: ({ @name, @src, @code, @type, @async, component }) ->
+    assert @src || @code, 'Dependency: No "src" or "code" param provided'
+    assert not (@src && @code), 'Dependency: Only provide one of "src" or "code" params'
     assert @type in ['js', 'css'], "Dependency: Unrecognized type: #{ @type }"
 
-    @inline ?= false # is it inline js or css?
+    @inline = true if @code?
     if @type == 'css' || @inline == true
       @async = undefined
 
     @components = {} # components which depend upon this resource
     @componentCount = 0
+    @addComponent(component) if component?
 
 
   # Check if this is a dependency of a certain component
@@ -39,12 +41,9 @@ module.exports = class Dependency
   serialize: ->
     obj = {}
 
-    if not @inline
-      obj.src = @source
-    else
-      obj.code = @source
-      obj.inline = @inline
-
+    obj.src = @src if @src?
+    obj.code = @code if @code?
+    obj.inline = @inline if @inline?
     obj.async = @async if @async?
     obj.name = @name if @name
 
