@@ -9,6 +9,7 @@ config = require('./configuration/config')
 dom = require('./interaction/dom')
 designCache = require('./design/design_cache')
 ComponentTree = require('./component_tree/component_tree')
+Dependencies = require('./rendering/dependencies')
 
 module.exports = class Livingdoc extends EventEmitter
 
@@ -52,6 +53,7 @@ module.exports = class Livingdoc extends EventEmitter
     @setComponentTree(componentTree)
     @views = {}
     @interactiveView = undefined
+    @dependencies = undefined
 
 
   # Get a drop target for an event
@@ -137,6 +139,25 @@ module.exports = class Livingdoc extends EventEmitter
       'Error creating interactive view: Livingdoc can have only one interactive view'
 
     @interactiveView = view
+
+
+  addDependency: (obj) ->
+    @dependencies ?= new Dependencies({ @componentTree })
+    @dependencies.add(obj)
+
+
+  addJsDependency: (obj) ->
+    obj.type = 'js'
+    @addDependency(obj)
+
+
+  addCssDependency: (obj) ->
+    obj.type = 'css'
+    @addDependency(obj)
+
+
+  hasDependencies: ->
+    @dependencies?.hasEntries()
 
 
   toHtml: ({ excludeComponents }={}) ->
