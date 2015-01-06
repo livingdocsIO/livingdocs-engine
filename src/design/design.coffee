@@ -1,3 +1,4 @@
+config = require('../configuration/config')
 assert = require('../modules/logging/assert')
 log = require('../modules/logging/log')
 Template = require('../template/template')
@@ -23,7 +24,7 @@ module.exports = class Design
     @imageRatios = {}
 
     # assets required by the design
-    @assets = new Assets(design: this)
+    @assets = new Assets(prefix: "#{ config.designPath }/#{ this.name }")
 
     # default components
     @defaultParagraph = undefined
