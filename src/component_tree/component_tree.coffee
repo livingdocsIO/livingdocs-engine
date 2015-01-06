@@ -37,6 +37,7 @@ module.exports = class ComponentTree
 
   constructor: ({ content, @design } = {}) ->
     assert @design?, "Error instantiating ComponentTree: design param is misssing."
+    @componentById = {}
     @root = new ComponentContainer(isRoot: true)
 
     # initialize content before we set the componentTree to the root
@@ -129,10 +130,15 @@ module.exports = class ComponentTree
       new ComponentArray()
 
 
+  findById: (id) ->
+    @componentById[id]
+
+
   detach: ->
     @root.componentTree = undefined
-    @each (component) ->
+    @each (component) =>
       component.componentTree = undefined
+      @componentById[component.id] = undefined
 
     oldRoot = @root
     @root = new ComponentContainer(isRoot: true)
@@ -197,6 +203,7 @@ module.exports = class ComponentTree
 
       component.descendantsAndSelf (descendant) =>
         descendant.componentTree = this
+        @componentById[descendant.id] = component
 
       attachComponentFunc()
       @fireEvent('componentAdded', component)
@@ -211,8 +218,9 @@ module.exports = class ComponentTree
     assert component.componentTree is this,
       'cannot remove component from another ComponentTree'
 
-    component.descendantsAndSelf (descendants) ->
-      descendants.componentTree = undefined
+    component.descendantsAndSelf (descendant) =>
+      descendant.componentTree = undefined
+      @componentById[descendant.id] = undefined
 
     detachComponentFunc()
     @fireEvent('componentRemoved', component)
@@ -290,6 +298,7 @@ module.exports = class ComponentTree
       @root.componentTree = this
       @root.each (component) =>
         component.componentTree = this
+        @componentById[component.id] = component
 
 
   # Append data to this componentTree
