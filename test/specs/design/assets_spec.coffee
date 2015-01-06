@@ -6,7 +6,7 @@ describe 'assets:', ->
 
     beforeEach ->
       { @design } = test.get('design')
-      @assets = new Assets(design: @design)
+      @assets = new Assets(prefix: '/designs/test')
 
 
     it 'creates an instance', ->
@@ -15,13 +15,31 @@ describe 'assets:', ->
 
     describe 'convertToAbsolutePaths()', ->
 
-      it 'converts a relative url', ->
+      it 'converts an url that starts with "./"', ->
         @assets.addCss('./design.css')
         absUrls = @assets.convertToAbsolutePaths(@assets.css)
         expect(absUrls[0]).to.equal('/designs/test/design.css')
 
 
-      it 'leaves absolute urls alone', ->
+      it 'converts a relative url', ->
+        @assets.addCss('design.css')
+        absUrls = @assets.convertToAbsolutePaths(@assets.css)
+        expect(absUrls[0]).to.equal('/designs/test/design.css')
+
+
+      it 'does not touch a url that starts with "http://"', ->
+        @assets.addCss('http://design.css')
+        absUrls = @assets.convertToAbsolutePaths(@assets.css)
+        expect(absUrls[0]).to.equal('http://design.css')
+
+
+      it 'does not touch a url that starts with "https://"', ->
+        @assets.addCss('https://design.css')
+        absUrls = @assets.convertToAbsolutePaths(@assets.css)
+        expect(absUrls[0]).to.equal('https://design.css')
+
+
+      it 'does not touch a url that starts with "/"', ->
         @assets.addCss('/my/custom/path/to/the/design.css')
         absUrls = @assets.convertToAbsolutePaths(@assets.css)
         expect(absUrls[0]).to.equal('/my/custom/path/to/the/design.css')

@@ -1,9 +1,9 @@
 $ = require('jquery')
-config = require('../configuration/config')
 
 module.exports = class Assets
 
-  constructor: ({ @design }) ->
+  constructor: ({ @prefix }) ->
+    @prefix ?= ''
 
 
   loadCss: (cssLoader, cb) ->
@@ -12,18 +12,22 @@ module.exports = class Assets
     cssLoader.load(cssUrls, cb)
 
 
-  getAssetPath: ->
-    "#{ config.designPath }/#{ @design.name }"
-
-
+  # Absolute paths:
+  # //
+  # /
+  # http://google.com
+  # https://google.com
+  #
+  # Everything else is prefixed if a prefix is provided.
   convertToAbsolutePaths: (urls) ->
     $.map urls, (path) =>
-      # URLs are absolute when they contain two `//` or begin with a `/`
-      return path if /\/\//.test(path) || /^\//.test(path)
 
-      # Normalize paths that begin with a `./
-      path = path.replace(/^[\.\/]*/, '')
-      "#{ @getAssetPath() }/#{ path }"
+      # URLs are absolute when they contain two `//` or begin with a `/`
+      if /(^\/\/|[a-z]*:\/\/)/.test(path) || /^\//.test(path)
+        path
+      else # Normalize paths that begin with a `./
+        path = path.replace(/^[\.\/]*/, '')
+        "#{ @prefix }/#{ path }"
 
 
   # @param { String or Array of Strings }
