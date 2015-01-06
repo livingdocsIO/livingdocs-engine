@@ -2,16 +2,13 @@ assert = require('../modules/logging/assert')
 
 module.exports = class Dependency
 
-  constructor: ({ @name, @source, @type, @inline, @async, @appendToHead }) ->
+  constructor: ({ @name, @source, @type, @inline, @async }) ->
     assert @source, 'Dependency: No source provided'
     assert @type in ['js', 'css'], "Dependency: Unrecognized type: #{ @type }"
 
     @inline ?= false # is it inline js or css?
-    @appendToHead ?= false # true: append to the head of the document, false: append to body
-    if @type == 'css'
-      @async = false
-    else
-      @async ?= false
+    if @type == 'css' || @inline == true
+      @async = undefined
 
     @components = {} # components which depend upon this resource
     @componentCount = 0
@@ -41,10 +38,14 @@ module.exports = class Dependency
 
   serialize: ->
     obj = {}
-    obj[@type] = @source
-    obj.inline = @inline if @inline
-    obj.async = @async if @async
-    obj.appendToHead = @appendToHead if @appendToHead
+
+    if not @inline
+      obj.src = @source
+    else
+      obj.code = @source
+      obj.inline = @inline
+
+    obj.async = @async if @async?
     obj.name = @name if @name
 
     for componentId of @components
