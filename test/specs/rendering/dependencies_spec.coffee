@@ -18,15 +18,15 @@ describe 'dependencies:', ->
 
 
     it 'adds a js dependency', ->
-      @dependencies.add(js: 'http://resrc.it')
+      @dependencies.addJs(src: 'http://resrc.it')
       expect(@dependencies.serialize().js).to.deep.equal [
         { src: 'http://resrc.it' }
       ]
 
 
     it 'only adds a named dependency once', ->
-      @dependencies.add(name: 'twitter', js: 'https://platform.twitter.com/widgets.js')
-      @dependencies.add(name: 'twitter', js: 'https://platform.twitter.com/widgets.js')
+      @dependencies.addJs(name: 'twitter', src: 'https://platform.twitter.com/widgets.js')
+      @dependencies.addJs(name: 'twitter', src: 'https://platform.twitter.com/widgets.js')
       expect(@dependencies.serialize().js).to.deep.equal [
         { src: 'https://platform.twitter.com/widgets.js', name: 'twitter' }
       ]
@@ -36,9 +36,9 @@ describe 'dependencies:', ->
       component = @componentTree.createComponent('text')
       @componentTree.append(component)
 
-      @dependencies.add
+      @dependencies.addJs
         name: 'twitter'
-        js: 'https://platform.twitter.com/widgets.js'
+        src: 'https://platform.twitter.com/widgets.js'
         async: true
         component: component
 
@@ -53,7 +53,7 @@ describe 'dependencies:', ->
 
 
     it 'adds a css dependency', ->
-      @dependencies.add(css: 'http://restyle.it')
+      @dependencies.addCss(src: 'http://restyle.it')
       expect(@dependencies.serialize().css).to.deep.equal [
         { src: 'http://restyle.it' }
       ]
@@ -70,8 +70,8 @@ describe 'dependencies:', ->
 
 
     it 'removes a dependency when the component is removed', ->
-      @dependencies.add
-        js: 'https://platform.twitter.com/widgets.js'
+      @dependencies.addJs
+        src: 'https://platform.twitter.com/widgets.js'
         component: @component
 
       expect( @dependencies.hasEntries() ).to.equal(true)

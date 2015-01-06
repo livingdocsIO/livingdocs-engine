@@ -11,47 +11,35 @@ module.exports = class Dependencies
 
   # Add a dependency
   #
-  # The biggest limitation at the moment is that you can only
-  # register one dependency per type (js or css) per component.
-  #
   # @param {Object}
+  #   - type {String} Either 'js' or 'css'
+  #
   #   One of the following needs to be provided:
-  #   - js {String} URL to a javascript file
-  #   - inlineJs {String} js code
-  #   - css {String} URL to a css file
-  #   - inlineCss {String} css code
+  #   - src {String} URL to a javascript or css file
+  #   - code {String} JS or CSS code
   #
   #   And all of the following are optional:
   #   - name {String} Optional. A Name to identify the dependency
   #   - async {Boolean} only valid for js urls
   #   - component {ComponentModel} The componentModel that is depending on this resource
-  add: ({ js, inlineJs, css, inlineCss, name, async, component }) ->
+  add: ({ type, src, code, name, async, component }) ->
     if @isExisting(name) && component?
       dependency = @getByName(name)
       dependency.addComponent(component)
     else
-      options = {}
-      options['name'] = name
-      options['async'] = async
-
-      if js?
-        options['source'] = js
-        options['type'] = 'js'
-      else if inlineJs?
-        options['source'] = inlineJs
-        options['type'] = 'js'
-        options['inline'] = true
-      else if css?
-        options['source'] = css
-        options['type'] = 'css'
-      else if inlineCss?
-        options['source'] = inlineCss
-        options['type'] = 'css'
-        options['inline'] = true
-
-      dep = new Dependency(options)
-      dep.addComponent(component) if component?
+      params = arguments[0]
+      dep = new Dependency(params)
       @addDependency(dep)
+
+
+  addJs: (obj) ->
+    obj.type = 'js'
+    @add(obj)
+
+
+  addCss: (obj) ->
+    obj.type = 'css'
+    @add(obj)
 
 
   addDependency: (dependency) ->
@@ -109,18 +97,22 @@ module.exports = class Dependencies
     # js
     for entry in data.js || []
       obj =
+        type: 'js'
         name: entry.name
+        src: entry.src
+        code: entry.code
         async: entry.async
 
-      if entry.inline then obj.inlineJs = entry.code else obj.js = entry.src
       @addDeserialzedObj(obj, entry)
 
     # css
     for entry in data.css || []
       obj =
+        type: 'css'
         name: entry.name
+        src: entry.src
+        code: entry.code
 
-      if entry.inline then obj.inlineCss = entry.code else obj.css = entry.src
       @addDeserialzedObj(obj, entry)
 
 
