@@ -7,7 +7,7 @@ module.exports = class CssLoader
     @loadedUrls = []
 
 
-  load: (urls, callback=$.noop) ->
+  load: (urls, callback = ->) ->
     return callback() if @isDisabled
 
     urls = [urls] unless $.isArray(urls)
@@ -22,7 +22,7 @@ module.exports = class CssLoader
 
 
   # @private
-  loadSingleUrl: (url, callback=$.noop) ->
+  loadSingleUrl: (url, callback = ->) ->
     return callback() if @isDisabled
 
     if @isUrlLoaded(url)
