@@ -7,7 +7,7 @@ describe 'directive_compiler:', ->
   describe 'node without attributes', ->
 
     beforeEach ->
-      @elem = $('<div/>')[0]
+      @elem = $('<div>')[0]
       @directive = directiveCompiler.parse(@elem)
 
 

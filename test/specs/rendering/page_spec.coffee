@@ -7,7 +7,7 @@ describe 'page:', ->
   describe 'simple page with only a renderNode', ->
 
     beforeEach ->
-      @page = new Page(renderNode: $('div'))
+      @page = new Page(renderNode: $('<div>'))
 
 
     it 'should be readOnly', ->
@@ -21,5 +21,5 @@ describe 'page:', ->
   describe 'ready()', ->
 
     it 'calls the callback as soon as the assets are loaded', (done) ->
-      new Page().ready ->
+      new Page(renderNode: $('<div>')).ready ->
         done()
