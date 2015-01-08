@@ -1,6 +1,9 @@
 # load jsdom and create a global window
 jsdom = require("jsdom")
-global.window = jsdom.jsdom().parentWindow
+path = require('path')
+window = jsdom.jsdom().parentWindow
+jquery = require('jquery')(window)
+require.cache[path.resolve('./node_modules/jquery/dist/jquery.js')].exports = jquery
 
 Livingdoc = require('./livingdoc')
 ComponentTree = require('./component_tree/component_tree')
@@ -16,6 +19,8 @@ module.exports = do ->
   ComponentTree: ComponentTree
   version: version.version
   revision: version.revision
+  window: window
+  jquery: jquery
 
 
   createLivingdoc: ({ data, design, componentTree }) ->
