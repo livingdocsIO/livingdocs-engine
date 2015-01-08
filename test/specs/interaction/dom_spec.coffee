@@ -92,14 +92,14 @@ describe 'dom:', ->
       $node = @$html.findIn('div').first()
       expect( dom.findNodeContext($node) ).to.deep.equal
         contextAttr: 'data-doc-html'
-        attrName: 'html'
+        attrName: 'source'
 
 
     it 'finds html node context from child node', ->
       $node = @$html.find('.html-placeholder').first()
       expect( dom.findNodeContext($node) ).to.deep.equal
         contextAttr: 'data-doc-html'
-        attrName: 'html'
+        attrName: 'source'
 
 
   describe 'findContainer()', ->

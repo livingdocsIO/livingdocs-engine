@@ -104,7 +104,7 @@ module.exports = do ->
       label: 'Freeform html'
       html:
         """
-        <div #{ htmlAttr }="html">
+        <div #{ htmlAttr }="source">
           <span class="html-placeholder">placholder text</text>
         </div>
         """

@@ -231,14 +231,14 @@ describe 'ComponentView html', ->
 
   beforeEach ->
     @component = test.getComponent('html')
-    @component.set('html', '<section>test</section>')
+    @component.set('source', '<section>test</section>')
     @view = @component.createView()
     # There is additional code by the interaction blocker element in there
     # which is not nice but hopefully works out just fine.
     @expected = $ """
       <div class="#{ css.component }"
         #{ attr.template }="test.html"
-        #{ test.htmlAttr }="html"
+        #{ test.htmlAttr }="source"
         style="position: relative; ">
         <section>test</section>
         <div class="doc-interaction-blocker" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></div>
@@ -246,7 +246,7 @@ describe 'ComponentView html', ->
       """
 
 
-  describe 'set("html", value)', ->
+  describe 'set("source", value)', ->
 
     it 'adds the html to the component', ->
       expect(@view.$html).to.have.html(@expected)
@@ -254,9 +254,9 @@ describe 'ComponentView html', ->
 
     describe 'when clearing an existing value', ->
       it 'inserts the default value', ->
-        @component.set('html', undefined)
+        @component.set('source', undefined)
         @view.render()
-        @expected.html(@component.template.defaults['html'])
+        @expected.html(@component.template.defaults['source'])
         expect(@view.$html).to.have.html(@expected)
 
 
