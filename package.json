@@ -1,13 +1,14 @@
 {
   "name": "livingdocs-engine",
   "version": "0.4.3",
-  "main": "src/node_api.coffee",
+  "main": "index.js",
   "browser": "src/browser_api.coffee",
   "repository": {
     "type": "git",
     "url": "git://github.com/upfrontIO/livingdocs-engine.git"
   },
   "dependencies": {
+    "coffee-script": "^1.8.0",
     "deep-equal": "~0.2.1",
     "jquery": "^2.1.1",
     "jscheme": "^0.2.0",
