@@ -1,6 +1,8 @@
+$ = require('jquery')
+
 module.exports = do ->
 
   htmlPointerEvents: ->
-    element = document.createElement('x')
+    element = $('<x>')[0]
     element.style.cssText = 'pointer-events:auto'
     return element.style.pointerEvents == 'auto'
