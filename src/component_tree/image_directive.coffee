@@ -75,6 +75,24 @@ module.exports = class ImageDirective
       @component.componentTree.contentChanging(@component, @name) if @component.componentTree
 
 
+  getCrop: ->
+    @component.content[@name].crop
+
+
+  setOriginalImageDimensions: ({width, height}) ->
+    content = @component.content[@name]
+    content.width = width
+    content.height = height
+
+
+  getOriginalImageDimensions: ->
+    content = @component.content[@name]
+    {
+      width: content.width,
+      height: content.height
+    }
+
+
   resetCrop: ->
     currentValue = @component.content[@name]
     if currentValue?
