@@ -74,6 +74,10 @@ module.exports = class EditableController
 
     element = view.getDirectiveElement(editableName)
     @page.focus.editableFocused(element, view)
+
+    directive = view.model.directives.get(editableName)
+    @editable.prependTo(element, directive.getPlaceholder()) if directive.hasPlaceholder && !@extractContent(element)
+
     true # enable editable.js default behaviour
 
 
@@ -81,6 +85,10 @@ module.exports = class EditableController
     @clearChangeTimeout()
 
     element = view.getDirectiveElement(editableName)
+    directive = view.model.directives.get(editableName)
+    # Dirty spike because editable has no explicit method for text removing
+    element.innerHTML = '' if directive.hasPlaceholder && directive.isEmptyPlaceholder(@extractContent(element))
+
     @updateModel(view, editableName, element)
 
     view.blurEditable(editableName)

@@ -103,6 +103,10 @@ module.exports = augmentConfig(
       attr: 'doc-optional'
       renderedAttr: 'calculated later'
       elementDirective: false
+    inputPlaceholder:
+      attr: 'doc-input-placeholder'
+      renderedAttr: 'calculated later'
+      elementDirective: false
 
 
   animations:
