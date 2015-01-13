@@ -1,3 +1,11 @@
+# v*.*.*
+
+#### Improvements:
+
+- Do not expose window as global variable in node [#145](https://github.com/upfrontIO/livingdocs-engine/pull/145)
+- Pass all directive configurations to the template directive [#143](https://github.com/upfrontIO/livingdocs-engine/pull/143)
+
+
 # v0.4.3
 
 #### Improvements:
