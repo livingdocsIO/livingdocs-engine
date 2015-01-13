@@ -252,25 +252,43 @@ module.exports = class ComponentModel
 
 
   # can be called with a string or a hash
+  # getter:
+  #   data() or
+  #   data('my-key')
+  # setter:
+  #   data('my-key': 'awesome')
   data: (arg) ->
     if typeof(arg) == 'object'
       changedDataProperties = []
       for name, value of arg
         if @changeData(name, value)
           changedDataProperties.push(name)
-      if @componentTree && changedDataProperties.length > 0
-        @componentTree.dataChanging(this, changedDataProperties)
-    else
+      if changedDataProperties.length > 0
+        @componentTree?.dataChanging(this, changedDataProperties)
+    else if arg
       @dataValues[arg]
+    else
+      @dataValues
+
+
+  setData: (key, value) ->
+    if key && @changeData(key, value)
+      @componentTree?.dataChanging(this, [key])
+
+
+  getData: (key) ->
+    if key
+      @dataValues[key]
+    else
+      @dataValues
 
 
   # @api private
   changeData: (name, value) ->
-    if not deepEqual(@dataValues[name], value)
-      @dataValues[name] = value
-      true
-    else
-      false
+    return false if deepEqual(@dataValues[name], value)
+
+    @dataValues[name] = value
+    true
 
 
   # Style Operations
