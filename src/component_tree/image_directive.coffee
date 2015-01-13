@@ -1,12 +1,8 @@
 assert = require('../modules/logging/assert')
 imageService = require('../image_services/image_service')
+ComponentDirective = require('./component_directive')
 
-module.exports = class ImageDirective
-
-  constructor: ({ @component, @templateDirective }) ->
-    @name = @templateDirective.name
-    @type = @templateDirective.type
-
+module.exports = class ImageDirective extends ComponentDirective
 
   isImage: true
 
