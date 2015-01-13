@@ -6,7 +6,7 @@ jquery = require('jquery')(window)
 
 # rewrite the jquery variable to allow requiring
 # it in other files without setting the window again
-jqueryModulePath = path.resolve('./node_modules/jquery/dist/jquery.js')
+jqueryModulePath = path.join(__dirname, '../node_modules/jquery/dist/jquery.js')
 require.cache[jqueryModulePath].exports = jquery
 
 Livingdoc = require('./livingdoc')
