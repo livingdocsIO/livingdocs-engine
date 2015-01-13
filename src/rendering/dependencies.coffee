@@ -10,25 +10,11 @@ module.exports = class Dependencies
 
 
   # Add a dependency
-  #
-  # @param {Object}
-  #   - type {String} Either 'js' or 'css'
-  #
-  #   One of the following needs to be provided:
-  #   - src {String} URL to a javascript or css file
-  #   - code {String} JS or CSS code
-  #
-  #   And all of the following are optional:
-  #   - name {String} Optional. A Name to identify the dependency
-  #   - async {Boolean} only valid for js urls
-  #   - component {ComponentModel} The componentModel that is depending on this resource
-  add: ({ type, src, code, name, async, component }) ->
-    if @isExisting(name) && component?
-      dependency = @getByName(name)
-      dependency.addComponent(component)
+  add: (obj) ->
+    dep = new Dependency(obj)
+    if existing = @getExisting(dep) && component?
+      existing.addComponent(component)
     else
-      params = arguments[0]
-      dep = new Dependency(params)
       @addDependency(dep)
 
 
@@ -43,13 +29,21 @@ module.exports = class Dependencies
 
 
   addDependency: (dependency) ->
-    return if @isExisting(dependency.name)
+    return if existing = @getExisting(dependency)
 
     @namedDependencies[dependency.name] = dependency if dependency.name
     @entries.push(dependency)
     dependency
 
 
+  getExisting: (dep) ->
+    for entry in @entries
+      return entry if entry.isSameAs(dep)
+
+    undefined
+
+
+  # todo: remove
   isExisting: (name) ->
     @namedDependencies[name]?
 

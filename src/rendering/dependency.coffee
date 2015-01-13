@@ -2,9 +2,22 @@ assert = require('../modules/logging/assert')
 
 module.exports = class Dependency
 
+
+  # @param {Object}
+  #   - type {String} Either 'js' or 'css'
+  #
+  #   One of the following needs to be provided:
+  #   - src {String} URL to a javascript or css file
+  #   - code {String} JS or CSS code
+  #
+  #   All of the following are optional:
+  #   - name {String} Optional. A Name to identify the dependency
+  #   - async {Boolean} only valid for js urls
+  #   - component {ComponentModel} The componentModel that is depending on this resource
   constructor: ({ @name, @src, @code, @type, @async, component }) ->
     assert @src || @code, 'Dependency: No "src" or "code" param provided'
     assert not (@src && @code), 'Dependency: Only provide one of "src" or "code" params'
+    assert @type, "Dependency: Param type must be specified"
     assert @type in ['js', 'css'], "Dependency: Unrecognized type: #{ @type }"
 
     @inline = true if @code?
@@ -36,6 +49,15 @@ module.exports = class Dependency
       @components[component.id] = undefined
 
     @componentCount != 0
+
+
+  isSameAs: (otherDependency) ->
+    return false if @type != otherDependency.type
+
+    if otherDependency.src
+      @src == otherDependency.src
+    else
+      @code == otherDependency.code
 
 
   serialize: ->

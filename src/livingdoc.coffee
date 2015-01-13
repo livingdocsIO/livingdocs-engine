@@ -50,10 +50,13 @@ module.exports = class Livingdoc extends EventEmitter
 
   constructor: ({ componentTree }) ->
     @design = componentTree.design
+
+    @componentTree = undefined
+    @dependencies = undefined
     @setComponentTree(componentTree)
+
     @views = {}
     @interactiveView = undefined
-    @dependencies = undefined
 
 
   setComponentTree: (componentTree) ->
@@ -76,6 +79,15 @@ module.exports = class Livingdoc extends EventEmitter
 
   extractMetadata: ->
     @componentTree.extractMetadata()
+
+
+  setComponentTree: (componentTree) ->
+    assert componentTree.design == @design,
+      'ComponentTree must have the same design as the document'
+
+    @model = @componentTree = componentTree
+    @dependencies = new Dependencies({ @componentTree })
+    @forwardComponentTreeEvents()
 
 
   forwardComponentTreeEvents: ->
@@ -148,18 +160,15 @@ module.exports = class Livingdoc extends EventEmitter
 
 
   addDependency: (obj) ->
-    @dependencies ?= new Dependencies({ @componentTree })
     @dependencies.add(obj)
 
 
   addJsDependency: (obj) ->
-    obj.type = 'js'
-    @addDependency(obj)
+    @dependencies.addJs(obj)
 
 
   addCssDependency: (obj) ->
-    obj.type = 'css'
-    @addDependency(obj)
+    @dependencies.addCss(obj)
 
 
   hasDependencies: ->
