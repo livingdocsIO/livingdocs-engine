@@ -21,9 +21,9 @@ module.exports = class View
   create: (options) ->
     @createIFrame(@parent).then (iframe, renderNode) =>
       @iframe = iframe
-      renderer = @createIFrameRenderer(iframe, options)
+      @renderer = @createIFrameRenderer(iframe, options)
       iframe: iframe
-      renderer: renderer
+      renderer: @renderer
 
 
   createIFrame: (parent) ->

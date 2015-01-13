@@ -97,6 +97,8 @@ module.exports = class Livingdoc extends EventEmitter
 
     if view.isInteractive
       @setInteractiveView(view)
+      promise.then ({ iframe, renderer }) =>
+        @componentTree.setMainView(view)
 
     promise
 

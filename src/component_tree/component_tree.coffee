@@ -152,16 +152,21 @@ module.exports = class ComponentTree
   # eachWithParents: (component, parents) ->
   #   parents ||= []
 
-  #   # traverse
-  #   parents = parents.push(component)
-  #   for name, componentContainer of component.containers
-  #     component = componentContainer.first
 
-  #     while (component)
-  #       @eachWithParents(component, parents)
-  #       component = component.next
+  # Set a main view for this componentTree
+  # Note: There can be multiple views for a componentTree. With this
+  # method we can set a main view so it becomes possible to get a view
+  # directly from the componentTree for convenience
+  setMainView: (view) ->
+    assert view.renderer, 'componentTree.setMainView: view does not have an initialized renderer'
+    assert view.renderer.componentTree == this, 'componentTree.setMainView: Cannot set renderer from different componentTree'
+    @mainRenderer = view.renderer
 
-  #   parents.splice(-1)
+
+  # Get the componentView for a model
+  # This only works if setMainView() has been called.
+  getMainComponentView: (componentId) ->
+    @mainRenderer?.getComponentViewById(componentId)
 
 
   # returns a readable string representation of the whole tree
@@ -234,6 +239,11 @@ module.exports = class ComponentTree
     @fireEvent('componentHtmlChanged', component)
 
 
+  # Dispatched event description:
+  # componentDataChanged(component, changedProperties)
+  # @param component {ComponentModel}
+  # @param changedProperties {Array of Strings} Top level data properties
+  #   that have been changed
   dataChanging: (component, changedProperties) ->
     @fireEvent('componentDataChanged', component, changedProperties)
 
