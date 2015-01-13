@@ -2,7 +2,6 @@ $ = require('jquery')
 config = require('../../src/configuration/config')
 Design = require('../../src/design/design')
 designJson = require('./test_design_json')
-localstore = require('../../src/modules/localstore')
 getInstances = require('../support/factories/instance_injector').get
 
 # Local variables
@@ -62,13 +61,9 @@ module.exports = testHelpers =
 
 
   # use this to test serialization and deserialization
-  # through localstorage
-  localstore: (obj) ->
-    if localstore.isSupported()
-      localstore.set('test', obj)
-      localstore.get('test')
-    else
-      obj
+  # through JSON.stringify
+  deepclone: (value) ->
+    JSON.parse(JSON.stringify(value))
 
 
   # monitor a jQuery.Callbacks object

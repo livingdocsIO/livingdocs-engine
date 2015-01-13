@@ -128,7 +128,7 @@ describe 'Deserialization', ->
   describe 'of a single component', ->
 
     beforeEach ->
-      @json = test.localstore
+      @json = test.deepclone
         identifier: 'test.title'
         content:
           'title': 'Baby Geniuses'
@@ -149,7 +149,7 @@ describe 'Deserialization', ->
   describe 'of a component with styles', ->
 
     beforeEach ->
-      @json = test.localstore
+      @json = test.deepclone
         identifier: 'test.hero'
         styles:
           'color': 'color--blue'
@@ -163,7 +163,7 @@ describe 'Deserialization', ->
   describe 'of a component with invalid styles', ->
 
     beforeEach ->
-      @json = test.localstore
+      @json = test.deepclone
         identifier: 'test.hero'
         styles:
           'color': 'no-color-at-all'
@@ -177,7 +177,7 @@ describe 'Deserialization', ->
   describe 'of a component with data', ->
 
     beforeEach ->
-      @json = test.localstore
+      @json = test.deepclone
         identifier: 'test.hero'
         data:
           'center':
@@ -202,7 +202,7 @@ describe 'Deserialization', ->
   describe 'of a component with children', ->
 
     beforeEach ->
-      @rowJson = test.localstore
+      @rowJson = test.deepclone
         identifier : 'test.row',
         containers :
           main : [
@@ -266,7 +266,7 @@ describe 'Serialize and Deserialize', ->
     @title.set('title', 'What we have here is a failure to communicate')
     @row.append('sidebar', @title)
     @before.append(@row)
-    @json = test.localstore(@before.toJson())
+    @json = test.deepclone(@before.toJson())
     @after = new ComponentTree(content: @json, design: @design)
     @afterTitle = @after.find('title').first
 

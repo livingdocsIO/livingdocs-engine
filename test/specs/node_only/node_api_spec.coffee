@@ -8,13 +8,17 @@ describe 'node_api:', ->
 
   describe 'global variables', ->
 
-    it 'sets window as global', ->
-      expect(window).to.exist
+    it 'does not set window as global', ->
+      expect(window?).to.equal(false)
+
+
+    it 'exports a window', ->
+      expect(engine.window).to.exist
 
 
     # jquery required a window with a document
     it 'sets a window with a document', ->
-      expect(window.document).to.exist
+      expect(engine.window.document).to.exist
 
 
   describe 'variables', ->

@@ -58,7 +58,7 @@ module.exports = do ->
   # Extract only the text from an HTML string
   # '<div>A &amp; B</div>' -> 'A & B'
   extractTextFromHtml: (str) ->
-    div = window.document.createElement('div')
+    div = $('<div>')[0]
     div.innerHTML = str
     div.textContent
 

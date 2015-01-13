@@ -6241,7 +6241,7 @@ module.exports = RenderingContainer = (function() {
 
   function RenderingContainer() {
     if (this.renderNode == null) {
-      this.renderNode = $('<div/>')[0];
+      this.renderNode = $('<div>')[0];
     }
     this.readySemaphore = new Semaphore();
     this.beforeReady();
