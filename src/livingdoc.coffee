@@ -50,10 +50,13 @@ module.exports = class Livingdoc extends EventEmitter
 
   constructor: ({ componentTree }) ->
     @design = componentTree.design
+
+    @componentTree = undefined
+    @dependencies = undefined
     @setComponentTree(componentTree)
+
     @views = {}
     @interactiveView = undefined
-    @dependencies = undefined
 
 
   # Get a drop target for an event
@@ -71,6 +74,7 @@ module.exports = class Livingdoc extends EventEmitter
       'ComponentTree must have the same design as the document'
 
     @model = @componentTree = componentTree
+    @dependencies = new Dependencies({ @componentTree })
     @forwardComponentTreeEvents()
 
 
@@ -144,18 +148,15 @@ module.exports = class Livingdoc extends EventEmitter
 
 
   addDependency: (obj) ->
-    @dependencies ?= new Dependencies({ @componentTree })
     @dependencies.add(obj)
 
 
   addJsDependency: (obj) ->
-    obj.type = 'js'
-    @addDependency(obj)
+    @dependencies.addJs(obj)
 
 
   addCssDependency: (obj) ->
-    obj.type = 'css'
-    @addDependency(obj)
+    @dependencies.addCss(obj)
 
 
   hasDependencies: ->
