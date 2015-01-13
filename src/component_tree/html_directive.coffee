@@ -6,6 +6,10 @@ module.exports = class HtmlDirective extends ComponentDirective
   isHtml: true
 
 
+  setEmbedHandler: (embedHandlerName) ->
+    @setData('_embedHandler', embedHandlerName)
 
 
+  getEmbedHandler: ->
+    @getData('_embedHandler')
 
