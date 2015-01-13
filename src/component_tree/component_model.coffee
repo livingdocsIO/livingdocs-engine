@@ -62,8 +62,16 @@ module.exports = class ComponentModel
       templateDirective: templateDirective
 
 
+  # View operations
+  # ---------------
+
+
   createView: (isReadOnly) ->
     @template.createView(this, isReadOnly)
+
+
+  getMainView: ->
+    @componentTree.getMainComponentView(this.id)
 
 
   # ComponentTree operations
