@@ -3,7 +3,11 @@ jsdom = require("jsdom")
 path = require('path')
 window = jsdom.jsdom().parentWindow
 jquery = require('jquery')(window)
-require.cache[path.resolve('./node_modules/jquery/dist/jquery.js')].exports = jquery
+
+# rewrite the jquery variable to allow requiring
+# it in other files without setting the window again
+jqueryModulePath = path.resolve('./node_modules/jquery/dist/jquery.js')
+require.cache[jqueryModulePath].exports = jquery
 
 Livingdoc = require('./livingdoc')
 ComponentTree = require('./component_tree/component_tree')
@@ -20,7 +24,6 @@ module.exports = do ->
   version: version.version
   revision: version.revision
   window: window
-  jquery: jquery
 
 
   createLivingdoc: ({ data, design, componentTree }) ->
