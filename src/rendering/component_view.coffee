@@ -333,3 +333,8 @@ module.exports = class ComponentView
     if newVal
       @resetDirectives()
       @wasAttachedToDom.fire()
+
+
+  getOwnerWindow: ->
+    @$elem[0].ownerDocument.defaultView
+
