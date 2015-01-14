@@ -1,5 +1,4 @@
 $ = require('jquery')
-Semaphore = require('../modules/semaphore')
 
 module.exports = class CssLoader
 
@@ -7,40 +6,32 @@ module.exports = class CssLoader
     @loadedUrls = []
 
 
-  load: (urls, callback = ->) ->
-    return callback() if @isDisabled
-
-    urls = [urls] unless $.isArray(urls)
-    semaphore = new Semaphore()
-    semaphore.addCallback(callback)
-    @loadSingleUrl(url, semaphore.wait()) for url in urls
-    semaphore.start()
-
-
   disable: ->
     @isDisabled = true
 
 
+  loadInlineStyles: (codeBlock, callback = ->) ->
+    # todo
+    callback()
+
+
   # @private
   loadSingleUrl: (url, callback = ->) ->
-    return callback() if @isDisabled
+    return callback() if @isDisabled || @isUrlLoaded(url)
 
-    if @isUrlLoaded(url)
+    link = $('<link rel="stylesheet" type="text/css" />')[0]
+    link.onload = callback
+
+    # Do not prevent the page from loading because of css errors
+    # onerror is not supported by every browser.
+    # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link
+    link.onerror = ->
+      console.warn "Stylesheet could not be loaded: #{ url }"
       callback()
-    else
-      link = $('<link rel="stylesheet" type="text/css" />')[0]
-      link.onload = callback
 
-      # Do not prevent the page from loading because of css errors
-      # onerror is not supported by every browser.
-      # https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link
-      link.onerror = ->
-        console.warn "Stylesheet could not be loaded: #{ url }"
-        callback()
-
-      link.href = url
-      @window.document.head.appendChild(link)
-      @markUrlAsLoaded(url)
+    link.href = url
+    @window.document.head.appendChild(link)
+    @markUrlAsLoaded(url)
 
 
   # @private

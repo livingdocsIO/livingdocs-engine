@@ -7,7 +7,7 @@ describe 'css_loader:', ->
     @loader = new CssLoader(@window)
 
 
-  describe 'load()', ->
+  describe.skip 'load()', ->
 
     describe 'when passing a single url', ->
 
