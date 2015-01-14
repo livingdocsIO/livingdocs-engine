@@ -1,6 +1,6 @@
 $ = require('jquery')
 RenderingContainer = require('./rendering_container')
-CssLoader = require('./css_loader')
+Assets = require('./assets')
 config = require('../configuration/config')
 
 # A Page is a subclass of RenderingContainer which is intended to be shown to
@@ -9,6 +9,7 @@ config = require('../configuration/config')
 module.exports = class Page extends RenderingContainer
 
   constructor: ({ renderNode, readOnly, hostWindow, @design, @componentTree, @loadResources }={}) ->
+    @loadResources ?= config.loadResources
     @isReadOnly = readOnly if readOnly?
     @renderNode = if renderNode?.jquery then renderNode[0] else renderNode
     @setWindow(hostWindow)
@@ -16,9 +17,11 @@ module.exports = class Page extends RenderingContainer
 
     super()
 
-    @cssLoader = new CssLoader(@window)
-    @cssLoader.disable() if not @shouldLoadResources()
-    @beforePageReady()
+    # Prepare assets
+    preventAssetLoading = not @loadResources
+    @assets = new Assets(window: @window, disable: preventAssetLoading)
+
+    @loadAssets()
 
 
   beforeReady: ->
@@ -29,17 +32,13 @@ module.exports = class Page extends RenderingContainer
     , 0
 
 
-  shouldLoadResources: ->
-    if @loadResources?
-      Boolean(@loadResources)
-    else
-      Boolean(config.loadResources)
+  loadAssets: =>
+    # First load design dependencies
+    if @design?
+      @assets.loadDependencies(@design.dependencies, @readySemaphore.wait())
 
-
-  # todo: move path resolutions to design.assets
-  beforePageReady: =>
-    return unless @design
-    @design.assets.loadCss(@cssLoader, @readySemaphore.wait())
+    # Then load document specific dependencies
+    # @livingdoc.dependencies
 
 
   setWindow: (hostWindow) ->

@@ -1,23 +1,43 @@
 $ = require('jquery')
 JsLoader = require('./js_loader')
 CssLoader = require('./css_loader')
+Semaphore = require('../modules/semaphore')
 
 module.exports = class Assets
 
-  constructor: ({ @prefix, @window }) ->
-    @prefix ?= ''
-
+  constructor: ({ @window }) ->
     @cssLoader = new CssLoader(@window)
     @jsLoader = new JsLoader(@window)
 
 
+  loadDependencies: (dependencies, callback) ->
+    semaphore = new Semaphore()
+    semaphore.addCallback(callback)
+    for dep in dependencies.js
+      @loadJs(dep, semaphore.wait())
 
-  loadCss: (cssLoader, cb) ->
-    return cb() unless @css?
-    cssUrls = @convertToAbsolutePaths(@css)
-    cssLoader.load(cssUrls, cb)
+    for dep in dependencies.css
+      @loadCss(dep, semaphore.wait())
+
+    semaphore.start()
 
 
+  loadDependency: ->
+    # todo
+
+
+  loadJs: (dependency, callback) ->
+    if dep.inline
+      @jsLoader.loadInlineScript(dependency.code, callback)
+    else
+      @jsLoader.loadSingleUrl(dependency.src, callback)
+
+
+  loadCss: (dependency, callback) ->
+    if dependency.inline
+      @cssLoader.loadInlineStyles(dependency.code, callback)
+    else
+      @cssLoader.loadSingleUrl(dependency.src, callback)
 
 
 

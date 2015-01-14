@@ -17,6 +17,7 @@ module.exports = class Dependencies
     @js = []
     @css = []
     @namedDependencies = {}
+
     if @componentTree?
       @componentTree.componentRemoved.add(@onComponentRemoved)
 
