@@ -122,3 +122,36 @@ describe 'dependencies:', ->
       expect(@dependencies.serialize()).to.deep.equal({})
 
 
+  describe 'prefix relative urls', ->
+
+
+    beforeEach ->
+      @dependencies = new Dependencies(prefix: '/designs/test')
+      @checkConversion = (a, b) =>
+        @dependencies.addCss(src: a)
+        dependency = @dependencies.css[0]
+        expect(dependency.src).to.equal(b)
+
+
+    it 'converts an url that starts with "./"', ->
+      @checkConversion('./design.css', '/designs/test/design.css')
+
+
+    it 'converts a relative url', ->
+      @checkConversion('design.css', '/designs/test/design.css')
+
+
+    it 'does not touch a url that starts with "http://"', ->
+      @checkConversion('http://design.css', 'http://design.css')
+
+
+    it 'does not touch a url that starts with "https://"', ->
+      @checkConversion('https://design.css', 'https://design.css')
+
+
+    it 'does not touch a url that starts with "/"', ->
+      @checkConversion(
+        '/my/custom/path/to/the/design.css',
+        '/my/custom/path/to/the/design.css'
+      )
+
