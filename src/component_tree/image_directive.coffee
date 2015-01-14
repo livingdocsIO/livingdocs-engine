@@ -87,10 +87,9 @@ module.exports = class ImageDirective
 
   getOriginalImageDimensions: ->
     content = @component.content[@name]
-    {
-      width: content.width,
-      height: content.height
-    }
+
+    width: content.width,
+    height: content.height
 
 
   resetCrop: ->
