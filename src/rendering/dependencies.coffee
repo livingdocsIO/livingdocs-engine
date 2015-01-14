@@ -12,8 +12,8 @@ module.exports = class Dependencies
   # Add a dependency
   add: (obj) ->
     dep = new Dependency(obj)
-    if existing = @getExisting(dep) && component?
-      existing.addComponent(component)
+    if existing = @getExisting(dep)
+      existing.addComponent(component) if component?
     else
       @addDependency(dep)
 
@@ -29,8 +29,6 @@ module.exports = class Dependencies
 
 
   addDependency: (dependency) ->
-    return if existing = @getExisting(dependency)
-
     @namedDependencies[dependency.name] = dependency if dependency.name
     @entries.push(dependency)
     dependency
