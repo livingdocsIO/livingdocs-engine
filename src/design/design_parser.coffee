@@ -6,7 +6,7 @@ Template = require('../template/template')
 Design = require('./design')
 Version = require('./version')
 ImageRatio = require('./image_ratio')
-
+$ = require('jquery')
 
 module.exports = designParser =
 
