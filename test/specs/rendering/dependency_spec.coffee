@@ -61,3 +61,11 @@ describe 'dependency:', ->
       dep2 = new Dependency(code: '.superstyle { color: blue; }', type: 'css')
       expect( dep1.isSameAs(dep2) ).to.equal(false)
 
+
+    it 'compares with an object literal with type and src attributes', ->
+      dep1 = new Dependency(code: '.superstyle { color: red; }', type: 'css')
+
+      expect( dep1.isSameAs(code: '.superstyle { color: red; }', type: 'css') )
+      .to.equal(true)
+
+

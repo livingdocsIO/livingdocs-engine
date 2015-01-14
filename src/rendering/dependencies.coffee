@@ -3,19 +3,55 @@ log = require('../modules/logging/log')
 
 module.exports = class Dependencies
 
-  constructor: ({ @componentTree }) ->
+  # @param {ComponentTree} optional. Required if you want to
+  #   track which components use a dependency.
+  # @param {String} optional. Prefix relative urls with this string
+  #   (the string should not have a slash at the end).
+  # @param {Boolean} optional. Whether to allow relative urls or not.
+  #   Defaults to false.
+  constructor: ({ @componentTree, @prefix, allowRelativeUrls }={}) ->
+    @allowRelativeUrls = if @prefix then true else allowRelativeUrls || false
+    @prefix ?= ''
+
     @entries = []
+    @js = []
+    @css = []
     @namedDependencies = {}
-    @componentTree.componentRemoved.add(@onComponentRemoved)
+    if @componentTree?
+      @componentTree.componentRemoved.add(@onComponentRemoved)
 
 
   # Add a dependency
   add: (obj) ->
+    @convertToAbsolutePaths(obj)
     dep = new Dependency(obj)
     if existing = @getExisting(dep)
       existing.addComponent(component) if component?
     else
       @addDependency(dep)
+
+
+  # Absolute paths:
+  # //
+  # /
+  # http://google.com
+  # https://google.com
+  #
+  # Everything else is prefixed if a prefix is provided.
+  # To explicitly pass a relative URL start it with './'
+  convertToAbsolutePaths: (obj) ->
+    return unless obj.src
+    src = obj.src
+
+    if not @isAbsoluteUrl(src)
+      assert @allowRelativeUrls, "Dependencies: relative urls are not allowed: #{ src }"
+      src = src.replace(/^[\.\/]*/, '')
+      obj.src = "#{ @prefix }/#{ src }"
+
+
+  isAbsoluteUrl: (src) ->
+    # URLs are absolute when they contain two `//` or begin with a `/`
+    /(^\/\/|[a-z]*:\/\/)/.test(src) || /^\//.test(src)
 
 
   addJs: (obj) ->
@@ -30,12 +66,14 @@ module.exports = class Dependencies
 
   addDependency: (dependency) ->
     @namedDependencies[dependency.name] = dependency if dependency.name
-    @entries.push(dependency)
+    collection = if dependency.isJs() then @js else @css
+    collection.push(dependency)
     dependency
 
 
   getExisting: (dep) ->
-    for entry in @entries
+    collection = if dep.isJs() then @js else @css
+    for entry in collection
       return entry if entry.isSameAs(dep)
 
     undefined
@@ -47,7 +85,15 @@ module.exports = class Dependencies
 
 
   hasEntries: ->
-    @entries.length > 0
+    @hasJs() || @hasCss()
+
+
+  hasCss: ->
+    @css.length > 0
+
+
+  hasJs: ->
+    @js.length > 0
 
 
   getByName: (name) ->
@@ -56,7 +102,11 @@ module.exports = class Dependencies
 
   onComponentRemoved: (component) =>
     toBeRemoved = []
-    for dependency in @entries
+    for dependency in @js
+      needed = dependency.removeComponent(component)
+      toBeRemoved.push(dependency) if not needed
+
+    for dependency in @css
       needed = dependency.removeComponent(component)
       toBeRemoved.push(dependency) if not needed
 
@@ -66,19 +116,20 @@ module.exports = class Dependencies
 
   removeDependency: (dependency) ->
     @namedDependencies[dependency.name] = undefined if dependency.name
-    index = @entries.indexOf(dependency)
-    @entries.splice(index, 1) if index > -1
+    collection = if dependency.isJs() then @js else @css
+    index = collection.indexOf(dependency)
+    collection.splice(index, 1) if index > -1
 
 
   serialize: ->
     data = {}
-    for dependency in @entries
-      if dependency.type == 'js'
-        data['js'] ?= []
-        data['js'].push( dependency.serialize() )
-      else if dependency.type == 'css'
-        data['css'] ?= []
-        data['css'].push( dependency.serialize() )
+    for dependency in @js
+      data['js'] ?= []
+      data['js'].push( dependency.serialize() )
+
+    for dependency in @css
+      data['css'] ?= []
+      data['css'].push( dependency.serialize() )
 
     data
 
