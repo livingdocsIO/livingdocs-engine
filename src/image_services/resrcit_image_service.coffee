@@ -23,10 +23,6 @@ module.exports = do ->
       @setBackgroundImage($elem, url)
 
 
-  setPlaceholder: ($elem) ->
-    imgService.setPlaceholder($elem)
-
-
   getUrl: (value, { crop, quality }={}) ->
     style = ""
     style += "/C=W#{ crop.width },H#{ crop.height },X#{ crop.x },Y#{ crop.y }" if crop?
