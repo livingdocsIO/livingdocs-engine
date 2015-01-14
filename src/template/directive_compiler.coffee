@@ -44,6 +44,8 @@ module.exports = do ->
       switch directive.type
         when 'optional'
           mainDirective.optional = true
+        when 'inputPlaceholder'
+          mainDirective.inputPlaceholder = directive.name
 
 
   # Normalize or remove the attribute
