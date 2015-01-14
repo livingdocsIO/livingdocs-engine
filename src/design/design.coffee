@@ -3,7 +3,7 @@ assert = require('../modules/logging/assert')
 log = require('../modules/logging/log')
 Template = require('../template/template')
 OrderedHash = require('../modules/ordered_hash')
-Assets = require('./assets')
+Dependencies = require('../rendering/dependencies')
 
 module.exports = class Design
 
@@ -23,8 +23,9 @@ module.exports = class Design
     @components = new OrderedHash()
     @imageRatios = {}
 
-    # assets required by the design
-    @assets = new Assets(prefix: "#{ config.designPath }/#{ this.name }")
+    # js and css dependencies required by the design
+    @dependencies = new Dependencies()
+    # @assets = new Assets(prefix: "#{ config.designPath }/#{ this.name }")
 
     # default components
     @defaultParagraph = undefined

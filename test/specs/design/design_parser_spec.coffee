@@ -105,8 +105,9 @@ describe 'design_parser:', ->
 
 
     it 'parses the assets', ->
-      expect(@design.assets.hasCss()).to.equal(true)
-      expect(@design.assets.css[0]).to.equal('/stylesheets/test.css')
+      expect(@design.dependencies.hasCss()).to.equal(true)
+      dependency = @design.dependencies.css[0]
+      expect(dependency.src).to.equal('/stylesheets/test.css')
 
 
     it 'parses the components', ->
