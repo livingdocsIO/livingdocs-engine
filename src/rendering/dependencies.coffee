@@ -1,5 +1,6 @@
 Dependency = require('./dependency')
 log = require('../modules/logging/log')
+assert = require('../modules/logging/assert')
 
 module.exports = class Dependencies
 
@@ -13,7 +14,6 @@ module.exports = class Dependencies
     @allowRelativeUrls = if @prefix then true else allowRelativeUrls || false
     @prefix ?= ''
 
-    @entries = []
     @js = []
     @css = []
     @namedDependencies = {}
@@ -77,15 +77,6 @@ module.exports = class Dependencies
       return entry if entry.isSameAs(dep)
 
     undefined
-
-
-  # todo: remove
-  isExisting: (name) ->
-    @namedDependencies[name]?
-
-
-  hasEntries: ->
-    @hasJs() || @hasCss()
 
 
   hasCss: ->

@@ -13,7 +13,7 @@ module.exports = class Design
   #  - author { String }
   #  - description { String }
   constructor: ({ @name, @version, @author, @description }) ->
-    assert @name?, 'Design needs a name'
+    assert @name?, 'Design: param "name" is required'
     @identifier = Design.getIdentifier(@name, @version)
 
     # templates in a structured format
@@ -24,8 +24,7 @@ module.exports = class Design
     @imageRatios = {}
 
     # js and css dependencies required by the design
-    @dependencies = new Dependencies()
-    # @assets = new Assets(prefix: "#{ config.designPath }/#{ this.name }")
+    @dependencies = new Dependencies(prefix: "#{ config.designPath }/#{ this.name }")
 
     # default components
     @defaultParagraph = undefined

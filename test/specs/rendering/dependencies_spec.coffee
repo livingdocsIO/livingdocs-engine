@@ -74,9 +74,9 @@ describe 'dependencies:', ->
         src: 'https://platform.twitter.com/widgets.js'
         component: @component
 
-      expect( @dependencies.hasEntries() ).to.equal(true)
+      expect( @dependencies.hasJs() ).to.equal(true)
       @component.remove()
-      expect( @dependencies.hasEntries() ).to.equal(false)
+      expect( @dependencies.hasJs() ).to.equal(false)
 
 
   describe 'deserialize()', ->
@@ -123,7 +123,6 @@ describe 'dependencies:', ->
 
 
   describe 'prefix relative urls', ->
-
 
     beforeEach ->
       @dependencies = new Dependencies(prefix: '/designs/test')
