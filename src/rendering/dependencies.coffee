@@ -1,7 +1,8 @@
-Dependency = require('./dependency')
+$ = require('jquery')
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
-$ = require('jquery')
+Dependency = require('./dependency')
+dependenciesToHtml = require('./dependencies_to_html')
 
 module.exports = class Dependencies
 
@@ -201,4 +202,12 @@ module.exports = class Dependencies
         log.warn('Dropped dependency: could not find components that depend on it', entry)
     else
       @add(obj)
+
+
+  printJs: ->
+    dependenciesToHtml.printJs(this)
+
+
+  printCss: ->
+    dependenciesToHtml.printCss(this)
 

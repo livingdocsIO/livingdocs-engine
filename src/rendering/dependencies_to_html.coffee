@@ -11,6 +11,8 @@ module.exports =
       else
         html += @printScriptTag(src: dependency.src)
 
+      html += '\n'
+
     html
 
 
@@ -21,6 +23,8 @@ module.exports =
         html += @printInlineCss(styles: dependency.code)
       else
         html += @printCssLink(src: dependency.src)
+
+      html += '\n'
 
     html
 
