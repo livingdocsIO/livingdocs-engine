@@ -7,7 +7,7 @@ Template = require('../template/template')
 Design = require('./design')
 Version = require('./version')
 ImageRatio = require('./image_ratio')
-
+$ = require('jquery')
 
 module.exports = designParser =
 
@@ -107,8 +107,8 @@ module.exports = designParser =
     for name, conf of directives
       directive = component.directives.get(name)
       assert directive, "Could not find directive #{ name } in #{ component.name } component."
-      directiveConfig =
-        imageRatios: @lookupImageRatios(conf.imageRatios)
+      directiveConfig = $.extend({}, conf)
+      directiveConfig.imageRatios = @lookupImageRatios(conf.imageRatios) if conf.imageRatios
       directive.setConfig(directiveConfig)
 
 

@@ -16,7 +16,7 @@ module.exports = class RenderingContainer
 
 
   constructor: ->
-    @renderNode ?= $('<div/>')[0]
+    @renderNode ?= $('<div>')[0]
     @readySemaphore = new Semaphore()
     @beforeReady()
     @readySemaphore.start()
