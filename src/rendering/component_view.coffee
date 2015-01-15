@@ -213,11 +213,13 @@ module.exports = class ComponentView
 
       $elem.removeClass(config.css.emptyImage)
     else
-      setPlaceholder = $.proxy(@setPlaceholderImage, this, name)
+      setPlaceholder = $.proxy(@setPlaceholderImage, this, $elem, name)
       @delayUntilAttached(name, setPlaceholder) # todo: replace with @afterInserted -> ... (something like $.Callbacks('once remember'))
 
 
-  setPlaceholderImage: (name) ->
+  setPlaceholderImage: ($elem, name) ->
+    $elem.addClass(config.css.emptyImage)
+
     value = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjI0IiBoZWlnaHQ9IjM1MSIgdmlld0JveD0iMCAwIDYyNCAzNTEiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjxyZWN0IHdpZHRoPSI2MjQiIGhlaWdodD0iMzUxIiBmaWxsPSIjRDRENENFIi8+PGxpbmUgeDE9IjAiIHkxPSIwIiB4Mj0iNjI0IiB5Mj0iMzUxIiBzdHlsZT0ic3Ryb2tlOiNmZmZmZmY7c3Ryb2tlLXdpZHRoOjIiLz48bGluZSB4MT0iNjI0IiB5MT0iMCIgeDI9IjAiIHkyPSIzNTEiIHN0eWxlPSJzdHJva2U6I2ZmZmZmZjtzdHJva2Utd2lkdGg6MiIvPjwvc3ZnPgo="
     imageService = @model.directives.get(name).getImageService()
     imageService.set($elem, value)
