@@ -41,6 +41,10 @@ module.exports = class Page extends RenderingContainer
     if @documentDependencies?
       @assets.loadDependencies(@documentDependencies, @readySemaphore.wait())
 
+      # listen for new dependencies
+      @documentDependencies.dependencyAdded.add (dependency) =>
+        @assets.loadDependency(dependency)
+
 
   setWindow: (hostWindow) ->
     hostWindow ?= @getParentWindow(@renderNode)
