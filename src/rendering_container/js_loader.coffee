@@ -16,7 +16,7 @@ module.exports = class JsLoader
   # @param {String} Path to the js file
   # @param {Function} Callback when the script is loaded or an error occured.
   loadSingleUrl: (path, callback = ->) ->
-    return callback() if @isDisabled || @isUrlLoaded(url)
+    return callback() if @isDisabled || @isUrlLoaded(path)
 
     doc = @window.document
     readyState = 'readyState'
@@ -30,7 +30,7 @@ module.exports = class JsLoader
       return if ((el[readyState] && !(/^c|loade/.test(el[readyState]))) || loaded)
       el.onload = el[onreadystatechange] = null
       loaded = true
-      @loadedUrls.push(url)
+      @loadedUrls.push(path)
       callback()
 
     el.async = true
@@ -47,12 +47,13 @@ module.exports = class JsLoader
 
   loadInlineScript: (codeBlock, callback = ->) ->
     codeBlock = @prepareInlineCode(codeBlock)
-    return callblack() if @isInlineBlockLoaded(codeBlock)
+    return callback() if @isInlineBlockLoaded(codeBlock)
 
     # Inject an inline script element to the document
-    script = document.createElement('script');
+    doc = @window.document
+    script = doc.createElement('script');
     script.innerHTML = codeBlock;
-    document.body.appendChild(script);
+    doc.body.appendChild(script);
     @loadedScripts.push(codeBlock)
 
     callback()
