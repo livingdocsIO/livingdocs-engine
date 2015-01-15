@@ -1,3 +1,10 @@
+# v.x.x.x
+
+#### Features:
+
+- Manage document dependencies [#142](https://github.com/upfrontIO/livingdocs-engine/issues/142)
+
+
 # v0.4.3
 
 #### Improvements:
