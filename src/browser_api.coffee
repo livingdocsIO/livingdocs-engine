@@ -4,6 +4,8 @@ Livingdoc = require('./livingdoc')
 ComponentTree = require('./component_tree/component_tree')
 designCache = require('./design/design_cache')
 EditorPage = require('./rendering_container/editor_page')
+JsLoader = require('./rendering_container/js_loader')
+CssLoader = require('./rendering_container/css_loader')
 version = require('../version')
 
 module.exports = doc = do ->
@@ -69,6 +71,12 @@ module.exports = doc = do ->
   config: (userConfig) ->
     $.extend(true, config, userConfig)
     augmentConfig(config)
+
+
+  # Expose modules and classes that can be used by the editor
+  JsLoader: JsLoader
+  CssLoader: CssLoader
+
 
 
 
