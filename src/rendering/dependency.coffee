@@ -70,11 +70,8 @@ module.exports = class Dependency
   serialize: ->
     obj = {}
 
-    obj.src = @src if @src?
-    obj.code = @code if @code?
-    obj.inline = @inline if @inline?
-    obj.name = @name if @name
-    obj.namespace = @namespace if @namespace
+    for key in ['src', 'code', 'inline', 'name', 'namespace']
+      obj[key] = this[key] if this[key]?
 
     for componentId of @components
       obj.componentIds ?= []
