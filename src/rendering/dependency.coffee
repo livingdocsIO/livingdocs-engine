@@ -11,18 +11,16 @@ module.exports = class Dependency
   #   - code {String} JS or CSS code
   #
   #   All of the following are optional:
-  #   - name {String} Optional. A Name to identify the dependency.
-  #   - async {Boolean} only valid for js urls
+  #   - namespace {String} Optional. A name to identify a dependency more easily.
+  #   - namespace {String} Optional. A Namespace to group dependencies together.
   #   - component {ComponentModel} The componentModel that is depending on this resource
-  constructor: ({ @name, @src, @code, @type, @async, component }) ->
+  constructor: ({ @name, @namespace, @src, @code, @type, component }) ->
     assert @src || @code, 'Dependency: No "src" or "code" param provided'
     assert not (@src && @code), 'Dependency: Only provide one of "src" or "code" params'
     assert @type, "Dependency: Param type must be specified"
     assert @type in ['js', 'css'], "Dependency: Unrecognized type: #{ @type }"
 
     @inline = true if @code?
-    if @type == 'css' || @inline == true
-      @async = undefined
 
     @components = {} # components which depend upon this resource
     @componentCount = 0
@@ -61,6 +59,7 @@ module.exports = class Dependency
 
   isSameAs: (otherDependency) ->
     return false if @type != otherDependency.type
+    return false if @namespace != otherDependency.namespace
 
     if otherDependency.src
       @src == otherDependency.src
@@ -74,8 +73,8 @@ module.exports = class Dependency
     obj.src = @src if @src?
     obj.code = @code if @code?
     obj.inline = @inline if @inline?
-    obj.async = @async if @async?
     obj.name = @name if @name
+    obj.namespace = @namespace if @namespace
 
     for componentId of @components
       obj.componentIds ?= []

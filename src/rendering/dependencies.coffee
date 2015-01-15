@@ -15,10 +15,9 @@ module.exports = class Dependencies
     @allowRelativeUrls = if @prefix then true else allowRelativeUrls || false
     @prefix ?= ''
 
-
     @js = []
     @css = []
-    @namedDependencies = {}
+    @namespaces = {}
 
     @dependencyAdded = $.Callbacks()
     @dependencyRemoved = $.Callbacks()
@@ -71,13 +70,40 @@ module.exports = class Dependencies
 
 
   addDependency: (dependency) ->
-    @namedDependencies[dependency.name] = dependency if dependency.name
+    @addToNamespace(dependency) if dependency.namespace
+
     collection = if dependency.isJs() then @js else @css
     collection.push(dependency)
 
     @dependencyAdded.fire(dependency)
 
     dependency
+
+
+  # Namespaces
+  # ----------
+
+  addToNamespace: (dependency) ->
+    if dependency.namespace
+      @namespaces[dependency.namespace] ?= []
+      namespace = @namespaces[dependency.namespace]
+      namespace.push(dependency)
+
+
+  removeFromNamespace: (dependency) ->
+    if namespace = @getNamespace(dependency.namespace)
+      index = namespace.indexOf(dependency)
+      namespace.splice(index, 1) if index > -1
+
+
+  getNamespaces: ->
+    for name, array of @namespaces
+      name
+
+
+  getNamespace: (name) ->
+    namespace = @namespaces[name]
+    if namespace?.length then namespace else undefined
 
 
   getExisting: (dep) ->
@@ -96,10 +122,6 @@ module.exports = class Dependencies
     @js.length > 0
 
 
-  getByName: (name) ->
-    @namedDependencies[name]
-
-
   onComponentRemoved: (component) =>
     toBeRemoved = []
     for dependency in @js
@@ -115,7 +137,7 @@ module.exports = class Dependencies
 
 
   removeDependency: (dependency) ->
-    @namedDependencies[dependency.name] = undefined if dependency.name
+    @removeFromNamespace(dependency) if dependency.namespace
     collection = if dependency.isJs() then @js else @css
     index = collection.indexOf(dependency)
     collection.splice(index, 1) if index > -1
@@ -143,10 +165,10 @@ module.exports = class Dependencies
     for entry in data.js || []
       obj =
         type: 'js'
-        name: entry.name
         src: entry.src
         code: entry.code
-        async: entry.async
+        namespace: entry.namespace
+        name: entry.name
 
       @addDeserialzedObj(obj, entry)
 
@@ -154,9 +176,10 @@ module.exports = class Dependencies
     for entry in data.css || []
       obj =
         type: 'css'
-        name: entry.name
         src: entry.src
         code: entry.code
+        namespace: entry.namespace
+        name: entry.name
 
       @addDeserialzedObj(obj, entry)
 
