@@ -2,15 +2,11 @@ module.exports = class JsLoader
 
   constructor: (@window) ->
     @loadedUrls = []
+    @loadedScripts = []
 
 
   disable: ->
     @isDisabled = true
-
-
-  loadInlineScript: (codeBlock, callback = ->) ->
-    # todo
-    callback()
 
 
   # Core method extracted from $script (https://github.com/ded/script.js).
@@ -30,10 +26,11 @@ module.exports = class JsLoader
     el = doc.createElement('script')
     loaded = undefined
 
-    el.onload = el.onerror = el[onreadystatechange] = ->
+    el.onload = el.onerror = el[onreadystatechange] = =>
       return if ((el[readyState] && !(/^c|loade/.test(el[readyState]))) || loaded)
       el.onload = el[onreadystatechange] = null
       loaded = true
+      @loadedUrls.push(url)
       callback()
 
     el.async = true
@@ -45,8 +42,28 @@ module.exports = class JsLoader
     @loadedUrls.indexOf(url) >= 0
 
 
-  # @private
-  markUrlAsLoaded: (url) ->
-    @loadedUrls.push(url)
+  # Inline Script
+  # -------------
+
+  loadInlineScript: (codeBlock, callback = ->) ->
+    codeBlock = @prepareInlineCode(codeBlock)
+    return callblack() if @isInlineBlockLoaded(codeBlock)
+
+    # Inject an inline script element to the document
+    script = document.createElement('script');
+    script.innerHTML = codeBlock;
+    document.body.appendChild(script);
+    @loadedScripts.push(codeBlock)
+
+    callback()
+
+
+  prepareInlineCode: (codeBlock) ->
+    # Remove <script> tags around the script
+    codeBlock.replace(/<script[^>]*>|<\/script>/gi, '')
+
+
+  isInlineBlockLoaded: (codeBlock) ->
+    @loadedScripts.indexOf(codeBlock) >= 0
 
 
