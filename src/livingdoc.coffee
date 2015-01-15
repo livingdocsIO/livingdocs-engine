@@ -148,10 +148,6 @@ module.exports = class Livingdoc extends EventEmitter
     @interactiveView = view
 
 
-  addDependency: (obj) ->
-    @dependencies.add(obj)
-
-
   addJsDependency: (obj) ->
     @dependencies.addJs(obj)
 
@@ -161,7 +157,7 @@ module.exports = class Livingdoc extends EventEmitter
 
 
   hasDependencies: ->
-    @dependencies?.hasEntries()
+    @dependencies?.hasJs() || @dependencies?.hasCss()
 
 
   toHtml: ({ excludeComponents }={}) ->
