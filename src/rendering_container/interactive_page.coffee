@@ -110,7 +110,7 @@ module.exports = class InteractivePage extends Page
 
 
   getFocusedElement: ->
-    window.document.activeElement
+    @window.document.activeElement
 
 
   blurFocusedElement: ->
