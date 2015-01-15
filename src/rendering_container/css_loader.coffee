@@ -7,12 +7,8 @@ module.exports = class CssLoader
     @loadedInlineStyles = []
 
 
-  disable: ->
-    @isDisabled = true
-
-
   loadSingleUrl: (url, callback = ->) ->
-    return callback() if @isDisabled || @isUrlLoaded(url)
+    return callback() if @isUrlLoaded(url)
 
     link = $('<link rel="stylesheet" type="text/css" />')[0]
     link.onload = callback

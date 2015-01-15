@@ -5,7 +5,11 @@ Semaphore = require('../modules/semaphore')
 
 module.exports = class Assets
 
-  constructor: ({ @window }) ->
+  # @param {Window}
+  # @param {Boolean} optional. If set to true no assets will be loaded.
+  constructor: ({ @window, disable }) ->
+    @isDisabled = disable || false
+
     @cssLoader = new CssLoader(@window)
     @jsLoader = new JsLoader(@window)
 
@@ -30,6 +34,8 @@ module.exports = class Assets
 
 
   loadJs: (dependency, callback) ->
+    return callback()  if @isDisabled
+
     if dependency.inline
       @jsLoader.loadInlineScript(dependency.code, callback)
     else
@@ -37,6 +43,8 @@ module.exports = class Assets
 
 
   loadCss: (dependency, callback) ->
+    return callback()  if @isDisabled
+
     if dependency.inline
       @cssLoader.loadInlineStyles(dependency.code, callback)
     else

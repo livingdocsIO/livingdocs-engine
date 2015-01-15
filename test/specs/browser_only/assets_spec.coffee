@@ -98,3 +98,20 @@ describe 'assets:', ->
       @assets.loadDependency dependency, =>
         expect( @$elem.css('position') ).to.equal('absolute')
         done()
+
+
+  describe 'disable', ->
+
+    beforeEach (done) ->
+      whenIframeLoaded = test.iframe.create()
+      whenIframeLoaded.then (iframe) =>
+        @iframeWindow = iframe.contentWindow
+        @assets = new Assets(window: @iframeWindow, disable: true)
+        done()
+
+
+    it 'does not load a js script if disabled', (done) ->
+      dependency = new Dependency(code: 'window.test = "hilarious";', type: 'js')
+      @assets.loadDependency dependency, =>
+        expect(@iframeWindow.test).to.equal(undefined)
+        done()
