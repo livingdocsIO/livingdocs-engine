@@ -1,6 +1,7 @@
 Dependency = require('./dependency')
 log = require('../modules/logging/log')
 assert = require('../modules/logging/assert')
+$ = require('jquery')
 
 module.exports = class Dependencies
 
@@ -14,9 +15,13 @@ module.exports = class Dependencies
     @allowRelativeUrls = if @prefix then true else allowRelativeUrls || false
     @prefix ?= ''
 
+
     @js = []
     @css = []
     @namedDependencies = {}
+
+    @dependencyAdded = $.Callbacks()
+    @dependencyRemoved = $.Callbacks()
 
     if @componentTree?
       @componentTree.componentRemoved.add(@onComponentRemoved)
@@ -69,6 +74,9 @@ module.exports = class Dependencies
     @namedDependencies[dependency.name] = dependency if dependency.name
     collection = if dependency.isJs() then @js else @css
     collection.push(dependency)
+
+    @dependencyAdded.fire(dependency)
+
     dependency
 
 
@@ -111,6 +119,8 @@ module.exports = class Dependencies
     collection = if dependency.isJs() then @js else @css
     index = collection.indexOf(dependency)
     collection.splice(index, 1) if index > -1
+
+    @dependencyRemoved.fire(dependency)
 
 
   serialize: ->

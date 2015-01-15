@@ -5,10 +5,6 @@ module.exports = class JsLoader
     @loadedScripts = []
 
 
-  disable: ->
-    @isDisabled = true
-
-
   # Core method extracted from $script (https://github.com/ded/script.js).
   # Loads individual scripts asynchronously.
   #
@@ -16,7 +12,7 @@ module.exports = class JsLoader
   # @param {String} Path to the js file
   # @param {Function} Callback when the script is loaded or an error occured.
   loadSingleUrl: (path, callback = ->) ->
-    return callback() if @isDisabled || @isUrlLoaded(path)
+    return callback() if @isUrlLoaded(path)
 
     doc = @window.document
     readyState = 'readyState'
