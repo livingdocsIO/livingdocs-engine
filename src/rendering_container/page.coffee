@@ -8,7 +8,7 @@ config = require('../configuration/config')
 # page.
 module.exports = class Page extends RenderingContainer
 
-  constructor: ({ renderNode, readOnly, hostWindow, @design, @componentTree, @loadResources }={}) ->
+  constructor: ({ renderNode, readOnly, hostWindow, @documentDependencies, @design, @componentTree, @loadResources }={}) ->
     @loadResources ?= config.loadResources
     @isReadOnly = readOnly if readOnly?
     @renderNode = if renderNode?.jquery then renderNode[0] else renderNode
@@ -38,7 +38,8 @@ module.exports = class Page extends RenderingContainer
       @assets.loadDependencies(@design.dependencies, @readySemaphore.wait())
 
     # Then load document specific dependencies
-    # @livingdoc.dependencies
+    if @documentDependencies?
+      @assets.loadDependencies(@documentDependencies, @readySemaphore.wait())
 
 
   setWindow: (hostWindow) ->
