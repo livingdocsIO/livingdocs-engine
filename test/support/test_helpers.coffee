@@ -4,6 +4,7 @@ Design = require('../../src/design/design')
 designJson = require('./test_design_json')
 localstore = require('../../src/modules/localstore')
 getInstances = require('../support/factories/instance_injector').get
+iframeFactory = require('../support/factories/iframe_factory')
 
 # Local variables
 cachedDesign = undefined
@@ -16,6 +17,8 @@ module.exports = testHelpers =
   jQuery: $
   get: getInstances
   config: config
+  iframe: iframeFactory
+
 
 
   createElem: (str) ->

@@ -22,12 +22,15 @@ module.exports = class Assets
     semaphore.start()
 
 
-  loadDependency: ->
-    # todo
+  loadDependency: (dependency, callback) ->
+    if dependency.isJs()
+      @loadJs(dependency, callback)
+    else if dependency.isCss()
+      @loadCss(dependency, callback)
 
 
   loadJs: (dependency, callback) ->
-    if dep.inline
+    if dependency.inline
       @jsLoader.loadInlineScript(dependency.code, callback)
     else
       @jsLoader.loadSingleUrl(dependency.src, callback)

@@ -4,18 +4,13 @@ module.exports = class CssLoader
 
   constructor: (@window) ->
     @loadedUrls = []
+    @loadedInlineStyles = []
 
 
   disable: ->
     @isDisabled = true
 
 
-  loadInlineStyles: (codeBlock, callback = ->) ->
-    # todo
-    callback()
-
-
-  # @private
   loadSingleUrl: (url, callback = ->) ->
     return callback() if @isDisabled || @isUrlLoaded(url)
 
@@ -31,14 +26,36 @@ module.exports = class CssLoader
 
     link.href = url
     @window.document.head.appendChild(link)
-    @markUrlAsLoaded(url)
+    @loadedUrls.push(url)
 
 
-  # @private
   isUrlLoaded: (url) ->
     @loadedUrls.indexOf(url) >= 0
 
 
-  # @private
-  markUrlAsLoaded: (url) ->
-    @loadedUrls.push(url)
+  # Inline Styles
+  # -------------
+
+  loadInlineStyles: (inlineStyles, callback = ->) ->
+    inlineStyles = @prepareInlineStyles(inlineStyles)
+    return callback() if @areInlineStylesLoaded(inlineStyles)
+
+    # Inject an inline script element to the document
+    doc = @window.document
+    styles = doc.createElement('style');
+    styles.innerHTML = inlineStyles;
+    doc.body.appendChild(styles);
+    @loadedInlineStyles.push(inlineStyles)
+
+    callback()
+
+
+  prepareInlineStyles: (inlineStyles) ->
+    # Remove <style> tags around the inline styles
+    inlineStyles.replace(/<style[^>]*>|<\/style>/gi, '')
+
+
+  areInlineStylesLoaded: (inlineStyles) ->
+    @loadedInlineStyles.indexOf(inlineStyles) >= 0
+
+
