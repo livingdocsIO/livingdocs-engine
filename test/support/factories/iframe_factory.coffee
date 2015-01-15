@@ -1,4 +1,6 @@
-globalWindow = window
+# In a browser context we can use the globalWindow
+# On node however a window will have to be passed explicitly
+globalWindow = window if window?
 
 module.exports =
 
