@@ -32,6 +32,16 @@ module.exports = class Dependencies
       @addDependency(dep)
 
 
+  addJs: (obj) ->
+    obj.type = 'js'
+    @add(obj)
+
+
+  addCss: (obj) ->
+    obj.type = 'css'
+    @add(obj)
+
+
   # Absolute paths:
   # //
   # /
@@ -53,16 +63,6 @@ module.exports = class Dependencies
   isAbsoluteUrl: (src) ->
     # URLs are absolute when they contain two `//` or begin with a `/`
     /(^\/\/|[a-z]*:\/\/)/.test(src) || /^\//.test(src)
-
-
-  addJs: (obj) ->
-    obj.type = 'js'
-    @add(obj)
-
-
-  addCss: (obj) ->
-    obj.type = 'css'
-    @add(obj)
 
 
   addDependency: (dependency) ->
