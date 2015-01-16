@@ -64,3 +64,21 @@ describe 'livingdoc:', ->
     it 'renders an empty livingdoc with prettify', ->
       expect(@doc.toJson('prettify')).to.contain('\n  ')
 
+
+describe 'livingdoc of two components tree:', ->
+
+  beforeEach ->
+    componentTree = test.createComponentTree [
+      hero: { title: 'Hero Title' },
+      title: { title: 'Title Title' }
+    ]
+    @doc = new Livingdoc({ componentTree })
+
+
+  describe 'extractMetadata()', ->
+
+    it 'extracts metadata', ->
+      metadata = @doc.extractMetadata()
+      expect(metadata.title.content).to.be.equal('Hero Title')
+      expect(metadata.description.content).to.be.equal('Title Title')
+
