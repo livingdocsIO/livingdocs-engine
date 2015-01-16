@@ -173,7 +173,7 @@ describe 'ComponentView image', ->
 
 
     it 'inserts placeholder when view is attached', ->
-      placeholderUrl = 'http://placehold.it/0x0/BEF56F/B2E668'
+      placeholderUrl = test.config.imagePlaceholder
       @view.wasAttachedToDom.fireWith(@view.$html)
 
       expect(@view.$html).to.have.html """
