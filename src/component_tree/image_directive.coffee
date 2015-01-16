@@ -60,19 +60,35 @@ module.exports = class ImageDirective
     @component.content[@name].originalUrl || @getImageUrl()
 
 
-  setCrop: ({ x, y, width, height, name }) ->
+  setCrop: (crop) ->
     currentValue = @component.content[@name]
+    return unless currentValue?.url?
 
-    if currentValue?.url?
-      currentValue.crop =
-        x: x
-        y: y
-        width: width
-        height: height
-        name: name
+    if crop
+      { x, y, width, height, name } = crop
+      currentValue.crop = {x, y, width, height, name}
+    else
+      delete currentValue.crop
 
-      @processImageUrl(currentValue.originalUrl || currentValue.url)
-      @component.componentTree.contentChanging(@component, @name) if @component.componentTree
+    @processImageUrl(currentValue.originalUrl || currentValue.url)
+    @component.componentTree.contentChanging(@component, @name) if @component.componentTree
+
+
+  getCrop: ->
+    @component.content[@name].crop
+
+
+  setOriginalImageDimensions: ({width, height}) ->
+    content = @component.content[@name]
+    content.width = width
+    content.height = height
+
+
+  getOriginalImageDimensions: ->
+    content = @component.content[@name]
+
+    width: content.width,
+    height: content.height
 
 
   resetCrop: ->
