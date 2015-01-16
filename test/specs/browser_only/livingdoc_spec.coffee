@@ -21,3 +21,18 @@ describe '(browser only) livingdoc:', ->
       .then ({ iframe, renderer }) ->
         expect(renderer.$wrapperHtml).to.exist
         done()
+
+
+  describe 'scripts in components', ->
+
+    it.only 'executes scripts in doc-html within the iframe', (done) ->
+      @doc.createView(undefined)
+      .then ({ iframe, renderer }) =>
+        renderer.ready =>
+          componentTree = @doc.componentTree
+          html = test.createComponent('html')
+          html.setContent('source', '<script>window.testXy = "halleluja!";</script>')
+          componentTree.append(html)
+          console.log 'testXy:', window.testXy
+          console.log 'iframe.testXy:', iframe.contentWindow.testXy
+          expect(iframe.contentWindow.testXy).to.equal('hey')
