@@ -32,8 +32,7 @@
 .doc-component-highlight {
   /* Default */
   /*outline: thin dotted #333;*/
-  -webkit-box-shadow: 0 0 1px 2px rgba(123, 215, 253, 0.5);
-  box-shadow: 0 0 1px 2px rgba(123, 215, 253, 0.5);
+  box-shadow: 0 0 1px 2px rgba(123, 215, 253, 0.5)
 
   /* Webkit */
   /*outline: 5px auto -webkit-focus-ring-color;*/
@@ -68,14 +67,23 @@
   content: attr(data-doc-placeholder);
   opacity: 0.4;
   -webkit-animation: fadeIn 0.4s;
-  animation: fadeIn 0.4s;
+          animation: fadeIn 0.4s;
 }
 
 .doc-editable.doc-no-placeholder:before {
   content: normal;
   opacity: 1;
   -webkit-animation: none;
-  animation: none;
+          animation: none;
+}
+
+
+/**
+ * Image Placeholder
+ */
+
+.doc-image-empty {
+  background-size: 100% 100%;
 }
 
 
@@ -121,24 +129,24 @@
 
 .doc-dragged {
   -webkit-animation: pulse 0.3s;
-  animation: pulse 0.3s;
+          animation: pulse 0.3s;
   opacity: .4;
 }
 
 .doc-before-drop {
   -webkit-transition: all 0.3s;
-  transition: all 0.3s;
+          transition: all 0.3s;
   -webkit-transform: translateY(-25px);
-  -ms-transform: translateY(-25px);
-  transform: translateY(-25px);
+      -ms-transform: translateY(-25px);
+          transform: translateY(-25px);
 }
 
 .doc-after-drop {
   -webkit-transition: all 0.3s;
-  transition: all 0.3s;
+          transition: all 0.3s;
   -webkit-transform: translateY(25px);
-  -ms-transform: translateY(25px);
-  transform: translateY(25px);
+      -ms-transform: translateY(25px);
+          transform: translateY(25px);
 }
 
 .doc-dragged-placeholder {
@@ -153,7 +161,6 @@
   color: #fff;
   height: 25px;
   line-height: 25px;
-  -webkit-box-shadow: 0 1px 2px 2px rgba(0, 0, 0, 0.2);
   box-shadow: 0 1px 2px 2px rgba(0, 0, 0, 0.2);
 }
 
@@ -225,7 +232,7 @@
   border-radius: 10px;
   border: 3px solid rgba(0, 153, 221, 0);
   -webkit-animation: ring 0.4s ease-in;
-  animation: ring 0.4s ease-in;
+          animation: ring 0.4s ease-in;
 
 }
 
@@ -239,7 +246,7 @@
   border-radius: 10px;
   border: 1px solid rgba(0, 153, 221, 0);
   -webkit-animation: inner-ring 0.4s ease-in;
-  animation: inner-ring 0.4s ease-in;
+          animation: inner-ring 0.4s ease-in;
 }
 
 
@@ -249,7 +256,7 @@
 
 .doc-no-selection {
   -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
