@@ -1,8 +1,10 @@
-# v.x.x.x
+# v.0.5.0
 
 #### Features:
 
 - Manage document dependencies [#142](https://github.com/upfrontIO/livingdocs-engine/issues/142)
+- Use base64 image placeholder [#151](https://github.com/upfrontIO/livingdocs-engine/pull/151)
+- Adds ImageDirective getters and setters for dimension and crop [#150](https://github.com/upfrontIO/livingdocs-engine/pull/150)
 
 
 # v0.4.4
