@@ -16,11 +16,6 @@ module.exports =
       @setBackgroundImage($elem, value)
 
 
-  setPlaceholder: ($elem) ->
-    dim = @getImageDimensions($elem)
-    imageUrl = "http://placehold.it/#{ dim.width }x#{ dim.height }/BEF56F/B2E668"
-
-
   # The default service does not transfor the given url
   getUrl: (value) ->
     value

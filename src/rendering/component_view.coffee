@@ -219,16 +219,9 @@ module.exports = class ComponentView
 
   setPlaceholderImage: ($elem, name) ->
     $elem.addClass(config.css.emptyImage)
-    if $elem[0].nodeName == 'IMG'
-      width = $elem.width()
-      height = $elem.height()
-    else
-      width = $elem.outerWidth()
-      height = $elem.outerHeight()
-    value = "http://placehold.it/#{width}x#{height}/BEF56F/B2E668"
 
     imageService = @model.directives.get(name).getImageService()
-    imageService.set($elem, value)
+    imageService.set($elem, config.imagePlaceholder)
 
 
   setStyle: (name, className) ->
