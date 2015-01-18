@@ -9,6 +9,7 @@ config = require('./configuration/config')
 dom = require('./interaction/dom')
 designCache = require('./design/design_cache')
 ComponentTree = require('./component_tree/component_tree')
+Dependencies = require('./rendering/dependencies')
 
 module.exports = class Livingdoc extends EventEmitter
 
@@ -49,9 +50,13 @@ module.exports = class Livingdoc extends EventEmitter
 
   constructor: ({ componentTree }) ->
     @design = componentTree.design
+
+    @componentTree = undefined
+    @dependencies = undefined
     @setComponentTree(componentTree)
-    @views = {}
+
     @interactiveView = undefined
+    @additionalViews = []
 
 
   # Get a drop target for an event
@@ -69,6 +74,7 @@ module.exports = class Livingdoc extends EventEmitter
       'ComponentTree must have the same design as the document'
 
     @model = @componentTree = componentTree
+    @dependencies = new Dependencies({ @componentTree })
     @forwardComponentTreeEvents()
 
 
@@ -86,13 +92,15 @@ module.exports = class Livingdoc extends EventEmitter
     options.$wrapper ?= @findWrapper($parent)
     $parent.html('') # empty container
 
-    view = new View(@componentTree, $parent[0])
-    promise = view.create(options)
+    view = new View(this, $parent[0])
+    whenViewIsReady = view.create(options)
 
     if view.isInteractive
       @setInteractiveView(view)
+      whenViewIsReady.then ({ iframe, renderer }) =>
+        @componentTree.setMainView(view)
 
-    promise
+    whenViewIsReady
 
 
   createComponent: ->
@@ -104,7 +112,8 @@ module.exports = class Livingdoc extends EventEmitter
   # @param { DOM Node, jQuery object or CSS selector string } Where to append the article in the document.
   # @param { Object } options:
   #   interactive: { Boolean } Whether the document is edtiable.
-  #   loadAssets: { Boolean } Load CSS files. Only disable this if you are sure you have loaded everything manually.
+  #   loadAssets: { Boolean } Load Js and CSS files.
+  #     Only disable this if you are sure you have loaded everything manually.
   #
   # Example:
   # article.appendTo('.article', { interactive: true, loadAssets: false });
@@ -113,7 +122,7 @@ module.exports = class Livingdoc extends EventEmitter
     options.$wrapper ?= @findWrapper($parent)
     $parent.html('') # empty container
 
-    view = new View(@componentTree, $parent[0])
+    view = new View(this, $parent[0])
     view.createRenderer({ options })
 
 
@@ -137,6 +146,18 @@ module.exports = class Livingdoc extends EventEmitter
       'Error creating interactive view: Livingdoc can have only one interactive view'
 
     @interactiveView = view
+
+
+  addJsDependency: (obj) ->
+    @dependencies.addJs(obj)
+
+
+  addCssDependency: (obj) ->
+    @dependencies.addCss(obj)
+
+
+  hasDependencies: ->
+    @dependencies?.hasJs() || @dependencies?.hasCss()
 
 
   toHtml: ({ excludeComponents }={}) ->

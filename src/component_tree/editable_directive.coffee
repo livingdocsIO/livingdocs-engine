@@ -1,22 +1,10 @@
 assert = require('../modules/logging/assert')
 words = require('../modules/words')
+ComponentDirective = require('./component_directive')
 
-module.exports = class EditableDirective
-
-  constructor: ({ @component, @templateDirective }) ->
-    @name = @templateDirective.name
-    @type = @templateDirective.type
-
+module.exports = class EditableDirective extends ComponentDirective
 
   isEditable: true
-
-
-  getContent: ->
-    @component.content[@name]
-
-
-  setContent: (value) ->
-    @component.setContent(@name, value)
 
 
   getText: ->

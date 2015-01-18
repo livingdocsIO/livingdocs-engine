@@ -1,15 +1,15 @@
 assert = require('../modules/logging/assert')
+ComponentDirective = require('./component_directive')
 
-module.exports = class HtmlDirective
-
-  constructor: ({ @component, @templateDirective }) ->
-    @name = @templateDirective.name
-    @type = @templateDirective.type
-
+module.exports = class HtmlDirective extends ComponentDirective
 
   isHtml: true
 
 
-  getContent: ->
-    @component.content[@name]
+  setEmbedHandler: (embedHandlerName) ->
+    @setData('_embedHandler', embedHandlerName)
+
+
+  getEmbedHandler: ->
+    @getData('_embedHandler')
 

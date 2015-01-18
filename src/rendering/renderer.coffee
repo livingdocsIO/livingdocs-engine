@@ -111,6 +111,9 @@ module.exports = class Renderer
   # Rendering
   # ---------
 
+  getComponentViewById: (componentId) ->
+    @componentViews[componentId]
+
 
   componentViewForComponent: (model) ->
     @componentViews[model.id] ||= model.createView(@renderingContainer.isReadOnly)

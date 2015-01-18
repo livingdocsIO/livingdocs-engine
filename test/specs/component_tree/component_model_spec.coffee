@@ -153,22 +153,23 @@ describe 'component_model:', ->
   describe 'Html component', ->
 
     beforeEach ->
-      @image = test.getComponent('html')
+      @html = test.getComponent('html')
 
 
     it 'has one html field', ->
-      expect(@image.content).to.have.ownProperty('html')
+      expect(@html.content).to.have.ownProperty('source')
 
 
     describe 'with content', ->
 
       beforeEach ->
-        @image.set('html', '<section>text</section>')
+        @html.set('source', '<section>text</section>')
+
 
       it 'has the html field set in content', ->
-        expect(@image.content['html']).to.equal('<section>text</section>')
+        expect(@html.content['source']).to.equal('<section>text</section>')
 
 
       it 'can get the content', ->
-        expect(@image.get('html')).to.equal('<section>text</section>')
+        expect(@html.get('source')).to.equal('<section>text</section>')
 

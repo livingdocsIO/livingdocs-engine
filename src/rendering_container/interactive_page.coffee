@@ -38,7 +38,7 @@ module.exports = class InteractivePage extends Page
 
   beforeInteractivePageReady: ->
     if config.livingdocsCssFile
-      @cssLoader.load(config.livingdocsCssFile, @readySemaphore.wait())
+      @assets.cssLoader.loadSingleUrl(config.livingdocsCssFile, @readySemaphore.wait())
 
 
   # prevent the browser Drag&Drop from interfering
@@ -110,7 +110,7 @@ module.exports = class InteractivePage extends Page
 
 
   getFocusedElement: ->
-    window.document.activeElement
+    @window.document.activeElement
 
 
   blurFocusedElement: ->

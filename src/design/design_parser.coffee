@@ -1,4 +1,5 @@
 log = require('../modules/logging/log')
+$ = require('jquery')
 assert = require('../modules/logging/assert')
 designConfigSchema = require('./design_config_schema')
 CssModificatorProperty = require('./css_modificator_property')
@@ -43,11 +44,34 @@ module.exports = designParser =
       version: version.toString()
 
 
+  # Assets
+  # ------
+
   parseAssets: (assets) ->
     return unless assets?
-    @design.assets.addCss(assets.css)
-    @design.assets.addJs(assets.js)
 
+    @eachAsset assets.js, (assetUrl) =>
+      @design.dependencies.addJs(src: assetUrl)
+
+    @eachAsset assets.css, (assetUrl) =>
+      @design.dependencies.addCss(src: assetUrl)
+
+
+  # Iterate through assets
+  # @param {String or Array of Strings or undefined}
+  # @param {Function}
+  eachAsset: (data, callback) ->
+    return unless data?
+
+    if $.type(data) == 'string'
+      callback(data)
+    else
+      for entry in data
+        callback(entry)
+
+
+  # Component Properties
+  # --------------------
 
   # Note: Currently componentProperties consist only of design styles
   parseComponentProperties: (componentProperties) ->
