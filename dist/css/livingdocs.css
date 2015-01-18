@@ -79,6 +79,15 @@
 
 
 /**
+ * Image Placeholder
+ */
+
+.doc-image-empty {
+  background-size: 100% 100%;
+}
+
+
+/**
  * Drag & Drop
  */
 
