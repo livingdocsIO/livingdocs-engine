@@ -32,12 +32,23 @@ module.exports = designParser =
     } = designConfig
     try
       @design = @parseDesignInfo(designConfig)
+
+      $.each [
+        'metadata'
+        'wrapper'
+        'imageDropComponent'
+        'defaultContent'
+        'prefilledComponents'
+      ], (index, attributeName) =>
+        @design[attributeName] = designConfig[attributeName]
+
       @parseAssets(assets, assetsBasePath)
       @parseComponentProperties(componentProperties)
       @parseImageRatios(imageRatios)
       @parseComponents(components)
       @parseGroups(groups)
       @parseDefaults(defaultComponents)
+
     catch error
       error.message = "Error creating the design: #{ error.message }"
       throw error

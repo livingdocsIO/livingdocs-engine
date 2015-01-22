@@ -50,6 +50,11 @@ validator.add 'design',
   imageRatios:
     __validate: 'optional'
     __additionalProperty: (key, value) -> validator.validate('imageRatio', value)
+  metadata: 'array of object, optional'
+  wrapper: 'string, optional'
+  defaultContent: 'array of object, optional'
+  imageDropComponent: 'object, optional'
+  prefilledComponents: 'object, optional'
 
 
 validator.add 'component',
