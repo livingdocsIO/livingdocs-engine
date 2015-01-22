@@ -8,13 +8,7 @@ module.exports = class Dependencies
 
   # @param {ComponentTree} optional. Required if you want to
   #   track which components use a dependency.
-  # @param {String} optional. Prefix relative urls with this string
-  #   (the string should not have a slash at the end).
-  # @param {Boolean} optional. Whether to allow relative urls or not.
-  #   Defaults to false.
-  constructor: ({ @componentTree, @prefix, allowRelativeUrls }={}) ->
-    @allowRelativeUrls = if @prefix then true else allowRelativeUrls || false
-    @prefix ?= ''
+  constructor: ({ @componentTree }={}) ->
 
     @js = []
     @css = []
@@ -53,16 +47,16 @@ module.exports = class Dependencies
   # http://google.com
   # https://google.com
   #
-  # Everything else is prefixed if a prefix is provided.
+  # Everything else is prefixed with the assetsBasePath.
   # To explicitly pass a relative URL start it with './'
   convertToAbsolutePaths: (obj) ->
     return unless obj.src
     src = obj.src
 
     if not @isAbsoluteUrl(src)
-      assert @allowRelativeUrls, "Dependencies: relative urls are not allowed: #{ src }"
+      assert obj.assetsBasePath, "Dependencies: relative urls are not allowed: #{ src }"
       src = src.replace(/^[\.\/]*/, '')
-      obj.src = "#{ @prefix }/#{ src }"
+      obj.src = "#{ obj.assetsBasePath.replace(/\/$/, '') }/#{ src }"
 
 
   isAbsoluteUrl: (src) ->

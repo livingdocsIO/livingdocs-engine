@@ -33,6 +33,7 @@ validator.add 'design',
   version: 'string, semVer'
   author: 'string, optional'
   description: 'string, optional'
+  assetsBasePath: 'string, optional'
   assets:
     __validate: 'optional'
     css: 'array of string'
