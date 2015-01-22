@@ -33,6 +33,16 @@ module.exports = designParser =
     } = designConfig
     try
       @design = @parseDesignInfo(designConfig)
+
+      $.each [
+        'metadata'
+        'wrapper'
+        'imageDropComponent'
+        'defaultContent'
+        'prefilledComponents'
+      ], (index, attributeName) =>
+        @design[attributeName] = designConfig[attributeName]
+
       @parseAssets(assets, assetsBasePath)
       @parseComponentProperties(componentProperties)
       @parseImageRatios(imageRatios)

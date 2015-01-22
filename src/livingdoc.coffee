@@ -48,15 +48,18 @@ module.exports = class Livingdoc extends EventEmitter
     new Livingdoc({ componentTree })
 
 
-  constructor: ({ componentTree }) ->
-    @design = componentTree.design
+  constructor: ({ @componentTree }) ->
 
-    @componentTree = undefined
-    @dependencies = undefined
-    @setComponentTree(componentTree)
+    # @model is a legacy attribute and should be deleted ASAP
+    @model = @componentTree
 
     @interactiveView = undefined
     @additionalViews = []
+
+    @design = @componentTree.design
+    @dependencies = new Dependencies({ @componentTree })
+
+    @forwardComponentTreeEvents()
 
 
   setComponentTree: (componentTree) ->
