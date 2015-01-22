@@ -21,10 +21,18 @@ module.exports = designParser =
 
 
   createDesign: (designConfig) ->
-    { assets, components, componentProperties, groups, defaultComponents, imageRatios } = designConfig
+    {
+      assets
+      assetsBasePath
+      components
+      componentProperties
+      groups
+      defaultComponents
+      imageRatios
+    } = designConfig
     try
       @design = @parseDesignInfo(designConfig)
-      @parseAssets(assets)
+      @parseAssets(assets, assetsBasePath)
       @parseComponentProperties(componentProperties)
       @parseImageRatios(imageRatios)
       @parseComponents(components)
@@ -47,14 +55,18 @@ module.exports = designParser =
   # Assets
   # ------
 
-  parseAssets: (assets) ->
+  parseAssets: (assets, assetsBasePath) ->
     return unless assets?
 
     @eachAsset assets.js, (assetUrl) =>
-      @design.dependencies.addJs(src: assetUrl)
+      @design.dependencies.addJs
+        src: assetUrl
+        assetsBasePath: assetsBasePath
 
     @eachAsset assets.css, (assetUrl) =>
-      @design.dependencies.addCss(src: assetUrl)
+      @design.dependencies.addCss
+        src: assetUrl
+        assetsBasePath: assetsBasePath
 
 
   # Iterate through assets

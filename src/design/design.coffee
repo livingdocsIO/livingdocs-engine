@@ -24,7 +24,7 @@ module.exports = class Design
     @imageRatios = {}
 
     # js and css dependencies required by the design
-    @dependencies = new Dependencies(prefix: "#{ config.designPath }/#{ this.name }")
+    @dependencies = new Dependencies()
 
     # default components
     @defaultParagraph = undefined
