@@ -3,10 +3,12 @@
   "version": "0.0.1",
   "author": "Peter Pan",
   "assets": {
+    "basePath": "/designs/boilerplate",
     "css": [
       "./stylesheets/boilerplate.css"
     ]
   },
+
   "componentProperties": {
     "featured": {
       "label": "Featured",
