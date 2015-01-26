@@ -60,6 +60,7 @@ module.exports = designParser =
     version = new Version(design.version)
     new Design
       name: design.name
+      label: design.label
       version: version.toString()
 
 
