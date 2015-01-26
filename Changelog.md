@@ -1,3 +1,10 @@
+# v.0.5.1
+
+#### Features:
+
+- Consolidate design config [#152](https://github.com/upfrontIO/livingdocs-engine/pull/152)
+
+
 # v.0.5.0
 
 #### Features:
