@@ -72,12 +72,12 @@ module.exports = designParser =
     @eachAsset assets.js, (assetUrl) =>
       @design.dependencies.addJs
         src: assetUrl
-        assetsBasePath: assetsBasePath
+        basePath: assetsBasePath
 
     @eachAsset assets.css, (assetUrl) =>
       @design.dependencies.addCss
         src: assetUrl
-        assetsBasePath: assetsBasePath
+        basePath: assetsBasePath
 
 
   # Iterate through assets

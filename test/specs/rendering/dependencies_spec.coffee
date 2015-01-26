@@ -129,7 +129,7 @@ describe 'dependencies:', ->
       @checkConversion = (a, b) =>
         @dependencies.addCss
           src: a
-          assetsBasePath: '/designs/test'
+          basePath: '/designs/test'
 
         dependency = @dependencies.css[0]
         expect(dependency.src).to.equal(b)

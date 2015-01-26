@@ -47,16 +47,16 @@ module.exports = class Dependencies
   # http://google.com
   # https://google.com
   #
-  # Everything else is prefixed with the assetsBasePath.
+  # Everything else is prefixed with the basePath.
   # To explicitly pass a relative URL start it with './'
   convertToAbsolutePaths: (obj) ->
     return unless obj.src
     src = obj.src
 
     if not @isAbsoluteUrl(src)
-      assert obj.assetsBasePath, "Dependencies: relative urls are not allowed: #{ src }"
+      assert obj.basePath, "Dependencies: relative urls are not allowed: #{ src }"
       src = src.replace(/^[\.\/]*/, '')
-      obj.src = "#{ obj.assetsBasePath.replace(/\/$/, '') }/#{ src }"
+      obj.src = "#{ obj.basePath.replace(/\/$/, '') }/#{ src }"
 
 
   isAbsoluteUrl: (src) ->
