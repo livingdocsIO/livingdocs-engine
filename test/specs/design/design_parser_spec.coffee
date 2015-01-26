@@ -88,6 +88,8 @@ describe 'design_parser:', ->
             label: "16:9 Cinemascope"
             ratio: "16/9"
 
+        wrapper: '<div class="doc-section"></div>'
+
 
     it 'returns an instance of Design', ->
       expect(@design).to.be.an.instanceof(Design)
@@ -150,6 +152,10 @@ describe 'design_parser:', ->
 
     it 'sets the default text paragraph', ->
       expect(@design.defaultParagraph.name).to.equal('paragraph')
+
+
+    it 'sets the wrapper', ->
+      expect(@design.wrapper).to.exist
 
 
   describe 'parse error', ->
