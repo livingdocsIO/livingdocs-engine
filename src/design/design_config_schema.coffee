@@ -48,11 +48,11 @@ validator.add 'design',
   version: 'string, semVer'
   author: 'string, optional'
   description: 'string, optional'
-  assetsBasePath: 'string, optional'
   assets:
     __validate: 'optional'
     css: 'array of string'
     js: 'array of string, optional'
+    basePath: 'string, optional'
   components: 'array of component'
   componentProperties:
     __validate: 'optional'

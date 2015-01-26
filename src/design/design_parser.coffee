@@ -23,7 +23,6 @@ module.exports = designParser =
   createDesign: (designConfig) ->
     {
       assets
-      assetsBasePath
       components
       componentProperties
       groups
@@ -42,7 +41,7 @@ module.exports = designParser =
       ], (index, attributeName) =>
         @design[attributeName] = designConfig[attributeName]
 
-      @parseAssets(assets, assetsBasePath)
+      @parseAssets(assets)
       @parseComponentProperties(componentProperties)
       @parseImageRatios(imageRatios)
       @parseComponents(components)
@@ -67,18 +66,19 @@ module.exports = designParser =
   # Assets
   # ------
 
-  parseAssets: (assets, assetsBasePath) ->
+  parseAssets: (assets) ->
     return unless assets?
+    basePath = assets.basePath
 
     @eachAsset assets.js, (assetUrl) =>
       @design.dependencies.addJs
         src: assetUrl
-        basePath: assetsBasePath
+        basePath: basePath
 
     @eachAsset assets.css, (assetUrl) =>
       @design.dependencies.addCss
         src: assetUrl
-        basePath: assetsBasePath
+        basePath: basePath
 
 
   # Iterate through assets
