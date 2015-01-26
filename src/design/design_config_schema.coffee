@@ -44,6 +44,7 @@ validator.add 'one empty option', (value) ->
 
 validator.add 'design',
   name: 'string'
+  label: 'string, optional'
   version: 'string, semVer'
   author: 'string, optional'
   description: 'string, optional'
