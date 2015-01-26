@@ -18,7 +18,7 @@ validator.add 'wrapper', (value) ->
   regexp = ///
     <.*\u0020 # start of tag
     (?:[^>]*\u0020|) # optionally followed by other attributes
-    class=("|')doc-section\1 # class="doc-section"
+    class=("|')[^'"]*doc-section[^'"]*\1 # class="doc-section"
     (?:\u0020[^>]*|) # optionally followed by other attributes
     > # end of tag
   ///
