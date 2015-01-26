@@ -67,10 +67,11 @@ module.exports = (grunt) ->
 
     browserify:
       options:
-        extensions: ['.coffee']
+        browserifyOptions:
+          extensions: ['.coffee']
         transform: ['coffeeify']
         debug: true
-        alias: ['./src/modules/jquery_browserify:jquery']
+        alias: ['./src/modules/jquery_browserify.coffee:jquery']
       tmp:
         files:
           '.tmp/livingdocs-engine.js' : [
