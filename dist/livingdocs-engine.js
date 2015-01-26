@@ -3004,7 +3004,7 @@ validator.add('semVer', function(value) {
 
 validator.add('wrapper', function(value) {
   var regexp;
-  regexp = /<.*\u0020(?:[^>]*\u0020|)class=("|')doc-section\1(?:\u0020[^>]*|)>/;
+  regexp = /<.*\u0020(?:[^>]*\u0020|)class=("|')[^'"]*doc-section[^'"]*\1(?:\u0020[^>]*|)>/;
   if (!regexp.test(value)) {
     return "design.wrapper is missing a 'doc-section' class ('" + value + "').";
   } else {
@@ -7620,7 +7620,7 @@ Template.parseIdentifier = function(identifier) {
 },{"../component_tree/component_model":16,"../configuration/config":23,"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/words":49,"../rendering/component_view":50,"./directive_collection":64,"./directive_compiler":65,"./directive_finder":66,"./directive_iterator":67,"jquery":"jquery"}],69:[function(require,module,exports){
 module.exports={
   "version": "0.5.0",
-  "revision": "cd14861"
+  "revision": "1d02a5d"
 }
 
 },{}],"jquery":[function(require,module,exports){
