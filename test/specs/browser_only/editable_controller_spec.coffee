@@ -59,8 +59,10 @@ describe '(browser only) editable_controller:', ->
 
 
     it 'inserts the paragraph component defined by the design', ->
+      defaultBefore = @design.defaultParagraph
       @design.defaultParagraph = test.getTemplate('title')
       @editableController.insert(@title.createView())
+      @design.defaultParagraph = defaultBefore
       expect(@renderer.componentTree.toJson().content[1].identifier).to.equal('test.title')
 
 

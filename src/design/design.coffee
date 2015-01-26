@@ -61,6 +61,26 @@ module.exports = class Design
     name
 
 
+  getDefaultParagraphTemplate: ->
+    @defaultParagraph
+
+
+  getDefaultImageTemplate: ->
+    @defaultImage
+
+
+  getDefaultParagraphComponentName: ->
+    @getDefaultParagraphTemplate()?.name
+
+
+  getDefaultImageComponentName: ->
+    @getDefaultImageTemplate()?.name
+
+
+  getDefaultImageDirectiveName: ->
+    @defaultImage?.directives.firstOfType('image')?.name
+
+
   @getIdentifier: (name, version) ->
     if version
       "#{ name }@#{ version }"

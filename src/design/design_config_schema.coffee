@@ -53,7 +53,6 @@ validator.add 'design',
   metadata: 'array of object, optional'
   wrapper: 'string, optional'
   defaultContent: 'array of object, optional'
-  imageDropComponent: 'object, optional'
   prefilledComponents: 'object, optional'
 
 
