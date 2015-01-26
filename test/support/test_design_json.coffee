@@ -173,10 +173,6 @@ module.exports = do ->
 
   prefilledComponents: {}
 
-  imageDropComponent:
-    identifier: 'normal'
-    directive: 'image'
-
   metadata: [
     identifier: 'title'
     type: 'text'
