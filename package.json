@@ -11,7 +11,7 @@
     "coffee-script": "^1.8.0",
     "deep-equal": "~0.2.1",
     "jquery": "^2.1.1",
-    "jscheme": "^0.2.0",
+    "jscheme": "^0.2.1",
     "jsdom": "^0.10.6",
     "wolfy87-eventemitter": "~4.2.6"
   },
