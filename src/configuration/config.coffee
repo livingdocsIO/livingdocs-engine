@@ -12,7 +12,6 @@ module.exports = augmentConfig(
   ignoreInteraction: '.ld-control'
 
   # Setup paths to load resources dynamically
-  designPath: '/designs'
   livingdocsCssFile: '/assets/css/livingdocs.css'
 
   wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?"
@@ -114,6 +113,9 @@ module.exports = augmentConfig(
         $elem.slideUp(250)
 
 
+  # Define an image placeholder using an url or a base64 image
+  # echo '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><svg xmlns="http://www.w3.org/2000/svg" width="620" height="350" viewBox="0 0 620 350" preserveAspectRatio="none"><rect width="620" height="350" fill="#D4D4CE"/><line x1="0" y1="0" x2="620" y2="350" style="stroke:#ffffff;stroke-width:2"/><line x1="620" y1="0" x2="0" y2="350" style="stroke:#ffffff;stroke-width:2"/></svg>' | base64
+  imagePlaceholder: "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjIwIiBoZWlnaHQ9IjM1MCIgdmlld0JveD0iMCAwIDYyMCAzNTAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjxyZWN0IHdpZHRoPSI2MjAiIGhlaWdodD0iMzUwIiBmaWxsPSIjRDRENENFIi8+PGxpbmUgeDE9IjAiIHkxPSIwIiB4Mj0iNjIwIiB5Mj0iMzUwIiBzdHlsZT0ic3Ryb2tlOiNmZmZmZmY7c3Ryb2tlLXdpZHRoOjIiLz48bGluZSB4MT0iNjIwIiB5MT0iMCIgeDI9IjAiIHkyPSIzNTAiIHN0eWxlPSJzdHJva2U6I2ZmZmZmZjtzdHJva2Utd2lkdGg6MiIvPjwvc3ZnPgo"
   imageServices:
     'resrc.it':
       quality: 75

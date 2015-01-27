@@ -30,10 +30,6 @@ imageService.eachService (name, service) ->
         expect(service.set).to.be.a('function')
 
 
-      it 'has a setPlaceholder() method', ->
-        expect(service.setPlaceholder).to.be.a('function')
-
-
       it 'has a getUrl() method', ->
         expect(service.getUrl).to.be.a('function')
 

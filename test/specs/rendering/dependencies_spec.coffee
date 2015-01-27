@@ -125,9 +125,12 @@ describe 'dependencies:', ->
   describe 'prefix relative urls', ->
 
     beforeEach ->
-      @dependencies = new Dependencies(prefix: '/designs/test')
+      @dependencies = new Dependencies()
       @checkConversion = (a, b) =>
-        @dependencies.addCss(src: a)
+        @dependencies.addCss
+          src: a
+          basePath: '/designs/test'
+
         dependency = @dependencies.css[0]
         expect(dependency.src).to.equal(b)
 

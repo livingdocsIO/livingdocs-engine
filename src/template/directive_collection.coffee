@@ -72,6 +72,10 @@ module.exports = class DirectiveCollection
         callback(directive)
 
 
+  firstOfType: (type) ->
+    this[type]?[0]
+
+
   eachEditable: (callback) ->
     @eachOfType('editable', callback)
 

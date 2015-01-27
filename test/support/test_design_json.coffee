@@ -156,3 +156,18 @@ module.exports = do ->
     components: ['subtitle', 'text', 'image']
   ]
 
+  wrapper: '<div class="doc-section"></div>'
+
+  defaultContent: [
+    identifier: 'hero'
+  ,
+    identifier: 'text'
+  ]
+
+  prefilledComponents: {}
+
+  metadata: [
+    identifier: 'title'
+    type: 'text'
+    matches: ['hero.title']
+  ]

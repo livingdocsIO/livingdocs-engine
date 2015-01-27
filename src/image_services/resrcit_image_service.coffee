@@ -23,13 +23,19 @@ module.exports = do ->
       @setBackgroundImage($elem, url)
 
 
-  setPlaceholder: ($elem) ->
-    imgService.setPlaceholder($elem)
-
-
   getUrl: (value, { crop, quality }={}) ->
     style = ""
-    style += "/C=W#{ crop.width },H#{ crop.height },X#{ crop.x },Y#{ crop.y }" if crop?
+
+    if crop?
+      {x, y, width, height} = crop
+
+      assert typeof x is 'number', 'x should be a number'
+      assert typeof y is 'number', 'y should be a number'
+      assert typeof width is 'number', 'width should be a number'
+      assert typeof height is 'number', 'height should be a number'
+
+      style += "/C=W#{ width },H#{ height },X#{ x },Y#{ y }"
+
     style += "/O=#{ q }" if q = quality || resrcitConfig.quality
     "#{ resrcitConfig.host }#{ style }/#{ value }"
 
