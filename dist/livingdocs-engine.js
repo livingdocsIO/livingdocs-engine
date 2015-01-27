@@ -2836,13 +2836,15 @@ module.exports = CssModificatorProperty = (function() {
 
 
 },{"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/words":49}],25:[function(require,module,exports){
-var Dependencies, Design, OrderedHash, Template, assert, config, log;
+var Dependencies, Design, OrderedHash, Template, assert, config, log, words;
 
 config = require('../configuration/config');
 
 assert = require('../modules/logging/assert');
 
 log = require('../modules/logging/log');
+
+words = require('../modules/words');
 
 Template = require('../template/template');
 
@@ -2852,8 +2854,10 @@ Dependencies = require('../rendering/dependencies');
 
 module.exports = Design = (function() {
   function Design(_arg) {
-    this.name = _arg.name, this.version = _arg.version, this.author = _arg.author, this.description = _arg.description;
+    var label;
+    this.name = _arg.name, this.version = _arg.version, label = _arg.label, this.author = _arg.author, this.description = _arg.description;
     assert(this.name != null, 'Design: param "name" is required');
+    this.label = label || words.humanize(this.name);
     this.identifier = Design.getIdentifier(this.name, this.version);
     this.groups = [];
     this.components = new OrderedHash();
@@ -2932,7 +2936,7 @@ module.exports = Design = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/ordered_hash":46,"../rendering/dependencies":51,"../template/template":68}],26:[function(require,module,exports){
+},{"../configuration/config":23,"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/ordered_hash":46,"../modules/words":49,"../rendering/dependencies":51,"../template/template":68}],26:[function(require,module,exports){
 var Design, Version, assert, designParser;
 
 assert = require('../modules/logging/assert');
@@ -3026,14 +3030,15 @@ validator.add('one empty option', function(value) {
 
 validator.add('design', {
   name: 'string',
+  label: 'string, optional',
   version: 'string, semVer',
   author: 'string, optional',
   description: 'string, optional',
-  assetsBasePath: 'string, optional',
   assets: {
     __validate: 'optional',
     css: 'array of string',
-    js: 'array of string, optional'
+    js: 'array of string, optional',
+    basePath: 'string, optional'
   },
   components: 'array of component',
   componentProperties: {
@@ -3130,8 +3135,8 @@ module.exports = designParser = {
     }
   },
   createDesign: function(designConfig) {
-    var assets, assetsBasePath, componentProperties, components, defaultComponents, error, groups, imageRatios;
-    assets = designConfig.assets, assetsBasePath = designConfig.assetsBasePath, components = designConfig.components, componentProperties = designConfig.componentProperties, groups = designConfig.groups, defaultComponents = designConfig.defaultComponents, imageRatios = designConfig.imageRatios;
+    var assets, componentProperties, components, defaultComponents, error, groups, imageRatios;
+    assets = designConfig.assets, components = designConfig.components, componentProperties = designConfig.componentProperties, groups = designConfig.groups, defaultComponents = designConfig.defaultComponents, imageRatios = designConfig.imageRatios;
     try {
       this.design = this.parseDesignInfo(designConfig);
       $.each(['metadata', 'wrapper', 'defaultContent', 'prefilledComponents'], (function(_this) {
@@ -3139,7 +3144,7 @@ module.exports = designParser = {
           return _this.design[attributeName] = designConfig[attributeName];
         };
       })(this));
-      this.parseAssets(assets, assetsBasePath);
+      this.parseAssets(assets);
       this.parseComponentProperties(componentProperties);
       this.parseImageRatios(imageRatios);
       this.parseComponents(components);
@@ -3157,18 +3162,21 @@ module.exports = designParser = {
     version = new Version(design.version);
     return new Design({
       name: design.name,
+      label: design.label,
       version: version.toString()
     });
   },
-  parseAssets: function(assets, assetsBasePath) {
+  parseAssets: function(assets) {
+    var basePath;
     if (assets == null) {
       return;
     }
+    basePath = assets.basePath;
     this.eachAsset(assets.js, (function(_this) {
       return function(assetUrl) {
         return _this.design.dependencies.addJs({
           src: assetUrl,
-          basePath: assetsBasePath
+          basePath: basePath
         });
       };
     })(this));
@@ -3176,7 +3184,7 @@ module.exports = designParser = {
       return function(assetUrl) {
         return _this.design.dependencies.addCss({
           src: assetUrl,
-          basePath: assetsBasePath
+          basePath: basePath
         });
       };
     })(this));
@@ -7619,8 +7627,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":16,"../configuration/config":23,"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/words":49,"../rendering/component_view":50,"./directive_collection":64,"./directive_compiler":65,"./directive_finder":66,"./directive_iterator":67,"jquery":"jquery"}],69:[function(require,module,exports){
 module.exports={
-  "version": "0.5.0",
-  "revision": "1d02a5d"
+  "version": "0.5.1",
+  "revision": "63330ab"
 }
 
 },{}],"jquery":[function(require,module,exports){
