@@ -48,15 +48,18 @@ module.exports = class Livingdoc extends EventEmitter
     new Livingdoc({ componentTree })
 
 
-  constructor: ({ componentTree }) ->
-    @design = componentTree.design
+  constructor: ({ @componentTree }) ->
 
-    @componentTree = undefined
-    @dependencies = undefined
-    @setComponentTree(componentTree)
+    # @model is a legacy attribute and should be deleted ASAP
+    @model = @componentTree
 
     @interactiveView = undefined
     @additionalViews = []
+
+    @design = @componentTree.design
+    @dependencies = new Dependencies({ @componentTree })
+
+    @forwardComponentTreeEvents()
 
 
   # Get a drop target for an event
@@ -67,15 +70,6 @@ module.exports = class Livingdoc extends EventEmitter
     if elem?
       coords = { left: event.pageX, top: event.pageY }
       target = dom.dropTarget(elem, coords)
-
-
-  setComponentTree: (componentTree) ->
-    assert componentTree.design == @design,
-      'ComponentTree must have the same design as the document'
-
-    @model = @componentTree = componentTree
-    @dependencies = new Dependencies({ @componentTree })
-    @forwardComponentTreeEvents()
 
 
   forwardComponentTreeEvents: ->

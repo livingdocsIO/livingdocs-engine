@@ -104,3 +104,20 @@ describe 'design:', ->
       hero = @design.get('hero')
       expect(hero.styles).to.have.keys('capitalized', 'extra-space', 'color')
 
+
+  describe 'default components', ->
+
+    beforeEach ->
+      @design = test.getDesign()
+
+    it 'gets the default paragraph component name', ->
+      expect(@design.getDefaultParagraphComponentName()).to.equal('text')
+
+
+    it 'gets the default image component name', ->
+      expect(@design.getDefaultImageComponentName()).to.equal('image')
+
+
+    it 'get the default image directive name', ->
+      expect(@design.getDefaultImageDirectiveName()).to.equal('image')
+

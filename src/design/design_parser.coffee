@@ -21,15 +21,32 @@ module.exports = designParser =
 
 
   createDesign: (designConfig) ->
-    { assets, components, componentProperties, groups, defaultComponents, imageRatios } = designConfig
+    {
+      assets
+      components
+      componentProperties
+      groups
+      defaultComponents
+      imageRatios
+    } = designConfig
     try
       @design = @parseDesignInfo(designConfig)
+
+      $.each [
+        'metadata'
+        'wrapper'
+        'defaultContent'
+        'prefilledComponents'
+      ], (index, attributeName) =>
+        @design[attributeName] = designConfig[attributeName]
+
       @parseAssets(assets)
       @parseComponentProperties(componentProperties)
       @parseImageRatios(imageRatios)
       @parseComponents(components)
       @parseGroups(groups)
       @parseDefaults(defaultComponents)
+
     catch error
       error.message = "Error creating the design: #{ error.message }"
       throw error
@@ -41,6 +58,7 @@ module.exports = designParser =
     version = new Version(design.version)
     new Design
       name: design.name
+      label: design.label
       version: version.toString()
 
 
@@ -49,12 +67,17 @@ module.exports = designParser =
 
   parseAssets: (assets) ->
     return unless assets?
+    basePath = assets.basePath
 
     @eachAsset assets.js, (assetUrl) =>
-      @design.dependencies.addJs(src: assetUrl)
+      @design.dependencies.addJs
+        src: assetUrl
+        basePath: basePath
 
     @eachAsset assets.css, (assetUrl) =>
-      @design.dependencies.addCss(src: assetUrl)
+      @design.dependencies.addCss
+        src: assetUrl
+        basePath: basePath
 
 
   # Iterate through assets

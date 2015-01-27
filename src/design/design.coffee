@@ -1,6 +1,7 @@
 config = require('../configuration/config')
 assert = require('../modules/logging/assert')
 log = require('../modules/logging/log')
+words = require('../modules/words')
 Template = require('../template/template')
 OrderedHash = require('../modules/ordered_hash')
 Dependencies = require('../rendering/dependencies')
@@ -12,8 +13,10 @@ module.exports = class Design
   #  - version { String } e.g. '1.0.0'
   #  - author { String }
   #  - description { String }
-  constructor: ({ @name, @version, @author, @description }) ->
+  constructor: ({ @name, @version, label, @author, @description }) ->
     assert @name?, 'Design: param "name" is required'
+    @label = label || words.humanize(@name)
+
     @identifier = Design.getIdentifier(@name, @version)
 
     # templates in a structured format
@@ -24,7 +27,7 @@ module.exports = class Design
     @imageRatios = {}
 
     # js and css dependencies required by the design
-    @dependencies = new Dependencies(prefix: "#{ config.designPath }/#{ this.name }")
+    @dependencies = new Dependencies()
 
     # default components
     @defaultParagraph = undefined
@@ -59,6 +62,26 @@ module.exports = class Design
   getComponentNameFromIdentifier: (identifier) ->
     { name } = Template.parseIdentifier(identifier)
     name
+
+
+  getDefaultParagraphTemplate: ->
+    @defaultParagraph
+
+
+  getDefaultImageTemplate: ->
+    @defaultImage
+
+
+  getDefaultParagraphComponentName: ->
+    @getDefaultParagraphTemplate()?.name
+
+
+  getDefaultImageComponentName: ->
+    @getDefaultImageTemplate()?.name
+
+
+  getDefaultImageDirectiveName: ->
+    @defaultImage?.directives.firstOfType('image')?.name
 
 
   @getIdentifier: (name, version) ->

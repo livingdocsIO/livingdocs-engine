@@ -14,6 +14,20 @@ validator.add 'semVer', (value) ->
   Version.semVer.test(value)
 
 
+validator.add 'wrapper', (value) ->
+  regexp = ///
+    <.*\u0020 # start of tag
+    (?:[^>]*\u0020|) # optionally followed by other attributes
+    class=("|')[^'"]*doc-section[^'"]*\1 # class="doc-section"
+    (?:\u0020[^>]*|) # optionally followed by other attributes
+    > # end of tag
+  ///
+  if not regexp.test(value)
+    "design.wrapper is missing a 'doc-section' class ('#{ value}')."
+  else
+    true
+
+
 # cssClassModificator properties need one 'Default' option
 # with an undefined value. Otherwise users cannot reset the
 # style via the dropdown in the UI.
@@ -30,6 +44,7 @@ validator.add 'one empty option', (value) ->
 
 validator.add 'design',
   name: 'string'
+  label: 'string, optional'
   version: 'string, semVer'
   author: 'string, optional'
   description: 'string, optional'
@@ -37,6 +52,7 @@ validator.add 'design',
     __validate: 'optional'
     css: 'array of string'
     js: 'array of string, optional'
+    basePath: 'string, optional'
   components: 'array of component'
   componentProperties:
     __validate: 'optional'
@@ -49,6 +65,10 @@ validator.add 'design',
   imageRatios:
     __validate: 'optional'
     __additionalProperty: (key, value) -> validator.validate('imageRatio', value)
+  metadata: 'array of object, optional'
+  wrapper: 'string, wrapper, optional'
+  defaultContent: 'array of object, optional'
+  prefilledComponents: 'object, optional'
 
 
 validator.add 'component',

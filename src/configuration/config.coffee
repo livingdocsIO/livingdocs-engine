@@ -12,7 +12,6 @@ module.exports = augmentConfig(
   ignoreInteraction: '.ld-control'
 
   # Setup paths to load resources dynamically
-  designPath: '/designs'
   livingdocsCssFile: '/assets/css/livingdocs.css'
 
   wordSeparators: "./\\()\"':,.;<>~!#%^&*|+=[]{}`~?"

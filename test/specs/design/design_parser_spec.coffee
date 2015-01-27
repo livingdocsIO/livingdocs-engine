@@ -24,6 +24,11 @@ describe 'design_parser:', ->
       expect(@design.get('title')).to.be.an.instanceof(Template)
 
 
+    it 'sets a label inferred from then name', ->
+      expect(@design.label).to.equal('Minimal')
+
+
+
   describe 'complete design', ->
 
     # Use a before to only construct the design one.
@@ -31,6 +36,7 @@ describe 'design_parser:', ->
     before ->
       @design = designParser.parse
         name: 'complete'
+        label: 'A Complete Design'
         version: 'v1.0.0-eternal-bliss'
         author: 'Peter Pan'
 
@@ -87,6 +93,8 @@ describe 'design_parser:', ->
           "16:9":
             label: "16:9 Cinemascope"
             ratio: "16/9"
+
+        wrapper: '<div class="doc-section"></div>'
 
 
     it 'returns an instance of Design', ->
@@ -150,6 +158,14 @@ describe 'design_parser:', ->
 
     it 'sets the default text paragraph', ->
       expect(@design.defaultParagraph.name).to.equal('paragraph')
+
+
+    it 'sets the configured label', ->
+      expect(@design.label).to.equal('A Complete Design')
+
+
+    it 'sets the wrapper', ->
+      expect(@design.wrapper).to.exist
 
 
   describe 'parse error', ->
