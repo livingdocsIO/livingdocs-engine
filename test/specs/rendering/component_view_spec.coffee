@@ -137,8 +137,9 @@ describe 'ComponentView image', ->
 
 
     it 'sets the src', ->
+      @component.set('image', 'http://images.com/1')
       @view = @component.createView()
-      @view.set('image', 'http://images.com/1')
+      @view.updateContent('image')
       expectSrc(@view, 'http://images.com/1')
 
 
@@ -147,11 +148,12 @@ describe 'ComponentView image', ->
     it 'sets the data-src attribute', ->
       @view = @component.createView()
       @view.model.directives.get('image').setImageService('resrc.it')
-      @view.set('image', 'http://images.com/1')
+      @component.set('image', 'http://images.com/1')
+      @view.updateContent('image')
       expect(@view.$html).to.have.html """
         <img
           src=""
-          data-src="http://images.com/1"
+          data-src="https://app.resrc.it/O=75/http://images.com/1"
           class="#{ css.component } resrc"
           #{ test.imageAttr }="image"
           #{ attr.template }="test.image">
@@ -185,7 +187,8 @@ describe 'ComponentView image', ->
 
     it 'does not re-insert placeholders if value is set later on', ->
       imageUrl = 'http://www.bla.com'
-      @view.set('image', imageUrl)
+      @component.set('image', imageUrl)
+      @view.updateContent('image')
       @view.wasAttachedToDom.fireWith(@view.$html)
 
       expect(@view.$html).to.have.html """
@@ -196,10 +199,10 @@ describe 'ComponentView image', ->
 
 
     it 'remove the empty image css class when the image is set', ->
-      placeholderUrl = 'http://placehold.it/0x0/BEF56F/B2E668'
       imageUrl = 'http://www.bla.com'
       @view.wasAttachedToDom.fireWith(@view.$html)
-      @view.set('image', imageUrl)
+      @component.set('image', imageUrl)
+      @view.updateContent('image')
 
       expect(@view.$html).to.have.html """
         <img src="#{ imageUrl }"
@@ -217,8 +220,9 @@ describe 'ComponentView background image', ->
   describe 'with the default image service', ->
 
     it 'sets the background-image in the style attribute', ->
+      @component.set('image', 'http://images.com/1')
       @view = @component.createView()
-      @view.set('image', 'http://images.com/1')
+      @view.updateContent('image')
       expect(@view.$html).to.have.html """
         <div
           style="background-image: url(http://images.com/1);"
