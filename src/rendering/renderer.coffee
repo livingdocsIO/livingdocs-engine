@@ -100,8 +100,8 @@ module.exports = class Renderer
     @insertComponent(model)
 
 
-  componentContentChanged: (model) ->
-    @componentViewForComponent(model).updateContent()
+  componentContentChanged: (model, directiveName) ->
+    @componentViewForComponent(model).updateContent(directiveName)
 
 
   componentHtmlChanged: (model) ->
