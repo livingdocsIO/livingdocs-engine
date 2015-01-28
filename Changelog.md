@@ -1,15 +1,28 @@
+# v.0.5.4
+
+#### Features:
+
+- Render view updates per directive [#153](https://github.com/upfrontIO/livingdocs-engine/pull/153)
+
+#### Bugfixes
+
+- Scripts of doc-html are initialized in the main window not inside the document iframe [#144](https://github.com/upfrontIO/livingdocs-engine/pull/144)
+
+
 # v.0.5.3
 
 #### Bugfixes
 
-- fix bug when adding a dependency to the document [#157](https://github.com/upfrontIO/livingdocs-engine/pull/157)
+- Fix bug when adding a dependency to the document [#157](https://github.com/upfrontIO/livingdocs-engine/pull/157)
+
 
 # v.0.5.2
 
 #### Bugfixes
 
-- fix bug in dependency reference counting [#155](https://github.com/upfrontIO/livingdocs-engine/pull/155)
-- fix failing spec in FF [#156](https://github.com/upfrontIO/livingdocs-engine/pull/156)
+- Fix bug in dependency reference counting [#155](https://github.com/upfrontIO/livingdocs-engine/pull/155)
+- Fix failing spec in FF [#156](https://github.com/upfrontIO/livingdocs-engine/pull/156)
+
 
 # v.0.5.1
 
