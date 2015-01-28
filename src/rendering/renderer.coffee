@@ -36,7 +36,7 @@ module.exports = class Renderer
       @excludedComponentIds[componentId] = true
       view = @componentViews[componentId]
       if view? and view.isAttachedToDom
-        @removeComponent(view.model)
+        @removeComponentFromDom(view.model)
 
 
   setRoot: () ->
@@ -91,21 +91,21 @@ module.exports = class Renderer
 
 
   componentRemoved: (model) ->
-    @removeComponent(model)
-    @deleteCachedComponentViewForComponent(model)
+    @removeComponentFromDom(model)
+    @deleteCachedComponentView(model)
 
 
   componentMoved: (model) ->
-    @removeComponent(model)
+    @removeComponentFromDom(model)
     @insertComponent(model)
 
 
   componentContentChanged: (model, directiveName) ->
-    @componentViewForComponent(model).updateContent(directiveName)
+    @getOrCreateComponentView(model).updateContent(directiveName)
 
 
   componentHtmlChanged: (model) ->
-    @componentViewForComponent(model).updateHtml()
+    @getOrCreateComponentView(model).updateHtml()
 
 
   # Rendering
@@ -115,11 +115,11 @@ module.exports = class Renderer
     @componentViews[componentId]
 
 
-  componentViewForComponent: (model) ->
+  getOrCreateComponentView: (model) ->
     @componentViews[model.id] ||= model.createView(@renderingContainer.isReadOnly)
 
 
-  deleteCachedComponentViewForComponent: (model) ->
+  deleteCachedComponentView: (model) ->
     delete @componentViews[model.id]
 
 
@@ -130,7 +130,7 @@ module.exports = class Renderer
 
   clear: ->
     @componentTree.each (model) =>
-      @componentViewForComponent(model).setAttachedToDom(false)
+      @getOrCreateComponentView(model).setAttachedToDom(false)
 
     @$root.empty()
 
@@ -152,14 +152,14 @@ module.exports = class Renderer
     else
       log.error('Component could not be inserted by renderer.')
 
-    componentView = @componentViewForComponent(model)
+    componentView = @getOrCreateComponentView(model)
     componentView.setAttachedToDom(true)
     @renderingContainer.componentViewWasInserted(componentView)
     @attachChildComponents(model)
 
 
   isComponentAttached: (model) ->
-    model && @componentViewForComponent(model).isAttachedToDom
+    model && @getComponentViewById(model.id)?.isAttachedToDom
 
 
   attachChildComponents: (model) ->
@@ -180,18 +180,21 @@ module.exports = class Renderer
 
 
   $nodeForComponent: (model) ->
-    @componentViewForComponent(model).$html
+    @getOrCreateComponentView(model).$html
 
 
   $nodeForContainer: (container) ->
     if container.isRoot
       @$root
     else
-      parentView = @componentViewForComponent(container.parentComponent)
+      parentView = @getOrCreateComponentView(container.parentComponent)
       $(parentView.getDirectiveElement(container.name))
 
 
-  removeComponent: (model) ->
-    @componentViewForComponent(model).setAttachedToDom(false)
-    @$nodeForComponent(model).detach()
+  # Remove a componentView from the DOM
+  removeComponentFromDom: (model) ->
+    if @isComponentAttached(model)
+      view = @getComponentViewById(model.id)
+      view.$html.detach()
+      view.setAttachedToDom(false)
 
