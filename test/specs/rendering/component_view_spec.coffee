@@ -9,41 +9,41 @@ describe 'component_view:', ->
   describe 'title', ->
 
     beforeEach ->
-      @componentView = test.getTemplate('title').createView()
+      @view = test.getTemplate('title').createView()
       @expected = $ """
         <h1 #{ test.editableAttr }="title"
           class="#{ css.editable } #{ css.component }"
             #{ attr.template }="test.title"
-            #{ attr.placeholder }="#{ @componentView.template.defaults['title'] }">
+            #{ attr.placeholder }="#{ @view.template.defaults['title'] }">
         </h1>
         """
 
 
     it 'sets title', ->
-      @componentView.set('title', 'Humble Bundle')
+      @view.set('title', 'Humble Bundle')
       @expected.addClass(css.noPlaceholder)
       @expected.html('Humble Bundle')
-      expect(@componentView.$html).to.have.html(@expected)
+      expect(@view.$html).to.have.html(@expected)
 
 
     describe 'when clearing an existing value', ->
       it 'clears the html', ->
-        @componentView.set('title', 'foobar')
-        @componentView.set('title', undefined)
-        expect(@componentView.$html[0]).to.have.html(@expected[0])
+        @view.set('title', 'foobar')
+        @view.set('title', undefined)
+        expect(@view.$html[0]).to.have.html(@expected[0])
 
 
     it 'renders content from the model', ->
-      @componentView.model.set('title', 'Humble Bundle')
-      @componentView.render()
+      @view.model.set('title', 'Humble Bundle')
+      @view.render()
       @expected.addClass(css.noPlaceholder)
       @expected.html('Humble Bundle')
-      expect(@componentView.$html).to.have.html(@expected)
+      expect(@view.$html).to.have.html(@expected)
 
 
     it 'gets the title', ->
-      @componentView.set('title', 'Games Galore')
-      expect( @componentView.get('title') ).to.equal('Games Galore')
+      @view.set('title', 'Games Galore')
+      expect( @view.get('title') ).to.equal('Games Galore')
 
 
 describe 'ComponentView title set style', ->
@@ -78,46 +78,46 @@ describe 'ComponentView hero', ->
     component.set('title', 'Humble Bundle 2')
     component.set('tagline', 'Get it now!')
     template = test.getTemplate('hero')
-    @componentView = template.createView(component)
+    @view = template.createView(component)
     @expected = $ """
       <div  class="#{ css.component }"
             #{ attr.template }="test.hero">
         <h1 #{ test.editableAttr }="title"
             class="#{ css.editable } #{ css.noPlaceholder }"
-            #{ attr.placeholder }="#{ @componentView.template.defaults['title'] }">Humble Bundle 2</h1>
+            #{ attr.placeholder }="#{ @view.template.defaults['title'] }">Humble Bundle 2</h1>
         <p  #{ test.editableAttr }="tagline"
             class="#{ css.editable } #{ css.noPlaceholder }"
-            #{ attr.placeholder }="#{ @componentView.template.defaults['tagline'] }">Get it now!</p>
+            #{ attr.placeholder }="#{ @view.template.defaults['tagline'] }">Get it now!</p>
       </div>"""
 
 
   it 'renders component content on creation', ->
-    expect(@componentView.$html).to.have.html(@expected)
+    expect(@view.$html).to.have.html(@expected)
 
 
   it 'sets "extra-space"', ->
     @expected.addClass('extra-space')
-    @componentView.setStyle('extra-space', 'extra-space')
-    expect(@componentView.$html).to.have.html(@expected)
+    @view.setStyle('extra-space', 'extra-space')
+    expect(@view.$html).to.have.html(@expected)
 
 
   it 'resets "extra-space"', ->
-    @componentView.setStyle('extra-space', 'extra-space')
-    @componentView.setStyle('extra-space', '')
-    expect(@componentView.$html).to.have.html(@expected)
+    @view.setStyle('extra-space', 'extra-space')
+    @view.setStyle('extra-space', '')
+    expect(@view.$html).to.have.html(@expected)
 
 
   describe 'empty optional', ->
 
     beforeEach ->
-      @componentView.model.set('tagline', undefined)
-      @componentView.render()
+      @view.model.set('tagline', undefined)
+      @view.render()
       @expected.find('p').hide().html('')
       @expected.find('p').removeClass(css.noPlaceholder)
 
 
     it 'is hidden by default', ->
-      expect(@componentView.$html).to.have.html(@expected)
+      expect(@view.$html).to.have.html(@expected)
 
 
 describe 'ComponentView image', ->
