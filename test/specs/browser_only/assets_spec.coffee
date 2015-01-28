@@ -87,13 +87,18 @@ describe 'assets:', ->
       dependency = new Dependency(src: base64Url, type: 'css')
 
       @assets.loadDependency dependency, =>
-        # Without the timeout Firefox fails this spec. Maybe
-        # it is because of the base64 encoded stylesheet. That's
-        # why I included this hack here instead of in the css loader.
-        setTimeout =>
-          expect( @$elem.css('position') ).to.equal('absolute')
+        if @$elem.css('position') == 'absolute'
           done()
-        , 0
+        else
+          # Without the timeout Firefox fails this spec. Maybe
+          # it is because of the base64 encoded stylesheet. That's
+          # why I included this hack here instead of in the css loader.
+          intervalId = setInterval =>
+            if @$elem.css('position') == 'absolute'
+              console.warn('Warning: Spec "loads a css file from a base64 src" is async')
+              clearInterval(intervalId)
+              done()
+          , 0
 
 
     it 'loads inline css styles', (done) ->
