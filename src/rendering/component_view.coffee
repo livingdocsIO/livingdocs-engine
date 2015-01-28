@@ -29,8 +29,11 @@ module.exports = class ComponentView
     @updateHtml()
 
 
-  updateContent: ->
-    @content(@model.content)
+  updateContent: (directiveName) ->
+    if directiveName
+      @set(directiveName, @model.content[directiveName])
+    else
+      @setAll()
 
     if not @hasFocus()
       @displayOptionals()
@@ -107,23 +110,24 @@ module.exports = class ComponentView
     dom.getAbsoluteBoundingClientRect(@$html[0])
 
 
-  content: (content) ->
-    for name, value of content
-      directive = @model.directives.get(name)
-      if directive.isImage
-        if directive.base64Image?
-          @set(name, directive.base64Image)
-        else
-          @set(name, directive.getImageUrl() )
-      else
-        @set(name, value)
+  # Set all directives at once
+  setAll: ->
+    for name, value of @model.content
+      @set(name, value)
+
+    undefined
 
 
   set: (name, value) ->
-    directive = @directives.get(name)
+    directive = @model.directives.get(name)
     switch directive.type
       when 'editable' then @setEditable(name, value)
-      when 'image' then @setImage(name, value)
+      when 'image'
+        if directive.base64Image?
+          @setImage(name, directive.base64Image)
+        else
+          @setImage(name, directive.getImageUrl() )
+
       when 'html' then @setHtml(name, value)
 
 
@@ -146,7 +150,6 @@ module.exports = class ComponentView
     $elem = @directives.$getElem(name)
     $elem.toggleClass(css.noPlaceholder, Boolean(value))
     $elem.attr(attr.placeholder, @template.defaults[name])
-
     $elem.html(value || '')
 
 
