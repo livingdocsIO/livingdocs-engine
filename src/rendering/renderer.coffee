@@ -174,7 +174,9 @@ module.exports = class Renderer
 
 
   appendComponentToParentContainer: (model) ->
-    @$nodeForComponent(model).appendTo(@$nodeForContainer(model.parentContainer))
+    $node = @$nodeForComponent(model)
+    $container = @$nodeForContainer(model.parentContainer)
+    $container.append($node)
 
 
   $nodeForComponent: (model) ->
