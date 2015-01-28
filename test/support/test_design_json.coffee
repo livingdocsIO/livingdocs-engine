@@ -108,6 +108,16 @@ module.exports = do ->
           <span class="html-placeholder">placholder text</text>
         </div>
         """
+    ,
+      name: 'compositeHtml'
+      label: 'Freeform html with a title'
+      html:
+        """
+        <div #{ htmlAttr }="source">
+          <h1 doc-editable="title">HMTL Freeform Title</h1>
+          <span class="html-placeholder">placholder text</text>
+        </div>
+        """
     ]
 
 

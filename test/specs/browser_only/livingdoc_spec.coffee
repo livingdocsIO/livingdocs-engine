@@ -71,3 +71,15 @@ describe '(browser only) livingdoc:', ->
       @html.setContent('source', '<script>scriptCounter += 1;</script>')
       @html.setContent('source', '<script>scriptCounter += 2;</script>')
       expect(@iframe.contentWindow.scriptCounter).to.equal(3)
+
+
+    it 'does not execute scripts again when a different directive is updated', ->
+      @iframe.contentWindow.scriptCounter = 0
+
+      newHtml = test.createComponent('compositeHtml')
+      @componentTree.append(newHtml)
+      newHtml.setContent('source', '<script>scriptCounter += 1;</script>')
+      newHtml.setContent('title', 'My counter script')
+
+      expect(@iframe.contentWindow.scriptCounter).to.equal(1)
+
