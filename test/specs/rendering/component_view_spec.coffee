@@ -107,6 +107,14 @@ describe 'ComponentView hero', ->
     expect(@view.$html).to.have.html(@expected)
 
 
+  it 'set(directiveName) does only update the passed directive', ->
+    @view.model.set('title', 'bla')
+    spy = sinon.spy(@view, 'set')
+    @view.updateContent('title')
+    expect(spy.callCount).to.equal(1)
+    expect(spy.firstCall.args[0]).to.equal('title')
+
+
   describe 'empty optional', ->
 
     beforeEach ->
