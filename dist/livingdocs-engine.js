@@ -5721,8 +5721,8 @@ module.exports = Dependencies = (function() {
     this.convertToAbsolutePaths(obj);
     dep = new Dependency(obj);
     if (existing = this.getExisting(dep)) {
-      if (typeof component !== "undefined" && component !== null) {
-        return existing.addComponent(component);
+      if (obj.component != null) {
+        return existing.addComponent(obj.component);
       }
     } else {
       return this.addDependency(dep);
@@ -7627,8 +7627,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":16,"../configuration/config":23,"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/words":49,"../rendering/component_view":50,"./directive_collection":64,"./directive_compiler":65,"./directive_finder":66,"./directive_iterator":67,"jquery":"jquery"}],69:[function(require,module,exports){
 module.exports={
-  "version": "0.5.1",
-  "revision": "63330ab"
+  "version": "0.5.2",
+  "revision": "64f434c"
 }
 
 },{}],"jquery":[function(require,module,exports){
