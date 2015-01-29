@@ -26,7 +26,7 @@ module.exports = class Dependencies
     @convertToAbsolutePaths(obj)
     dep = new Dependency(obj)
     if existing = @getExisting(dep)
-      existing.addComponent(component) if component?
+      existing.addComponent(obj.component) if obj.component?
     else
       @addDependency(dep)
 
