@@ -1,3 +1,10 @@
+# v.0.5.2
+
+#### Bugfixes
+
+- fix bug in dependency reference counting [#155](https://github.com/upfrontIO/livingdocs-engine/pull/155)
+- fix failing spec in FF [#156](https://github.com/upfrontIO/livingdocs-engine/pull/156)
+
 # v.0.5.1
 
 #### Features:
