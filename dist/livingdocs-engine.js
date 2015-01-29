@@ -6094,8 +6094,10 @@ module.exports = Dependency = (function() {
     if (this.hasComponent(component)) {
       this.componentCount -= 1;
       this.components[component.id] = void 0;
+      return this.componentCount !== 0;
+    } else {
+      return true;
     }
-    return this.componentCount !== 0;
   };
 
   Dependency.prototype.isSameAs = function(otherDependency) {
@@ -7627,8 +7629,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":16,"../configuration/config":23,"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/words":49,"../rendering/component_view":50,"./directive_collection":64,"./directive_compiler":65,"./directive_finder":66,"./directive_iterator":67,"jquery":"jquery"}],69:[function(require,module,exports){
 module.exports={
-  "version": "0.5.2",
-  "revision": "64f434c"
+  "version": "0.5.3",
+  "revision": "661fdb9"
 }
 
 },{}],"jquery":[function(require,module,exports){
