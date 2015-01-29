@@ -79,6 +79,17 @@ describe 'dependencies:', ->
       expect( @dependencies.hasJs() ).to.equal(false)
 
 
+    it 'does not remove a dependency if there is still another component with this dependency', ->
+      @secondComponent = @componentTree.createComponent('text')
+      @componentTree.append(@secondComponent)
+      for component in [@component, @secondComponent]
+        @dependencies.addJs
+          src: 'https://platform.twitter.com/widgets.js'
+          component: component
+      @component.remove() # remove only the first, second is still there
+      expect( @dependencies.hasJs() ).to.equal(true)
+
+
   describe 'deserialize()', ->
 
     beforeEach ->
