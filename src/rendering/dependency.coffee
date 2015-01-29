@@ -54,7 +54,9 @@ module.exports = class Dependency
       @componentCount -= 1
       @components[component.id] = undefined
 
-    @componentCount != 0
+      @componentCount != 0
+    else
+      true
 
 
   isSameAs: (otherDependency) ->
