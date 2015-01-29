@@ -1,3 +1,9 @@
+# v.0.5.3
+
+#### Bugfixes
+
+- fix bug when adding a dependency to the document [#157](https://github.com/upfrontIO/livingdocs-engine/pull/157)
+
 # v.0.5.2
 
 #### Bugfixes
