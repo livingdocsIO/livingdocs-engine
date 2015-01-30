@@ -7637,8 +7637,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":16,"../configuration/config":23,"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/words":49,"../rendering/component_view":50,"./directive_collection":64,"./directive_compiler":65,"./directive_finder":66,"./directive_iterator":67,"jquery":"jquery"}],69:[function(require,module,exports){
 module.exports={
-  "version": "0.5.3",
-  "revision": "6f2da83"
+  "version": "0.5.4",
+  "revision": "3aacfc8"
 }
 
 },{}],"jquery":[function(require,module,exports){
