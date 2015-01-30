@@ -222,8 +222,8 @@ module.exports = class ComponentTree
     @fireEvent('componentRemoved', component)
 
 
-  contentChanging: (component) ->
-    @fireEvent('componentContentChanged', component)
+  contentChanging: (component, directiveName) ->
+    @fireEvent('componentContentChanged', component, directiveName)
 
 
   htmlChanging: (component) ->

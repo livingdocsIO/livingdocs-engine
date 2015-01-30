@@ -2239,8 +2239,8 @@ module.exports = ComponentTree = (function() {
     return this.fireEvent('componentRemoved', component);
   };
 
-  ComponentTree.prototype.contentChanging = function(component) {
-    return this.fireEvent('componentContentChanged', component);
+  ComponentTree.prototype.contentChanging = function(component, directiveName) {
+    return this.fireEvent('componentContentChanged', component, directiveName);
   };
 
   ComponentTree.prototype.htmlChanging = function(component) {
@@ -5305,8 +5305,12 @@ module.exports = ComponentView = (function() {
     return this.updateHtml();
   };
 
-  ComponentView.prototype.updateContent = function() {
-    this.content(this.model.content);
+  ComponentView.prototype.updateContent = function(directiveName) {
+    if (directiveName) {
+      this.set(directiveName, this.model.content[directiveName]);
+    } else {
+      this.setAll();
+    }
     if (!this.hasFocus()) {
       this.displayOptionals();
     }
@@ -5395,33 +5399,29 @@ module.exports = ComponentView = (function() {
     return dom.getAbsoluteBoundingClientRect(this.$html[0]);
   };
 
-  ComponentView.prototype.content = function(content) {
-    var directive, name, value, _results;
-    _results = [];
-    for (name in content) {
-      value = content[name];
-      directive = this.model.directives.get(name);
-      if (directive.isImage) {
-        if (directive.base64Image != null) {
-          _results.push(this.set(name, directive.base64Image));
-        } else {
-          _results.push(this.set(name, directive.getImageUrl()));
-        }
-      } else {
-        _results.push(this.set(name, value));
-      }
+  ComponentView.prototype.setAll = function() {
+    var name, value, _ref;
+    _ref = this.model.content;
+    for (name in _ref) {
+      value = _ref[name];
+      this.set(name, value);
     }
-    return _results;
+    return void 0;
   };
 
   ComponentView.prototype.set = function(name, value) {
     var directive;
-    directive = this.directives.get(name);
+    directive = this.model.directives.get(name);
     switch (directive.type) {
       case 'editable':
         return this.setEditable(name, value);
       case 'image':
-        return this.setImage(name, value);
+        if (directive.base64Image != null) {
+          return this.setImage(name, directive.base64Image);
+        } else {
+          return this.setImage(name, directive.getImageUrl());
+        }
+        break;
       case 'html':
         return this.setHtml(name, value);
     }
@@ -6184,7 +6184,7 @@ module.exports = Renderer = (function() {
       this.excludedComponentIds[componentId] = true;
       view = this.componentViews[componentId];
       if ((view != null) && view.isAttachedToDom) {
-        return this.removeComponent(view.model);
+        return this.removeComponentFromDom(view.model);
       }
     }
   };
@@ -6241,33 +6241,33 @@ module.exports = Renderer = (function() {
   };
 
   Renderer.prototype.componentRemoved = function(model) {
-    this.removeComponent(model);
-    return this.deleteCachedComponentViewForComponent(model);
+    this.removeComponentFromDom(model);
+    return this.deleteCachedComponentView(model);
   };
 
   Renderer.prototype.componentMoved = function(model) {
-    this.removeComponent(model);
+    this.removeComponentFromDom(model);
     return this.insertComponent(model);
   };
 
-  Renderer.prototype.componentContentChanged = function(model) {
-    return this.componentViewForComponent(model).updateContent();
+  Renderer.prototype.componentContentChanged = function(model, directiveName) {
+    return this.getOrCreateComponentView(model).updateContent(directiveName);
   };
 
   Renderer.prototype.componentHtmlChanged = function(model) {
-    return this.componentViewForComponent(model).updateHtml();
+    return this.getOrCreateComponentView(model).updateHtml();
   };
 
   Renderer.prototype.getComponentViewById = function(componentId) {
     return this.componentViews[componentId];
   };
 
-  Renderer.prototype.componentViewForComponent = function(model) {
+  Renderer.prototype.getOrCreateComponentView = function(model) {
     var _base, _name;
     return (_base = this.componentViews)[_name = model.id] || (_base[_name] = model.createView(this.renderingContainer.isReadOnly));
   };
 
-  Renderer.prototype.deleteCachedComponentViewForComponent = function(model) {
+  Renderer.prototype.deleteCachedComponentView = function(model) {
     return delete this.componentViews[model.id];
   };
 
@@ -6282,7 +6282,7 @@ module.exports = Renderer = (function() {
   Renderer.prototype.clear = function() {
     this.componentTree.each((function(_this) {
       return function(model) {
-        return _this.componentViewForComponent(model).setAttachedToDom(false);
+        return _this.getOrCreateComponentView(model).setAttachedToDom(false);
       };
     })(this));
     return this.$root.empty();
@@ -6307,14 +6307,15 @@ module.exports = Renderer = (function() {
     } else {
       log.error('Component could not be inserted by renderer.');
     }
-    componentView = this.componentViewForComponent(model);
+    componentView = this.getOrCreateComponentView(model);
     componentView.setAttachedToDom(true);
     this.renderingContainer.componentViewWasInserted(componentView);
     return this.attachChildComponents(model);
   };
 
   Renderer.prototype.isComponentAttached = function(model) {
-    return model && this.componentViewForComponent(model).isAttachedToDom;
+    var _ref;
+    return model && ((_ref = this.getComponentViewById(model.id)) != null ? _ref.isAttachedToDom : void 0);
   };
 
   Renderer.prototype.attachChildComponents = function(model) {
@@ -6334,11 +6335,14 @@ module.exports = Renderer = (function() {
   };
 
   Renderer.prototype.appendComponentToParentContainer = function(model) {
-    return this.$nodeForComponent(model).appendTo(this.$nodeForContainer(model.parentContainer));
+    var $container, $node;
+    $node = this.$nodeForComponent(model);
+    $container = this.$nodeForContainer(model.parentContainer);
+    return $container.append($node);
   };
 
   Renderer.prototype.$nodeForComponent = function(model) {
-    return this.componentViewForComponent(model).$html;
+    return this.getOrCreateComponentView(model).$html;
   };
 
   Renderer.prototype.$nodeForContainer = function(container) {
@@ -6346,14 +6350,18 @@ module.exports = Renderer = (function() {
     if (container.isRoot) {
       return this.$root;
     } else {
-      parentView = this.componentViewForComponent(container.parentComponent);
+      parentView = this.getOrCreateComponentView(container.parentComponent);
       return $(parentView.getDirectiveElement(container.name));
     }
   };
 
-  Renderer.prototype.removeComponent = function(model) {
-    this.componentViewForComponent(model).setAttachedToDom(false);
-    return this.$nodeForComponent(model).detach();
+  Renderer.prototype.removeComponentFromDom = function(model) {
+    var view;
+    if (this.isComponentAttached(model)) {
+      view = this.getComponentViewById(model.id);
+      view.$html.detach();
+      return view.setAttachedToDom(false);
+    }
   };
 
   return Renderer;
@@ -7630,7 +7638,7 @@ Template.parseIdentifier = function(identifier) {
 },{"../component_tree/component_model":16,"../configuration/config":23,"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/words":49,"../rendering/component_view":50,"./directive_collection":64,"./directive_compiler":65,"./directive_finder":66,"./directive_iterator":67,"jquery":"jquery"}],69:[function(require,module,exports){
 module.exports={
   "version": "0.5.3",
-  "revision": "661fdb9"
+  "revision": "6f2da83"
 }
 
 },{}],"jquery":[function(require,module,exports){
