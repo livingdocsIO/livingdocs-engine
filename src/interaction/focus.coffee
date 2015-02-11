@@ -25,6 +25,7 @@ module.exports = class Focus
       if componentView
         @componentView = componentView
         @componentFocus.fire(@componentView)
+        @bubbleUpEvent @componentView.model, target: @componentView, type: 'containerFocus'
 
 
   # call after browser focus change
@@ -65,5 +66,13 @@ module.exports = class Focus
       previous = @componentView
       @componentView = undefined
       @componentBlur.fire(previous)
+      @bubbleUpEvent previous.model, target: previous, type: 'containerBlur'
+
+
+  bubbleUpEvent: (component, event) ->
+    if component.parentContainer?
+      this[event.type].fire(component.parentContainer, event)
+      unless component.parentContainer.isRoot
+        @bubbleUpEvent(component.getParent(), event)
 
 
