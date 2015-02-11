@@ -11,6 +11,8 @@ module.exports = class Focus
 
     @componentFocus = $.Callbacks()
     @componentBlur = $.Callbacks()
+    @containerFocus = $.Callbacks()
+    @containerBlur = $.Callbacks()
 
 
   setFocus: (componentView, editableNode) ->
