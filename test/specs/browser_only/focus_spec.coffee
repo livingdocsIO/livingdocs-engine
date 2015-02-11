@@ -74,7 +74,66 @@ describe '(browser only) focus:', ->
       @focus.blur()
 
 
-    it 'does not fire componentBlur() when noting is selected', ->
+    it 'does not fire componentBlur() when nothing is selected', ->
       eventSpy = sinon.spy(@focus.componentBlur, 'fire')
       @focus.blur()
       expect(eventSpy.callCount).to.equal(0)
+
+
+    describe 'for containers', ->
+
+      beforeEach ->
+        @container = test.getTemplate('container').createView()
+        @componentInContainer = test.getTemplate('image').createView()
+        @container.model.containers.default.append(@componentInContainer)
+
+
+      it 'fires containerFocus()', (done) ->
+        @focus.containerFocus.add (container, event) ->
+          expect(container).to.equal(@container)
+          expect(event.target).to.equal(@componentInContainer)
+          done()
+
+        @focus.componentFocused(@componentInContainer)
+
+
+      it 'bubbles up to the root container', (done) ->
+        callCount = 0
+        @focus.containerFocus.add (container, event) ->
+          callCount += 1
+          if callCount == 2
+            # TODO expect root
+            expect(event.target).to.equal(@componentInContainer)
+            done()
+
+        @focus.componentFocused(@componentInContainer)
+
+
+      it 'fires containerBlur()', (done) ->
+        @focus.componentFocused(@componentInContainer)
+        @focus.containerBlur.add (container, event) ->
+          expect(container).to.equal(@container)
+          done()
+        @focus.componentFocused(@componentView)
+
+
+      it 'fires containerFocus() after componentFocus()', (done) ->
+        componentFocusWasCalled = false
+        @focus.componentFocus.add (componentView) =>
+          expect(componentView).to.equal(@componentInContainer)
+          componentFocusWasCalled = true
+        @focus.containerFocus.add (container, event) ->
+          expect(componentFocusWasCalled).to.be.true
+          done()
+        @focus.componentFocused(@componentInContainer)
+
+
+      it 'fires containerBlur() after componentBlur()', ->
+        componentBlurWasCalled = false
+        @focus.componentFocused(@componentInContainer)
+        @focus.componentBlur.add (componentView) =>
+          expect(componentView).to.equal(@componentView)
+          componentBlurWasCalled = true
+        @focus.containerBlur.add (container, event) ->
+          expect(componentBlurWasCalled).to.be.true
+        @focus.componentFocused(@componentView)
