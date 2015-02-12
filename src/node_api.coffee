@@ -3,6 +3,8 @@ jsdom = require("jsdom")
 path = require('path')
 window = jsdom.jsdom().parentWindow
 jquery = require('jquery')(window)
+imageService = require('./image_services/image_service')
+
 
 # rewrite the jquery variable to allow requiring
 # it in other files without setting the window again
@@ -34,3 +36,6 @@ module.exports = do ->
     $.extend(true, config, userConfig)
     augmentConfig(config)
 
+
+  getImageService: (serviceName) ->
+    imageService.get(serviceName)

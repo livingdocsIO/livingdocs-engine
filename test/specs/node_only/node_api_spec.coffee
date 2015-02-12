@@ -2,9 +2,14 @@ engine = require('../../../src/node_api')
 Livingdoc = require('../../../src/livingdoc')
 ComponentTree = require('../../../src/component_tree/component_tree')
 designCache = require('../../../src/design/design_cache')
+
 config = test.config
 
 describe 'node_api:', ->
+
+  it 'exposes "getImageService"', ->
+    expect(engine.getImageService('resrc.it').name).to.equal('resrc.it')
+
 
   describe 'global variables', ->
 
