@@ -1134,7 +1134,7 @@ module.exports = {
 }.call(this));
 
 },{}],11:[function(require,module,exports){
-var ComponentTree, CssLoader, EditorPage, JsLoader, Livingdoc, augmentConfig, config, designCache, doc, version;
+var ComponentTree, CssLoader, EditorPage, JsLoader, Livingdoc, augmentConfig, config, designCache, doc, imageService, version;
 
 config = require('./configuration/config');
 
@@ -1153,6 +1153,8 @@ JsLoader = require('./rendering_container/js_loader');
 CssLoader = require('./rendering_container/css_loader');
 
 version = require('../version');
+
+imageService = require('./image_services/image_service');
 
 module.exports = doc = (function() {
   var editorPage;
@@ -1184,7 +1186,10 @@ module.exports = doc = (function() {
       return augmentConfig(config);
     },
     JsLoader: JsLoader,
-    CssLoader: CssLoader
+    CssLoader: CssLoader,
+    getImageService: function(serviceName) {
+      return imageService.get(serviceName);
+    }
   };
 })();
 
@@ -1192,7 +1197,7 @@ window.doc = doc;
 
 
 
-},{"../version":69,"./component_tree/component_tree":18,"./configuration/augment_config":22,"./configuration/config":23,"./design/design_cache":26,"./livingdoc":39,"./rendering_container/css_loader":57,"./rendering_container/editor_page":58,"./rendering_container/js_loader":60}],12:[function(require,module,exports){
+},{"../version":69,"./component_tree/component_tree":18,"./configuration/augment_config":22,"./configuration/config":23,"./design/design_cache":26,"./image_services/image_service":32,"./livingdoc":39,"./rendering_container/css_loader":57,"./rendering_container/editor_page":58,"./rendering_container/js_loader":60}],12:[function(require,module,exports){
 var ComponentArray;
 
 module.exports = ComponentArray = (function() {
@@ -7637,8 +7642,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":16,"../configuration/config":23,"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/words":49,"../rendering/component_view":50,"./directive_collection":64,"./directive_compiler":65,"./directive_finder":66,"./directive_iterator":67,"jquery":"jquery"}],69:[function(require,module,exports){
 module.exports={
-  "version": "0.5.4",
-  "revision": "3aacfc8"
+  "version": "0.5.5",
+  "revision": "1f9138f"
 }
 
 },{}],"jquery":[function(require,module,exports){

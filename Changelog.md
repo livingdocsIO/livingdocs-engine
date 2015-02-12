@@ -1,3 +1,10 @@
+# v.0.5.5
+
+#### Features:
+
+- Expose image service to browser and node APIs [#160](https://github.com/upfrontIO/livingdocs-engine/pull/160)
+
+
 # v.0.5.4
 
 #### Features:
