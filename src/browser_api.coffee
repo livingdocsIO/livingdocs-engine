@@ -7,6 +7,7 @@ EditorPage = require('./rendering_container/editor_page')
 JsLoader = require('./rendering_container/js_loader')
 CssLoader = require('./rendering_container/css_loader')
 version = require('../version')
+imageService = require('./image_services/image_service')
 
 module.exports = doc = do ->
 
@@ -78,6 +79,8 @@ module.exports = doc = do ->
   CssLoader: CssLoader
 
 
+  getImageService: (serviceName) ->
+    imageService.get(serviceName)
 
 
 # Export global variable
