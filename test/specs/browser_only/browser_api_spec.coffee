@@ -7,6 +7,10 @@ describe 'browser_api:', ->
     doc.design.resetCache()
 
 
+  it 'exposes "getImageService"', ->
+    expect(doc.getImageService('resrc.it').name).to.equal('resrc.it')
+
+
   describe 'Global variable', ->
 
     it 'defines the global variable doc', ->
