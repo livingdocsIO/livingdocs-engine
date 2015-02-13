@@ -1197,7 +1197,7 @@ window.doc = doc;
 
 
 
-},{"../version":69,"./component_tree/component_tree":18,"./configuration/augment_config":22,"./configuration/config":23,"./design/design_cache":26,"./image_services/image_service":32,"./livingdoc":39,"./rendering_container/css_loader":57,"./rendering_container/editor_page":58,"./rendering_container/js_loader":60}],12:[function(require,module,exports){
+},{"../version":70,"./component_tree/component_tree":18,"./configuration/augment_config":22,"./configuration/config":23,"./design/design_cache":26,"./image_services/image_service":32,"./livingdoc":40,"./rendering_container/css_loader":58,"./rendering_container/editor_page":59,"./rendering_container/js_loader":61}],12:[function(require,module,exports){
 var ComponentArray;
 
 module.exports = ComponentArray = (function() {
@@ -1457,7 +1457,7 @@ module.exports = ComponentContainer = (function() {
 
 
 
-},{"../modules/logging/assert":44}],14:[function(require,module,exports){
+},{"../modules/logging/assert":45}],14:[function(require,module,exports){
 var ComponentDirective;
 
 module.exports = ComponentDirective = (function() {
@@ -1550,7 +1550,7 @@ module.exports = {
 
 
 
-},{"../image_services/image_service":32,"../modules/logging/assert":44,"./editable_directive":19,"./html_directive":20,"./image_directive":21}],16:[function(require,module,exports){
+},{"../image_services/image_service":32,"../modules/logging/assert":45,"./editable_directive":19,"./html_directive":20,"./image_directive":21}],16:[function(require,module,exports){
 var ComponentContainer, ComponentModel, DirectiveCollection, assert, config, deepEqual, directiveFactory, guid, log;
 
 deepEqual = require('deep-equal');
@@ -1737,6 +1737,17 @@ module.exports = ComponentModel = (function() {
   ComponentModel.prototype.descendantsAndSelf = function(callback) {
     callback(this);
     return this.descendants(callback);
+  };
+
+  ComponentModel.prototype.parentContainers = function(callback) {
+    var componentModel, _results;
+    componentModel = this;
+    _results = [];
+    while (componentModel != null) {
+      callback(componentModel.parentContainer);
+      _results.push(componentModel = componentModel.getParent());
+    }
+    return _results;
   };
 
   ComponentModel.prototype.descendantContainers = function(callback) {
@@ -1936,7 +1947,7 @@ module.exports = ComponentModel = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/guid":43,"../modules/logging/assert":44,"../modules/logging/log":45,"../template/directive_collection":64,"./component_container":13,"./component_directive_factory":15,"deep-equal":1}],17:[function(require,module,exports){
+},{"../configuration/config":23,"../modules/guid":44,"../modules/logging/assert":45,"../modules/logging/log":46,"../template/directive_collection":65,"./component_container":13,"./component_directive_factory":15,"deep-equal":1}],17:[function(require,module,exports){
 var $, ComponentModel, assert, config, deepEqual, guid, log, serialization;
 
 $ = require('jquery');
@@ -2028,7 +2039,7 @@ module.exports = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/guid":43,"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/serialization":48,"./component_model":16,"deep-equal":1,"jquery":"jquery"}],18:[function(require,module,exports){
+},{"../configuration/config":23,"../modules/guid":44,"../modules/logging/assert":45,"../modules/logging/log":46,"../modules/serialization":49,"./component_model":16,"deep-equal":1,"jquery":"jquery"}],18:[function(require,module,exports){
 var $, ComponentArray, ComponentContainer, ComponentModel, ComponentTree, assert, componentModelSerializer,
   __slice = [].slice;
 
@@ -2380,7 +2391,7 @@ module.exports = ComponentTree = (function() {
 
 
 
-},{"../modules/logging/assert":44,"./component_array":12,"./component_container":13,"./component_model":16,"./component_model_serializer":17,"jquery":"jquery"}],19:[function(require,module,exports){
+},{"../modules/logging/assert":45,"./component_array":12,"./component_container":13,"./component_model":16,"./component_model_serializer":17,"jquery":"jquery"}],19:[function(require,module,exports){
 var ComponentDirective, EditableDirective, assert, words,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -2415,7 +2426,7 @@ module.exports = EditableDirective = (function(_super) {
 
 
 
-},{"../modules/logging/assert":44,"../modules/words":49,"./component_directive":14}],20:[function(require,module,exports){
+},{"../modules/logging/assert":45,"../modules/words":50,"./component_directive":14}],20:[function(require,module,exports){
 var ComponentDirective, HtmlDirective, assert,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -2447,7 +2458,7 @@ module.exports = HtmlDirective = (function(_super) {
 
 
 
-},{"../modules/logging/assert":44,"./component_directive":14}],21:[function(require,module,exports){
+},{"../modules/logging/assert":45,"./component_directive":14}],21:[function(require,module,exports){
 var ComponentDirective, ImageDirective, assert, imageService,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -2614,7 +2625,7 @@ module.exports = ImageDirective = (function(_super) {
 
 
 
-},{"../image_services/image_service":32,"../modules/logging/assert":44,"./component_directive":14}],22:[function(require,module,exports){
+},{"../image_services/image_service":32,"../modules/logging/assert":45,"./component_directive":14}],22:[function(require,module,exports){
 module.exports = function(config) {
   var name, prefix, value, _ref;
   config.docDirective = {};
@@ -2840,7 +2851,7 @@ module.exports = CssModificatorProperty = (function() {
 
 
 
-},{"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/words":49}],25:[function(require,module,exports){
+},{"../modules/logging/assert":45,"../modules/logging/log":46,"../modules/words":50}],25:[function(require,module,exports){
 var Dependencies, Design, OrderedHash, Template, assert, config, log, words;
 
 config = require('../configuration/config');
@@ -2941,7 +2952,7 @@ module.exports = Design = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/ordered_hash":46,"../modules/words":49,"../rendering/dependencies":51,"../template/template":68}],26:[function(require,module,exports){
+},{"../configuration/config":23,"../modules/logging/assert":45,"../modules/logging/log":46,"../modules/ordered_hash":47,"../modules/words":50,"../rendering/dependencies":52,"../template/template":69}],26:[function(require,module,exports){
 var Design, Version, assert, designParser;
 
 assert = require('../modules/logging/assert');
@@ -2992,7 +3003,7 @@ module.exports = (function() {
 
 
 
-},{"../modules/logging/assert":44,"./design":25,"./design_parser":28,"./version":30}],27:[function(require,module,exports){
+},{"../modules/logging/assert":45,"./design":25,"./design_parser":28,"./version":30}],27:[function(require,module,exports){
 var Version, config, jScheme, validator;
 
 config = require('../configuration/config');
@@ -3359,7 +3370,7 @@ Design.parser = designParser;
 
 
 
-},{"../modules/logging/assert":44,"../modules/logging/log":45,"../template/template":68,"./css_modificator_property":24,"./design":25,"./design_config_schema":27,"./image_ratio":29,"./version":30,"jquery":"jquery"}],29:[function(require,module,exports){
+},{"../modules/logging/assert":45,"../modules/logging/log":46,"../template/template":69,"./css_modificator_property":24,"./design":25,"./design_config_schema":27,"./image_ratio":29,"./version":30,"jquery":"jquery"}],29:[function(require,module,exports){
 var $, ImageRatio, assert, words;
 
 $ = require('jquery');
@@ -3396,7 +3407,7 @@ module.exports = ImageRatio = (function() {
 
 
 
-},{"../modules/logging/assert":44,"../modules/words":49,"jquery":"jquery"}],30:[function(require,module,exports){
+},{"../modules/logging/assert":45,"../modules/words":50,"jquery":"jquery"}],30:[function(require,module,exports){
 var Version;
 
 module.exports = Version = (function() {
@@ -3538,7 +3549,7 @@ module.exports = (function() {
 
 
 
-},{"../modules/logging/assert":44,"./default_image_service":31,"./resrcit_image_service":33}],33:[function(require,module,exports){
+},{"../modules/logging/assert":45,"./default_image_service":31,"./resrcit_image_service":33}],33:[function(require,module,exports){
 var assert, imgService, resrcitConfig;
 
 assert = require('../modules/logging/assert');
@@ -3600,7 +3611,7 @@ module.exports = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/logging/assert":44,"./default_image_service":31}],34:[function(require,module,exports){
+},{"../configuration/config":23,"../modules/logging/assert":45,"./default_image_service":31}],34:[function(require,module,exports){
 var ComponentDrag, config, css, dom, isSupported;
 
 dom = require('./dom');
@@ -3954,7 +3965,23 @@ module.exports = ComponentDrag = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/feature_detection/is_supported":42,"./dom":35}],35:[function(require,module,exports){
+},{"../configuration/config":23,"../modules/feature_detection/is_supported":43,"./dom":36}],35:[function(require,module,exports){
+var ContainerEvent;
+
+module.exports = ContainerEvent = (function() {
+  function ContainerEvent(_arg) {
+    var blur, focus;
+    this.target = _arg.target, focus = _arg.focus, blur = _arg.blur;
+    this.type = focus ? 'containerFocus' : blur ? 'containerBlur' : void 0;
+  }
+
+  return ContainerEvent;
+
+})();
+
+
+
+},{}],36:[function(require,module,exports){
 var $, config, css;
 
 $ = require('jquery');
@@ -4241,7 +4268,7 @@ module.exports = (function() {
 
 
 
-},{"../configuration/config":23,"jquery":"jquery"}],36:[function(require,module,exports){
+},{"../configuration/config":23,"jquery":"jquery"}],37:[function(require,module,exports){
 var DragBase, config, css;
 
 config = require('../configuration/config');
@@ -4467,7 +4494,7 @@ module.exports = DragBase = (function() {
 
 
 
-},{"../configuration/config":23}],37:[function(require,module,exports){
+},{"../configuration/config":23}],38:[function(require,module,exports){
 var EditableController, config, dom,
   __slice = [].slice;
 
@@ -4637,10 +4664,12 @@ module.exports = EditableController = (function() {
 
 
 
-},{"../configuration/config":23,"./dom":35}],38:[function(require,module,exports){
-var Focus, dom;
+},{"../configuration/config":23,"./dom":36}],39:[function(require,module,exports){
+var ContainerEvent, Focus, dom;
 
 dom = require('./dom');
+
+ContainerEvent = require('./container_event');
 
 module.exports = Focus = (function() {
   function Focus() {
@@ -4648,6 +4677,8 @@ module.exports = Focus = (function() {
     this.componentView = void 0;
     this.componentFocus = $.Callbacks();
     this.componentBlur = $.Callbacks();
+    this.containerFocus = $.Callbacks();
+    this.containerBlur = $.Callbacks();
   }
 
   Focus.prototype.setFocus = function(componentView, editableNode) {
@@ -4659,7 +4690,11 @@ module.exports = Focus = (function() {
       this.resetComponentView();
       if (componentView) {
         this.componentView = componentView;
-        return this.componentFocus.fire(this.componentView);
+        this.componentFocus.fire(this.componentView);
+        return this.fireContainerEvent({
+          view: this.componentView,
+          focus: true
+        });
       }
     }
   };
@@ -4698,8 +4733,28 @@ module.exports = Focus = (function() {
     if (this.componentView) {
       previous = this.componentView;
       this.componentView = void 0;
-      return this.componentBlur.fire(previous);
+      this.componentBlur.fire(previous);
+      return this.fireContainerEvent({
+        view: previous,
+        blur: true
+      });
     }
+  };
+
+  Focus.prototype.fireContainerEvent = function(_arg) {
+    var blur, component, event, focus, view;
+    view = _arg.view, focus = _arg.focus, blur = _arg.blur;
+    event = new ContainerEvent({
+      target: view,
+      focus: focus,
+      blur: blur
+    });
+    component = view.model;
+    return component.parentContainers((function(_this) {
+      return function(container) {
+        return _this[event.type].fire(container, event);
+      };
+    })(this));
   };
 
   return Focus;
@@ -4708,7 +4763,7 @@ module.exports = Focus = (function() {
 
 
 
-},{"./dom":35}],39:[function(require,module,exports){
+},{"./container_event":35,"./dom":36}],40:[function(require,module,exports){
 var ComponentTree, Dependencies, EventEmitter, InteractivePage, Livingdoc, Page, Renderer, RenderingContainer, View, assert, config, designCache, dom,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -4904,7 +4959,7 @@ module.exports = Livingdoc = (function(_super) {
 
 
 
-},{"./component_tree/component_tree":18,"./configuration/config":23,"./design/design_cache":26,"./interaction/dom":35,"./modules/logging/assert":44,"./rendering/dependencies":51,"./rendering/renderer":54,"./rendering/view":55,"./rendering_container/interactive_page":59,"./rendering_container/page":61,"./rendering_container/rendering_container":62,"wolfy87-eventemitter":10}],40:[function(require,module,exports){
+},{"./component_tree/component_tree":18,"./configuration/config":23,"./design/design_cache":26,"./interaction/dom":36,"./modules/logging/assert":45,"./rendering/dependencies":52,"./rendering/renderer":55,"./rendering/view":56,"./rendering_container/interactive_page":60,"./rendering_container/page":62,"./rendering_container/rendering_container":63,"wolfy87-eventemitter":10}],41:[function(require,module,exports){
 var __slice = [].slice;
 
 module.exports = (function() {
@@ -4925,7 +4980,7 @@ module.exports = (function() {
 
 
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 var $;
 
 $ = require('jquery');
@@ -4943,7 +4998,7 @@ module.exports = (function() {
 
 
 
-},{"jquery":"jquery"}],42:[function(require,module,exports){
+},{"jquery":"jquery"}],43:[function(require,module,exports){
 var detects, executedTests;
 
 detects = require('./feature_detects');
@@ -4961,7 +5016,7 @@ module.exports = function(name) {
 
 
 
-},{"./feature_detects":41}],43:[function(require,module,exports){
+},{"./feature_detects":42}],44:[function(require,module,exports){
 module.exports = (function() {
   var idCounter, lastId;
   idCounter = lastId = void 0;
@@ -4985,7 +5040,7 @@ module.exports = (function() {
 
 
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 var assert, log;
 
 log = require('./log');
@@ -4998,7 +5053,7 @@ module.exports = assert = function(condition, message) {
 
 
 
-},{"./log":45}],45:[function(require,module,exports){
+},{"./log":46}],46:[function(require,module,exports){
 var log,
   __slice = [].slice,
   __hasProp = {}.hasOwnProperty,
@@ -5072,7 +5127,7 @@ module.exports = log = function() {
 
 
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 var OrderedHash;
 
 module.exports = OrderedHash = (function() {
@@ -5117,7 +5172,7 @@ module.exports = OrderedHash = (function() {
 
 
 
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 var Semaphore, assert;
 
 assert = require('../modules/logging/assert');
@@ -5188,7 +5243,7 @@ module.exports = Semaphore = (function() {
 
 
 
-},{"../modules/logging/assert":44}],48:[function(require,module,exports){
+},{"../modules/logging/assert":45}],49:[function(require,module,exports){
 module.exports = (function() {
   return {
     isEmpty: function(obj) {
@@ -5218,7 +5273,7 @@ module.exports = (function() {
 
 
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 var $;
 
 $ = require('jquery');
@@ -5275,7 +5330,7 @@ module.exports = (function() {
 
 
 
-},{"jquery":"jquery"}],50:[function(require,module,exports){
+},{"jquery":"jquery"}],51:[function(require,module,exports){
 var $, ComponentView, DirectiveIterator, attr, config, css, dom, eventing;
 
 $ = require('jquery');
@@ -5693,7 +5748,7 @@ module.exports = ComponentView = (function() {
 
 
 
-},{"../configuration/config":23,"../interaction/dom":35,"../modules/eventing":40,"../template/directive_iterator":67,"jquery":"jquery"}],51:[function(require,module,exports){
+},{"../configuration/config":23,"../interaction/dom":36,"../modules/eventing":41,"../template/directive_iterator":68,"jquery":"jquery"}],52:[function(require,module,exports){
 var $, Dependencies, Dependency, assert, dependenciesToHtml, log,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -5971,7 +6026,7 @@ module.exports = Dependencies = (function() {
 
 
 
-},{"../modules/logging/assert":44,"../modules/logging/log":45,"./dependencies_to_html":52,"./dependency":53,"jquery":"jquery"}],52:[function(require,module,exports){
+},{"../modules/logging/assert":45,"../modules/logging/log":46,"./dependencies_to_html":53,"./dependency":54,"jquery":"jquery"}],53:[function(require,module,exports){
 var CssLoader, JsLoader;
 
 JsLoader = require('../rendering_container/js_loader');
@@ -6053,7 +6108,7 @@ module.exports = {
 
 
 
-},{"../rendering_container/css_loader":57,"../rendering_container/js_loader":60}],53:[function(require,module,exports){
+},{"../rendering_container/css_loader":58,"../rendering_container/js_loader":61}],54:[function(require,module,exports){
 var Dependency, assert;
 
 assert = require('../modules/logging/assert');
@@ -6144,7 +6199,7 @@ module.exports = Dependency = (function() {
 
 
 
-},{"../modules/logging/assert":44}],54:[function(require,module,exports){
+},{"../modules/logging/assert":45}],55:[function(require,module,exports){
 var $, Renderer, Semaphore, assert, config, log;
 
 $ = require('jquery');
@@ -6375,7 +6430,7 @@ module.exports = Renderer = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/semaphore":47,"jquery":"jquery"}],55:[function(require,module,exports){
+},{"../configuration/config":23,"../modules/logging/assert":45,"../modules/logging/log":46,"../modules/semaphore":48,"jquery":"jquery"}],56:[function(require,module,exports){
 var InteractivePage, Page, Renderer, View;
 
 Renderer = require('./renderer');
@@ -6464,7 +6519,7 @@ module.exports = View = (function() {
 
 
 
-},{"../rendering_container/interactive_page":59,"../rendering_container/page":61,"./renderer":54}],56:[function(require,module,exports){
+},{"../rendering_container/interactive_page":60,"../rendering_container/page":62,"./renderer":55}],57:[function(require,module,exports){
 var $, Assets, CssLoader, JsLoader, Semaphore;
 
 $ = require('jquery');
@@ -6537,7 +6592,7 @@ module.exports = Assets = (function() {
 
 
 
-},{"../modules/semaphore":47,"./css_loader":57,"./js_loader":60,"jquery":"jquery"}],57:[function(require,module,exports){
+},{"../modules/semaphore":48,"./css_loader":58,"./js_loader":61,"jquery":"jquery"}],58:[function(require,module,exports){
 var $, CssLoader;
 
 $ = require('jquery');
@@ -6603,7 +6658,7 @@ module.exports = CssLoader = (function() {
 
 
 
-},{"jquery":"jquery"}],58:[function(require,module,exports){
+},{"jquery":"jquery"}],59:[function(require,module,exports){
 var ComponentDrag, DragBase, EditorPage, config, css;
 
 config = require('../configuration/config');
@@ -6666,7 +6721,7 @@ module.exports = EditorPage = (function() {
 
 
 
-},{"../configuration/config":23,"../interaction/component_drag":34,"../interaction/drag_base":36}],59:[function(require,module,exports){
+},{"../configuration/config":23,"../interaction/component_drag":34,"../interaction/drag_base":37}],60:[function(require,module,exports){
 var ComponentDrag, DragBase, EditableController, Focus, InteractivePage, Page, config, dom,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -6841,7 +6896,7 @@ module.exports = InteractivePage = (function(_super) {
 
 
 
-},{"../configuration/config":23,"../interaction/component_drag":34,"../interaction/dom":35,"../interaction/drag_base":36,"../interaction/editable_controller":37,"../interaction/focus":38,"./page":61}],60:[function(require,module,exports){
+},{"../configuration/config":23,"../interaction/component_drag":34,"../interaction/dom":36,"../interaction/drag_base":37,"../interaction/editable_controller":38,"../interaction/focus":39,"./page":62}],61:[function(require,module,exports){
 var JsLoader;
 
 module.exports = JsLoader = (function() {
@@ -6916,7 +6971,7 @@ module.exports = JsLoader = (function() {
 
 
 
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 var $, Assets, Page, RenderingContainer, config,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -7004,7 +7059,7 @@ module.exports = Page = (function(_super) {
 
 
 
-},{"../configuration/config":23,"./assets":56,"./rendering_container":62,"jquery":"jquery"}],62:[function(require,module,exports){
+},{"../configuration/config":23,"./assets":57,"./rendering_container":63,"jquery":"jquery"}],63:[function(require,module,exports){
 var $, RenderingContainer, Semaphore;
 
 $ = require('jquery');
@@ -7041,7 +7096,7 @@ module.exports = RenderingContainer = (function() {
 
 
 
-},{"../modules/semaphore":47,"jquery":"jquery"}],63:[function(require,module,exports){
+},{"../modules/semaphore":48,"jquery":"jquery"}],64:[function(require,module,exports){
 var $, Directive, dom, editorConfig;
 
 $ = require('jquery');
@@ -7101,7 +7156,7 @@ module.exports = Directive = (function() {
 
 
 
-},{"../configuration/config":23,"../interaction/dom":35,"jquery":"jquery"}],64:[function(require,module,exports){
+},{"../configuration/config":23,"../interaction/dom":36,"jquery":"jquery"}],65:[function(require,module,exports){
 var $, Directive, DirectiveCollection, assert, config;
 
 $ = require('jquery');
@@ -7260,7 +7315,7 @@ module.exports = DirectiveCollection = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/logging/assert":44,"./directive":63,"jquery":"jquery"}],65:[function(require,module,exports){
+},{"../configuration/config":23,"../modules/logging/assert":45,"./directive":64,"jquery":"jquery"}],66:[function(require,module,exports){
 var Directive, config;
 
 config = require('../configuration/config');
@@ -7357,7 +7412,7 @@ module.exports = (function() {
 
 
 
-},{"../configuration/config":23,"./directive":63}],66:[function(require,module,exports){
+},{"../configuration/config":23,"./directive":64}],67:[function(require,module,exports){
 var config, directiveFinder;
 
 config = require('../configuration/config');
@@ -7384,7 +7439,7 @@ module.exports = directiveFinder = (function() {
 
 
 
-},{"../configuration/config":23}],67:[function(require,module,exports){
+},{"../configuration/config":23}],68:[function(require,module,exports){
 var DirectiveIterator, config;
 
 config = require('../configuration/config');
@@ -7439,7 +7494,7 @@ module.exports = DirectiveIterator = (function() {
 
 
 
-},{"../configuration/config":23}],68:[function(require,module,exports){
+},{"../configuration/config":23}],69:[function(require,module,exports){
 var $, ComponentModel, ComponentView, DirectiveCollection, DirectiveIterator, Template, assert, config, directiveCompiler, directiveFinder, log, sortByName, words;
 
 $ = require('jquery');
@@ -7640,10 +7695,10 @@ Template.parseIdentifier = function(identifier) {
 
 
 
-},{"../component_tree/component_model":16,"../configuration/config":23,"../modules/logging/assert":44,"../modules/logging/log":45,"../modules/words":49,"../rendering/component_view":50,"./directive_collection":64,"./directive_compiler":65,"./directive_finder":66,"./directive_iterator":67,"jquery":"jquery"}],69:[function(require,module,exports){
+},{"../component_tree/component_model":16,"../configuration/config":23,"../modules/logging/assert":45,"../modules/logging/log":46,"../modules/words":50,"../rendering/component_view":51,"./directive_collection":65,"./directive_compiler":66,"./directive_finder":67,"./directive_iterator":68,"jquery":"jquery"}],70:[function(require,module,exports){
 module.exports={
-  "version": "0.5.5",
-  "revision": "1f9138f"
+  "version": "0.5.6",
+  "revision": "bed5518"
 }
 
 },{}],"jquery":[function(require,module,exports){
