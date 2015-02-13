@@ -1,4 +1,5 @@
 dom = require('./dom')
+ContainerEvent = require('./container_event')
 
 # Component Focus
 # ---------------
@@ -25,7 +26,7 @@ module.exports = class Focus
       if componentView
         @componentView = componentView
         @componentFocus.fire(@componentView)
-        @bubbleUpEvent @componentView.model, target: @componentView, type: 'containerFocus'
+        @fireContainerEvent(view: @componentView, focus: true)
 
 
   # call after browser focus change
@@ -66,13 +67,12 @@ module.exports = class Focus
       previous = @componentView
       @componentView = undefined
       @componentBlur.fire(previous)
-      @bubbleUpEvent previous.model, target: previous, type: 'containerBlur'
+      @fireContainerEvent(view: previous, blur: true)
 
 
-  bubbleUpEvent: (component, event) ->
-    if component.parentContainer?
-      this[event.type].fire(component.parentContainer, event)
-      unless component.parentContainer.isRoot
-        @bubbleUpEvent(component.getParent(), event)
-
+  fireContainerEvent: ({ view, focus, blur }) ->
+    event = new ContainerEvent({ target: view, focus, blur })
+    component = view.model
+    component.parentContainers (container) =>
+      this[event.type].fire(container, event)
 
