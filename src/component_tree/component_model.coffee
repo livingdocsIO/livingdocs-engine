@@ -169,7 +169,15 @@ module.exports = class ComponentModel
     @descendants(callback)
 
 
-  # return all descendant containers (including those of this componentModel)
+  # iterate over all parent containers (bubbling up)
+  parentContainers: (callback) ->
+    componentModel = this
+    while componentModel?
+      callback(componentModel.parentContainer)
+      componentModel = componentModel.getParent()
+
+
+  # iterate over all descendant containers (including those of this componentModel)
   descendantContainers: (callback) ->
     @descendantsAndSelf (componentModel) ->
       for name, componentContainer of componentModel.containers
