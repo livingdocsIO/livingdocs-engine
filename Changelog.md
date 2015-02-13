@@ -1,3 +1,9 @@
+# v.0.5.6
+
+#### Features:
+
+- Container focus event [#161](https://github.com/upfrontIO/livingdocs-engine/pull/161)
+
 # v.0.5.5
 
 #### Features:
