@@ -31,15 +31,9 @@ describe '(browser only) livingdoc:', ->
       @html.setContent('source', '<script>scriptTest = "halleluja!";</script>')
       @componentTree.append(@html)
       @doc.createView(undefined)
-      .then ({ iframe, renderer }) =>
-        renderer.ready =>
-          componentTree = @doc.componentTree
-          html = test.createComponent('html')
-          html.setContent('source', '<script>window.testXy = "halleluja!";</script>')
-          componentTree.append(html)
-          console.log 'testXy:', window.testXy
-          console.log 'iframe.testXy:', iframe.contentWindow.testXy
-          expect(iframe.contentWindow.testXy).to.equal('hey')
+      .then ({ @iframe, @renderer }) =>
+        @renderer.ready =>
+          done()
 
 
     it 'executes scripts in the iframe when components are added before createView()', ->
