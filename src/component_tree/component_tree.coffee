@@ -43,10 +43,11 @@ module.exports = class ComponentTree
     # initialize content before we set the componentTree to the root
     # otherwise all the events will be triggered while building the tree
     @fromJson(content, @design) if content?
-    @metadataExtractor = new MetadataExtractor(this, @design.metadata)
 
     @root.componentTree = this
     @initializeEvents()
+
+    @metadataExtractor = new MetadataExtractor(this, @design.metadata)
 
 
   # Insert a component at the beginning.
@@ -154,10 +155,6 @@ module.exports = class ComponentTree
     assert view.renderer, 'componentTree.setMainView: view does not have an initialized renderer'
     assert view.renderer.componentTree == this, 'componentTree.setMainView: Cannot set renderer from different componentTree'
     @mainRenderer = view.renderer
-
-
-  extractMetadata: ->
-    @metadataExtractor.extract()
 
 
   # Get the componentView for a model
