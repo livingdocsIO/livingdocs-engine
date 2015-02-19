@@ -1,4 +1,4 @@
-module.exports = class MetadataExtractor
+module.exports = class FieldExtractor
 
   constructor: (@componentTree, config) ->
     @parseConfig(config)
@@ -24,36 +24,36 @@ module.exports = class MetadataExtractor
   extractAll: (componentModel) ->
     # TODO: reset and watch emptyThatWouldHaveBeenTaken (for changed)
     # TODO: reset and watch takenComponents (for changed)
-    @metadata = @extractMetadataFromTree()
-    @metadataChanged.fire(@metadata, @metadata)
-    @metadata
+    @fields = @extractFieldsFromTree()
+    @fieldsChanged.fire(@fields, @fields)
+    @fields
 
 
   recheckComponent: (componentModel) ->
-    changedMetadata = {}
-    @extractMetadataFromComponent(componentModel, changedMetadata)
-    @metadata = $.extend(@metadata, changedMetadata) # NOTE: this is a shallow merge by design
-    @metadataChanged.fire(changedMetadata, @metadata)
-    { changedMetadata, @metadata }
+    changedFields = {}
+    @extractFieldsFromComponent(componentModel, changedFields)
+    @fields = $.extend(@fields, changedFields) # NOTE: this is a shallow merge by design
+    @fieldsChanged.fire(changedFields, @fields)
+    { changedFields, @fields }
 
 
   initEvents: ->
-    @metadataChanged = $.Callbacks()
+    @fieldsChanged = $.Callbacks()
 
 
-  extractMetadataFromTree: ->
-    metadata = {}
+  extractFieldsFromTree: ->
+    fields = {}
     @componentTree.each (componentModel) =>
-      @extractMetadataFromComponent(componentModel, metadata)
-    metadata
+      @extractFieldsFromComponent(componentModel, fields)
+    fields
 
 
-  extractMetadataFromComponent: (componentModel, metadata) ->
+  extractFieldsFromComponent: (componentModel, fields) ->
     for match in @matches
       if componentModel.componentName == match.template
         content = componentModel.get(match.directive)
-        if !metadata[match.field]
-          metadata[match.field] =
+        if !fields[match.field]
+          fields[match.field] =
             'content': content,
             'component': componentModel,
             'field': match.directive
@@ -61,11 +61,11 @@ module.exports = class MetadataExtractor
 
   parseConfig: (metadataConfiguration) ->
     @matches = []
-    for metadataItemConfig in metadataConfiguration
-      field = metadataItemConfig.identifier
-      type = metadataItemConfig.type
+    for fieldItemConfig in metadataConfiguration
+      field = fieldItemConfig.identifier
+      type = fieldItemConfig.type
 
-      for pattern in metadataItemConfig.matches
+      for pattern in fieldItemConfig.matches
         [template, directive] = pattern.split('.')
         @matches.push
           'field': field
@@ -78,7 +78,7 @@ module.exports = class MetadataExtractor
     @matches
 
 
-  getMetadata: ->
-    @metadata
+  getFields: ->
+    @fields
 
 

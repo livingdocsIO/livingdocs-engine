@@ -4,7 +4,7 @@ ComponentContainer = require('./component_container')
 ComponentArray = require('./component_array')
 ComponentModel = require('./component_model')
 componentModelSerializer = require('./component_model_serializer')
-MetadataExtractor = require('./metadata_extractor')
+FieldExtractor = require('./field_extractor')
 
 # ComponentTree
 # -----------
@@ -47,7 +47,7 @@ module.exports = class ComponentTree
     @root.componentTree = this
     @initializeEvents()
 
-    @metadataExtractor = new MetadataExtractor this, @design.metadataConfig
+    @fieldExtractor = new FieldExtractor this, @design.metadataConfig
 
 
   # Insert a component at the beginning.
