@@ -2,7 +2,7 @@ ComponentModel = require('../../../src/component_tree/component_model')
 ComponentTree = require('../../../src/component_tree/component_tree')
 FieldExtractor = require('../../../src/component_tree/field_extractor')
 
-describe 'Field Extractor', ->
+describe.only 'Field Extractor', ->
 
   simpleConfig = [
     identifier: 'title'
@@ -12,18 +12,23 @@ describe 'Field Extractor', ->
     identifier: 'description'
     type: 'text'
     matches: ['title.title']
+  ,
+    identifier: 'teaser'
+    type: 'image'
+    matches: ['cover.image']
   ]
 
   beforeEach ->
     @tree = test.createComponentTree [
       hero: { title: 'Hero Title' },
       title: { title: 'Title Title' }
+      cover: { image: 'http://www.lolcats.com/images/1.jpg' }
     ]
     @extractor = new FieldExtractor @tree, simpleConfig
 
 
   it 'parses the config correctly', ->
-    expect(@extractor.getMatches().length).to.equal(3)
+    expect(@extractor.getMatches().length).to.equal(4)
 
 
   describe 'matching', ->
@@ -42,6 +47,11 @@ describe 'Field Extractor', ->
       @tree.find('title').first.up()
       fields = @extractor.getFields()
       expect(fields.title.content).to.equal('Title Title')
+
+
+    it 'uses the teaser image from the cover', ->
+      fields = @extractor.getFields()
+      expect(fields.teaser.image.originalUrl).to.equal('http://www.lolcats.com/images/1.jpg')
 
 
   describe 'recheckComponent()', ->
@@ -90,4 +100,5 @@ describe 'Field Extractor', ->
     it 'fires the fieldsChanged event when moving a component', ->
       @tree.find('title').first.up()
       expect(@fieldsChanged).to.have.been.calledOnce
+
 
