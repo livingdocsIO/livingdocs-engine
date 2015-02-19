@@ -8,7 +8,6 @@ module.exports = class FieldExtractor
     @setupListeners()
 
 
-
   # TODO: ignore empty fields
   # TODO when empty -> extract all
   # TODO fill up watchedComponent and empty containers
@@ -51,12 +50,37 @@ module.exports = class FieldExtractor
   extractFieldsFromComponent: (componentModel, fields) ->
     for match in @matches
       if componentModel.componentName == match.template
-        content = componentModel.get(match.directive)
         if !fields[match.field]
-          fields[match.field] =
-            'content': content,
-            'component': componentModel,
-            'field': match.directive
+          if match.type == 'text'
+            fields[match.field] = @extractTextField(componentModel, match.directive)
+          else if match.type == 'image'
+            fields[match.field] = @extractImageField(componentModel, match.directive, match.data.imageRatios)
+          else
+            assert false, "Unknown template type #{match.type}"
+
+
+  extractTextField: (componentModel, directive) ->
+    content = componentModel.get(directive)
+
+    content: content
+    component: componentModel
+    field: directive
+    text: $("<div>#{ content }</div>").text()
+    type: 'text'
+
+
+  extractImageField: (componentModel, directive, imageRatios) ->
+    image = componentModel.directives.get(directive)
+    return unless image?
+
+    component: componentModel
+    field: directive
+    image:
+      originalUrl: image.getOriginalUrl()
+      url: image.getImageUrl()
+      width: image.getOriginalImageDimensions()?.width
+      height: image.getOriginalImageDimensions()?.height
+      imageService: image.getImageServiceName()
 
 
   parseConfig: (metadataConfig) ->
@@ -68,10 +92,17 @@ module.exports = class FieldExtractor
       for pattern in fieldConfig.matches
         [template, directive] = pattern.split('.')
         @matches.push
-          'field': field
-          'type': type
-          'template': template
-          'directive': directive
+          field: field
+          type: type
+          template: template
+          directive: directive
+          data: @getDataForType(type, fieldConfig)
+
+
+  getDataForType: (type, fieldConfig) ->
+    switch type
+      when 'image'
+        imageRatios: fieldConfig.imageRatios
 
 
   getMatches: ->
