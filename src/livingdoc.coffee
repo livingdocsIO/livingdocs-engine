@@ -80,10 +80,6 @@ module.exports = class Livingdoc extends EventEmitter
       target = dom.dropTarget(elem, coords)
 
 
-  extractMetadata: ->
-    @componentTree.extractMetadata()
-
-
   setComponentTree: (componentTree) ->
     assert componentTree.design == @design,
       'ComponentTree must have the same design as the document'

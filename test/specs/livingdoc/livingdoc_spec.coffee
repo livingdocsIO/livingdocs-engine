@@ -73,12 +73,3 @@ describe 'livingdoc of two components tree:', ->
       title: { title: 'Title Title' }
     ]
     @doc = new Livingdoc({ componentTree })
-
-
-  describe 'extractMetadata()', ->
-
-    it 'extracts metadata', ->
-      metadata = @doc.extractMetadata()
-      expect(metadata.title.content).to.be.equal('Hero Title')
-      expect(metadata.description.content).to.be.equal('Title Title')
-

@@ -4,11 +4,15 @@ MetadataExtractor = require('../../../src/component_tree/metadata_extractor')
 
 describe 'metadata_extractor:', ->
 
-  simpleConfig =
-    "title":
-      matches: ["hero.title", "title.title"]
-    "description":
-      matches: ["title.title"]
+  simpleConfig = [
+    identifier: 'title'
+    type: 'text'
+    matches: ['hero.title', 'title.title']
+  ,
+    identifier: 'description'
+    type: 'text'
+    matches: ['title.title']
+  ]
 
   tree = test.createComponentTree [
     hero: { title: 'Hero Title' },
@@ -19,20 +23,13 @@ describe 'metadata_extractor:', ->
     @tree = test.get('componentTree')
     @extractor = new MetadataExtractor tree, simpleConfig
 
+
   it 'has configured exactly three matches', ->
     expect(@extractor.getMatches().length).to.equal(3)
 
-  it 'has found all metadata', ->
-    metadata = @extractor.extract()
+
+  it 'has found all metadata on init', ->
+    metadata = @extractor.getMetadata()
     expect(metadata.title.content).to.equal('Hero Title')
     expect(metadata.description.content).to.equal('Title Title')
 
-  it 'finds metadata when using the cache', ->
-    cacheSpy = sinon.spy(@extractor, 'updateContent_')
-    # heat up the cache
-    @extractor.extract()
-    # do extraction from cache
-    metadata = @extractor.extract()
-    expect(cacheSpy.callCount).to.equal(1);
-    expect(metadata.title.content).to.equal('Hero Title')
-    expect(metadata.description.content).to.equal('Title Title')

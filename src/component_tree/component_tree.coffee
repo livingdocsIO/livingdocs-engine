@@ -43,10 +43,11 @@ module.exports = class ComponentTree
     # initialize content before we set the componentTree to the root
     # otherwise all the events will be triggered while building the tree
     @fromJson(content, @design) if content?
-    @metadataExtractor = new MetadataExtractor this, @design.metadataConfig
 
     @root.componentTree = this
     @initializeEvents()
+
+    @metadataExtractor = new MetadataExtractor this, @design.metadataConfig
 
 
   # Insert a component at the beginning.
@@ -144,13 +145,6 @@ module.exports = class ComponentTree
     @root = new ComponentContainer(isRoot: true)
 
     oldRoot
-
-
-  extractMetadata: ->
-    @metadataExtractor.extract()
-
-  # eachWithParents: (component, parents) ->
-  #   parents ||= []
 
 
   # Set a main view for this componentTree
