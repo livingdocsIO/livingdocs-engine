@@ -62,14 +62,6 @@ module.exports = class Livingdoc extends EventEmitter
     @forwardComponentTreeEvents()
 
 
-  setComponentTree: (componentTree) ->
-    assert componentTree.design == @design,
-      'ComponentTree must have the same design as the document'
-
-    @model = @componentTree = componentTree
-    @forwardComponentTreeEvents()
-
-
   # Get a drop target for an event
   getDropTarget: ({ event }) ->
     document = event.target.ownerDocument
@@ -78,15 +70,6 @@ module.exports = class Livingdoc extends EventEmitter
     if elem?
       coords = { left: event.pageX, top: event.pageY }
       target = dom.dropTarget(elem, coords)
-
-
-  setComponentTree: (componentTree) ->
-    assert componentTree.design == @design,
-      'ComponentTree must have the same design as the document'
-
-    @model = @componentTree = componentTree
-    @dependencies = new Dependencies({ @componentTree })
-    @forwardComponentTreeEvents()
 
 
   forwardComponentTreeEvents: ->
