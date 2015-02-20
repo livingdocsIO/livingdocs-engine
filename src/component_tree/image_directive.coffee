@@ -26,6 +26,10 @@ module.exports = class ImageDirective extends ComponentDirective
     @templateDirective.getTagName() == 'img'
 
 
+  isBase64: ->
+    !!@base64Image
+
+
   setBase64Image: (base64String) ->
     @base64Image = base64String
     @component.componentTree.contentChanging(@component, @name) if @component.componentTree

@@ -52,11 +52,13 @@ module.exports = class FieldExtractor
   extractFieldsFromComponent: (componentModel, fields) ->
     for match in @matches
       if componentModel.componentName == match.template
-        if !fields[match.field]
+        directiveModel = componentModel.directives.get(match.directive)
+        if !fields[match.field] && !directiveModel.isEmpty()
           if match.type == 'text'
             fields[match.field] = @extractTextField(componentModel, match.directive)
           else if match.type == 'image'
-            fields[match.field] = @extractImageField(componentModel, match.directive, match.data.imageRatios)
+            unless directiveModel.isBase64()
+              fields[match.field] = @extractImageField(componentModel, directiveModel, match.directive)
           else
             assert false, "Unknown template type #{match.type}"
 
@@ -71,9 +73,7 @@ module.exports = class FieldExtractor
     type: 'text'
 
 
-  extractImageField: (componentModel, directive, imageRatios) ->
-    image = componentModel.directives.get(directive)
-    return unless image?
+  extractImageField: (componentModel, image, directive) ->
 
     component: componentModel
     field: directive
