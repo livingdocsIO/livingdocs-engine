@@ -1197,7 +1197,7 @@ window.doc = doc;
 
 
 
-},{"../version":70,"./component_tree/component_tree":18,"./configuration/augment_config":22,"./configuration/config":23,"./design/design_cache":26,"./image_services/image_service":32,"./livingdoc":40,"./rendering_container/css_loader":58,"./rendering_container/editor_page":59,"./rendering_container/js_loader":61}],12:[function(require,module,exports){
+},{"../version":71,"./component_tree/component_tree":18,"./configuration/augment_config":23,"./configuration/config":24,"./design/design_cache":27,"./image_services/image_service":33,"./livingdoc":41,"./rendering_container/css_loader":59,"./rendering_container/editor_page":60,"./rendering_container/js_loader":62}],12:[function(require,module,exports){
 var ComponentArray;
 
 module.exports = ComponentArray = (function() {
@@ -1457,7 +1457,7 @@ module.exports = ComponentContainer = (function() {
 
 
 
-},{"../modules/logging/assert":45}],14:[function(require,module,exports){
+},{"../modules/logging/assert":46}],14:[function(require,module,exports){
 var ComponentDirective;
 
 module.exports = ComponentDirective = (function() {
@@ -1473,6 +1473,10 @@ module.exports = ComponentDirective = (function() {
 
   ComponentDirective.prototype.setContent = function(value) {
     return this.component.setContent(this.name, value);
+  };
+
+  ComponentDirective.prototype.isEmpty = function() {
+    return !this.getContent();
   };
 
   ComponentDirective.prototype.setData = function(key, value) {
@@ -1550,7 +1554,7 @@ module.exports = {
 
 
 
-},{"../image_services/image_service":32,"../modules/logging/assert":45,"./editable_directive":19,"./html_directive":20,"./image_directive":21}],16:[function(require,module,exports){
+},{"../image_services/image_service":33,"../modules/logging/assert":46,"./editable_directive":19,"./html_directive":21,"./image_directive":22}],16:[function(require,module,exports){
 var ComponentContainer, ComponentModel, DirectiveCollection, assert, config, deepEqual, directiveFactory, guid, log;
 
 deepEqual = require('deep-equal');
@@ -1947,7 +1951,7 @@ module.exports = ComponentModel = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/guid":44,"../modules/logging/assert":45,"../modules/logging/log":46,"../template/directive_collection":65,"./component_container":13,"./component_directive_factory":15,"deep-equal":1}],17:[function(require,module,exports){
+},{"../configuration/config":24,"../modules/guid":45,"../modules/logging/assert":46,"../modules/logging/log":47,"../template/directive_collection":66,"./component_container":13,"./component_directive_factory":15,"deep-equal":1}],17:[function(require,module,exports){
 var $, ComponentModel, assert, config, deepEqual, guid, log, serialization;
 
 $ = require('jquery');
@@ -2039,8 +2043,8 @@ module.exports = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/guid":44,"../modules/logging/assert":45,"../modules/logging/log":46,"../modules/serialization":49,"./component_model":16,"deep-equal":1,"jquery":"jquery"}],18:[function(require,module,exports){
-var $, ComponentArray, ComponentContainer, ComponentModel, ComponentTree, assert, componentModelSerializer,
+},{"../configuration/config":24,"../modules/guid":45,"../modules/logging/assert":46,"../modules/logging/log":47,"../modules/serialization":50,"./component_model":16,"deep-equal":1,"jquery":"jquery"}],18:[function(require,module,exports){
+var $, ComponentArray, ComponentContainer, ComponentModel, ComponentTree, FieldExtractor, assert, componentModelSerializer,
   __slice = [].slice;
 
 $ = require('jquery');
@@ -2054,6 +2058,8 @@ ComponentArray = require('./component_array');
 ComponentModel = require('./component_model');
 
 componentModelSerializer = require('./component_model_serializer');
+
+FieldExtractor = require('./field_extractor');
 
 module.exports = ComponentTree = (function() {
   function ComponentTree(_arg) {
@@ -2069,6 +2075,7 @@ module.exports = ComponentTree = (function() {
     }
     this.root.componentTree = this;
     this.initializeEvents();
+    this.fieldExtractor = new FieldExtractor(this, this.design.metadata);
   }
 
   ComponentTree.prototype.prepend = function(component) {
@@ -2391,7 +2398,7 @@ module.exports = ComponentTree = (function() {
 
 
 
-},{"../modules/logging/assert":45,"./component_array":12,"./component_container":13,"./component_model":16,"./component_model_serializer":17,"jquery":"jquery"}],19:[function(require,module,exports){
+},{"../modules/logging/assert":46,"./component_array":12,"./component_container":13,"./component_model":16,"./component_model_serializer":17,"./field_extractor":20,"jquery":"jquery"}],19:[function(require,module,exports){
 var ComponentDirective, EditableDirective, assert, words,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -2426,7 +2433,172 @@ module.exports = EditableDirective = (function(_super) {
 
 
 
-},{"../modules/logging/assert":45,"../modules/words":50,"./component_directive":14}],20:[function(require,module,exports){
+},{"../modules/logging/assert":46,"../modules/words":51,"./component_directive":14}],20:[function(require,module,exports){
+var FieldExtractor, assert;
+
+assert = require('../modules/logging/assert');
+
+module.exports = FieldExtractor = (function() {
+  function FieldExtractor(componentTree, config) {
+    this.componentTree = componentTree;
+    this.parseConfig(config);
+    this.initEvents();
+    this.extractAll();
+    this.setupListeners();
+  }
+
+  FieldExtractor.prototype.setupListeners = function() {
+    this.componentTree.componentAdded.add($.proxy(this.extractAll, this));
+    this.componentTree.componentRemoved.add($.proxy(this.extractAll, this));
+    this.componentTree.componentMoved.add($.proxy(this.extractAll, this));
+    return this.componentTree.componentContentChanged.add($.proxy(this.recheckComponent, this));
+  };
+
+  FieldExtractor.prototype.extractAll = function(componentModel) {
+    this.fields = this.extractFieldsFromTree();
+    this.fieldsChanged.fire(this.fields, this.fields);
+    return this.fields;
+  };
+
+  FieldExtractor.prototype.recheckComponent = function(componentModel) {
+    var changedFields;
+    changedFields = {};
+    this.extractFieldsFromComponent(componentModel, changedFields);
+    this.fields = $.extend(this.fields, changedFields);
+    this.fieldsChanged.fire(changedFields, this.fields);
+    return {
+      changedFields: changedFields,
+      fields: this.fields
+    };
+  };
+
+  FieldExtractor.prototype.initEvents = function() {
+    return this.fieldsChanged = $.Callbacks();
+  };
+
+  FieldExtractor.prototype.extractFieldsFromTree = function() {
+    var fields;
+    fields = {};
+    this.componentTree.each((function(_this) {
+      return function(componentModel) {
+        return _this.extractFieldsFromComponent(componentModel, fields);
+      };
+    })(this));
+    return fields;
+  };
+
+  FieldExtractor.prototype.extractFieldsFromComponent = function(componentModel, fields) {
+    var directiveModel, match, _i, _len, _ref, _results;
+    _ref = this.matches;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      match = _ref[_i];
+      if (componentModel.componentName === match.template) {
+        directiveModel = componentModel.directives.get(match.directive);
+        if (!fields[match.field] && !directiveModel.isEmpty()) {
+          if (match.type === 'text') {
+            _results.push(fields[match.field] = this.extractTextField(componentModel, match.directive));
+          } else if (match.type === 'image') {
+            if (!directiveModel.isBase64()) {
+              _results.push(fields[match.field] = this.extractImageField(componentModel, directiveModel, match.directive));
+            } else {
+              _results.push(void 0);
+            }
+          } else {
+            _results.push(assert(false, "Unknown template type " + match.type));
+          }
+        } else {
+          _results.push(void 0);
+        }
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
+  };
+
+  FieldExtractor.prototype.extractTextField = function(componentModel, directive) {
+    var content;
+    content = componentModel.get(directive);
+    return {
+      content: content,
+      component: componentModel,
+      field: directive,
+      text: $("<div>" + content + "</div>").text(),
+      type: 'text'
+    };
+  };
+
+  FieldExtractor.prototype.extractImageField = function(componentModel, image, directive) {
+    var _ref, _ref1;
+    console.log(componentModel.content[directive]);
+    return {
+      component: componentModel,
+      field: directive,
+      type: 'image',
+      image: {
+        originalUrl: image.getOriginalUrl(),
+        url: image.getImageUrl(),
+        width: (_ref = image.getOriginalImageDimensions()) != null ? _ref.width : void 0,
+        height: (_ref1 = image.getOriginalImageDimensions()) != null ? _ref1.height : void 0,
+        imageService: image.getImageServiceName()
+      }
+    };
+  };
+
+  FieldExtractor.prototype.parseConfig = function(metadataConfiguration) {
+    var directive, field, fieldItemConfig, pattern, template, type, _i, _len, _results;
+    this.matches = [];
+    _results = [];
+    for (_i = 0, _len = metadataConfiguration.length; _i < _len; _i++) {
+      fieldItemConfig = metadataConfiguration[_i];
+      field = fieldItemConfig.identifier;
+      type = fieldItemConfig.type;
+      _results.push((function() {
+        var _j, _len1, _ref, _ref1, _results1;
+        _ref = fieldItemConfig.matches;
+        _results1 = [];
+        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+          pattern = _ref[_j];
+          _ref1 = pattern.split('.'), template = _ref1[0], directive = _ref1[1];
+          _results1.push(this.matches.push({
+            field: field,
+            type: type,
+            template: template,
+            directive: directive,
+            data: this.getDataForType(type, fieldItemConfig)
+          }));
+        }
+        return _results1;
+      }).call(this));
+    }
+    return _results;
+  };
+
+  FieldExtractor.prototype.getDataForType = function(type, fieldItemConfig) {
+    switch (type) {
+      case 'image':
+        return {
+          imageRatios: fieldItemConfig.imageRatios
+        };
+    }
+  };
+
+  FieldExtractor.prototype.getMatches = function() {
+    return this.matches;
+  };
+
+  FieldExtractor.prototype.getFields = function() {
+    return this.fields;
+  };
+
+  return FieldExtractor;
+
+})();
+
+
+
+},{"../modules/logging/assert":46}],21:[function(require,module,exports){
 var ComponentDirective, HtmlDirective, assert,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -2458,7 +2630,7 @@ module.exports = HtmlDirective = (function(_super) {
 
 
 
-},{"../modules/logging/assert":45,"./component_directive":14}],21:[function(require,module,exports){
+},{"../modules/logging/assert":46,"./component_directive":14}],22:[function(require,module,exports){
 var ComponentDirective, ImageDirective, assert, imageService,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -2494,6 +2666,10 @@ module.exports = ImageDirective = (function(_super) {
     return this.templateDirective.getTagName() === 'img';
   };
 
+  ImageDirective.prototype.isBase64 = function() {
+    return !!this.base64Image;
+  };
+
   ImageDirective.prototype.setBase64Image = function(base64String) {
     this.base64Image = base64String;
     if (this.component.componentTree) {
@@ -2527,7 +2703,8 @@ module.exports = ImageDirective = (function(_super) {
   };
 
   ImageDirective.prototype.getOriginalUrl = function() {
-    return this.component.content[this.name].originalUrl || this.getImageUrl();
+    var _ref;
+    return ((_ref = this.component.content[this.name]) != null ? _ref.originalUrl : void 0) || this.getImageUrl();
   };
 
   ImageDirective.prototype.setCrop = function(crop) {
@@ -2570,8 +2747,8 @@ module.exports = ImageDirective = (function(_super) {
     var content;
     content = this.component.content[this.name];
     return {
-      width: content.width,
-      height: content.height
+      width: content != null ? content.width : void 0,
+      height: content != null ? content.height : void 0
     };
   };
 
@@ -2625,7 +2802,7 @@ module.exports = ImageDirective = (function(_super) {
 
 
 
-},{"../image_services/image_service":32,"../modules/logging/assert":45,"./component_directive":14}],22:[function(require,module,exports){
+},{"../image_services/image_service":33,"../modules/logging/assert":46,"./component_directive":14}],23:[function(require,module,exports){
 module.exports = function(config) {
   var name, prefix, value, _ref;
   config.docDirective = {};
@@ -2643,7 +2820,7 @@ module.exports = function(config) {
 
 
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var augmentConfig;
 
 augmentConfig = require('./augment_config');
@@ -2739,7 +2916,7 @@ module.exports = augmentConfig({
 
 
 
-},{"./augment_config":22}],24:[function(require,module,exports){
+},{"./augment_config":23}],25:[function(require,module,exports){
 var CssModificatorProperty, assert, log, words;
 
 log = require('../modules/logging/log');
@@ -2851,7 +3028,7 @@ module.exports = CssModificatorProperty = (function() {
 
 
 
-},{"../modules/logging/assert":45,"../modules/logging/log":46,"../modules/words":50}],25:[function(require,module,exports){
+},{"../modules/logging/assert":46,"../modules/logging/log":47,"../modules/words":51}],26:[function(require,module,exports){
 var Dependencies, Design, OrderedHash, Template, assert, config, log, words;
 
 config = require('../configuration/config');
@@ -2881,6 +3058,7 @@ module.exports = Design = (function() {
     this.dependencies = new Dependencies();
     this.defaultParagraph = void 0;
     this.defaultImage = void 0;
+    this.metadataConfig = {};
   }
 
   Design.prototype.equals = function(design) {
@@ -2952,7 +3130,7 @@ module.exports = Design = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/logging/assert":45,"../modules/logging/log":46,"../modules/ordered_hash":47,"../modules/words":50,"../rendering/dependencies":52,"../template/template":69}],26:[function(require,module,exports){
+},{"../configuration/config":24,"../modules/logging/assert":46,"../modules/logging/log":47,"../modules/ordered_hash":48,"../modules/words":51,"../rendering/dependencies":53,"../template/template":70}],27:[function(require,module,exports){
 var Design, Version, assert, designParser;
 
 assert = require('../modules/logging/assert');
@@ -3003,7 +3181,7 @@ module.exports = (function() {
 
 
 
-},{"../modules/logging/assert":45,"./design":25,"./design_parser":28,"./version":30}],27:[function(require,module,exports){
+},{"../modules/logging/assert":46,"./design":26,"./design_parser":29,"./version":31}],28:[function(require,module,exports){
 var Version, config, jScheme, validator;
 
 config = require('../configuration/config');
@@ -3116,7 +3294,7 @@ validator.add('styleOption', {
 
 
 
-},{"../configuration/config":23,"./version":30,"jscheme":4}],28:[function(require,module,exports){
+},{"../configuration/config":24,"./version":31,"jscheme":4}],29:[function(require,module,exports){
 var $, CssModificatorProperty, Design, ImageRatio, Template, Version, assert, designConfigSchema, designParser, log;
 
 log = require('../modules/logging/log');
@@ -3370,7 +3548,7 @@ Design.parser = designParser;
 
 
 
-},{"../modules/logging/assert":45,"../modules/logging/log":46,"../template/template":69,"./css_modificator_property":24,"./design":25,"./design_config_schema":27,"./image_ratio":29,"./version":30,"jquery":"jquery"}],29:[function(require,module,exports){
+},{"../modules/logging/assert":46,"../modules/logging/log":47,"../template/template":70,"./css_modificator_property":25,"./design":26,"./design_config_schema":28,"./image_ratio":30,"./version":31,"jquery":"jquery"}],30:[function(require,module,exports){
 var $, ImageRatio, assert, words;
 
 $ = require('jquery');
@@ -3407,7 +3585,7 @@ module.exports = ImageRatio = (function() {
 
 
 
-},{"../modules/logging/assert":45,"../modules/words":50,"jquery":"jquery"}],30:[function(require,module,exports){
+},{"../modules/logging/assert":46,"../modules/words":51,"jquery":"jquery"}],31:[function(require,module,exports){
 var Version;
 
 module.exports = Version = (function() {
@@ -3452,7 +3630,7 @@ module.exports = Version = (function() {
 
 
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 module.exports = {
   name: 'default',
   set: function($elem, value) {
@@ -3506,7 +3684,7 @@ module.exports = {
 
 
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var assert, defaultImageService, resrcitImageService;
 
 assert = require('../modules/logging/assert');
@@ -3549,7 +3727,7 @@ module.exports = (function() {
 
 
 
-},{"../modules/logging/assert":45,"./default_image_service":31,"./resrcit_image_service":33}],33:[function(require,module,exports){
+},{"../modules/logging/assert":46,"./default_image_service":32,"./resrcit_image_service":34}],34:[function(require,module,exports){
 var assert, imgService, resrcitConfig;
 
 assert = require('../modules/logging/assert');
@@ -3611,7 +3789,7 @@ module.exports = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/logging/assert":45,"./default_image_service":31}],34:[function(require,module,exports){
+},{"../configuration/config":24,"../modules/logging/assert":46,"./default_image_service":32}],35:[function(require,module,exports){
 var ComponentDrag, config, css, dom, isSupported;
 
 dom = require('./dom');
@@ -3965,7 +4143,7 @@ module.exports = ComponentDrag = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/feature_detection/is_supported":43,"./dom":36}],35:[function(require,module,exports){
+},{"../configuration/config":24,"../modules/feature_detection/is_supported":44,"./dom":37}],36:[function(require,module,exports){
 var ContainerEvent;
 
 module.exports = ContainerEvent = (function() {
@@ -3981,7 +4159,7 @@ module.exports = ContainerEvent = (function() {
 
 
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 var $, config, css;
 
 $ = require('jquery');
@@ -4268,7 +4446,7 @@ module.exports = (function() {
 
 
 
-},{"../configuration/config":23,"jquery":"jquery"}],37:[function(require,module,exports){
+},{"../configuration/config":24,"jquery":"jquery"}],38:[function(require,module,exports){
 var DragBase, config, css;
 
 config = require('../configuration/config');
@@ -4494,7 +4672,7 @@ module.exports = DragBase = (function() {
 
 
 
-},{"../configuration/config":23}],38:[function(require,module,exports){
+},{"../configuration/config":24}],39:[function(require,module,exports){
 var EditableController, config, dom,
   __slice = [].slice;
 
@@ -4664,7 +4842,7 @@ module.exports = EditableController = (function() {
 
 
 
-},{"../configuration/config":23,"./dom":36}],39:[function(require,module,exports){
+},{"../configuration/config":24,"./dom":37}],40:[function(require,module,exports){
 var ContainerEvent, Focus, dom;
 
 dom = require('./dom');
@@ -4763,7 +4941,7 @@ module.exports = Focus = (function() {
 
 
 
-},{"./container_event":35,"./dom":36}],40:[function(require,module,exports){
+},{"./container_event":36,"./dom":37}],41:[function(require,module,exports){
 var ComponentTree, Dependencies, EventEmitter, InteractivePage, Livingdoc, Page, Renderer, RenderingContainer, View, assert, config, designCache, dom,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -4821,6 +4999,12 @@ module.exports = Livingdoc = (function(_super) {
     this.forwardComponentTreeEvents();
   }
 
+  Livingdoc.prototype.setComponentTree = function(componentTree) {
+    assert(componentTree.design === this.design, 'ComponentTree must have the same design as the document');
+    this.model = this.componentTree = componentTree;
+    return this.forwardComponentTreeEvents();
+  };
+
   Livingdoc.prototype.getDropTarget = function(_arg) {
     var clientX, clientY, coords, document, elem, event, target;
     event = _arg.event;
@@ -4834,6 +5018,15 @@ module.exports = Livingdoc = (function(_super) {
       };
       return target = dom.dropTarget(elem, coords);
     }
+  };
+
+  Livingdoc.prototype.setComponentTree = function(componentTree) {
+    assert(componentTree.design === this.design, 'ComponentTree must have the same design as the document');
+    this.model = this.componentTree = componentTree;
+    this.dependencies = new Dependencies({
+      componentTree: this.componentTree
+    });
+    return this.forwardComponentTreeEvents();
   };
 
   Livingdoc.prototype.forwardComponentTreeEvents = function() {
@@ -4959,7 +5152,7 @@ module.exports = Livingdoc = (function(_super) {
 
 
 
-},{"./component_tree/component_tree":18,"./configuration/config":23,"./design/design_cache":26,"./interaction/dom":36,"./modules/logging/assert":45,"./rendering/dependencies":52,"./rendering/renderer":55,"./rendering/view":56,"./rendering_container/interactive_page":60,"./rendering_container/page":62,"./rendering_container/rendering_container":63,"wolfy87-eventemitter":10}],41:[function(require,module,exports){
+},{"./component_tree/component_tree":18,"./configuration/config":24,"./design/design_cache":27,"./interaction/dom":37,"./modules/logging/assert":46,"./rendering/dependencies":53,"./rendering/renderer":56,"./rendering/view":57,"./rendering_container/interactive_page":61,"./rendering_container/page":63,"./rendering_container/rendering_container":64,"wolfy87-eventemitter":10}],42:[function(require,module,exports){
 var __slice = [].slice;
 
 module.exports = (function() {
@@ -4980,7 +5173,7 @@ module.exports = (function() {
 
 
 
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 var $;
 
 $ = require('jquery');
@@ -4998,7 +5191,7 @@ module.exports = (function() {
 
 
 
-},{"jquery":"jquery"}],43:[function(require,module,exports){
+},{"jquery":"jquery"}],44:[function(require,module,exports){
 var detects, executedTests;
 
 detects = require('./feature_detects');
@@ -5016,7 +5209,7 @@ module.exports = function(name) {
 
 
 
-},{"./feature_detects":42}],44:[function(require,module,exports){
+},{"./feature_detects":43}],45:[function(require,module,exports){
 module.exports = (function() {
   var idCounter, lastId;
   idCounter = lastId = void 0;
@@ -5040,7 +5233,7 @@ module.exports = (function() {
 
 
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 var assert, log;
 
 log = require('./log');
@@ -5053,7 +5246,7 @@ module.exports = assert = function(condition, message) {
 
 
 
-},{"./log":46}],46:[function(require,module,exports){
+},{"./log":47}],47:[function(require,module,exports){
 var log,
   __slice = [].slice,
   __hasProp = {}.hasOwnProperty,
@@ -5127,7 +5320,7 @@ module.exports = log = function() {
 
 
 
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 var OrderedHash;
 
 module.exports = OrderedHash = (function() {
@@ -5172,7 +5365,7 @@ module.exports = OrderedHash = (function() {
 
 
 
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 var Semaphore, assert;
 
 assert = require('../modules/logging/assert');
@@ -5243,7 +5436,7 @@ module.exports = Semaphore = (function() {
 
 
 
-},{"../modules/logging/assert":45}],49:[function(require,module,exports){
+},{"../modules/logging/assert":46}],50:[function(require,module,exports){
 module.exports = (function() {
   return {
     isEmpty: function(obj) {
@@ -5273,7 +5466,7 @@ module.exports = (function() {
 
 
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 var $;
 
 $ = require('jquery');
@@ -5330,7 +5523,7 @@ module.exports = (function() {
 
 
 
-},{"jquery":"jquery"}],51:[function(require,module,exports){
+},{"jquery":"jquery"}],52:[function(require,module,exports){
 var $, ComponentView, DirectiveIterator, attr, config, css, dom, eventing;
 
 $ = require('jquery');
@@ -5748,7 +5941,7 @@ module.exports = ComponentView = (function() {
 
 
 
-},{"../configuration/config":23,"../interaction/dom":36,"../modules/eventing":41,"../template/directive_iterator":68,"jquery":"jquery"}],52:[function(require,module,exports){
+},{"../configuration/config":24,"../interaction/dom":37,"../modules/eventing":42,"../template/directive_iterator":69,"jquery":"jquery"}],53:[function(require,module,exports){
 var $, Dependencies, Dependency, assert, dependenciesToHtml, log,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -6026,7 +6219,7 @@ module.exports = Dependencies = (function() {
 
 
 
-},{"../modules/logging/assert":45,"../modules/logging/log":46,"./dependencies_to_html":53,"./dependency":54,"jquery":"jquery"}],53:[function(require,module,exports){
+},{"../modules/logging/assert":46,"../modules/logging/log":47,"./dependencies_to_html":54,"./dependency":55,"jquery":"jquery"}],54:[function(require,module,exports){
 var CssLoader, JsLoader;
 
 JsLoader = require('../rendering_container/js_loader');
@@ -6108,7 +6301,7 @@ module.exports = {
 
 
 
-},{"../rendering_container/css_loader":58,"../rendering_container/js_loader":61}],54:[function(require,module,exports){
+},{"../rendering_container/css_loader":59,"../rendering_container/js_loader":62}],55:[function(require,module,exports){
 var Dependency, assert;
 
 assert = require('../modules/logging/assert');
@@ -6199,7 +6392,7 @@ module.exports = Dependency = (function() {
 
 
 
-},{"../modules/logging/assert":45}],55:[function(require,module,exports){
+},{"../modules/logging/assert":46}],56:[function(require,module,exports){
 var $, Renderer, Semaphore, assert, config, log;
 
 $ = require('jquery');
@@ -6430,7 +6623,7 @@ module.exports = Renderer = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/logging/assert":45,"../modules/logging/log":46,"../modules/semaphore":48,"jquery":"jquery"}],56:[function(require,module,exports){
+},{"../configuration/config":24,"../modules/logging/assert":46,"../modules/logging/log":47,"../modules/semaphore":49,"jquery":"jquery"}],57:[function(require,module,exports){
 var InteractivePage, Page, Renderer, View;
 
 Renderer = require('./renderer');
@@ -6519,7 +6712,7 @@ module.exports = View = (function() {
 
 
 
-},{"../rendering_container/interactive_page":60,"../rendering_container/page":62,"./renderer":55}],57:[function(require,module,exports){
+},{"../rendering_container/interactive_page":61,"../rendering_container/page":63,"./renderer":56}],58:[function(require,module,exports){
 var $, Assets, CssLoader, JsLoader, Semaphore;
 
 $ = require('jquery');
@@ -6592,7 +6785,7 @@ module.exports = Assets = (function() {
 
 
 
-},{"../modules/semaphore":48,"./css_loader":58,"./js_loader":61,"jquery":"jquery"}],58:[function(require,module,exports){
+},{"../modules/semaphore":49,"./css_loader":59,"./js_loader":62,"jquery":"jquery"}],59:[function(require,module,exports){
 var $, CssLoader;
 
 $ = require('jquery');
@@ -6658,7 +6851,7 @@ module.exports = CssLoader = (function() {
 
 
 
-},{"jquery":"jquery"}],59:[function(require,module,exports){
+},{"jquery":"jquery"}],60:[function(require,module,exports){
 var ComponentDrag, DragBase, EditorPage, config, css;
 
 config = require('../configuration/config');
@@ -6721,7 +6914,7 @@ module.exports = EditorPage = (function() {
 
 
 
-},{"../configuration/config":23,"../interaction/component_drag":34,"../interaction/drag_base":37}],60:[function(require,module,exports){
+},{"../configuration/config":24,"../interaction/component_drag":35,"../interaction/drag_base":38}],61:[function(require,module,exports){
 var ComponentDrag, DragBase, EditableController, Focus, InteractivePage, Page, config, dom,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -6896,7 +7089,7 @@ module.exports = InteractivePage = (function(_super) {
 
 
 
-},{"../configuration/config":23,"../interaction/component_drag":34,"../interaction/dom":36,"../interaction/drag_base":37,"../interaction/editable_controller":38,"../interaction/focus":39,"./page":62}],61:[function(require,module,exports){
+},{"../configuration/config":24,"../interaction/component_drag":35,"../interaction/dom":37,"../interaction/drag_base":38,"../interaction/editable_controller":39,"../interaction/focus":40,"./page":63}],62:[function(require,module,exports){
 var JsLoader;
 
 module.exports = JsLoader = (function() {
@@ -6971,7 +7164,7 @@ module.exports = JsLoader = (function() {
 
 
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 var $, Assets, Page, RenderingContainer, config,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -7059,7 +7252,7 @@ module.exports = Page = (function(_super) {
 
 
 
-},{"../configuration/config":23,"./assets":57,"./rendering_container":63,"jquery":"jquery"}],63:[function(require,module,exports){
+},{"../configuration/config":24,"./assets":58,"./rendering_container":64,"jquery":"jquery"}],64:[function(require,module,exports){
 var $, RenderingContainer, Semaphore;
 
 $ = require('jquery');
@@ -7096,7 +7289,7 @@ module.exports = RenderingContainer = (function() {
 
 
 
-},{"../modules/semaphore":48,"jquery":"jquery"}],64:[function(require,module,exports){
+},{"../modules/semaphore":49,"jquery":"jquery"}],65:[function(require,module,exports){
 var $, Directive, dom, editorConfig;
 
 $ = require('jquery');
@@ -7156,7 +7349,7 @@ module.exports = Directive = (function() {
 
 
 
-},{"../configuration/config":23,"../interaction/dom":36,"jquery":"jquery"}],65:[function(require,module,exports){
+},{"../configuration/config":24,"../interaction/dom":37,"jquery":"jquery"}],66:[function(require,module,exports){
 var $, Directive, DirectiveCollection, assert, config;
 
 $ = require('jquery');
@@ -7315,7 +7508,7 @@ module.exports = DirectiveCollection = (function() {
 
 
 
-},{"../configuration/config":23,"../modules/logging/assert":45,"./directive":64,"jquery":"jquery"}],66:[function(require,module,exports){
+},{"../configuration/config":24,"../modules/logging/assert":46,"./directive":65,"jquery":"jquery"}],67:[function(require,module,exports){
 var Directive, config;
 
 config = require('../configuration/config');
@@ -7412,7 +7605,7 @@ module.exports = (function() {
 
 
 
-},{"../configuration/config":23,"./directive":64}],67:[function(require,module,exports){
+},{"../configuration/config":24,"./directive":65}],68:[function(require,module,exports){
 var config, directiveFinder;
 
 config = require('../configuration/config');
@@ -7439,7 +7632,7 @@ module.exports = directiveFinder = (function() {
 
 
 
-},{"../configuration/config":23}],68:[function(require,module,exports){
+},{"../configuration/config":24}],69:[function(require,module,exports){
 var DirectiveIterator, config;
 
 config = require('../configuration/config');
@@ -7494,7 +7687,7 @@ module.exports = DirectiveIterator = (function() {
 
 
 
-},{"../configuration/config":23}],69:[function(require,module,exports){
+},{"../configuration/config":24}],70:[function(require,module,exports){
 var $, ComponentModel, ComponentView, DirectiveCollection, DirectiveIterator, Template, assert, config, directiveCompiler, directiveFinder, log, sortByName, words;
 
 $ = require('jquery');
@@ -7695,10 +7888,10 @@ Template.parseIdentifier = function(identifier) {
 
 
 
-},{"../component_tree/component_model":16,"../configuration/config":23,"../modules/logging/assert":45,"../modules/logging/log":46,"../modules/words":50,"../rendering/component_view":51,"./directive_collection":65,"./directive_compiler":66,"./directive_finder":67,"./directive_iterator":68,"jquery":"jquery"}],70:[function(require,module,exports){
+},{"../component_tree/component_model":16,"../configuration/config":24,"../modules/logging/assert":46,"../modules/logging/log":47,"../modules/words":51,"../rendering/component_view":52,"./directive_collection":66,"./directive_compiler":67,"./directive_finder":68,"./directive_iterator":69,"jquery":"jquery"}],71:[function(require,module,exports){
 module.exports={
   "version": "0.5.6",
-  "revision": "bed5518"
+  "revision": "c9f192f"
 }
 
 },{}],"jquery":[function(require,module,exports){

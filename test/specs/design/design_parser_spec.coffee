@@ -89,6 +89,12 @@ describe 'design_parser:', ->
         defaultComponents:
           paragraph: 'paragraph'
 
+        metadataConfig:
+          "title":
+            matches: ["hero.title", "title.title"]
+          "description":
+            matches: ["title.title"]
+
         imageRatios:
           "16:9":
             label: "16:9 Cinemascope"

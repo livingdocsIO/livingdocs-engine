@@ -155,6 +155,13 @@ module.exports = do ->
       ratio: "16/9"
 
 
+  metadataConfig:
+    "title":
+      matches: ["hero.title", "title.title"]
+    "description":
+      matches: ["title.title"]
+
+
   groups: [
     label: 'Layout'
     components: ['row', 'container', 'stuffedContainer']

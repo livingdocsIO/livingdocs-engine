@@ -26,6 +26,10 @@ module.exports = class ImageDirective extends ComponentDirective
     @templateDirective.getTagName() == 'img'
 
 
+  isBase64: ->
+    !!@base64Image
+
+
   setBase64Image: (base64String) ->
     @base64Image = base64String
     @component.componentTree.contentChanging(@component, @name) if @component.componentTree
@@ -53,7 +57,7 @@ module.exports = class ImageDirective extends ComponentDirective
 
 
   getOriginalUrl: ->
-    @component.content[@name].originalUrl || @getImageUrl()
+    @component.content[@name]?.originalUrl || @getImageUrl()
 
 
   setCrop: (crop) ->
@@ -83,8 +87,8 @@ module.exports = class ImageDirective extends ComponentDirective
   getOriginalImageDimensions: ->
     content = @component.content[@name]
 
-    width: content.width,
-    height: content.height
+    width: content?.width,
+    height: content?.height
 
 
   resetCrop: ->

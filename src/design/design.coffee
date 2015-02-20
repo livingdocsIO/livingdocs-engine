@@ -33,6 +33,8 @@ module.exports = class Design
     @defaultParagraph = undefined
     @defaultImage = undefined
 
+    @metadataConfig = {}
+
 
   equals: (design) ->
     design.name == @name && design.version == @version

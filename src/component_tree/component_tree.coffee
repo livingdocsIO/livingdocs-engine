@@ -4,6 +4,7 @@ ComponentContainer = require('./component_container')
 ComponentArray = require('./component_array')
 ComponentModel = require('./component_model')
 componentModelSerializer = require('./component_model_serializer')
+FieldExtractor = require('./field_extractor')
 
 # ComponentTree
 # -----------
@@ -45,6 +46,7 @@ module.exports = class ComponentTree
 
     @root.componentTree = this
     @initializeEvents()
+    @fieldExtractor = new FieldExtractor this, @design.metadata
 
 
   # Insert a component at the beginning.
@@ -275,10 +277,12 @@ module.exports = class ComponentTree
 
 
   # Initialize a componentTree
-  # This method suppresses change events in the componentTree.
+  # This method suppresses change events in the componentTree by default, can
+  # be changed by setting silent = false
   #
   # Consider to change params:
-  # fromData({ content, design, silent }) # silent [boolean]: suppress change events
+  # fromData({ content, design, silent }) # silent [boolean]: suppress change
+  # events
   fromData: (data, design, silent=true) ->
     if design?
       assert not @design? || design.equals(@design), 'Error loading data. Specified design is different from current componentTree design'
@@ -306,6 +310,7 @@ module.exports = class ComponentTree
     @fromData(data, design, false)
 
 
+  # Consider extracting animation logic to another level
   addDataWithAnimation: (data, delay=200) ->
     assert @design?, 'Error adding data. ComponentTree has no design'
 
