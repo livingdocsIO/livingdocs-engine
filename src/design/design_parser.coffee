@@ -27,7 +27,6 @@ module.exports = designParser =
       componentProperties
       groups
       defaultComponents
-      metadataConfig
       imageRatios
     } = designConfig
     try
@@ -47,7 +46,6 @@ module.exports = designParser =
       @parseComponents(components)
       @parseGroups(groups)
       @parseDefaults(defaultComponents)
-      @setMetadataConfig(metadataConfig)
     catch error
       error.message = "Error creating the design: #{ error.message }"
       throw error
@@ -111,9 +109,6 @@ module.exports = designParser =
         name: name
         label: ratio.label
         ratio: ratio.ratio
-
-  setMetadataConfig: (metadataConfig) ->
-    @design.metadataConfig = metadataConfig
 
 
   parseComponents: (components=[]) ->

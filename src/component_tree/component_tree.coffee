@@ -46,8 +46,7 @@ module.exports = class ComponentTree
 
     @root.componentTree = this
     @initializeEvents()
-
-    @fieldExtractor = new FieldExtractor this, @design.metadataConfig
+    @fieldExtractor = new FieldExtractor this, @design.metadata
 
 
   # Insert a component at the beginning.

@@ -1,3 +1,5 @@
+assert = require('../modules/logging/assert')
+
 module.exports = class FieldExtractor
 
   constructor: (@componentTree, config) ->

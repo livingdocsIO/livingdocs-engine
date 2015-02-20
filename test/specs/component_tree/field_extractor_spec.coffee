@@ -2,7 +2,7 @@ ComponentModel = require('../../../src/component_tree/component_model')
 ComponentTree = require('../../../src/component_tree/component_tree')
 FieldExtractor = require('../../../src/component_tree/field_extractor')
 
-describe.only 'Field Extractor', ->
+describe 'Field Extractor', ->
 
   simpleConfig = [
     identifier: 'title'
