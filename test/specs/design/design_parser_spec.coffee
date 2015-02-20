@@ -131,12 +131,6 @@ describe 'design_parser:', ->
       expect(title.styles['position']).to.be.an.instanceof(CssModificatorProperty)
 
 
-    it 'sets the metadataConfig', ->
-      config = @design.metadataConfig
-      expect(config.title.matches.length).to.equal(2)
-      expect(config.description.matches.length).to.equal(1)
-
-
     it 'parses the imageRatios', ->
       ratio = @design.imageRatios["16:9"]
       expect(ratio.name).to.equal('16:9')
