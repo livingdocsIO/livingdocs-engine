@@ -77,6 +77,7 @@ module.exports = class FieldExtractor
 
     component: componentModel
     field: directive
+    type: 'image'
     image:
       originalUrl: image.getOriginalUrl()
       url: image.getImageUrl()
