@@ -1,6 +1,7 @@
 ComponentModel = require('../../../src/component_tree/component_model')
 ComponentTree = require('../../../src/component_tree/component_tree')
 FieldExtractor = require('../../../src/component_tree/field_extractor')
+MetadataConfig = require('../../../src/configuration/metadata_config')
 
 describe 'Field Extractor', ->
 
@@ -24,11 +25,12 @@ describe 'Field Extractor', ->
       title: { title: 'Title Title' }
       cover: { image: 'http://www.lolcats.com/images/1.jpg' }
     ]
-    @extractor = new FieldExtractor @tree, simpleConfig
+    @metadataConfig = new MetadataConfig simpleConfig
+    @extractor = new FieldExtractor @tree, @metadataConfig
 
 
   it 'parses the config correctly', ->
-    expect(@extractor.getMatches().length).to.equal(4)
+    expect(@extractor.metadataConfig.getFieldMatches().length).to.equal(4)
 
 
   describe 'matching', ->

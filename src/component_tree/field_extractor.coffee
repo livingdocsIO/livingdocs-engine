@@ -2,8 +2,7 @@ assert = require('../modules/logging/assert')
 
 module.exports = class FieldExtractor
 
-  constructor: (@componentTree, config) ->
-    @parseConfig(config)
+  constructor: (@componentTree, @metadataConfig) ->
     @initEvents()
     # start by extracting everything
     @extractAll()
@@ -50,7 +49,7 @@ module.exports = class FieldExtractor
 
 
   extractFieldsFromComponent: (componentModel, fields) ->
-    for match in @matches
+    for match in @metadataConfig.getFieldMatches()
       if componentModel.componentName == match.template
         directiveModel = componentModel.directives.get(match.directive)
         if !fields[match.field] && !directiveModel.isEmpty()
@@ -84,32 +83,6 @@ module.exports = class FieldExtractor
       width: image.getOriginalImageDimensions()?.width
       height: image.getOriginalImageDimensions()?.height
       imageService: image.getImageServiceName()
-
-
-  parseConfig: (metadataConfig) ->
-    @matches = []
-    for fieldConfig in metadataConfig
-      field = fieldConfig.identifier
-      type = fieldConfig.type
-
-      for pattern in fieldConfig.matches
-        [template, directive] = pattern.split('.')
-        @matches.push
-          field: field
-          type: type
-          template: template
-          directive: directive
-          data: @getDataForType(type, fieldConfig)
-
-
-  getDataForType: (type, fieldConfig) ->
-    switch type
-      when 'image'
-        imageRatios: fieldConfig.imageRatios
-
-
-  getMatches: ->
-    @matches
 
 
   getFields: ->
