@@ -14,16 +14,31 @@ module.exports = class Assets
     @jsLoader = new JsLoader(@window)
 
 
-  loadDependencies: (dependencies, callback) ->
+  loadDependencies: (jsDependencies, cssDependencies, callback) ->
     semaphore = new Semaphore()
     semaphore.addCallback(callback)
-    for dep in dependencies.js
-      @loadJs(dep, semaphore.wait())
 
-    for dep in dependencies.css
+    @loadSequentially(jsDependencies, semaphore)
+
+    for dep in cssDependencies || []
       @loadCss(dep, semaphore.wait())
 
     semaphore.start()
+
+
+  # load js dependencies sequentially
+  loadSequentially: (jsDependencies, semaphore) ->
+    if jsDependencies?.length
+      semaphore.increment(jsDependencies.length)
+
+      current = 0
+      next = =>
+        @loadJs jsDependencies[current], ->
+          semaphore.decrement()
+          current += 1
+          next() if current < jsDependencies.length
+
+      next()
 
 
   loadDependency: (dependency, callback) ->
@@ -37,7 +52,8 @@ module.exports = class Assets
     return callback()  if @isDisabled
 
     if dependency.inline
-      @jsLoader.loadInlineScript(dependency.code, callback)
+      preventRepeatedExecution = not dependency.isExecuteOnly
+      @jsLoader.loadInlineScript(dependency.code, preventRepeatedExecution, callback)
     else
       @jsLoader.loadSingleUrl(dependency.src, callback)
 

@@ -35,15 +35,24 @@ module.exports = class Page extends RenderingContainer
   loadAssets: =>
     # First load design dependencies
     if @design?
-      @assets.loadDependencies(@design.dependencies, @readySemaphore.wait())
+      deps = @design.dependencies
+      @assets.loadDependencies(deps.js, deps.css, @readySemaphore.wait())
 
     # Then load document specific dependencies
     if @documentDependencies?
-      @assets.loadDependencies(@documentDependencies, @readySemaphore.wait())
+      deps = @documentDependencies
+      @assets.loadDependencies(deps.js, deps.css, @readySemaphore.wait())
 
       # listen for new dependencies
-      @documentDependencies.dependencyAdded.add (dependency) =>
+      @documentDependencies.dependenciesAdded.add (jsDependencies, cssDependencies) =>
+        @assets.loadDependencies(jsDependencies, cssDependencies, ->)
+
+      # listen for dependencies to execute once
+      @documentDependencies.dependencyToExecute.add (dependency) =>
         @assets.loadDependency(dependency)
+
+      @documentDependencies.codeToExecute.add (callback) =>
+        callback(@window)
 
 
   setWindow: (hostWindow) ->

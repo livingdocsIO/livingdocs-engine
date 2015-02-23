@@ -37,7 +37,7 @@ describe 'dependencies:', ->
       @componentTree.append(component)
 
       @dependencies.addJs
-        name: 'twitter'
+        library: 'twitter-widgets'
         namespace: 'embeds.twitter'
         src: 'https://platform.twitter.com/widgets.js'
         component: component
@@ -45,7 +45,7 @@ describe 'dependencies:', ->
       expect(@dependencies.serialize().js).to.deep.equal [
         {
           src: 'https://platform.twitter.com/widgets.js'
-          name: 'twitter'
+          library: 'twitter-widgets'
           namespace: 'embeds.twitter'
           componentIds: [ component.id ]
         }
@@ -100,12 +100,12 @@ describe 'dependencies:', ->
     it 'deserializes the dependencies', ->
       data =
         js: [
-          { src: 'https://platform.twitter.com/widgets.js', name: 'twitter' }
-          { code: 'alert("hey")', name: 'custom101', inline: true, namespace: 'embed.test' }
+          { src: 'https://platform.twitter.com/widgets.js', library: 'twitter-widgets' }
+          { code: 'alert("hey")', inline: true, namespace: 'embed.test' }
         ]
         css: [
-          { src: 'http://restyle.it', name: 'restyle', namespace: 'embed.test' }
-          { code: '* { background: red !important; }', name: 'important styles', inline: true }
+          { src: 'http://restyle.it', library: 'restyle', namespace: 'embed.test' }
+          { code: '* { background: red !important; }', inline: true }
         ]
       @dependencies.deserialize(data)
       expect(@dependencies.serialize()).to.deep.equal(data)
@@ -117,7 +117,7 @@ describe 'dependencies:', ->
 
       data =
         js: [
-          { code: 'alert("hey")', name: 'custom101', inline: true, componentIds: [ @component.id ] }
+          { code: 'alert("hey")', inline: true, componentIds: [ @component.id ] }
         ]
 
       @dependencies.deserialize(data)
@@ -127,7 +127,7 @@ describe 'dependencies:', ->
     it 'discards dependencies with non-existing components', ->
       data =
         js: [
-          { code: 'alert("hey")', name: 'custom101', inline: true, componentIds: ['xxx'] }
+          { code: 'alert("hey")', inline: true, componentIds: ['xxx'] }
         ]
       @dependencies.deserialize(data)
       expect(@dependencies.serialize()).to.deep.equal({})
@@ -167,8 +167,6 @@ describe 'dependencies:', ->
         '/my/custom/path/to/the/design.css',
         '/my/custom/path/to/the/design.css'
       )
-
-
 
 
   describe 'namespaces', ->

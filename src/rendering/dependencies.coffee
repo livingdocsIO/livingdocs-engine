@@ -13,8 +13,11 @@ module.exports = class Dependencies
     @js = []
     @css = []
     @namespaces = {}
+    @jsWaitlist = []
 
-    @dependencyAdded = $.Callbacks()
+    @dependenciesAdded = $.Callbacks()
+    @dependencyToExecute = $.Callbacks()
+    @codeToExecute = $.Callbacks()
     @dependencyRemoved = $.Callbacks()
 
     if @componentTree?
@@ -54,6 +57,15 @@ module.exports = class Dependencies
     @add(obj)
 
 
+  executeJs: (obj) ->
+    obj.isExecuteOnly = true
+    @addJs(obj)
+
+
+  executeCode: (callback) ->
+    @codeToExecute.fire(callback)
+
+
   # Absolute paths:
   # //
   # /
@@ -78,15 +90,29 @@ module.exports = class Dependencies
 
 
   addDependency: (dependency) ->
-    @addToNamespace(dependency) if dependency.namespace
+    if not dependency.isExecuteOnly
+      @addToNamespace(dependency) if dependency.namespace
+      if dependency.isJs()
+        @js.push(dependency)
+        @delayedDependency(dependency)
+      else
+        @css.push(dependency)
+        @dependenciesAdded.fire(undefined, [dependency])
+    else
+      @dependencyToExecute.fire(dependency)
 
-    collection = if dependency.isJs() then @js else @css
-    collection.push(dependency)
+    return dependency
 
-    @dependencyAdded.fire(dependency)
 
-    dependency
-
+  # load all dependencies that are added in the same tick
+  # sequentially
+  delayedDependency: (dependency) ->
+    @jsWaitlist.push(dependency)
+    if @jsWaitlist.length == 1
+      setTimeout =>
+        @dependenciesAdded.fire(@jsWaitlist, undefined)
+        @jsWaitlist = []
+      , 0
 
   # Namespaces
   # ----------
