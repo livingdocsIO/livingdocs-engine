@@ -22,6 +22,19 @@ module.exports = class Dependencies
 
 
   # Add a dependency
+  #
+  # # @param {Object}
+  #   - type {String} Either 'js' or 'css'
+  #
+  # One of the following needs to be provided:
+  #   - src {String} URL to a javascript or css file
+  #   - code {String} JS or CSS code
+  #
+  # All of the following are optional:
+  #   - basePath {String} Optional. A base path for relative urls.
+  #   - namespace {String} Optional. A Namespace to group dependencies together.
+  #   - name {String} Optional. A name to identify a dependency more easily.
+  #   - component {ComponentModel} The componentModel that is depending on this resource
   add: (obj) ->
     @convertToAbsolutePaths(obj)
     dep = new Dependency(obj)
@@ -163,7 +176,7 @@ module.exports = class Dependencies
         src: entry.src
         code: entry.code
         namespace: entry.namespace
-        name: entry.name
+        library: entry.library
 
       @addDeserialzedObj(obj, entry)
 
@@ -174,7 +187,7 @@ module.exports = class Dependencies
         src: entry.src
         code: entry.code
         namespace: entry.namespace
-        name: entry.name
+        library: entry.library
 
       @addDeserialzedObj(obj, entry)
 
