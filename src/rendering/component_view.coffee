@@ -15,6 +15,11 @@ module.exports = class ComponentView
     @isAttachedToDom = false
     @wasAttachedToDom = $.Callbacks();
 
+    @decorateMarkup()
+    @render()
+
+
+  decorateMarkup: ->
     unless @isReadOnly
       # add attributes and references to the html
       @$html
