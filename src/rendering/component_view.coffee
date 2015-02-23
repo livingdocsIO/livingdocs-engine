@@ -9,6 +9,7 @@ dom = require('../interaction/dom')
 module.exports = class ComponentView
 
   constructor: ({ @model, @$html, @directives, @isReadOnly }) ->
+    @renderer = undefined # will be set once the view is attached to a renderer
     @$elem = @$html
     @template = @model.template
     @isAttachedToDom = false
@@ -22,6 +23,12 @@ module.exports = class ComponentView
         .attr(attr.template, @template.identifier)
 
     @render()
+
+
+  setRenderer: (@renderer) ->
+
+  removeRenderer: ->
+    @renderer = undefined
 
 
   render: (mode) ->

@@ -116,10 +116,15 @@ module.exports = class Renderer
 
 
   getOrCreateComponentView: (model) ->
-    @componentViews[model.id] ||= model.createView(@renderingContainer.isReadOnly)
+    return view if view = @componentViews[model.id]
+
+    view = model.createView(@renderingContainer.isReadOnly)
+    view.setRenderer(this)
+    @componentViews[model.id] = view
 
 
   deleteCachedComponentView: (model) ->
+    @componentViews[model.id]?.removeRenderer()
     delete @componentViews[model.id]
 
 
