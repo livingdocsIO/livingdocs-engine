@@ -50,15 +50,21 @@ module.exports = class Template
 
 
   createView: (componentModel, isReadOnly) ->
+    { $elem, directives } = @createViewHtml()
     componentModel ||= @createModel()
-    $elem = @$template.clone()
-    directives = @linkDirectives($elem[0])
 
     componentView = new ComponentView
       model: componentModel
       $html: $elem
       directives: directives
       isReadOnly: isReadOnly
+
+
+  createViewHtml: ->
+    $elem = @$template.clone()
+    directives = @linkDirectives($elem[0])
+
+    { $elem, directives }
 
 
   pruneHtml: (html) ->
