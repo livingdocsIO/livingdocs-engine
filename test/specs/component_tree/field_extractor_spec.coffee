@@ -61,6 +61,12 @@ describe 'Field Extractor', ->
       expect(fields.description.content).to.equal(undefined)
       expect(fields.description.text).to.equal(undefined)
 
+    it 'uses the next component\'s text when directive is cleared', ->
+      @tree.find('hero').first.set('title', '')
+      fields = @extractor.getFields()
+      expect(fields.description.content).to.equal('Title Title')
+      expect(fields.description.text).to.equal('Title Title')
+
   describe 'recheckComponent()', ->
 
 
