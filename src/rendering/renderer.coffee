@@ -90,9 +90,10 @@ module.exports = class Renderer
     @insertComponent(model)
 
 
-  componentRemoved: (model) ->
-    @removeComponentFromDom(model)
-    @deleteCachedComponentView(model)
+  componentRemoved: (component) ->
+    component.descendantsAndSelf (model) =>
+      @removeComponentFromDom(model)
+      @deleteCachedComponentView(model)
 
 
   componentMoved: (model) ->
