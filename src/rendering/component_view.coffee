@@ -28,6 +28,21 @@ module.exports = class ComponentView
         .attr(attr.template, @template.identifier)
 
 
+  # Renderer
+  # --------
+
+  setRenderer: (renderer) ->
+    @renderer = renderer
+
+
+  removeRenderer: ->
+    @renderer = undefined
+
+
+  viewForModel: (model) ->
+    @renderer?.getComponentViewById(model.id) if model?
+
+
   recreateHtml: ->
     @isAttachedToDom = false
     { @$elem, @directives } = @model.template.createViewHtml(@model)
@@ -37,10 +52,6 @@ module.exports = class ComponentView
     @render()
 
 
-  setRenderer: (@renderer) ->
-
-  removeRenderer: ->
-    @renderer = undefined
 
 
   render: (mode) ->
@@ -93,13 +104,8 @@ module.exports = class ComponentView
         config.animations.optionals.hide($(directive.elem))
 
 
-  next: ->
-    @$html.next().data('componentView')
-
-
-  prev: ->
-    @$html.prev().data('componentView')
-
+  # Focus
+  # -----
 
   afterFocused: () ->
     @$html.addClass(css.componentHighlight)
@@ -352,4 +358,32 @@ module.exports = class ComponentView
 
   getOwnerWindow: ->
     @$elem[0].ownerDocument.defaultView
+
+
+  # Iterators and Tree accessors
+  # ----------------------------
+  #
+  # See the end of this file for the generated iterators
+  # ('children', 'descendants', 'parents' etc.).
+
+  next: ->
+    @viewForModel(@model.next)
+
+
+  prev: -> @previous() # alias
+  previous: ->
+    @viewForModel(@model.previous)
+
+
+  parent: ->
+    @viewForModel(@model.getParent())
+
+
+# Generate componentView Iterators
+# --------------------------------
+
+['parents', 'children', 'childrenAndSelf', 'descendants', 'descendantsAndSelf'].forEach (method) ->
+  ComponentView::[method] = (callback) ->
+    @model[method] (model) =>
+      callback( @viewForModel(model) )
 

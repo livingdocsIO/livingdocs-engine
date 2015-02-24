@@ -148,10 +148,10 @@ module.exports = class ComponentTree
   # Note: There can be multiple views for a componentTree. With this
   # method we can set a main view so it becomes possible to get a view
   # directly from the componentTree for convenience
-  setMainView: (view) ->
-    assert view.renderer, 'componentTree.setMainView: view does not have an initialized renderer'
-    assert view.renderer.componentTree == this, 'componentTree.setMainView: Cannot set renderer from different componentTree'
-    @mainRenderer = view.renderer
+  setMainView: ({ renderer }) ->
+    assert renderer, 'componentTree.setMainView: view does not have an initialized renderer'
+    assert renderer.componentTree == this, 'componentTree.setMainView: Cannot set renderer from different componentTree'
+    @mainRenderer = renderer
 
 
   # Get the componentView for a model

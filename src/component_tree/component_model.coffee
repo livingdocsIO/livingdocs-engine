@@ -133,7 +133,7 @@ module.exports = class ComponentModel
 
 
   # ComponentTree Iterators
-  # ---------------------
+  # -----------------------
   #
   # Navigate and query the componentTree relative to this component.
 
@@ -153,6 +153,11 @@ module.exports = class ComponentModel
       while (componentModel)
         callback(componentModel)
         componentModel = componentModel.next
+
+
+  childrenAndSelf: (callback) ->
+    callback(this)
+    @children(callback)
 
 
   descendants: (callback) ->
@@ -190,11 +195,6 @@ module.exports = class ComponentModel
       callback(componentModel) if componentModel != this
       for name, componentContainer of componentModel.containers
         callback(componentContainer)
-
-
-  childrenAndSelf: (callback) ->
-    callback(this)
-    @children(callback)
 
 
   # Directive Operations

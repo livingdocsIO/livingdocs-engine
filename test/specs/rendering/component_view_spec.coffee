@@ -309,3 +309,51 @@ describe 'component_view:', ->
       @view.render()
       expect(@view.$html).to.have.attr('src', base64Image)
 
+
+  describe 'with multiple components', ->
+
+    beforeEach (done) ->
+      { @renderer, @componentTree } = test.get('page', 'renderer')
+      @componentTree.fromData content: [
+        component: 'title'
+        content: { 'title': 'A Title' }
+      ,
+        component: 'subtitle'
+        content: { 'title': 'A Subtitle' }
+      ,
+        component: 'container'
+        containers:
+          'default': [
+            component: 'text'
+            content: { 'text': 'some text' }
+          ]
+      ], undefined, false
+      @componentTree.setMainView({ @renderer })
+      @renderer.ready(done)
+
+
+    describe 'next() and prev()', ->
+
+      it 'return the correct views', ->
+        titleView = @componentTree.find('title').first.getMainView()
+        subtitleView = @componentTree.find('subtitle').first.getMainView()
+        containerView = @componentTree.find('container').first.getMainView()
+
+        expect(subtitleView.next()).to.equal(containerView)
+        expect(subtitleView.prev()).to.equal(titleView)
+
+
+    describe 'descendantsAndSelf()', ->
+
+      it 'iterates over children', ->
+        containerView = @componentTree.find('container').first.getMainView()
+        textView = @componentTree.find('text').first.getMainView()
+        views = []
+
+        containerView.descendantsAndSelf (view) ->
+          views.push(view)
+
+        expect(views.length).to.equal(2)
+        expect(views[0]).to.equal(containerView)
+        expect(views[1]).to.equal(textView)
+
