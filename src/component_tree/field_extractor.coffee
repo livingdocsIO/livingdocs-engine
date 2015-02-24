@@ -1,8 +1,10 @@
 assert = require('../modules/logging/assert')
+MetadataConfig = require('../configuration/metadata_config')
 
 module.exports = class FieldExtractor
 
-  constructor: (@componentTree, @metadataConfig) ->
+  constructor: (@componentTree, metadataConfigJSON) ->
+    @metadataConfig = new MetadataConfig(metadataConfigJSON)
     @fields = {}
     @initEvents()
     # start by extracting everything
@@ -12,21 +14,21 @@ module.exports = class FieldExtractor
 
   setupListeners: ->
 
-    @componentTree.componentAdded.add $.proxy(@extractAll, this)
-    @componentTree.componentRemoved.add $.proxy(@extractAll, this)
-    @componentTree.componentMoved.add $.proxy(@extractAll, this)
+    @componentTree.componentAdded.add(@extractAll)
+    @componentTree.componentRemoved.add(@extractAll)
+    @componentTree.componentMoved.add(@extractAll)
 
     # change only needs to re-check the component
-    @componentTree.componentContentChanged.add $.proxy(@recheckComponent, this)
+    @componentTree.componentContentChanged.add(@recheckComponent)
 
 
-  extractAll: (componentModel) ->
+  extractAll: (componentModel) =>
     @fields = @extractFieldsFromTree()
     @fieldsChanged.fire(@fields, @fields)
     @fields
 
 
-  recheckComponent: (componentModel) ->
+  recheckComponent: (componentModel) =>
     changedFields = {}
     previouslyUsedFieldWasCleared = @extractFieldsFromComponent(componentModel, changedFields)
 

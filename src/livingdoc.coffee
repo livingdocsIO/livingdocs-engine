@@ -10,6 +10,7 @@ dom = require('./interaction/dom')
 designCache = require('./design/design_cache')
 ComponentTree = require('./component_tree/component_tree')
 Dependencies = require('./rendering/dependencies')
+FieldExtractor = require('./component_tree/field_extractor')
 
 module.exports = class Livingdoc extends EventEmitter
 
@@ -58,6 +59,8 @@ module.exports = class Livingdoc extends EventEmitter
 
     @design = @componentTree.design
     @dependencies = new Dependencies({ @componentTree })
+
+    @fieldExtractor = new FieldExtractor(@componentTree, @design.metadata)
 
     @forwardComponentTreeEvents()
 

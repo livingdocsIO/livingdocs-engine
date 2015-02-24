@@ -20,13 +20,14 @@ describe 'Field Extractor', ->
   ]
 
   beforeEach ->
+
     @tree = test.createComponentTree [
       hero: { title: 'Hero Title' },
       title: { title: 'Title Title' }
       cover: { image: 'http://www.lolcats.com/images/1.jpg' }
     ]
-    @metadataConfig = new MetadataConfig simpleConfig
-    @extractor = new FieldExtractor @tree, @metadataConfig
+
+    @extractor = new FieldExtractor(@tree, simpleConfig)
 
 
   describe 'extraction', ->
@@ -122,3 +123,13 @@ describe 'Field Extractor', ->
         done()
       model = @tree.find('hero').first
       model.set('title', '')
+
+
+    it.only 'fires with first matched field when changing the second one', (done) ->
+
+      @extractor.fieldsChanged.add (changedFields) ->
+        expect(changedFields.title.text).to.equal('Hero Title')
+        done()
+
+      model = @tree.find('title').first
+      model.set('title', 'New Title Title')
