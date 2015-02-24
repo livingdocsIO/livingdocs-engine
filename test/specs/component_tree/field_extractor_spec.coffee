@@ -29,10 +29,6 @@ describe 'Field Extractor', ->
     @extractor = new FieldExtractor @tree, @metadataConfig
 
 
-  it 'parses the config correctly', ->
-    expect(@extractor.metadataConfig.getFieldMatches().length).to.equal(4)
-
-
   describe 'matching', ->
 
     it 'uses the title from the hero component', ->
@@ -82,6 +78,7 @@ describe 'Field Extractor', ->
 
     beforeEach ->
       @fieldsChanged = sinon.spy(@extractor.fieldsChanged, 'fire')
+
 
     it 'fires the fieldsChanged event when changing content', ->
       model = @tree.find('hero').first
