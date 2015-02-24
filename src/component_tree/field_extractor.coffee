@@ -3,6 +3,7 @@ assert = require('../modules/logging/assert')
 module.exports = class FieldExtractor
 
   constructor: (@componentTree, @metadataConfig) ->
+    @fields = {}
     @initEvents()
     # start by extracting everything
     @extractAll()
@@ -50,9 +51,15 @@ module.exports = class FieldExtractor
 
   extractFieldsFromComponent: (componentModel, fields) ->
     for match in @metadataConfig.getFieldMatches()
+
       if componentModel.componentName == match.template
         directiveModel = componentModel.directives.get(match.directive)
-        if !fields[match.field] && !directiveModel.isEmpty()
+
+        fieldWasNotMatchedBefore = !fields[match.field]
+        directiveModelHadContent = !!@fields[match.field]
+        directiveShouldBeExtracted = (!directiveModel.isEmpty() || directiveModelHadContent)
+
+        if fieldWasNotMatchedBefore && directiveShouldBeExtracted
           if match.type == 'text'
             fields[match.field] = @extractTextField(componentModel, match.directive)
           else if match.type == 'image'
@@ -64,11 +71,12 @@ module.exports = class FieldExtractor
 
   extractTextField: (componentModel, directive) ->
     content = componentModel.get(directive)
+    text = if content? then $("<div>#{ content }</div>").text() else undefined
 
     content: content
     component: componentModel
     field: directive
-    text: $("<div>#{ content }</div>").text()
+    text: text
     type: 'text'
 
 
