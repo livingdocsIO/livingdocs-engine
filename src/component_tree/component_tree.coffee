@@ -206,7 +206,7 @@ module.exports = class ComponentTree
 
 
   fireEvent: (event, args...) ->
-    this[event].fire.apply(event, args)
+    this[event].fire.apply(undefined, args)
     @changed.fire()
 
 
