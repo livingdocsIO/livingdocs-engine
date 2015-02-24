@@ -50,7 +50,6 @@ describe 'component_view:', ->
 
     beforeEach ->
       @title = test.getComponent('title')
-      @title.setStyle('color', 'color--blue')
       @$expected = $ """
         <h1 #{ test.editableAttr }="title"
             class="#{ css.editable } #{ css.component }"
@@ -59,18 +58,26 @@ describe 'component_view:', ->
         </h1>"""
 
 
+    describe 'recreateHtml()', ->
 
+      it 'resets changes made in the views html', ->
+        view = @title.createView()
+        view.$html.addClass('test-class')
+        view.recreateHtml()
+        expect(view.$html).to.have.html(@$expected)
 
 
     describe 'updates the style', ->
 
       it 'sets "color" style to "color--blue"', ->
+        @title.setStyle('color', 'color--blue')
         @$expected.addClass('color--blue')
         componentView = @title.createView()
         expect(componentView.$html).to.have.html(@$expected)
 
 
       it 'changes "color" style from "color--blue" to "color--red"', ->
+        @title.setStyle('color', 'color--blue')
         @$expected.addClass('color--red')
         componentView = @title.createView()
         componentView.setStyle('color', 'color--red')

@@ -27,6 +27,13 @@ module.exports = class ComponentView
         .addClass(css.component)
         .attr(attr.template, @template.identifier)
 
+
+  recreateHtml: ->
+    @isAttachedToDom = false
+    { @$elem, @directives } = @model.template.createViewHtml(@model)
+    @$html = @$elem
+
+    @decorateMarkup()
     @render()
 
 
