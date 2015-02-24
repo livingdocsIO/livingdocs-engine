@@ -29,28 +29,37 @@ describe 'Field Extractor', ->
     @extractor = new FieldExtractor @tree, @metadataConfig
 
 
-  describe 'matching', ->
+  describe 'extraction', ->
 
     it 'uses the title from the hero component', ->
       fields = @extractor.getFields()
       expect(fields.title.content).to.equal('Hero Title')
+      expect(fields.title.text).to.equal('Hero Title')
 
 
     it 'uses the description from the title component', ->
       fields = @extractor.getFields()
       expect(fields.description.content).to.equal('Title Title')
+      expect(fields.description.text).to.equal('Title Title')
 
 
     it 'uses the title from the title after moving it up', ->
       @tree.find('title').first.up()
       fields = @extractor.getFields()
       expect(fields.title.content).to.equal('Title Title')
+      expect(fields.title.text).to.equal('Title Title')
 
 
     it 'uses the teaser image from the cover', ->
       fields = @extractor.getFields()
       expect(fields.teaser.image.originalUrl).to.equal('http://www.lolcats.com/images/1.jpg')
 
+
+    it 'removes previously set fields', ->
+      @tree.find('title').first.set('title', '')
+      fields = @extractor.getFields()
+      expect(fields.description.content).to.equal(undefined)
+      expect(fields.description.text).to.equal(undefined)
 
   describe 'recheckComponent()', ->
 
