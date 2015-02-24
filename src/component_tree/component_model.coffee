@@ -307,6 +307,18 @@ module.exports = class ComponentModel
     true
 
 
+  getPluginName: ->
+    @plugin?.name
+
+
+  setPlugin: (plugin) ->
+    @plugin = plugin
+
+
+  getPlugin: (plugin) ->
+    @plugin
+
+
   # Style Operations
   # ----------------
 
