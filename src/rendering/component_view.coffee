@@ -52,6 +52,9 @@ module.exports = class ComponentView
     @render()
 
 
+  # Remove, recreate and reinsert the html of this view.
+  refresh: ->
+    @renderer.refreshComponent(@model)
 
 
   render: (mode) ->

@@ -14,6 +14,7 @@ module.exports = class Page extends RenderingContainer
     @renderNode = if renderNode?.jquery then renderNode[0] else renderNode
     @setWindow(hostWindow)
     @renderNode ?= $(".#{ config.css.section }", @$body)
+    @componentViewWasRefreshed = $.Callbacks() # (componentView) ->
 
     super()
 

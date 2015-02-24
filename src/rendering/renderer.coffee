@@ -146,6 +146,18 @@ module.exports = class Renderer
     @render()
 
 
+  # Recreate the html of a component and its descendants
+  refreshComponent: (component) ->
+    view = @getComponentViewById(component.id)
+
+    view.descendantsAndSelf (view) =>
+      @removeComponentFromDom(view.model)
+      view.recreateHtml()
+
+    @insertComponent(component)
+    @renderingContainer.componentViewWasRefreshed.fire(view)
+
+
   insertComponent: (model) ->
     return if @isComponentAttached(model) || @excludedComponentIds[model.id] == true
 

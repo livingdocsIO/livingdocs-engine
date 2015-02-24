@@ -313,7 +313,7 @@ describe 'component_view:', ->
   describe 'with multiple components', ->
 
     beforeEach (done) ->
-      { @renderer, @componentTree } = test.get('page', 'renderer')
+      { @renderer, @componentTree, @page } = test.get('page', 'renderer')
       @componentTree.fromData content: [
         component: 'title'
         content: { 'title': 'A Title' }
@@ -356,4 +356,34 @@ describe 'component_view:', ->
         expect(views.length).to.equal(2)
         expect(views[0]).to.equal(containerView)
         expect(views[1]).to.equal(textView)
+
+
+    describe 'refresh()', ->
+
+      it 'recreates the html of the view (with descendants)', ->
+        containerView = @componentTree.find('container').first.getMainView()
+        containerView.$html.find('p').addClass('some-test')
+        containerView.refresh()
+        expect(containerView.$html[0].outerHTML).to.have.html '
+          <div class="container">
+            <div><p>some text</p></div>
+          </div>
+        '
+
+
+      it 'updates the html of the renderer', ->
+        containerView = @componentTree.find('container').first.getMainView()
+        containerView.$html.find('p').addClass('some-test')
+        containerView.refresh()
+        expect(@page.renderNode).to.have.html '
+          <section>
+            <h1>A Title</h1>
+            <h2>A Subtitle</h2>
+            <div class="container">
+              <div>
+                <p>some text</p>
+              </div>
+            </div>
+          </section>
+        '
 
