@@ -58,8 +58,8 @@ describe 'Field Extractor', ->
     it 'removes previously set fields', ->
       @tree.find('title').first.set('title', '')
       fields = @extractor.getFields()
-      expect(fields.description.content).to.equal(undefined)
-      expect(fields.description.text).to.equal(undefined)
+      expect(fields.description).to.equal(undefined)
+
 
     it 'uses the next component\'s text when directive is cleared', ->
       @tree.find('hero').first.set('title', '')
@@ -89,7 +89,7 @@ describe 'Field Extractor', ->
       expect(fields.title.content).to.equal('new Title')
 
 
-  describe 'events', ->
+  describe 'event', ->
 
     beforeEach ->
       @fieldsChanged = sinon.spy(@extractor.fieldsChanged, 'fire')
@@ -116,3 +116,9 @@ describe 'Field Extractor', ->
       expect(@fieldsChanged).to.have.been.calledOnce
 
 
+    it 'fires with new field when a previously used field is cleared', (done) ->
+      @extractor.fieldsChanged.add (changedFields) ->
+        expect(changedFields.title.text).to.equal('Title Title')
+        done()
+      model = @tree.find('hero').first
+      model.set('title', '')

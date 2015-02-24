@@ -10,21 +10,17 @@ module.exports = class FieldExtractor
     @setupListeners()
 
 
-  # TODO: ignore empty fields
-  # TODO when empty -> extract all
-  # TODO fill up watchedComponent and empty containers
   setupListeners: ->
-    # add / remove needs to re-check the structure of the document
+
     @componentTree.componentAdded.add $.proxy(@extractAll, this)
     @componentTree.componentRemoved.add $.proxy(@extractAll, this)
     @componentTree.componentMoved.add $.proxy(@extractAll, this)
-    # change only needs to re-check the component (gets more complicated once we ignore empty fields)
+
+    # change only needs to re-check the component
     @componentTree.componentContentChanged.add $.proxy(@recheckComponent, this)
 
 
   extractAll: (componentModel) ->
-    # TODO: reset and watch emptyThatWouldHaveBeenTaken (for changed)
-    # TODO: reset and watch takenComponents (for changed)
     @fields = @extractFieldsFromTree()
     @fieldsChanged.fire(@fields, @fields)
     @fields
@@ -32,10 +28,14 @@ module.exports = class FieldExtractor
 
   recheckComponent: (componentModel) ->
     changedFields = {}
-    @extractFieldsFromComponent(componentModel, changedFields)
-    @fields = $.extend(@fields, changedFields) # NOTE: this is a shallow merge by design
-    @fieldsChanged.fire(changedFields, @fields)
-    { changedFields, @fields }
+    previouslyUsedFieldWasCleared = @extractFieldsFromComponent(componentModel, changedFields)
+
+    if previouslyUsedFieldWasCleared
+      @extractAll()
+    else
+      @fields = $.extend(@fields, changedFields) # NOTE: this is a shallow merge by design
+      @fieldsChanged.fire(changedFields, @fields)
+      { changedFields, @fields }
 
 
   initEvents: ->
@@ -50,6 +50,7 @@ module.exports = class FieldExtractor
 
 
   extractFieldsFromComponent: (componentModel, fields) ->
+    previouslyUsedFieldWasCleared = false
     for match in @metadataConfig.getFieldMatches()
 
       if componentModel.componentName == match.template
@@ -60,40 +61,46 @@ module.exports = class FieldExtractor
         directiveShouldBeExtracted = (!directiveModel.isEmpty() || directiveModelHadContent)
 
         if fieldWasNotMatchedBefore && directiveShouldBeExtracted
-          if match.type == 'text'
+
+          if directiveModel.isEmpty()
+            previouslyUsedFieldWasCleared = true
+            fields[match.field] = undefined
+
+          else if match.type == 'text'
             fields[match.field] = @extractTextField(componentModel, match.directive)
+
           else if match.type == 'image'
-            unless directiveModel.isBase64()
+            if !directiveModel.isBase64()
               fields[match.field] = @extractImageField(componentModel, directiveModel, match.directive)
+
           else
             assert false, "Unknown template type #{match.type}"
+
+    previouslyUsedFieldWasCleared
 
 
   extractTextField: (componentModel, directive) ->
     content = componentModel.get(directive)
-    text = if content? then $("<div>#{ content }</div>").text() else undefined
 
     content: content
     component: componentModel
     field: directive
-    text: text
+    text: $("<div>#{ content }</div>").text()
     type: 'text'
 
 
-  extractImageField: (componentModel, image, directive) ->
+  extractImageField: (componentModel, imageDirective, directiveName) ->
 
     component: componentModel
-    field: directive
+    field: directiveName
     type: 'image'
     image:
-      originalUrl: image.getOriginalUrl()
-      url: image.getImageUrl()
-      width: image.getOriginalImageDimensions()?.width
-      height: image.getOriginalImageDimensions()?.height
-      imageService: image.getImageServiceName()
+      originalUrl: imageDirective.getOriginalUrl()
+      url: imageDirective.getImageUrl()
+      width: imageDirective.getOriginalImageDimensions()?.width
+      height: imageDirective.getOriginalImageDimensions()?.height
+      imageService: imageDirective.getImageServiceName()
 
 
   getFields: ->
     @fields
-
-
