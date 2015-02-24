@@ -1,13 +1,12 @@
 module.exports = class MetadataConfig
 
   constructor: (config) ->
-    @parse(config)
+    @fieldMatches = []
+    @configMap = {}
+    @parse(config) if config? && config.length
 
 
   parse: (config) ->
-    @fieldMatches = []
-    @configMap = {}
-
     for fieldItemConfig in config
       fieldName = fieldItemConfig.identifier
       type = fieldItemConfig.type
