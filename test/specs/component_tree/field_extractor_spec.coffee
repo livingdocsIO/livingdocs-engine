@@ -6,13 +6,13 @@ MetadataConfig = require('../../../src/configuration/metadata_config')
 describe 'Field Extractor', ->
 
   simpleConfig = [
-    identifier: 'title'
+    identifier: 'documentTitle'
     type: 'text'
-    matches: ['hero.title', 'title.title']
+    matches: ['hero.title', 'subtitle.title']
   ,
     identifier: 'description'
     type: 'text'
-    matches: ['title.title']
+    matches: ['subtitle.title']
   ,
     identifier: 'teaser'
     type: 'image'
@@ -23,7 +23,7 @@ describe 'Field Extractor', ->
 
     @tree = test.createComponentTree [
       hero: { title: 'Hero Title' },
-      title: { title: 'Title Title' }
+      subtitle: { title: 'Subtitle Title' }
       cover: { image: 'http://www.lolcats.com/images/1.jpg' }
     ]
 
@@ -34,21 +34,21 @@ describe 'Field Extractor', ->
 
     it 'uses the title from the hero component', ->
       fields = @extractor.getFields()
-      expect(fields.title.content).to.equal('Hero Title')
-      expect(fields.title.text).to.equal('Hero Title')
+      expect(fields.documentTitle.content).to.equal('Hero Title')
+      expect(fields.documentTitle.text).to.equal('Hero Title')
 
 
     it 'uses the description from the title component', ->
       fields = @extractor.getFields()
-      expect(fields.description.content).to.equal('Title Title')
-      expect(fields.description.text).to.equal('Title Title')
+      expect(fields.description.content).to.equal('Subtitle Title')
+      expect(fields.description.text).to.equal('Subtitle Title')
 
 
     it 'uses the title from the title after moving it up', ->
-      @tree.find('title').first.up()
+      @tree.find('subtitle').first.up()
       fields = @extractor.getFields()
-      expect(fields.title.content).to.equal('Title Title')
-      expect(fields.title.text).to.equal('Title Title')
+      expect(fields.documentTitle.content).to.equal('Subtitle Title')
+      expect(fields.documentTitle.text).to.equal('Subtitle Title')
 
 
     it 'uses the teaser image from the cover', ->
@@ -57,7 +57,7 @@ describe 'Field Extractor', ->
 
 
     it 'removes previously set fields', ->
-      @tree.find('title').first.set('title', '')
+      @tree.find('subtitle').first.set('title', '')
       fields = @extractor.getFields()
       expect(fields.description).to.equal(undefined)
 
@@ -65,8 +65,8 @@ describe 'Field Extractor', ->
     it 'uses the next component\'s text when directive is cleared', ->
       @tree.find('hero').first.set('title', '')
       fields = @extractor.getFields()
-      expect(fields.description.content).to.equal('Title Title')
-      expect(fields.description.text).to.equal('Title Title')
+      expect(fields.description.content).to.equal('Subtitle Title')
+      expect(fields.description.text).to.equal('Subtitle Title')
 
   describe 'recheckComponent()', ->
 
@@ -77,17 +77,17 @@ describe 'Field Extractor', ->
       newModel.set 'title', 'new Hero'
       { changedFields, fields } = @extractor.recheckComponent(newModel)
       expect(Object.keys(changedFields).length).to.equal(1)
-      expect(changedFields.title.content).to.equal('new Hero')
-      expect(fields.title.content).to.equal('new Hero')
+      expect(changedFields.documentTitle.content).to.equal('new Hero')
+      expect(fields.documentTitle.content).to.equal('new Hero')
 
 
     it 'rechecks a component with 2 matches', ->
-      newModel = test.getComponent('title')
+      newModel = test.getComponent('subtitle')
       newModel.set 'title', 'new Title'
       { changedFields, fields } = @extractor.recheckComponent(newModel)
       expect(Object.keys(changedFields).length).to.equal(2)
-      expect(changedFields.title.content).to.equal('new Title')
-      expect(fields.title.content).to.equal('new Title')
+      expect(changedFields.documentTitle.content).to.equal('new Title')
+      expect(fields.documentTitle.content).to.equal('new Title')
 
 
   describe 'event', ->
@@ -108,28 +108,28 @@ describe 'Field Extractor', ->
 
 
     it 'fires the fieldsChanged event when removing a component', ->
-      @tree.find('title').first.remove()
+      @tree.find('subtitle').first.remove()
       expect(@fieldsChanged).to.have.been.calledOnce
 
 
     it 'fires the fieldsChanged event when moving a component', ->
-      @tree.find('title').first.up()
+      @tree.find('subtitle').first.up()
       expect(@fieldsChanged).to.have.been.calledOnce
 
 
     it 'fires with new field when a previously used field is cleared', (done) ->
       @extractor.fieldsChanged.add (changedFields) ->
-        expect(changedFields.title.text).to.equal('Title Title')
+        expect(changedFields.documentTitle.text).to.equal('Subtitle Title')
         done()
       model = @tree.find('hero').first
       model.set('title', '')
 
 
-    it.only 'fires with first matched field when changing the second one', (done) ->
+    it 'fires with first matched field when changing the second one', (done) ->
 
       @extractor.fieldsChanged.add (changedFields) ->
-        expect(changedFields.title.text).to.equal('Hero Title')
+        expect(changedFields.documentTitle.text).to.equal('Hero Title')
         done()
 
-      model = @tree.find('title').first
-      model.set('title', 'New Title Title')
+      model = @tree.find('subtitle').first
+      model.set('title', 'New Subtitle Title')
