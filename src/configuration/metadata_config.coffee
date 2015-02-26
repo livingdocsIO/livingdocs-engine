@@ -1,8 +1,10 @@
 module.exports = class MetadataConfig
 
   constructor: (config) ->
-    @fieldMatches = []
+    @fieldMap = {}
     @configMap = {}
+    @componentDirectiveMap = {}
+    @componentMap = {}
     @parse(config) if config? && config.length
 
 
@@ -11,21 +13,31 @@ module.exports = class MetadataConfig
       fieldName = fieldItemConfig.identifier
       type = fieldItemConfig.type
       @configMap[fieldName] = fieldItemConfig
+      @fieldMap[fieldName] ?= {}
+
       for pattern in fieldItemConfig.matches
-        [template, directive] = pattern.split('.')
-        isEditable = true
-        isEditable = fieldItemConfig.isEditable if fieldItemConfig.isEditable?
-        @fieldMatches.push
-          field: fieldName
-          type: type
-          template: template
-          directive: directive
-          isEditable: isEditable
+        [componentName, directive] = pattern.split('.')
+
+        @componentDirectiveMap[componentName] ?= {}
+        @componentDirectiveMap[componentName][directive] ?= []
+        @componentDirectiveMap[componentName][directive].push(fieldName)
+
+        @componentMap[componentName] ?= []
+        @componentMap[componentName].push(fieldName)
+
+        @fieldMap[fieldName][componentName] ?= []
+        @fieldMap[fieldName][componentName].push(directive)
 
 
-  getFieldMatches: ->
-    @fieldMatches
+  getConfigMap: -> @configMap
 
 
-  getConfigMap: ->
-    @configMap
+  getComponentMap: -> @componentMap
+
+
+  getFieldsBySource: (componentName, directive) ->
+    @componentDirectiveMap[componentName]?[directive] || []
+
+
+  getDirectivesByComponentAndField: (componentName, fieldName) ->
+    @fieldMap[fieldName][componentName]
