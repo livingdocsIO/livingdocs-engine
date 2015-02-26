@@ -12,30 +12,9 @@ describe 'Metadata Config', ->
     matches: ['cover.image']
   ]
 
+
   beforeEach ->
     @metadataConfig = new MetadataConfig(simpleConfig)
-
-
-  it 'parses matches from the metadata configuration', ->
-    expect(@metadataConfig.getFieldMatches()).to.have.deep.members [
-      field: 'title'
-      type: 'text'
-      template: 'hero'
-      directive: 'title'
-      isEditable: true
-    ,
-      field: 'title'
-      type: 'text'
-      template: 'title'
-      directive: 'title'
-      isEditable: true
-    ,
-      field: 'teaser'
-      type: 'image'
-      template: 'cover'
-      directive: 'image'
-      isEditable: true
-    ]
 
 
   it 'builds the config map correctly', ->
@@ -49,4 +28,21 @@ describe 'Metadata Config', ->
         type: 'image'
         matches: ['cover.image']
 
+  it 'returns directives by component and field', ->
+    expect(
+      @metadataConfig.getDirectivesByComponentAndField('cover', 'teaser')
+    ).to.deep.equal(['image'])
 
+  it 'returns fields by component and directive', ->
+    expect(
+      @metadataConfig.getFieldsBySource('cover', 'image')
+    ).to.deep.equal(['teaser'])
+
+  it 'returns the component map', ->
+     expect(
+      @metadataConfig.getComponentMap('cover', 'image')
+    ).to.deep.equal({
+      hero: ['title'],
+      title: ['title'],
+      cover: ['teaser']
+    })

@@ -32,7 +32,7 @@ describe 'Field Extractor', ->
 
   describe 'extraction', ->
 
-    it 'uses the title from the hero component', ->
+    it 'uses the documentTitle from the hero component', ->
       fields = @extractor.getFields()
       expect(fields.documentTitle.content).to.equal('Hero Title')
       expect(fields.documentTitle.text).to.equal('Hero Title')
@@ -67,27 +67,6 @@ describe 'Field Extractor', ->
       fields = @extractor.getFields()
       expect(fields.description.content).to.equal('Subtitle Title')
       expect(fields.description.text).to.equal('Subtitle Title')
-
-  describe 'recheckComponent()', ->
-
-
-    it 'rechecks a component', ->
-      # NOTE: we create a new model so the events are not triggered
-      newModel = test.getComponent('hero')
-      newModel.set 'title', 'new Hero'
-      { changedFields, fields } = @extractor.recheckComponent(newModel)
-      expect(Object.keys(changedFields).length).to.equal(1)
-      expect(changedFields.documentTitle.content).to.equal('new Hero')
-      expect(fields.documentTitle.content).to.equal('new Hero')
-
-
-    it 'rechecks a component with 2 matches', ->
-      newModel = test.getComponent('subtitle')
-      newModel.set 'title', 'new Title'
-      { changedFields, fields } = @extractor.recheckComponent(newModel)
-      expect(Object.keys(changedFields).length).to.equal(2)
-      expect(changedFields.documentTitle.content).to.equal('new Title')
-      expect(fields.documentTitle.content).to.equal('new Title')
 
 
   describe 'event', ->
@@ -125,11 +104,17 @@ describe 'Field Extractor', ->
       model.set('title', '')
 
 
-    it 'fires with first matched field when changing the second one', (done) ->
+    it 'does not fire with field when changing the second possible field source', (done) ->
 
       @extractor.fieldsChanged.add (changedFields) ->
-        expect(changedFields.documentTitle.text).to.equal('Hero Title')
+        expect(changedFields.documentTitle).to.equal(undefined)
         done()
 
       model = @tree.find('subtitle').first
       model.set('title', 'New Subtitle Title')
+
+
+    it 'does not fire when another component directive is fired', ->
+      model = @tree.find('hero').first
+      model.set('tagline', 'Hello world')
+      expect(@fieldsChanged).to.not.have.been.called
