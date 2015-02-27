@@ -45,6 +45,7 @@ module.exports = class Design
     @version > (design.version || '')
 
 
+  # @returns {Template}
   get: (identifier) ->
     componentName = @getComponentNameFromIdentifier(identifier)
     @components.get(componentName)
