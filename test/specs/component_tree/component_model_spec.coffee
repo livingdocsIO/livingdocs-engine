@@ -85,6 +85,32 @@ describe 'component_model:', ->
       expect(@container.containers[defaultName]).to.exist
 
 
+  # Component with a container with a config
+  describe 'RestrictedContainer Component', ->
+
+    beforeEach ->
+      @container = test.getComponent('restrictedContainer')
+
+
+    it 'has a restriction configuration', ->
+      container = @container.containers['children']
+      expect(container.allowedComponents).to.have.keys('text', 'image')
+
+
+    describe 'containers[\'children\'].isAllowedAsChild()', ->
+
+      it 'accepts a text component', ->
+        text = test.getComponent('text')
+        children = @container.containers['children']
+        expect(children.isAllowedAsChild(text)).to.equal(true)
+
+
+      it 'does not accept a row component', ->
+        row = test.getComponent('row')
+        children = @container.containers['children']
+        expect(children.isAllowedAsChild(row)).to.equal(false)
+
+
   describe 'Image component', ->
 
     beforeEach ->

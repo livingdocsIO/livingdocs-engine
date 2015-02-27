@@ -47,6 +47,7 @@ module.exports = class ComponentModel
           @containers[directive.name] = new ComponentContainer
             name: directive.name
             parentComponent: this
+            config: directive.config
         when 'editable', 'image', 'html'
           @createComponentDirective(directive)
           @content ||= {}

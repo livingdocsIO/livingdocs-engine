@@ -14,9 +14,26 @@ assert = require('../modules/logging/assert')
 module.exports = class ComponentContainer
 
 
-  constructor: ({ @parentComponent, @name, isRoot }) ->
+  constructor: ({ @parentComponent, @name, isRoot, config }) ->
     @isRoot = isRoot?
     @first = @last = undefined
+    @allowedComponents = undefined # undefined means all component are allowed
+    @parseConfig(config)
+
+
+  # @param configuration:
+  #   - only {Array} Array of componentNames
+  parseConfig: (configuration) ->
+    return unless configuration?
+
+    for componentName in configuration.onlyAllowComponents || []
+      @allowedComponents ?= {}
+      @allowedComponents[componentName] = true
+
+
+  isAllowedAsChild: (component) ->
+    return true if @allowedComponents == undefined
+    return !!@allowedComponents[component.componentName]
 
 
   prepend: (component) ->
