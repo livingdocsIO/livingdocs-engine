@@ -15,12 +15,26 @@ module.exports = class FieldExtractor
 
   setupListeners: ->
 
-    @componentTree.componentAdded.add(@extractAll)
-    @componentTree.componentRemoved.add(@extractAll)
-    @componentTree.componentMoved.add(@extractAll)
+    @componentTree.componentAdded.add(@onTreeChange)
+    @componentTree.componentRemoved.add(@onTreeChange)
+    @componentTree.componentMoved.add(@onTreeChange)
 
-    # change only needs to re-check the component
-    @componentTree.componentContentChanged.add(@recheckComponent)
+    @componentTree.componentContentChanged.add(@onComponentChange)
+
+
+  onTreeChange: (componentModel) =>
+    componentName = componentModel.componentName
+    fieldsToExtract = @metadataConfig.getComponentMap()[componentName]
+    changedFields = {}
+    fieldsHaveChanged = false
+
+    for fieldName, field of @extractFields(fieldsToExtract) when !_.isEqual(@fields[fieldName], field)
+      fieldsHaveChanged = true
+      changedFields[fieldName] = @fields[fieldName] = field
+
+    return unless fieldsHaveChanged
+
+    @fieldsChanged.fire(changedFields, @fields)
 
 
   extractAll: =>
@@ -80,29 +94,30 @@ module.exports = class FieldExtractor
     fields
 
 
-  recheckComponent: (componentModel, directive) =>
+  onComponentChange: (componentModel, directiveName) =>
     componentName = componentModel.componentName
-    fieldNames = @metadataConfig.getFieldsBySource(componentName, directive)
+    fieldNames = @metadataConfig.getFieldsBySource(componentName, directiveName)
 
     changedFields = {}
     fieldsThatNeedFullExtraction = []
 
-    _(fieldNames).forEach (fieldName) =>
+    directiveModel = componentModel.directives.get(directiveName);
 
-      directiveModel = componentModel.directives.get(directive);
+    _(fieldNames).forEach (fieldName) =>
 
       field = if directiveModel.isEmpty()
         undefined
       else
         @extractFieldFromDirective(directiveModel, fieldName)
 
-      fieldWasFilledFromThisComponent = @fields[fieldName].component.id is componentModel.id
+      fieldWasFilledFromThisComponent = @fields[fieldName]?.component.id == componentModel.id
 
-      if !field && fieldWasFilledFromThisComponent
+      if !field? && fieldWasFilledFromThisComponent
         fieldsThatNeedFullExtraction.push(fieldName)
+
         @fields[fieldName] = changedFields[fieldName] = undefined
 
-      else if fieldWasFilledFromThisComponent
+      else if fieldWasFilledFromThisComponent and !_.isEqual(@fields[fieldName], field)
         @fields[fieldName] = changedFields[fieldName] = field
 
     if fieldsThatNeedFullExtraction.length
@@ -136,15 +151,15 @@ module.exports = class FieldExtractor
 
     content: content
     component: directiveModel.component
-    field: directiveModel.name
-    text: $("<div>#{ content }</div>").text()
+    directiveName: directiveModel.name
+    text: directiveModel.getText()
     type: 'text'
 
 
   extractImageField: (imageDirective) ->
 
     component: imageDirective.component
-    field: imageDirective.name
+    directiveName: imageDirective.name
     type: 'image'
     image:
       originalUrl: imageDirective.getOriginalUrl()
