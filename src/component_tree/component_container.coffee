@@ -132,6 +132,8 @@ module.exports = class ComponentContainer
   # attached to one.
   # @api private
   attachComponent: (component, position = {}) ->
+    assert(@isAllowedAsChild(component), "Component '#{ component.componentName }' is not allowed as a child of #{ @getContainerIdentifier() }")
+
     func = =>
       @link(component, position)
 
@@ -195,4 +197,11 @@ module.exports = class ComponentContainer
       parentContainer.first = component unless component.previous?
       parentContainer.last = component unless component.next?
 
+
+  # Helper method for debugging and error messages
+  getContainerIdentifier: ->
+    if @isRoot
+      'root'
+    else
+      "#{ @parentComponent.componentName }.containers['#{ @name }']"
 

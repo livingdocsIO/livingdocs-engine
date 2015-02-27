@@ -227,6 +227,31 @@ describe 'ComponentTree with a multi-column row component', ->
       expect(visitedContainers).to.equal(3)
 
 
+describe 'ComponentTree with a restrictedContainer component', ->
+
+  beforeEach ->
+    { @componentTree } = test.get('componentTree')
+    @container = test.getComponent('restrictedContainer')
+    @componentTree.append(@container)
+
+
+  describe 'append()', ->
+
+    it 'fails to add a restricted title component', ->
+      titleComponent = test.getComponent('title')
+      mainContainer = @container.containers['children']
+
+      func = -> mainContainer.append(titleComponent)
+      expect(func).to.throw("Component 'title' is not allowed as a child")
+
+
+    it 'succeeds to add an allowed text component', ->
+      textComponent = test.getComponent('text')
+      mainContainer = @container.containers['children']
+      mainContainer.append(textComponent)
+      expect(mainContainer.first).to.equal(textComponent)
+
+
 describe 'ComponentTree with three levels', ->
 
   beforeEach ->
