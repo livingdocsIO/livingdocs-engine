@@ -1,6 +1,7 @@
 _ = require('underscore')
 base64Image = require('../../support/test_base64_image')
 config = test.config
+ComponentContainer = require('../../../src/component_tree/component_container')
 
 describe 'component_model:', ->
 
@@ -60,14 +61,17 @@ describe 'component_model:', ->
       expect(@row.componentName).to.equal('row')
 
 
-    it 'has two containers named main and sidebar', ->
-      expect( _.size(@row.containers)).to.equal(2)
-      expect(@row.containers).to.have.ownProperty('main')
-      expect(@row.containers).to.have.ownProperty('sidebar')
-
-
     it 'has no editables or images', ->
       expect(@row.content).not.to.exist
+
+
+    it 'initializes the two containers', ->
+      expect(@row.containers.main).to.be.an.instanceof(ComponentContainer)
+      expect(@row.containers.sidebar).to.be.an.instanceof(ComponentContainer)
+
+
+    it 'does not create directives for the containers ', ->
+      expect(@row.directives.length).to.equal(0)
 
 
   describe 'Container Component', ->

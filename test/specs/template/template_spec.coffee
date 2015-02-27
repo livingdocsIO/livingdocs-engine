@@ -1,6 +1,5 @@
 Template = require('../../../src/template/template')
 ComponentModel = require('../../../src/component_tree/component_model')
-ComponentContainer = require('../../../src/component_tree/component_container')
 ComponentView = require('../../../src/rendering/component_view')
 css = test.config.css
 
@@ -89,11 +88,16 @@ describe 'template:', ->
       template = test.getTemplate('row')
 
 
-    it 'initializes componentContainers', ->
+    it 'has tow container directives', ->
+      mainDirective = template.directives.get('main')
+      sidebarDirective = template.directives.get('sidebar')
+      expect(mainDirective.type).to.equal('container')
+      expect(sidebarDirective.type).to.equal('container')
+
+
+    it 'creates a componentModel successfully', ->
       component = template.createModel()
       expect(component).to.exist
-      expect(component.containers.main instanceof ComponentContainer).to.equal(true)
-      expect(component.containers.sidebar instanceof ComponentContainer).to.equal(true)
 
 
   describe 'Subtitle Template', ->
