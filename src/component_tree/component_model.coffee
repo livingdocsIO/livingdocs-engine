@@ -78,6 +78,14 @@ module.exports = class ComponentModel
   # ComponentTree operations
   # ----------------------
 
+  isAllowedAsSibling: (component) ->
+    @parentContainer.isAllowedAsChild(component)
+
+
+  isAllowedAsChild: (containerName, component) ->
+    @containers[containerName].isAllowedAsChild(component)
+
+
   # Insert a component before this one
   before: (componentModel) ->
     if componentModel

@@ -160,6 +160,17 @@ module.exports = class ComponentTree
     @mainRenderer?.getComponentViewById(componentId)
 
 
+  isDropAllowed: ({ componentToInsert, target, componentView, containerName }) ->
+    if target == 'root'
+      @root.isAllowedAsChild(componentToInsert)
+    else if target == 'component'
+      component = componentView.model
+      component.isAllowedAsSibling(componentToInsert)
+    else if target == 'container'
+      component = componentView.model
+      component.isAllowedAsChild(containerName, componentToInsert)
+
+
   # returns a readable string representation of the whole tree
   print: () ->
     output = 'ComponentTree\n-----------\n'
