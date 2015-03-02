@@ -94,6 +94,19 @@ module.exports = do ->
       return editableName
 
 
+  # @returns {Object}
+  #    target: {String} 'component'
+  #    componentView: {ComponentView}
+  #    position: {String} 'before', 'after'
+  #  ,
+  #    target: {String} 'container'
+  #    node: {DOM Node} node
+  #    componentView: {ComponentView}
+  #    containerName: {String}
+  #  ,
+  #    target: {String} 'root'
+  #    node: {DOM Node} node
+  #    componentTree: {ComponentTree}
   dropTarget: (node, { top, left }) ->
     node = @getElementNode(node)
     containerAttr = config.directives.container.renderedAttr
