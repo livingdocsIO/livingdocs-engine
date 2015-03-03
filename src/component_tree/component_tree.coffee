@@ -160,15 +160,20 @@ module.exports = class ComponentTree
     @mainRenderer?.getComponentViewById(componentId)
 
 
-  isDropAllowed: ({ componentToInsert, target, componentView, containerName }) ->
+  # Check if a component can be dropped at a specific drop location.
+  #
+  # @params {ComponentModel} The component that is being dragged
+  # @params {Object} A drop target obj. From interaction/dom.dropTarget()
+  isDropAllowed: (component, targetx) ->
+    { target, componentView, containerName } = targetx
     if target == 'root'
-      @root.isAllowedAsChild(componentToInsert)
+      @root.isAllowedAsChild(component)
     else if target == 'component'
-      component = componentView.model
-      component.isAllowedAsSibling(componentToInsert)
+      targetComponent = componentView.model
+      targetComponent.isAllowedAsSibling(component)
     else if target == 'container'
-      component = componentView.model
-      component.isAllowedAsChild(containerName, componentToInsert)
+      targetComponent = componentView.model
+      targetComponent.isAllowedAsChild(containerName, component)
 
 
   # returns a readable string representation of the whole tree
