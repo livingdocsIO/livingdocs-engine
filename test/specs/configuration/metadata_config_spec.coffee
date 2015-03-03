@@ -28,15 +28,18 @@ describe 'Metadata Config', ->
         type: 'image'
         matches: ['cover.image']
 
+
   it 'returns directives by component and field', ->
     expect(
       @metadataConfig.getDirectivesByComponentAndField('cover', 'teaser')
     ).to.deep.equal(['image'])
 
+
   it 'returns fields by component and directive', ->
     expect(
       @metadataConfig.getFieldsBySource('cover', 'image')
     ).to.deep.equal(['teaser'])
+
 
   it 'returns the component map', ->
      expect(
@@ -46,3 +49,26 @@ describe 'Metadata Config', ->
       title: ['title'],
       cover: ['teaser']
     })
+
+
+  it 'returns the editable fields', ->
+
+    config = [
+      identifier: 'foo'
+      type: 'text'
+      matches: ['hero.title', 'title.title']
+    ,
+      identifier: 'bar'
+      type: 'image'
+      matches: ['cover.image']
+      isEditable: true
+    ,
+      identifier: 'baz'
+      type: 'image'
+      matches: ['cover.image']
+      isEditable: false
+    ]
+    expect(
+      new MetadataConfig(config).getListOfEditableFields()
+    ).to.deep.equal(['foo', 'bar'])
+

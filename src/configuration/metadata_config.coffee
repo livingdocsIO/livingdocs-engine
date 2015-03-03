@@ -2,6 +2,7 @@ module.exports = class MetadataConfig
 
   constructor: (config) ->
     @fieldsArray = []
+    @editableFieldsArray = []
     @fieldMap = {}
     @configMap = {}
     @componentDirectiveMap = {}
@@ -18,6 +19,9 @@ module.exports = class MetadataConfig
       @configMap[fieldName] = fieldItemConfig
       @fieldMap[fieldName] ?= {}
 
+      isEditable = if fieldItemConfig.isEditable? then !!fieldItemConfig.isEditable else true
+      @editableFieldsArray.push(fieldName) if isEditable
+
       for pattern in fieldItemConfig.matches
         [componentName, directive] = pattern.split('.')
 
@@ -30,6 +34,11 @@ module.exports = class MetadataConfig
 
         @fieldMap[fieldName][componentName] ?= []
         @fieldMap[fieldName][componentName].push(directive)
+
+
+
+
+  getListOfEditableFields: -> @editableFieldsArray
 
 
   getListOfFields: -> @fieldsArray
