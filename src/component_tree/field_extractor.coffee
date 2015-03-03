@@ -45,11 +45,21 @@ module.exports = class FieldExtractor
 
   extractFields: (fieldsToExtract) ->
     fields = {}
-    fieldsByComponents = {}
+
+    # fieldsByComponentToExtract will look like that:
+    #
+    # fieldsByComponentToExtract = {
+    #   'hero': ['documentTitle', 'tagline'],
+    #   'title': ['documentTitle']
+    #    ^         ^ metadata-field name
+    #    | component name
+    # }
+    fieldsByComponentToExtract = {}
+
 
     _(@metadataConfig.getComponentMap())
       .forEach (fieldsByComponent, componentName) ->
-        fieldsByComponents[componentName] = _.intersection(
+        fieldsByComponentToExtract[componentName] = _.intersection(
           fieldsByComponent
           fieldsToExtract
         )
@@ -57,17 +67,33 @@ module.exports = class FieldExtractor
     @componentTree.each (componentModel) =>
       componentName = componentModel.componentName
 
-      return unless fieldsByComponents[componentName]?.length
+      # Only search for a field if it has not been found before
+      return unless fieldsByComponentToExtract[componentName]?.length
 
       newFields = @extractFieldsFromComponent(
         componentModel,
-        fieldsByComponents[componentName]
+        fieldsByComponentToExtract[componentName]
       )
 
       _(newFields).forEach (field, fieldName) =>
 
-        _(fieldsByComponents).forEach (fieldsByComponent, componentName) =>
-          fieldsByComponents[componentName] = _.without(
+        # When a field is matched, it is removed from the `fieldsByComponentToExtract`
+        #
+        # Say the `documentTitle` is matched, the `fieldsByComponentToExtract` goes from
+        #
+        #   {
+        #     'hero': ['documentTitle', 'tagline'],
+        #     'title': ['documentTitle']
+        #   }
+        #
+        # to
+        #
+        #   {
+        #     'hero': ['tagline'],
+        #     'title': []
+        #   }
+        _(fieldsByComponentToExtract).forEach (fieldsByComponent, componentName) =>
+          fieldsByComponentToExtract[componentName] = _.without(
             fieldsByComponent,
             fieldName
           )
