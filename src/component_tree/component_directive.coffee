@@ -17,6 +17,10 @@ module.exports = class ComponentDirective
     @component.setContent(@name, value)
 
 
+  isEmpty: ->
+    !@getContent()
+
+
   # Set data that will be persisted along
   # with the componentModel
   setData: (key, value) ->

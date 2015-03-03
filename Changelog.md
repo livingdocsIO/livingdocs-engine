@@ -1,8 +1,16 @@
+# v.0.6.0
+
+#### Features:
+
+- Adds field extractor [#164](https://github.com/upfrontIO/livingdocs-engine/pull/164)
+
+
 # v.0.5.6
 
 #### Features:
 
 - Container focus event [#161](https://github.com/upfrontIO/livingdocs-engine/pull/161)
+
 
 # v.0.5.5
 

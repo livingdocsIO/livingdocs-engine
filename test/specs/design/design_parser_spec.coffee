@@ -89,6 +89,16 @@ describe 'design_parser:', ->
         defaultComponents:
           paragraph: 'paragraph'
 
+        metadata: [
+          identifier: 'title'
+          type: 'text'
+          matches: ['hero.title', 'title.title']
+        ,
+          identifier: 'description'
+          type: 'text'
+          matches: ['title.title']
+        ]
+
         imageRatios:
           "16:9":
             label: "16:9 Cinemascope"
@@ -123,6 +133,12 @@ describe 'design_parser:', ->
     it 'parses the componentProperties', ->
       title = @design.get('title')
       expect(title.styles['position']).to.be.an.instanceof(CssModificatorProperty)
+
+
+    it 'sets the metadata', ->
+      config = @design.metadata
+      expect(config[0].identifier).to.equal('title')
+      expect(config[1].identifier).to.equal('description')
 
 
     it 'parses the imageRatios', ->
