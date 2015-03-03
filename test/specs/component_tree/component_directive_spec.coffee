@@ -10,6 +10,10 @@ describe 'component_directive:', ->
       expect(@imgDirective.component).to.equal(@image)
 
 
+    it 'recognizes an empty image', ->
+      expect(@imgDirective.isEmpty()).to.be.true
+
+
     describe 'getImageUrl()', ->
 
       it 'returns undefined for an empty image', ->

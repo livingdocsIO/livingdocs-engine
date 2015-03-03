@@ -64,3 +64,14 @@ describe 'livingdoc:', ->
     it 'renders an empty livingdoc with prettify', ->
       expect(@doc.toJson('prettify')).to.contain('\n  ')
 
+
+describe 'livingdoc of two components tree:', ->
+
+  beforeEach ->
+    componentTree = test.createComponentTree [
+      hero: { title: 'Hero Title' },
+      title: { title: 'Title Title' }
+    ]
+    @doc = new Livingdoc({ componentTree })
+
+

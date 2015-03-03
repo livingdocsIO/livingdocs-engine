@@ -46,7 +46,6 @@ module.exports = designParser =
       @parseComponents(components)
       @parseGroups(groups)
       @parseDefaults(defaultComponents)
-
     catch error
       error.message = "Error creating the design: #{ error.message }"
       throw error
