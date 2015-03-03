@@ -17,7 +17,7 @@ module.exports = class ComponentContainer
   constructor: ({ @parentComponent, @name, isRoot, config }) ->
     @isRoot = isRoot?
     @first = @last = undefined
-    @allowedComponents = undefined # undefined means all component are allowed
+    @allowedChildren = undefined # undefined means all component are allowed
     @parseConfig(config)
 
 
@@ -26,9 +26,9 @@ module.exports = class ComponentContainer
   parseConfig: (configuration) ->
     return unless configuration?
 
-    for componentName in configuration.onlyAllowComponents || []
-      @allowedComponents ?= {}
-      @allowedComponents[componentName] = true
+    for componentName in configuration.allowedChildren || []
+      @allowedChildren ?= {}
+      @allowedChildren[componentName] = true
 
 
   # Nesting Validations
@@ -37,7 +37,8 @@ module.exports = class ComponentContainer
   isAllowedAsChild: (component) ->
     !!(
       @canBeNested(component) &&
-      @isComponentAllowed(component)
+      @isChildAllowed(component) &&
+      @isAllowedAsParent(component)
     )
 
 
@@ -53,8 +54,19 @@ module.exports = class ComponentContainer
 
   # Check if the configuration allows a component to be
   # inserted here.
-  isComponentAllowed: (component) ->
-    @allowedComponents == undefined || @allowedComponents[component.componentName]
+  isChildAllowed: (component) ->
+    @allowedChildren == undefined || @allowedChildren[component.componentName]
+
+
+  isAllowedAsParent: (component) ->
+    return true unless allowedParents = component.template.allowedParents
+
+    parentName = if @isRoot then 'root' else @parentComponent?.componentName
+
+    for allowed in allowedParents
+      return true if parentName == allowed
+
+    return false
 
 
   # ComponentTree operations

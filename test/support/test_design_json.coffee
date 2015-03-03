@@ -86,16 +86,24 @@ module.exports = do ->
         </div>
         """
     ,
-      name: 'restrictedContainer'
-      label: 'Container that only accepts certain components'
+      name: 'list'
+      label: 'A list that only accepts certain components'
       directives:
         children:
-          onlyAllowComponents: ['text', 'image']
+          allowedChildren: ['listItem', 'text']
       html:
         """
-        <div class="container">
+        <div class="list">
           <div #{ containerAttr }="children"></div>
         </div>
+        """
+    ,
+      name: 'listItem'
+      label: 'Component that can only be placed in a restricted container'
+      allowedParents: ['list']
+      html:
+        """
+        <div #{ editableAttr }="content"></div>
         """
     ,
       name: 'stuffedContainer'

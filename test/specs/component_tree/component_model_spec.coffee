@@ -86,15 +86,15 @@ describe 'component_model:', ->
 
 
   # Component with a container with a config
-  describe 'RestrictedContainer Component', ->
+  describe 'List Component', ->
 
     beforeEach ->
-      @container = test.getComponent('restrictedContainer')
+      @container = test.getComponent('list')
 
 
     it 'has a restriction configuration', ->
       container = @container.containers['children']
-      expect(container.allowedComponents).to.have.keys('text', 'image')
+      expect(container.allowedChildren).to.have.keys('listItem', 'text')
 
 
     describe 'containers[\'children\'].isAllowedAsChild()', ->

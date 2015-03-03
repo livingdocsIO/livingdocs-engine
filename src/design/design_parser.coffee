@@ -113,7 +113,7 @@ module.exports = designParser =
 
 
   parseComponents: (components=[]) ->
-    for { name, label, html, properties, directives } in components
+    for { name, label, html, properties, directives, allowedParents } in components
       properties = @lookupComponentProperties(properties)
 
       template = new Template
@@ -121,6 +121,7 @@ module.exports = designParser =
         label: label
         html: html
         properties: properties
+        allowedParents: allowedParents
 
       @parseDirectives(template, directives)
       @design.add(template)

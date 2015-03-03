@@ -26,7 +26,7 @@ sortByName = (a, b) ->
 module.exports = class Template
 
 
-  constructor: ({ @name, html, label, properties } = {}) ->
+  constructor: ({ @name, html, label, properties, @allowedParents } = {}) ->
     assert html, 'Template: param html missing'
 
     @$template = $( @pruneHtml(html) ).wrap('<div>')
