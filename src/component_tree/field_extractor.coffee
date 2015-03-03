@@ -110,6 +110,7 @@ module.exports = class FieldExtractor
       else
         @extractFieldFromDirective(directiveModel, fieldName)
 
+      fieldWasEmpty = !@fields[fieldName]?
       fieldWasFilledFromThisComponent = @fields[fieldName]?.component.id == componentModel.id
 
       if !field? && fieldWasFilledFromThisComponent
@@ -117,7 +118,7 @@ module.exports = class FieldExtractor
 
         @fields[fieldName] = changedFields[fieldName] = undefined
 
-      else if fieldWasFilledFromThisComponent and !_.isEqual(@fields[fieldName], field)
+      else if (fieldWasEmpty || fieldWasFilledFromThisComponent) and !_.isEqual(@fields[fieldName], field)
         @fields[fieldName] = changedFields[fieldName] = field
 
     if fieldsThatNeedFullExtraction.length
