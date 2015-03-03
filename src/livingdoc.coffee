@@ -11,9 +11,9 @@ designCache = require('./design/design_cache')
 ComponentTree = require('./component_tree/component_tree')
 Dependencies = require('./rendering/dependencies')
 FieldExtractor = require('./component_tree/field_extractor')
+MetadataConfig = require('./configuration/metadata_config')
 
 module.exports = class Livingdoc extends EventEmitter
-
 
   # Create a new livingdoc in a synchronous way.
   # The design must be loaded first.
@@ -60,7 +60,8 @@ module.exports = class Livingdoc extends EventEmitter
     @design = @componentTree.design
     @dependencies = new Dependencies({ @componentTree })
 
-    @fieldExtractor = new FieldExtractor(@componentTree, @design.metadata)
+    @metadataConfig = new MetadataConfig(@design.metadata)
+    @fieldExtractor = new FieldExtractor(@componentTree, @metadataConfig)
 
     @forwardComponentTreeEvents()
 

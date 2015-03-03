@@ -31,8 +31,9 @@ describe 'Field Extractor', ->
       subtitle: { title: 'Subtitle Title' }
       cover: { image: 'http://www.lolcats.com/images/1.jpg' }
     ]
+    @metadataConfig = new MetadataConfig(simpleConfig)
 
-    @extractor = new FieldExtractor(@tree, simpleConfig)
+    @extractor = new FieldExtractor(@tree, @metadataConfig)
 
 
   describe 'extraction', ->
@@ -90,7 +91,7 @@ describe 'Field Extractor', ->
     it 'fires when the first field of an empty tree is edited', ->
       # Create an empty tree
       tree = test.createComponentTree([hero: {}])
-      extractor = new FieldExtractor(tree, simpleConfig)
+      extractor = new FieldExtractor(tree, @metadataConfig)
 
       fieldsChanged = sinon.spy(extractor.fieldsChanged, 'fire')
 

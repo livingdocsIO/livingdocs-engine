@@ -1,11 +1,9 @@
 assert = require('../modules/logging/assert')
-MetadataConfig = require('../configuration/metadata_config')
 _ = require('underscore')
 
 module.exports = class FieldExtractor
 
-  constructor: (@componentTree, metadataConfigJSON) ->
-    @metadataConfig = new MetadataConfig(metadataConfigJSON)
+  constructor: (@componentTree, @metadataConfig) ->
     @fields = {}
     @initEvents()
     # start by extracting everything
