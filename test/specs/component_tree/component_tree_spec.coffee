@@ -290,6 +290,41 @@ describe 'ComponentTree with three levels', ->
       expect(visitedComponents[3]).to.equal(@title)
 
 
+  describe 'isDropAllowed()', ->
+
+    it 'does allow to insert itself to the root container', ->
+      target =
+        target: 'root'
+      isAllowed = @componentTree.isDropAllowed(@row, target)
+      expect(isAllowed).to.equal(true)
+
+
+    it 'does not allow to insert itself next to a child', ->
+      target =
+        target: 'component'
+        componentView: { model: @text }
+      isAllowed = @componentTree.isDropAllowed(@row, target)
+      expect(isAllowed).to.equal(false)
+
+
+    it 'does not allow to insert to a container of itself', ->
+      target =
+        target: 'container'
+        componentView: { model: @row }
+        containerName: 'main'
+      isAllowed = @componentTree.isDropAllowed(@row, target)
+      expect(isAllowed).to.equal(false)
+
+
+    it 'does not allow to insert itself to a container of a child', ->
+      target =
+        target: 'container'
+        componentView: { model: @rowInMain }
+        containerName: 'sidebar'
+      isAllowed = @componentTree.isDropAllowed(@row, target)
+      expect(isAllowed).to.equal(false)
+
+
 describe 'ComponentTree with three components', ->
 
   beforeEach ->

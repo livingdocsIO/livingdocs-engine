@@ -76,7 +76,7 @@ module.exports = class ComponentModel
 
 
   # ComponentTree operations
-  # ----------------------
+  # ------------------------
 
   isAllowedAsSibling: (component) ->
     @parentContainer.isAllowedAsChild(component)

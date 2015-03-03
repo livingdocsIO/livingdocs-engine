@@ -31,9 +31,37 @@ module.exports = class ComponentContainer
       @allowedComponents[componentName] = true
 
 
+  # Nesting Validations
+  # -------------------
+
   isAllowedAsChild: (component) ->
-    return true if @allowedComponents == undefined
-    return !!@allowedComponents[component.componentName]
+    !!(
+      @canBeNested(component) &&
+      @isComponentAllowed(component)
+    )
+
+
+  # Prevent inserting a component into itself.
+  canBeNested: (component) ->
+    parent = @parentComponent
+    while parent?
+      return false if parent.id == component.id
+      parent = parent.getParent()
+
+    return true
+
+
+  # Check if the configuration allows a component to be
+  # inserted here.
+  isComponentAllowed: (component) ->
+    @allowedComponents == undefined || @allowedComponents[component.componentName]
+
+
+  # ComponentTree operations
+  # ------------------------
+
+  getComponentTree: ->
+    @componentTree || @parentComponent?.componentTree
 
 
   prepend: (component) ->
@@ -91,9 +119,13 @@ module.exports = class ComponentContainer
       @insertAfter(component.next, component)
 
 
-  getComponentTree: ->
-    @componentTree || @parentComponent?.componentTree
+  remove: (component) ->
+    component.destroy()
+    @_detachComponent(component)
 
+
+  # Iterators
+  # ---------
 
   # Traverse all components
   each: (callback) ->
@@ -117,11 +149,6 @@ module.exports = class ComponentContainer
       callback(component)
       for name, componentContainer of component.containers
         callback(componentContainer)
-
-
-  remove: (component) ->
-    component.destroy()
-    @_detachComponent(component)
 
 
   # Private
