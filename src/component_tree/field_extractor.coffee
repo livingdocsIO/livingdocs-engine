@@ -1,5 +1,6 @@
 assert = require('../modules/logging/assert')
 _ = require('underscore')
+$ = require('jquery')
 
 module.exports = class FieldExtractor
 
