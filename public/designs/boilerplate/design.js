@@ -138,6 +138,11 @@
       ]
     },
     {
+      "name": "media",
+      "html": "<div class=\"embed-responsive embed-responsive-16by9\" doc-html=\"iframe\"></div>",
+      "label": "Media"
+    },
+    {
       "name": "well",
       "html": "<div class=\"well\">\n  Look, I&apos;m in a well!\n</div>",
       "label": "Well",
@@ -151,11 +156,6 @@
       "label": "Main and Sidebar"
     },
     {
-      "name": "media",
-      "html": "<div class=\"embed-responsive embed-responsive-16by9\" doc-html=\"iframe\"></div>",
-      "label": "Media"
-    },
-    {
       "name": "h1",
       "html": "<h1 class=\"title\" doc-editable=\"title\">\n  Title\n</h1>",
       "label": "Title H1"
@@ -166,27 +166,14 @@
       "label": "Title H2"
     },
     {
-      "name": "hero",
-      "html": "<div class=\"jumbotron\">\n  <h1 doc-editable=\"title\">Hello, world!</h1>\n  <p doc-editable=\"text\">\n    This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.\n  </p>\n  <p>\n    <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" doc-editable=\"button\">Learn more</a>\n  </p>\n</div>",
-      "label": "Large Image"
-    },
-    {
-      "name": "list-group",
-      "html": "<ul class=\"list-group\" doc-container=\"list\"></ul>",
-      "label": "List Group",
-      "directives": {
-        "list": {
-          "onlyAllowComponents": [
-            "list-group-item",
-            "list-group-box-item"
-          ]
-        }
-      }
-    },
-    {
       "name": "header",
       "html": "<div class=\"page-header\">\n  <h1 doc-editable=\"title\">Example page header Subtext for header</h1>\n</div>",
       "label": "Header"
+    },
+    {
+      "name": "hero",
+      "html": "<div class=\"jumbotron\">\n  <h1 doc-editable=\"title\">Hello, world!</h1>\n  <p doc-editable=\"text\">\n    This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.\n  </p>\n  <p>\n    <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" doc-editable=\"button\">Learn more</a>\n  </p>\n</div>",
+      "label": "Large Image"
     },
     {
       "name": "image",
@@ -194,14 +181,33 @@
       "label": "Image"
     },
     {
+      "name": "list-group",
+      "html": "<ul class=\"list-group\" doc-container=\"list\"></ul>",
+      "label": "List Group",
+      "directives": {
+        "list": {
+          "allowedChildren": [
+            "list-group-item",
+            "list-group-box-item"
+          ]
+        }
+      }
+    },
+    {
       "name": "list-group-box-item",
       "html": "<li class=\"list-group-item\">\n  <h4 class=\"list-group-item-heading\" doc-editable=\"title\">List group item heading</h4>\n  <p class=\"list-group-item-text\" doc-editable=\"text\">\n    Donec id elit non mi porta gravida at eget metus.\n    Maecenas sed diam eget risus varius blandit.\n  </p>\n</li>",
-      "label": "List Group Box Item"
+      "label": "List Group Box Item",
+      "allowedParents": [
+        "list-group"
+      ]
     },
     {
       "name": "list-group-item",
       "html": "<li class=\"list-group-item\" doc-editable=\"text\">Cras justo odio</li>",
-      "label": "List Group Item"
+      "label": "List Group Item",
+      "allowedParents": [
+        "list-group"
+      ]
     },
     {
       "name": "p",
