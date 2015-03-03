@@ -87,6 +87,18 @@ describe 'Field Extractor', ->
     beforeEach ->
       @fieldsChanged = sinon.spy(@extractor.fieldsChanged, 'fire')
 
+    it 'fires when the first field of an empty tree is edited', ->
+      # Create an empty tree
+      tree = test.createComponentTree([hero: {}])
+      extractor = new FieldExtractor(tree, simpleConfig)
+
+      fieldsChanged = sinon.spy(extractor.fieldsChanged, 'fire')
+
+      model = tree.find('hero').first
+      model.set('title', 'new Hero')
+
+      expect(fieldsChanged).to.have.been.calledOnce
+
 
     it 'fires the fieldsChanged event when changing content', ->
       model = @tree.find('hero').first
