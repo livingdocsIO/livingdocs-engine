@@ -1,6 +1,7 @@
 module.exports = class MetadataConfig
 
   constructor: (config) ->
+    @fieldsArray = []
     @fieldMap = {}
     @configMap = {}
     @componentDirectiveMap = {}
@@ -12,6 +13,8 @@ module.exports = class MetadataConfig
     for fieldItemConfig in config
       fieldName = fieldItemConfig.identifier
       type = fieldItemConfig.type
+
+      @fieldsArray.push(fieldName)
       @configMap[fieldName] = fieldItemConfig
       @fieldMap[fieldName] ?= {}
 
@@ -27,6 +30,9 @@ module.exports = class MetadataConfig
 
         @fieldMap[fieldName][componentName] ?= []
         @fieldMap[fieldName][componentName].push(directive)
+
+
+  getListOfFields: -> @fieldsArray
 
 
   getConfigMap: -> @configMap

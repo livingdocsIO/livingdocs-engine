@@ -36,7 +36,7 @@ module.exports = class FieldExtractor
 
 
   extractAll: =>
-    allFields = Object.keys(@metadataConfig.getConfigMap())
+    allFields = @metadataConfig.getListOfFields()
 
     @fields = @extractFields(allFields)
     @fieldsChanged.fire(@fields, @fields)
