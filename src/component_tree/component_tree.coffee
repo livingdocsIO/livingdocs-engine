@@ -164,8 +164,8 @@ module.exports = class ComponentTree
   #
   # @params {ComponentModel} The component that is being dragged
   # @params {Object} A drop target obj. From interaction/dom.dropTarget()
-  isDropAllowed: (component, targetx) ->
-    { target, componentView, containerName } = targetx
+  isDropAllowed: (component, targetObj) ->
+    { target, componentView, containerName } = targetObj
     if target == 'root'
       @root.isAllowedAsChild(component)
     else if target == 'component'

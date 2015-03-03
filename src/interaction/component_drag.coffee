@@ -94,7 +94,6 @@ module.exports = class ComponentDrag
     componentTree = target.componentTree
     componentTree ?= target.componentView.model.componentTree
     isAllowed = componentTree.isDropAllowed(@componentModel, target)
-    console.log 'isAllowed', isAllowed
     return isAllowed
 
 

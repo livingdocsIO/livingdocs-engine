@@ -25,7 +25,7 @@
 
 
 /**
- * Highlighting
+ * Component Highlighting
  */
 
 .doc-editable.doc-component-highlight,
@@ -39,9 +39,39 @@
   /*outline-offset: 1px;*/
 }
 
+
+/**
+ * Container Highlighting
+ */
+
 .doc-container-highlight {
   outline: medium dashed rgba(255, 196, 13, 0.5);
 }
+
+[data-doc-container]:hover {
+  outline: 1px dashed rgba(0, 0, 0, 0.2);
+}
+
+[data-doc-container]:empty {
+  min-height: 100px;
+  outline: 1px dashed rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+[data-doc-container]:empty:before {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  content: attr(data-doc-container);
+  font-size: 12px;
+  line-height: 1.2;
+  padding: 1px 3px;
+
+  color: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.2);
+}
+
 
 
 /**

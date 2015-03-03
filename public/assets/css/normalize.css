@@ -68,7 +68,7 @@ audio:not([controls]) {
 html {
     font-size: 100%; /* 1 */
     -webkit-text-size-adjust: 100%; /* 2 */
-    -ms-text-size-adjust: 100% /* 2 */
+    -ms-text-size-adjust: 100%; /* 2 */
 }
 
 /**
@@ -329,7 +329,7 @@ nav ol {
 
 img {
     border: 0; /* 1 */
-    -ms-interpolation-mode: bicubic /* 2 */
+    -ms-interpolation-mode: bicubic; /* 2 */
 }
 
 /**
@@ -384,7 +384,7 @@ legend {
     border: 0; /* 1 */
     padding: 0;
     white-space: normal; /* 2 */
-    *margin-left: -7px /* 3 */
+    *margin-left: -7px; /* 3 */
 }
 
 /**
@@ -401,7 +401,7 @@ textarea {
     font-size: 100%; /* 1 */
     margin: 0; /* 2 */
     vertical-align: baseline; /* 3 */
-    *vertical-align: middle /* 3 */
+    *vertical-align: middle; /* 3 */
 }
 
 /**
@@ -442,7 +442,7 @@ input[type="reset"],
 input[type="submit"] {
     -webkit-appearance: button; /* 2 */
     cursor: pointer; /* 3 */
-    *overflow: visible  /* 4 */
+    *overflow: visible;  /* 4 */
 }
 
 /**
@@ -466,7 +466,7 @@ input[type="radio"] {
     box-sizing: border-box; /* 1 */
     padding: 0; /* 2 */
     *height: 13px; /* 3 */
-    *width: 13px /* 3 */
+    *width: 13px; /* 3 */
 }
 
 /**
@@ -507,7 +507,7 @@ input::-moz-focus-inner {
 
 textarea {
     overflow: auto; /* 1 */
-    vertical-align: top /* 2 */
+    vertical-align: top; /* 2 */
 }
 
 /* ==========================================================================
