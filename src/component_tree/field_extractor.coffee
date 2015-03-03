@@ -109,7 +109,9 @@ module.exports = class FieldExtractor
       directives = @metadataConfig.getDirectivesByComponentAndField(componentName, fieldToExtract)
 
       directives.forEach (directiveName) =>
+        # Only search for a field if it has not been found before
         return if fields[fieldToExtract]
+
         directiveModel = componentModel.directives.get(directiveName)
         return if directiveModel.isEmpty()
 
