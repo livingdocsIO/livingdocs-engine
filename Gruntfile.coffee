@@ -116,7 +116,7 @@ module.exports = (grunt) ->
         browsers: ['Chrome', 'Firefox', 'Safari']
       build:
         configFile: 'karma.conf.coffee'
-        browsers: ['Chrome', 'Firefox', 'Safari']
+        browsers: ['Firefox']
         singleRun: true
 
     uglify:
