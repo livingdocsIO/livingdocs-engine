@@ -1,3 +1,11 @@
+# v.0.7.0
+
+#### Features:
+
+- Restrict Drop Targets [#166](https://github.com/upfrontIO/livingdocs-engine/pull/166)
+- Basic support for editor plugins [#165](https://github.com/upfrontIO/livingdocs-engine/pull/165)
+
+
 # v.0.6.0
 
 #### Features:
