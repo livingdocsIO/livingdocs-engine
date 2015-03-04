@@ -62,19 +62,6 @@ describe 'Field Extractor', ->
       expect(fields.teaser.image.originalUrl).to.equal('http://www.lolcats.com/images/1.jpg')
 
 
-    it 'removes previously set fields', ->
-      @tree.find('subtitle').first.set('title', '')
-      fields = @extractor.getFields()
-      expect(fields.description).to.equal(undefined)
-
-
-    it 'uses the next component\'s text when directive is cleared', ->
-      @tree.find('hero').first.set('title', '')
-      fields = @extractor.getFields()
-      expect(fields.description.content).to.equal('Subtitle Title')
-      expect(fields.description.text).to.equal('Subtitle Title')
-
-
     it 'does not break when a component is added that fills a previously empty field', ->
       expect(=>
         textComponent = @tree.getComponent('text')
@@ -124,30 +111,9 @@ describe 'Field Extractor', ->
       expect(@fieldsChanged).to.not.have.been.called
 
 
-    it 'fires the fieldsChanged event when removing a component', (done) ->
-      @extractor.fieldsChanged.add (changedFields) ->
-        expect(changedFields.documentTitle.text).to.equal('Subtitle Title')
-        expect(_(changedFields).size()).to.equal(1)
-        done()
-      @tree.find('hero').first.remove()
-
-
-    it 'does not fires the fieldsChanged event when removing a component that does not change the metadata', ->
-      @tree.find('subtitle').first.remove()
-      expect(@fieldsChanged).to.not.have.been.called
-
-
     it 'fires the fieldsChanged event when moving a component', ->
       @tree.find('subtitle').first.up()
       expect(@fieldsChanged).to.have.been.calledOnce
-
-
-    it 'fires with new field when a previously used field is cleared', (done) ->
-      @extractor.fieldsChanged.add (changedFields) ->
-        expect(changedFields.documentTitle.text).to.equal('Subtitle Title')
-        done()
-      model = @tree.find('hero').first
-      model.set('title', '')
 
 
     it 'does not fire with field when changing the second possible field source', (done) ->
@@ -173,9 +139,91 @@ describe 'Field Extractor', ->
       @tree.find('subtitle').first.up()
 
 
+    # Setting empty string to directive
+    it 'fires the event only with the fields that have changed in a remove', (done) ->
+      @extractor.fieldsChanged.add (changedFields) ->
+        expect(changedFields.documentTitle.text).to.equal('Subtitle Title')
+        expect(_(changedFields).size()).to.equal(1)
+        done()
+      @tree.find('hero').first.set('title', '')
+
+
+    it 'fires the fieldsChanged event when removing a component', (done) ->
+      @extractor.fieldsChanged.add (changedFields) ->
+        expect(changedFields.documentTitle.text).to.equal('Subtitle Title')
+        expect(_(changedFields).size()).to.equal(1)
+        done()
+      @tree.find('hero').first.set('title', '')
+
+
+    it 'fires with `undefined` when the last component for a field is removed', (done) ->
+      @extractor.fieldsChanged.add (changedFields) ->
+        expect(changedFields.description).to.equal(undefined)
+        expect(_(changedFields).size()).to.equal(1)
+        done()
+      @tree.find('subtitle').first.set('title', '')
+
+
+    it 'does not fire when removing a component that does not change the metadata', ->
+      tree = test.createComponentTree [
+        hero: { title: 'Hero Title' }
+      ,
+        subtitle: { title: 'Subtitle Title' }
+      ,
+        subtitle: { title: 'Second Subtitle Title' }
+      ,
+        cover: { image: 'http://www.lolcats.com/images/1.jpg' }
+      ]
+      extractor = new FieldExtractor(tree, @metadataConfig)
+
+      fieldsChanged = sinon.spy(extractor.fieldsChanged, 'fire')
+
+      model = tree.find('subtitle')[1]
+      model.set('title', '')
+
+      expect(fieldsChanged).to.not.have.been.called
+
+
+    # Removing components
     it 'fires the event only with the fields that have changed in a remove', (done) ->
       @extractor.fieldsChanged.add (changedFields) ->
         expect(changedFields.documentTitle.text).to.equal('Subtitle Title')
         expect(_(changedFields).size()).to.equal(1)
         done()
       @tree.find('hero').first.remove()
+
+
+    it 'fires the fieldsChanged event when removing a component', (done) ->
+      @extractor.fieldsChanged.add (changedFields) ->
+        expect(changedFields.documentTitle.text).to.equal('Subtitle Title')
+        expect(_(changedFields).size()).to.equal(1)
+        done()
+      @tree.find('hero').first.remove()
+
+
+    it 'fires with `undefined` when the last component for a field is removed', (done) ->
+      @extractor.fieldsChanged.add (changedFields) ->
+        expect(changedFields.description).to.equal(undefined)
+        expect(_(changedFields).size()).to.equal(1)
+        done()
+      @tree.find('subtitle').first.remove()
+
+
+    it 'does not fire when removing a component that does not change the metadata', ->
+      tree = test.createComponentTree [
+        hero: { title: 'Hero Title' }
+      ,
+        subtitle: { title: 'Subtitle Title' }
+      ,
+        subtitle: { title: 'Second Subtitle Title' }
+      ,
+        cover: { image: 'http://www.lolcats.com/images/1.jpg' }
+      ]
+      extractor = new FieldExtractor(tree, @metadataConfig)
+
+      fieldsChanged = sinon.spy(extractor.fieldsChanged, 'fire')
+
+      model = tree.find('subtitle')[1]
+      model.remove()
+
+      expect(fieldsChanged).to.not.have.been.called
