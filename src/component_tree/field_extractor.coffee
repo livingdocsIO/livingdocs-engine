@@ -23,13 +23,14 @@ module.exports = class FieldExtractor
 
   onTreeChange: (componentModel) =>
     componentName = componentModel.componentName
-    fieldsToExtract = @metadataConfig.getComponentMap()[componentName]
+    fieldsToExtract = @metadataConfig.getComponentMap()[componentName] || []
+    newlyExtractedFields = @extractFields(fieldsToExtract)
     changedFields = {}
     fieldsHaveChanged = false
 
-    for fieldName, field of @extractFields(fieldsToExtract) when !_.isEqual(@fields[fieldName], field)
+    for fieldName in fieldsToExtract when !_.isEqual(@fields[fieldName], newlyExtractedFields[fieldName])
       fieldsHaveChanged = true
-      changedFields[fieldName] = @fields[fieldName] = field
+      changedFields[fieldName] = @fields[fieldName] = newlyExtractedFields[fieldName]
 
     return unless fieldsHaveChanged
 
