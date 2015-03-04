@@ -28,9 +28,12 @@ module.exports = class FieldExtractor
     changedFields = {}
     fieldsHaveChanged = false
 
-    for fieldName in fieldsToExtract when !_.isEqual(@fields[fieldName], newlyExtractedFields[fieldName])
-      fieldsHaveChanged = true
-      changedFields[fieldName] = @fields[fieldName] = newlyExtractedFields[fieldName]
+    for fieldName in fieldsToExtract
+      thisFieldHasChanged = !_.isEqual(@fields[fieldName], newlyExtractedFields[fieldName])
+
+      if thisFieldHasChanged
+        fieldsHaveChanged = true
+        changedFields[fieldName] = @fields[fieldName] = newlyExtractedFields[fieldName]
 
     return unless fieldsHaveChanged
 
