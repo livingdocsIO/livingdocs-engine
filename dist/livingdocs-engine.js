@@ -2598,11 +2598,70 @@ assert = require('../modules/logging/assert');
 
 module.exports = ComponentContainer = (function() {
   function ComponentContainer(_arg) {
-    var isRoot;
-    this.parentComponent = _arg.parentComponent, this.name = _arg.name, isRoot = _arg.isRoot;
+    var config, isRoot;
+    this.parentComponent = _arg.parentComponent, this.name = _arg.name, isRoot = _arg.isRoot, config = _arg.config;
     this.isRoot = isRoot != null;
     this.first = this.last = void 0;
+    this.allowedChildren = void 0;
+    this.parseConfig(config);
   }
+
+  ComponentContainer.prototype.parseConfig = function(configuration) {
+    var componentName, _i, _len, _ref, _results;
+    if (configuration == null) {
+      return;
+    }
+    _ref = configuration.allowedChildren || [];
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      componentName = _ref[_i];
+      if (this.allowedChildren == null) {
+        this.allowedChildren = {};
+      }
+      _results.push(this.allowedChildren[componentName] = true);
+    }
+    return _results;
+  };
+
+  ComponentContainer.prototype.isAllowedAsChild = function(component) {
+    return !!(this.canBeNested(component) && this.isChildAllowed(component) && this.isAllowedAsParent(component));
+  };
+
+  ComponentContainer.prototype.canBeNested = function(component) {
+    var parent;
+    parent = this.parentComponent;
+    while (parent != null) {
+      if (parent.id === component.id) {
+        return false;
+      }
+      parent = parent.getParent();
+    }
+    return true;
+  };
+
+  ComponentContainer.prototype.isChildAllowed = function(component) {
+    return this.allowedChildren === void 0 || this.allowedChildren[component.componentName];
+  };
+
+  ComponentContainer.prototype.isAllowedAsParent = function(component) {
+    var allowed, allowedParents, parentName, _i, _len, _ref;
+    if (!(allowedParents = component.template.allowedParents)) {
+      return true;
+    }
+    parentName = this.isRoot ? 'root' : (_ref = this.parentComponent) != null ? _ref.componentName : void 0;
+    for (_i = 0, _len = allowedParents.length; _i < _len; _i++) {
+      allowed = allowedParents[_i];
+      if (parentName === allowed) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  ComponentContainer.prototype.getComponentTree = function() {
+    var _ref;
+    return this.componentTree || ((_ref = this.parentComponent) != null ? _ref.componentTree : void 0);
+  };
 
   ComponentContainer.prototype.prepend = function(component) {
     if (this.first) {
@@ -2665,9 +2724,9 @@ module.exports = ComponentContainer = (function() {
     }
   };
 
-  ComponentContainer.prototype.getComponentTree = function() {
-    var _ref;
-    return this.componentTree || ((_ref = this.parentComponent) != null ? _ref.componentTree : void 0);
+  ComponentContainer.prototype.remove = function(component) {
+    component.destroy();
+    return this._detachComponent(component);
   };
 
   ComponentContainer.prototype.each = function(callback) {
@@ -2710,16 +2769,12 @@ module.exports = ComponentContainer = (function() {
     });
   };
 
-  ComponentContainer.prototype.remove = function(component) {
-    component.destroy();
-    return this._detachComponent(component);
-  };
-
   ComponentContainer.prototype.attachComponent = function(component, position) {
     var componentTree, func;
     if (position == null) {
       position = {};
     }
+    assert(this.isAllowedAsChild(component), "Component '" + component.componentName + "' is not allowed as a child of " + (this.getContainerIdentifier()));
     func = (function(_this) {
       return function() {
         return _this.link(component, position);
@@ -2793,6 +2848,14 @@ module.exports = ComponentContainer = (function() {
       if (component.next == null) {
         return parentContainer.last = component;
       }
+    }
+  };
+
+  ComponentContainer.prototype.getContainerIdentifier = function() {
+    if (this.isRoot) {
+      return 'root';
+    } else {
+      return "" + this.parentComponent.componentName + ".containers['" + this.name + "']";
     }
   };
 
@@ -2945,7 +3008,8 @@ module.exports = ComponentModel = (function() {
           this.containers || (this.containers = {});
           _results.push(this.containers[directive.name] = new ComponentContainer({
             name: directive.name,
-            parentComponent: this
+            parentComponent: this,
+            config: directive.config
           }));
           break;
         case 'editable':
@@ -2975,6 +3039,14 @@ module.exports = ComponentModel = (function() {
 
   ComponentModel.prototype.getMainView = function() {
     return this.componentTree.getMainComponentView(this.id);
+  };
+
+  ComponentModel.prototype.isAllowedAsSibling = function(component) {
+    return this.parentContainer.isAllowedAsChild(component);
+  };
+
+  ComponentModel.prototype.isAllowedAsChild = function(containerName, component) {
+    return this.containers[containerName].isAllowedAsChild(component);
   };
 
   ComponentModel.prototype.before = function(componentModel) {
@@ -3062,6 +3134,11 @@ module.exports = ComponentModel = (function() {
     return _results;
   };
 
+  ComponentModel.prototype.childrenAndSelf = function(callback) {
+    callback(this);
+    return this.children(callback);
+  };
+
   ComponentModel.prototype.descendants = function(callback) {
     var componentContainer, componentModel, name, _ref, _results;
     _ref = this.containers;
@@ -3128,11 +3205,6 @@ module.exports = ComponentModel = (function() {
         return _results;
       };
     })(this));
-  };
-
-  ComponentModel.prototype.childrenAndSelf = function(callback) {
-    callback(this);
-    return this.children(callback);
   };
 
   ComponentModel.prototype.hasContainers = function() {
@@ -3245,6 +3317,19 @@ module.exports = ComponentModel = (function() {
     }
     this.dataValues[name] = value;
     return true;
+  };
+
+  ComponentModel.prototype.getPluginName = function() {
+    var _ref;
+    return (_ref = this.plugin) != null ? _ref.name : void 0;
+  };
+
+  ComponentModel.prototype.setPlugin = function(plugin) {
+    return this.plugin = plugin;
+  };
+
+  ComponentModel.prototype.getPlugin = function(plugin) {
+    return this.plugin;
   };
 
   ComponentModel.prototype.getStyle = function(name) {
@@ -3521,15 +3606,31 @@ module.exports = ComponentTree = (function() {
     return oldRoot;
   };
 
-  ComponentTree.prototype.setMainView = function(view) {
-    assert(view.renderer, 'componentTree.setMainView: view does not have an initialized renderer');
-    assert(view.renderer.componentTree === this, 'componentTree.setMainView: Cannot set renderer from different componentTree');
-    return this.mainRenderer = view.renderer;
+  ComponentTree.prototype.setMainView = function(_arg) {
+    var renderer;
+    renderer = _arg.renderer;
+    assert(renderer, 'componentTree.setMainView: view does not have an initialized renderer');
+    assert(renderer.componentTree === this, 'componentTree.setMainView: Cannot set renderer from different componentTree');
+    return this.mainRenderer = renderer;
   };
 
   ComponentTree.prototype.getMainComponentView = function(componentId) {
     var _ref;
     return (_ref = this.mainRenderer) != null ? _ref.getComponentViewById(componentId) : void 0;
+  };
+
+  ComponentTree.prototype.isDropAllowed = function(component, targetObj) {
+    var componentView, containerName, target, targetComponent;
+    target = targetObj.target, componentView = targetObj.componentView, containerName = targetObj.containerName;
+    if (target === 'root') {
+      return this.root.isAllowedAsChild(component);
+    } else if (target === 'component') {
+      targetComponent = componentView.model;
+      return targetComponent.isAllowedAsSibling(component);
+    } else if (target === 'container') {
+      targetComponent = componentView.model;
+      return targetComponent.isAllowedAsChild(containerName, component);
+    }
   };
 
   ComponentTree.prototype.print = function() {
@@ -3588,7 +3689,7 @@ module.exports = ComponentTree = (function() {
   ComponentTree.prototype.fireEvent = function() {
     var args, event;
     event = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-    this[event].fire.apply(event, args);
+    this[event].fire.apply(void 0, args);
     return this.changed.fire();
   };
 
@@ -4733,6 +4834,7 @@ validator.add('component', {
   html: 'string',
   directives: 'object, optional',
   properties: 'array of string, optional',
+  allowedParents: 'array of string, optional',
   __additionalProperty: function(key, value) {
     return false;
   }
@@ -4892,32 +4994,33 @@ module.exports = designParser = {
     return _results;
   },
   parseComponents: function(components) {
-    var component, directives, html, label, name, properties, _i, _len, _ref, _results;
+    var allowedParents, directives, html, label, name, properties, template, _i, _len, _ref, _results;
     if (components == null) {
       components = [];
     }
     _results = [];
     for (_i = 0, _len = components.length; _i < _len; _i++) {
-      _ref = components[_i], name = _ref.name, label = _ref.label, html = _ref.html, properties = _ref.properties, directives = _ref.directives;
+      _ref = components[_i], name = _ref.name, label = _ref.label, html = _ref.html, properties = _ref.properties, directives = _ref.directives, allowedParents = _ref.allowedParents;
       properties = this.lookupComponentProperties(properties);
-      component = new Template({
+      template = new Template({
         name: name,
         label: label,
         html: html,
-        properties: properties
+        properties: properties,
+        allowedParents: allowedParents
       });
-      this.parseDirectives(component, directives);
-      _results.push(this.design.add(component));
+      this.parseDirectives(template, directives);
+      _results.push(this.design.add(template));
     }
     return _results;
   },
-  parseDirectives: function(component, directives) {
+  parseDirectives: function(template, directivesConfig) {
     var conf, directive, directiveConfig, name, _results;
     _results = [];
-    for (name in directives) {
-      conf = directives[name];
-      directive = component.directives.get(name);
-      assert(directive, "Could not find directive " + name + " in " + component.name + " component.");
+    for (name in directivesConfig) {
+      conf = directivesConfig[name];
+      directive = template.directives.get(name);
+      assert(directive, "Could not find directive " + name + " in " + template.name + " component.");
       directiveConfig = $.extend({}, conf);
       if (conf.imageRatios) {
         directiveConfig.imageRatios = this.lookupImageRatios(conf.imageRatios);
@@ -4983,17 +5086,17 @@ module.exports = designParser = {
     }
     paragraph = defaultComponents.paragraph, image = defaultComponents.image;
     if (paragraph) {
-      this.design.defaultParagraph = this.getComponent(paragraph);
+      this.design.defaultParagraph = this.getTemplate(paragraph);
     }
     if (image) {
-      return this.design.defaultImage = this.getComponent(image);
+      return this.design.defaultImage = this.getTemplate(image);
     }
   },
-  getComponent: function(name) {
-    var component;
-    component = this.design.get(name);
-    assert(component, "Could not find component " + name);
-    return component;
+  getTemplate: function(name) {
+    var template;
+    template = this.design.get(name);
+    assert(template, "Could not find component " + name);
+    return template;
   },
   createComponentProperty: function(styleDefinition) {
     return new CssModificatorProperty(styleDefinition);
@@ -5258,7 +5361,9 @@ module.exports = (function() {
 
 
 },{"../configuration/config":25,"../modules/logging/assert":48,"./default_image_service":34}],37:[function(require,module,exports){
-var ComponentDrag, config, css, dom, isSupported;
+var $, ComponentDrag, config, css, dom, isSupported;
+
+$ = require('jquery');
 
 dom = require('./dom');
 
@@ -5324,6 +5429,9 @@ module.exports = ComponentDrag = (function() {
     if (elem != null) {
       target = dom.dropTarget(elem, coords);
     }
+    if (!this.canBeDropped(target)) {
+      target = void 0;
+    }
     this.undoMakeSpace();
     if ((target != null) && ((_ref1 = target.componentView) != null ? _ref1.model : void 0) !== this.componentModel) {
       this.$placeholder.removeClass(css.noDrop);
@@ -5339,6 +5447,19 @@ module.exports = ComponentDrag = (function() {
       }
       return void 0;
     }
+  };
+
+  ComponentDrag.prototype.canBeDropped = function(target) {
+    var componentTree, isAllowed;
+    if (target == null) {
+      return false;
+    }
+    componentTree = target.componentTree;
+    if (componentTree == null) {
+      componentTree = target.componentView.model.componentTree;
+    }
+    isAllowed = componentTree.isDropAllowed(this.componentModel, target);
+    return isAllowed;
   };
 
   ComponentDrag.prototype.markDropPosition = function(target) {
@@ -5611,7 +5732,7 @@ module.exports = ComponentDrag = (function() {
 
 
 
-},{"../configuration/config":25,"../modules/feature_detection/is_supported":46,"./dom":39}],38:[function(require,module,exports){
+},{"../configuration/config":25,"../modules/feature_detection/is_supported":46,"./dom":39,"jquery":"jquery"}],38:[function(require,module,exports){
 var ContainerEvent;
 
 module.exports = ContainerEvent = (function() {
@@ -6855,22 +6976,28 @@ module.exports = Semaphore = (function() {
     return this.fireIfReady();
   };
 
-  Semaphore.prototype.increment = function() {
+  Semaphore.prototype.increment = function(num) {
+    if (num == null) {
+      num = 1;
+    }
     assert(!this.wasFired, "Unable to increment count once Semaphore is fired.");
-    return this.count += 1;
+    return this.count += num;
   };
 
-  Semaphore.prototype.decrement = function() {
+  Semaphore.prototype.decrement = function(num) {
+    if (num == null) {
+      num = 1;
+    }
     assert(this.count > 0, "Unable to decrement count resulting in negative count.");
-    this.count -= 1;
+    this.count -= num;
     return this.fireIfReady();
   };
 
-  Semaphore.prototype.wait = function() {
-    this.increment();
+  Semaphore.prototype.wait = function(num) {
+    this.increment(num);
     return (function(_this) {
       return function() {
-        return _this.decrement();
+        return _this.decrement(num);
       };
     })(this);
   };
@@ -7002,15 +7129,48 @@ dom = require('../interaction/dom');
 module.exports = ComponentView = (function() {
   function ComponentView(_arg) {
     this.model = _arg.model, this.$html = _arg.$html, this.directives = _arg.directives, this.isReadOnly = _arg.isReadOnly;
+    this.renderer = void 0;
     this.$elem = this.$html;
     this.template = this.model.template;
     this.isAttachedToDom = false;
     this.wasAttachedToDom = $.Callbacks();
-    if (!this.isReadOnly) {
-      this.$html.data('componentView', this).addClass(css.component).attr(attr.template, this.template.identifier);
-    }
+    this.decorateMarkup();
     this.render();
   }
+
+  ComponentView.prototype.decorateMarkup = function() {
+    if (!this.isReadOnly) {
+      return this.$html.data('componentView', this).addClass(css.component).attr(attr.template, this.template.identifier);
+    }
+  };
+
+  ComponentView.prototype.setRenderer = function(renderer) {
+    return this.renderer = renderer;
+  };
+
+  ComponentView.prototype.removeRenderer = function() {
+    return this.renderer = void 0;
+  };
+
+  ComponentView.prototype.viewForModel = function(model) {
+    var _ref;
+    if (model != null) {
+      return (_ref = this.renderer) != null ? _ref.getComponentViewById(model.id) : void 0;
+    }
+  };
+
+  ComponentView.prototype.recreateHtml = function() {
+    var _ref;
+    this.isAttachedToDom = false;
+    _ref = this.model.template.createViewHtml(this.model), this.$elem = _ref.$elem, this.directives = _ref.directives;
+    this.$html = this.$elem;
+    this.decorateMarkup();
+    return this.render();
+  };
+
+  ComponentView.prototype.refresh = function() {
+    return this.renderer.refreshComponent(this.model);
+  };
 
   ComponentView.prototype.render = function(mode) {
     this.updateContent();
@@ -7073,14 +7233,6 @@ module.exports = ComponentView = (function() {
         }
       };
     })(this));
-  };
-
-  ComponentView.prototype.next = function() {
-    return this.$html.next().data('componentView');
-  };
-
-  ComponentView.prototype.prev = function() {
-    return this.$html.prev().data('componentView');
   };
 
   ComponentView.prototype.afterFocused = function() {
@@ -7394,9 +7546,35 @@ module.exports = ComponentView = (function() {
     return this.$elem[0].ownerDocument.defaultView;
   };
 
+  ComponentView.prototype.next = function() {
+    return this.viewForModel(this.model.next);
+  };
+
+  ComponentView.prototype.prev = function() {
+    return this.previous();
+  };
+
+  ComponentView.prototype.previous = function() {
+    return this.viewForModel(this.model.previous);
+  };
+
+  ComponentView.prototype.parent = function() {
+    return this.viewForModel(this.model.getParent());
+  };
+
   return ComponentView;
 
 })();
+
+['parents', 'children', 'childrenAndSelf', 'descendants', 'descendantsAndSelf'].forEach(function(method) {
+  return ComponentView.prototype[method] = function(callback) {
+    return this.model[method]((function(_this) {
+      return function(model) {
+        return callback(_this.viewForModel(model));
+      };
+    })(this));
+  };
+});
 
 
 
@@ -7421,7 +7599,10 @@ module.exports = Dependencies = (function() {
     this.js = [];
     this.css = [];
     this.namespaces = {};
-    this.dependencyAdded = $.Callbacks();
+    this.jsWaitlist = [];
+    this.dependenciesAdded = $.Callbacks();
+    this.dependencyToExecute = $.Callbacks();
+    this.codeToExecute = $.Callbacks();
     this.dependencyRemoved = $.Callbacks();
     if (this.componentTree != null) {
       this.componentTree.componentRemoved.add(this.onComponentRemoved);
@@ -7451,6 +7632,15 @@ module.exports = Dependencies = (function() {
     return this.add(obj);
   };
 
+  Dependencies.prototype.executeJs = function(obj) {
+    obj.isExecuteOnly = true;
+    return this.addJs(obj);
+  };
+
+  Dependencies.prototype.executeCode = function(callback) {
+    return this.codeToExecute.fire(callback);
+  };
+
   Dependencies.prototype.convertToAbsolutePaths = function(obj) {
     var src;
     if (!obj.src) {
@@ -7469,14 +7659,33 @@ module.exports = Dependencies = (function() {
   };
 
   Dependencies.prototype.addDependency = function(dependency) {
-    var collection;
-    if (dependency.namespace) {
-      this.addToNamespace(dependency);
+    if (!dependency.isExecuteOnly) {
+      if (dependency.namespace) {
+        this.addToNamespace(dependency);
+      }
+      if (dependency.isJs()) {
+        this.js.push(dependency);
+        this.delayedDependency(dependency);
+      } else {
+        this.css.push(dependency);
+        this.dependenciesAdded.fire(void 0, [dependency]);
+      }
+    } else {
+      this.dependencyToExecute.fire(dependency);
     }
-    collection = dependency.isJs() ? this.js : this.css;
-    collection.push(dependency);
-    this.dependencyAdded.fire(dependency);
     return dependency;
+  };
+
+  Dependencies.prototype.delayedDependency = function(dependency) {
+    this.jsWaitlist.push(dependency);
+    if (this.jsWaitlist.length === 1) {
+      return setTimeout((function(_this) {
+        return function() {
+          _this.dependenciesAdded.fire(_this.jsWaitlist, void 0);
+          return _this.jsWaitlist = [];
+        };
+      })(this), 0);
+    }
   };
 
   Dependencies.prototype.addToNamespace = function(dependency) {
@@ -7616,7 +7825,7 @@ module.exports = Dependencies = (function() {
         src: entry.src,
         code: entry.code,
         namespace: entry.namespace,
-        name: entry.name
+        library: entry.library
       };
       this.addDeserialzedObj(obj, entry);
     }
@@ -7629,7 +7838,7 @@ module.exports = Dependencies = (function() {
         src: entry.src,
         code: entry.code,
         namespace: entry.namespace,
-        name: entry.name
+        library: entry.library
       };
       _results.push(this.addDeserialzedObj(obj, entry));
     }
@@ -7768,7 +7977,7 @@ assert = require('../modules/logging/assert');
 module.exports = Dependency = (function() {
   function Dependency(_arg) {
     var component, _ref;
-    this.name = _arg.name, this.namespace = _arg.namespace, this.src = _arg.src, this.code = _arg.code, this.type = _arg.type, component = _arg.component;
+    this.type = _arg.type, this.src = _arg.src, this.code = _arg.code, this.namespace = _arg.namespace, this.library = _arg.library, this.isExecuteOnly = _arg.isExecuteOnly, component = _arg.component;
     assert(this.src || this.code, 'Dependency: No "src" or "code" param provided');
     assert(!(this.src && this.code), 'Dependency: Only provide one of "src" or "code" params');
     assert(this.type, "Dependency: Param type must be specified");
@@ -7828,8 +8037,9 @@ module.exports = Dependency = (function() {
 
   Dependency.prototype.serialize = function() {
     var componentId, key, obj, _i, _len, _ref;
+    assert(!this.isExecuteOnly, 'engine//dependency.coffee: Cannot serialize a temporary dependency');
     obj = {};
-    _ref = ['src', 'code', 'inline', 'name', 'namespace'];
+    _ref = ['src', 'code', 'inline', 'library', 'namespace'];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       key = _ref[_i];
       if (this[key] != null) {
@@ -7952,9 +8162,13 @@ module.exports = Renderer = (function() {
     return this.insertComponent(model);
   };
 
-  Renderer.prototype.componentRemoved = function(model) {
-    this.removeComponentFromDom(model);
-    return this.deleteCachedComponentView(model);
+  Renderer.prototype.componentRemoved = function(component) {
+    return component.descendantsAndSelf((function(_this) {
+      return function(model) {
+        _this.removeComponentFromDom(model);
+        return _this.deleteCachedComponentView(model);
+      };
+    })(this));
   };
 
   Renderer.prototype.componentMoved = function(model) {
@@ -7975,11 +8189,20 @@ module.exports = Renderer = (function() {
   };
 
   Renderer.prototype.getOrCreateComponentView = function(model) {
-    var _base, _name;
-    return (_base = this.componentViews)[_name = model.id] || (_base[_name] = model.createView(this.renderingContainer.isReadOnly));
+    var view;
+    if (view = this.componentViews[model.id]) {
+      return view;
+    }
+    view = model.createView(this.renderingContainer.isReadOnly);
+    view.setRenderer(this);
+    return this.componentViews[model.id] = view;
   };
 
   Renderer.prototype.deleteCachedComponentView = function(model) {
+    var _ref;
+    if ((_ref = this.componentViews[model.id]) != null) {
+      _ref.removeRenderer();
+    }
     return delete this.componentViews[model.id];
   };
 
@@ -8003,6 +8226,19 @@ module.exports = Renderer = (function() {
   Renderer.prototype.redraw = function() {
     this.clear();
     return this.render();
+  };
+
+  Renderer.prototype.refreshComponent = function(component) {
+    var view;
+    view = this.getComponentViewById(component.id);
+    view.descendantsAndSelf((function(_this) {
+      return function(view) {
+        _this.removeComponentFromDom(view.model);
+        return view.recreateHtml();
+      };
+    })(this));
+    this.insertComponent(component);
+    return this.renderingContainer.componentViewWasRefreshed.fire(view);
   };
 
   Renderer.prototype.insertComponent = function(model) {
@@ -8191,21 +8427,37 @@ module.exports = Assets = (function() {
     this.jsLoader = new JsLoader(this.window);
   }
 
-  Assets.prototype.loadDependencies = function(dependencies, callback) {
-    var dep, semaphore, _i, _j, _len, _len1, _ref, _ref1;
+  Assets.prototype.loadDependencies = function(jsDependencies, cssDependencies, callback) {
+    var dep, semaphore, _i, _len, _ref;
     semaphore = new Semaphore();
     semaphore.addCallback(callback);
-    _ref = dependencies.js;
+    this.loadSequentially(jsDependencies, semaphore);
+    _ref = cssDependencies || [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       dep = _ref[_i];
-      this.loadJs(dep, semaphore.wait());
-    }
-    _ref1 = dependencies.css;
-    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-      dep = _ref1[_j];
       this.loadCss(dep, semaphore.wait());
     }
     return semaphore.start();
+  };
+
+  Assets.prototype.loadSequentially = function(jsDependencies, semaphore) {
+    var current, next;
+    if (jsDependencies != null ? jsDependencies.length : void 0) {
+      semaphore.increment(jsDependencies.length);
+      current = 0;
+      next = (function(_this) {
+        return function() {
+          return _this.loadJs(jsDependencies[current], function() {
+            semaphore.decrement();
+            current += 1;
+            if (current < jsDependencies.length) {
+              return next();
+            }
+          });
+        };
+      })(this);
+      return next();
+    }
   };
 
   Assets.prototype.loadDependency = function(dependency, callback) {
@@ -8217,11 +8469,13 @@ module.exports = Assets = (function() {
   };
 
   Assets.prototype.loadJs = function(dependency, callback) {
+    var preventRepeatedExecution;
     if (this.isDisabled) {
       return callback();
     }
     if (dependency.inline) {
-      return this.jsLoader.loadInlineScript(dependency.code, callback);
+      preventRepeatedExecution = !dependency.isExecuteOnly;
+      return this.jsLoader.loadInlineScript(dependency.code, preventRepeatedExecution, callback);
     } else {
       return this.jsLoader.loadSingleUrl(dependency.src, callback);
     }
@@ -8592,7 +8846,7 @@ module.exports = JsLoader = (function() {
     return this.loadedUrls.indexOf(url) >= 0;
   };
 
-  JsLoader.prototype.loadInlineScript = function(codeBlock, callback) {
+  JsLoader.prototype.loadInlineScript = function(codeBlock, preventRepeatedExecution, callback) {
     var doc, script;
     if (callback == null) {
       callback = function() {};
@@ -8605,7 +8859,9 @@ module.exports = JsLoader = (function() {
     script = doc.createElement('script');
     script.innerHTML = codeBlock;
     doc.body.appendChild(script);
-    this.loadedScripts.push(codeBlock);
+    if (preventRepeatedExecution) {
+      this.loadedScripts.push(codeBlock);
+    }
     return callback();
   };
 
@@ -8655,6 +8911,7 @@ module.exports = Page = (function(_super) {
     if (this.renderNode == null) {
       this.renderNode = $("." + config.css.section, this.$body);
     }
+    this.componentViewWasRefreshed = $.Callbacks();
     Page.__super__.constructor.call(this);
     preventAssetLoading = !this.loadResources;
     this.assets = new Assets({
@@ -8674,14 +8931,27 @@ module.exports = Page = (function(_super) {
   };
 
   Page.prototype.loadAssets = function() {
+    var deps;
     if (this.design != null) {
-      this.assets.loadDependencies(this.design.dependencies, this.readySemaphore.wait());
+      deps = this.design.dependencies;
+      this.assets.loadDependencies(deps.js, deps.css, this.readySemaphore.wait());
     }
     if (this.documentDependencies != null) {
-      this.assets.loadDependencies(this.documentDependencies, this.readySemaphore.wait());
-      return this.documentDependencies.dependencyAdded.add((function(_this) {
+      deps = this.documentDependencies;
+      this.assets.loadDependencies(deps.js, deps.css, this.readySemaphore.wait());
+      this.documentDependencies.dependenciesAdded.add((function(_this) {
+        return function(jsDependencies, cssDependencies) {
+          return _this.assets.loadDependencies(jsDependencies, cssDependencies, function() {});
+        };
+      })(this));
+      this.documentDependencies.dependencyToExecute.add((function(_this) {
         return function(dependency) {
           return _this.assets.loadDependency(dependency);
+        };
+      })(this));
+      return this.documentDependencies.codeToExecute.add((function(_this) {
+        return function(callback) {
+          return callback(_this.window);
         };
       })(this));
     }
@@ -9184,7 +9454,7 @@ sortByName = function(a, b) {
 module.exports = Template = (function() {
   function Template(_arg) {
     var html, label, properties, _ref;
-    _ref = _arg != null ? _arg : {}, this.name = _ref.name, html = _ref.html, label = _ref.label, properties = _ref.properties;
+    _ref = _arg != null ? _arg : {}, this.name = _ref.name, html = _ref.html, label = _ref.label, properties = _ref.properties, this.allowedParents = _ref.allowedParents;
     assert(html, 'Template: param html missing');
     this.$template = $(this.pruneHtml(html)).wrap('<div>');
     this.$wrap = this.$template.parent();
@@ -9206,16 +9476,25 @@ module.exports = Template = (function() {
   };
 
   Template.prototype.createView = function(componentModel, isReadOnly) {
-    var $elem, componentView, directives;
+    var $elem, componentView, directives, _ref;
+    _ref = this.createViewHtml(), $elem = _ref.$elem, directives = _ref.directives;
     componentModel || (componentModel = this.createModel());
-    $elem = this.$template.clone();
-    directives = this.linkDirectives($elem[0]);
     return componentView = new ComponentView({
       model: componentModel,
       $html: $elem,
       directives: directives,
       isReadOnly: isReadOnly
     });
+  };
+
+  Template.prototype.createViewHtml = function() {
+    var $elem, directives;
+    $elem = this.$template.clone();
+    directives = this.linkDirectives($elem[0]);
+    return {
+      $elem: $elem,
+      directives: directives
+    };
   };
 
   Template.prototype.pruneHtml = function(html) {
@@ -9350,7 +9629,7 @@ Template.parseIdentifier = function(identifier) {
 },{"../component_tree/component_model":17,"../configuration/config":25,"../modules/logging/assert":48,"../modules/logging/log":49,"../modules/words":53,"../rendering/component_view":54,"./directive_collection":68,"./directive_compiler":69,"./directive_finder":70,"./directive_iterator":71,"jquery":"jquery"}],73:[function(require,module,exports){
 module.exports={
   "version": "0.6.0",
-  "revision": "98e6abc"
+  "revision": "78dd23f"
 }
 
 },{}],"jquery":[function(require,module,exports){

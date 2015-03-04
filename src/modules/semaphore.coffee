@@ -52,22 +52,22 @@ module.exports = class Semaphore
     @fireIfReady()
 
 
-  increment: ->
+  increment: (num = 1) ->
     assert not @wasFired,
       "Unable to increment count once Semaphore is fired."
-    @count += 1
+    @count += num
 
 
-  decrement: ->
+  decrement: (num = 1) ->
     assert @count > 0,
       "Unable to decrement count resulting in negative count."
-    @count -= 1
+    @count -= num
     @fireIfReady()
 
 
-  wait: ->
-    @increment()
-    => @decrement()
+  wait: (num) ->
+    @increment(num)
+    => @decrement(num)
 
 
   # @private

@@ -41,7 +41,7 @@ module.exports = class JsLoader
   # Inline Script
   # -------------
 
-  loadInlineScript: (codeBlock, callback = ->) ->
+  loadInlineScript: (codeBlock, preventRepeatedExecution, callback = ->) ->
     codeBlock = @prepareInlineCode(codeBlock)
     return callback() if @isInlineBlockLoaded(codeBlock)
 
@@ -50,7 +50,7 @@ module.exports = class JsLoader
     script = doc.createElement('script');
     script.innerHTML = codeBlock;
     doc.body.appendChild(script);
-    @loadedScripts.push(codeBlock)
+    @loadedScripts.push(codeBlock) if preventRepeatedExecution
 
     callback()
 

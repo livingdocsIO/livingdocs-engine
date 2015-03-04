@@ -1,6 +1,5 @@
 Template = require('../../../src/template/template')
 ComponentModel = require('../../../src/component_tree/component_model')
-ComponentContainer = require('../../../src/component_tree/component_container')
 ComponentView = require('../../../src/rendering/component_view')
 css = test.config.css
 
@@ -8,27 +7,26 @@ describe 'template:', ->
 
   describe 'Title Template', ->
 
-    template = undefined
     beforeEach ->
-      template = new Template
+      @template = new Template
         name: 'h1'
         html: """<h1 #{ test.editableAttr }="title"></h1>"""
 
 
     it 'has $template Property', ->
-      expect(template.$template).to.exist
+      expect(@template.$template).to.exist
 
 
     it 'has a name', ->
-      expect(template.name).to.equal('h1')
+      expect(@template.name).to.equal('h1')
 
 
     it 'has one directive', ->
-      expect(template.directives.length).to.equal(1)
+      expect(@template.directives.length).to.equal(1)
 
 
     it 'has stored the html', ->
-      expect(template.$template).to.have.same.html """
+      expect(@template.$template).to.have.same.html """
         <h1 #{ test.editableAttr }='title' class='#{ css.editable }'>
         </h1>"""
 
@@ -36,14 +34,14 @@ describe 'template:', ->
     describe '#createModel()', ->
 
       it 'returns a ComponentModel', ->
-        model = template.createModel()
+        model = @template.createModel()
         expect(model instanceof ComponentModel).to.equal(true)
 
 
     describe '#createView()', ->
 
       it 'returns a ComponentView instance', ->
-        componentView = template.createView()
+        componentView = @template.createView()
         expect(componentView instanceof ComponentView).to.equal(true)
 
 
@@ -84,16 +82,20 @@ describe 'template:', ->
   # Component with containers
   describe 'Row Template', ->
 
-    template = null
     beforeEach ->
-      template = test.getTemplate('row')
+      @template = test.getTemplate('row')
 
 
-    it 'initializes componentContainers', ->
-      component = template.createModel()
+    it 'has tow container directives', ->
+      mainDirective = @template.directives.get('main')
+      sidebarDirective = @template.directives.get('sidebar')
+      expect(mainDirective.type).to.equal('container')
+      expect(sidebarDirective.type).to.equal('container')
+
+
+    it 'creates a componentModel successfully', ->
+      component = @template.createModel()
       expect(component).to.exist
-      expect(component.containers.main instanceof ComponentContainer).to.equal(true)
-      expect(component.containers.sidebar instanceof ComponentContainer).to.equal(true)
 
 
   describe 'Subtitle Template', ->
@@ -141,11 +143,21 @@ describe 'template:', ->
 
   describe 'Html Template', ->
 
-    template = null
     beforeEach ->
-      template = test.getTemplate('html')
+      @template = test.getTemplate('html')
+
 
     it 'has a html directive', ->
-      directive = template.directives.html[0]
+      directive = @template.directives.html[0]
       expect(directive).to.exist
+
+
+  describe 'listItem Template', ->
+
+    beforeEach ->
+      @template = test.getTemplate('listItem')
+
+
+    it 'has an allowedParents configuration', ->
+      expect(@template.allowedParents).to.have.members(['list'])
 

@@ -90,9 +90,10 @@ module.exports = class Renderer
     @insertComponent(model)
 
 
-  componentRemoved: (model) ->
-    @removeComponentFromDom(model)
-    @deleteCachedComponentView(model)
+  componentRemoved: (component) ->
+    component.descendantsAndSelf (model) =>
+      @removeComponentFromDom(model)
+      @deleteCachedComponentView(model)
 
 
   componentMoved: (model) ->
@@ -116,10 +117,15 @@ module.exports = class Renderer
 
 
   getOrCreateComponentView: (model) ->
-    @componentViews[model.id] ||= model.createView(@renderingContainer.isReadOnly)
+    return view if view = @componentViews[model.id]
+
+    view = model.createView(@renderingContainer.isReadOnly)
+    view.setRenderer(this)
+    @componentViews[model.id] = view
 
 
   deleteCachedComponentView: (model) ->
+    @componentViews[model.id]?.removeRenderer()
     delete @componentViews[model.id]
 
 
@@ -138,6 +144,18 @@ module.exports = class Renderer
   redraw: ->
     @clear()
     @render()
+
+
+  # Recreate the html of a component and its descendants
+  refreshComponent: (component) ->
+    view = @getComponentViewById(component.id)
+
+    view.descendantsAndSelf (view) =>
+      @removeComponentFromDom(view.model)
+      view.recreateHtml()
+
+    @insertComponent(component)
+    @renderingContainer.componentViewWasRefreshed.fire(view)
 
 
   insertComponent: (model) ->

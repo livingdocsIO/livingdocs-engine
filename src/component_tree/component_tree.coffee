@@ -148,16 +148,32 @@ module.exports = class ComponentTree
   # Note: There can be multiple views for a componentTree. With this
   # method we can set a main view so it becomes possible to get a view
   # directly from the componentTree for convenience
-  setMainView: (view) ->
-    assert view.renderer, 'componentTree.setMainView: view does not have an initialized renderer'
-    assert view.renderer.componentTree == this, 'componentTree.setMainView: Cannot set renderer from different componentTree'
-    @mainRenderer = view.renderer
+  setMainView: ({ renderer }) ->
+    assert renderer, 'componentTree.setMainView: view does not have an initialized renderer'
+    assert renderer.componentTree == this, 'componentTree.setMainView: Cannot set renderer from different componentTree'
+    @mainRenderer = renderer
 
 
   # Get the componentView for a model
   # This only works if setMainView() has been called.
   getMainComponentView: (componentId) ->
     @mainRenderer?.getComponentViewById(componentId)
+
+
+  # Check if a component can be dropped at a specific drop location.
+  #
+  # @params {ComponentModel} The component that is being dragged
+  # @params {Object} A drop target obj. From interaction/dom.dropTarget()
+  isDropAllowed: (component, targetObj) ->
+    { target, componentView, containerName } = targetObj
+    if target == 'root'
+      @root.isAllowedAsChild(component)
+    else if target == 'component'
+      targetComponent = componentView.model
+      targetComponent.isAllowedAsSibling(component)
+    else if target == 'container'
+      targetComponent = componentView.model
+      targetComponent.isAllowedAsChild(containerName, component)
 
 
   # returns a readable string representation of the whole tree
@@ -206,7 +222,7 @@ module.exports = class ComponentTree
 
 
   fireEvent: (event, args...) ->
-    this[event].fire.apply(event, args)
+    this[event].fire.apply(undefined, args)
     @changed.fire()
 
 

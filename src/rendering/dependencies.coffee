@@ -13,8 +13,11 @@ module.exports = class Dependencies
     @js = []
     @css = []
     @namespaces = {}
+    @jsWaitlist = []
 
-    @dependencyAdded = $.Callbacks()
+    @dependenciesAdded = $.Callbacks()
+    @dependencyToExecute = $.Callbacks()
+    @codeToExecute = $.Callbacks()
     @dependencyRemoved = $.Callbacks()
 
     if @componentTree?
@@ -22,6 +25,19 @@ module.exports = class Dependencies
 
 
   # Add a dependency
+  #
+  # # @param {Object}
+  #   - type {String} Either 'js' or 'css'
+  #
+  # One of the following needs to be provided:
+  #   - src {String} URL to a javascript or css file
+  #   - code {String} JS or CSS code
+  #
+  # All of the following are optional:
+  #   - basePath {String} Optional. A base path for relative urls.
+  #   - namespace {String} Optional. A Namespace to group dependencies together.
+  #   - name {String} Optional. A name to identify a dependency more easily.
+  #   - component {ComponentModel} The componentModel that is depending on this resource
   add: (obj) ->
     @convertToAbsolutePaths(obj)
     dep = new Dependency(obj)
@@ -39,6 +55,15 @@ module.exports = class Dependencies
   addCss: (obj) ->
     obj.type = 'css'
     @add(obj)
+
+
+  executeJs: (obj) ->
+    obj.isExecuteOnly = true
+    @addJs(obj)
+
+
+  executeCode: (callback) ->
+    @codeToExecute.fire(callback)
 
 
   # Absolute paths:
@@ -65,15 +90,29 @@ module.exports = class Dependencies
 
 
   addDependency: (dependency) ->
-    @addToNamespace(dependency) if dependency.namespace
+    if not dependency.isExecuteOnly
+      @addToNamespace(dependency) if dependency.namespace
+      if dependency.isJs()
+        @js.push(dependency)
+        @delayedDependency(dependency)
+      else
+        @css.push(dependency)
+        @dependenciesAdded.fire(undefined, [dependency])
+    else
+      @dependencyToExecute.fire(dependency)
 
-    collection = if dependency.isJs() then @js else @css
-    collection.push(dependency)
+    return dependency
 
-    @dependencyAdded.fire(dependency)
 
-    dependency
-
+  # load all dependencies that are added in the same tick
+  # sequentially
+  delayedDependency: (dependency) ->
+    @jsWaitlist.push(dependency)
+    if @jsWaitlist.length == 1
+      setTimeout =>
+        @dependenciesAdded.fire(@jsWaitlist, undefined)
+        @jsWaitlist = []
+      , 0
 
   # Namespaces
   # ----------
@@ -163,7 +202,7 @@ module.exports = class Dependencies
         src: entry.src
         code: entry.code
         namespace: entry.namespace
-        name: entry.name
+        library: entry.library
 
       @addDeserialzedObj(obj, entry)
 
@@ -174,7 +213,7 @@ module.exports = class Dependencies
         src: entry.src
         code: entry.code
         namespace: entry.namespace
-        name: entry.name
+        library: entry.library
 
       @addDeserialzedObj(obj, entry)
 

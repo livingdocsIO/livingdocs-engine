@@ -17,13 +17,13 @@
 
     <!-- Configuration file of your design -->
     <script src="/design.js" type="text/javascript"></script>
-    <link href="/stylesheets/boilerplate.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="/css/bootswatch-paper.css" media="screen" rel="stylesheet" type="text/css" />
 
   </head>
   <body lang="en">
 
     <!-- Container for the article -->
-    <section class="article"></section>
+    <div class='container article'></div>
 
     <!-- Code to load and insert the article into the page -->
     <script type="text/javascript">
@@ -39,36 +39,38 @@
             content: [
               {
                 "component": "hero",
-                "content": {
-                  "title": "Article Title",
-                  "image": { "url": "/images/mountains.jpg" }
-                }
+                "content": { "title": "History Is Water Under The Bridge" }
               },
-              { "component": "p", "content": { "text": "Studio Ghibli has produced nineteen feature films, several short films, television commercials, and a television film. Eight of Studio Ghibli’s films are among the 15 highest-grossing anime films made in Japan, with Spirited Away being the highest, grossing over $274 million worldwide." } },
-              { "component": "p", "content": { "text": "Many anime features created by Studio Ghibli have won the Animage Anime Grand Prix award and three have won the Japan Academy Prize for Animation of the Year. In 2002, Spirited Away won a Golden Bear and an Oscar for Best Animated Feature." } },
-              { "component": "normal" },
-              { "component": "p", "content": { "text": "The name Ghibli was given by Hayao Miyazaki bearing the Caproni Ca.309 Ghibli in mind. The Italian noun “ghibli” is based on the Arabic name for the sirocco, or Mediterranean wind, the idea being the studio would “blow a new wind through the anime industry”. Although the Italian word is pronounced with a very hard g, the Japanese pronunciation of the studio’s name is with a soft g <a href=\"http://upload.wikimedia.org/wikipedia/commons/f/f3/Ghibli.ogg\">listen to it</a>." } },
-              { "component": "listItem", "content": { "text": "One" } },
-              { "component": "listItem", "content": { "text": "Two" } },
-              { "component": "listItem", "content": { "text": "Three" } },
-              { "component": "fullSize" },
-              { "component": "head", "content": { "title": "History Is Water Under The Bridge" } },
-              { "component": "p", "content": { "text": "Founded in June 1985, the studio is headed by the directors Hayao Miyazaki and Isao Takahata and the producer Toshio Suzuki. Prior to the formation of the studio, Miyazaki and Takahata had already had long careers in Japanese film and television animation and had worked together on Hols: Prince of the Sun and Panda! Go, Panda!; and Suzuki was an editor at Tokuma Shoten’s Animage manga magazine." } },
-              { "component": "subtitle", "content": { "title": "Understanding The Present Means Understanding Subtitles" } },
-              { "component": "p", "content": { "text": "Founded in June 1985, the studio is headed by the directors Hayao Miyazaki and Isao Takahata and the producer Toshio Suzuki. Prior to the formation of the studio, Miyazaki and Takahata had already had long careers in Japanese film and television animation and had worked together on Hols: Prince of the Sun and Panda! Go, Panda!; and Suzuki was an editor at Tokuma Shoten’s Animage manga magazine." } },
-              { "component": "normal" },
-              { "component": "title", "content": { "title": "Understanding The Present Means Understanding Titles" } },
-              { "component": "p", "content": { "text": "The studio was founded after the success of the 1984 film Nausicaä of the Vboilerplateey of the Wind, written and directed by Miyazaki for Topcraft and distributed by Toei Company. The origins of the film lie in the first two volumes of a serialized manga written by Miyazaki for publication in Animage as a way of generating interest in an anime version. Suzuki was part of the production team on the film and founded Studio Ghibli with Miyazaki, who also invited Takahata to join the new studio." } },
-              { "component": "p", "content": { "text": "The studio has mainly produced films by Miyazaki, with the second most prolific director being Takahata (most notably with Grave of the Fireflies). Other directors who have worked with Studio Ghibli include Yoshifumi Kondo, Hiroyuki Morita and Gorō Miyazaki. Composer Joe Hisaishi has provided the soundtrack for all of Miyazaki’s Studio Ghibli films." } },
-              { "component": "aside" },
-              { "component": "p", "content": { "text": "In August 1996, Disney and Tokuma Shoten Publishing agreed that Disney would distribute international Tokuma’s Studio Ghibli animated films." } },
-              { "component": "p", "content": { "text": "Many of Ghibli’s works are distributed in Japan by Toho. Internationally, The Walt Disney Company has rights to all of Ghibli’s output that did not have previous international distribution, including the global, non-Japan distribution rights to Princess Mononoke and Spirited Away.[citation needed] As of September 2011, they share North American theatrical rights with GKids while domestic right remain with Disney." } },
-              { "component": "p", "content": { "text": "Over the years, there has been a close relationship between Studio Ghibli and the magazine Animage, which regularly runs exclusive articles on the studio and its members in a section titled “Ghibli Notes.” Artwork from Ghibli’s films and other works are frequently featured on the cover of the magazine. Between 1999 and 2005 Studio Ghibli was a subsidiary of Tokuma Shoten, the publisher of Animage." } },
-              { "component": "quote" },
-              { "component": "p", "content": { "text": "On February 1, 2008, Toshio Suzuki stepped down from the position of Studio Ghibli president, which he had held since 2005, and Koji Hoshino (former president of Walt Disney Japan) took over. Suzuki said he wanted to improve films with his own hands as a producer, rather than demanding this from his employees. Suzuki decided to hand over the presidency to Hoshino because Hoshino has helped Studio Ghibli to sell its videos since 1996, also helping to release the Princess Mononoke film in the United States. Suzuki still serves on the company’s board of directors." } },
-              { "component": "peephole" },
-              { "component": "p", "content": { "text": "Two Studio Ghibli short films created for the Ghibli Museum were shown at the Carnegie Hall Citywise Japan NYC Festival: “ouse Hunting” and “on Mon the Water Spider” were screened on March 26, 2011." } },
-              { "component": "p", "content": { "text": "As of 2012, Takahata is developing a project for release after Gorō Miyazaki’s (director of Tales from Earthsea and Hayao’s son) From Up on Poppy Hill. Takahata is working on an adaptation of the tale of The Tale of the Bamboo Cutter. Hayao Miyazaki is developing a project called The Wind Rises which is about the Mitsubishi A6M Zero and its founder." } },
+              {
+                "component": "p", "content": { "text": "On February 1, 2008, Toshio Suzuki stepped down from the position of Studio Ghibli president, which he had held since 2005, and Koji Hoshino (former president of Walt Disney Japan) took over. Suzuki said he wanted to improve films with his own hands as a producer, rather than demanding this from his employees. Suzuki decided to hand over the presidency to Hoshino because Hoshino has helped Studio Ghibli to sell its videos since 1996, also helping to release the Princess Mononoke film in the United States. Suzuki still serves on the company’s board of directors." }
+              },
+              {
+                "component": "main-and-sidebar",
+                "containers": {
+                  "main": [
+                    {
+                      "component": "h2",
+                      "content": { "title": "Understanding The Present Means Understanding Titles" }
+                    },
+                    {
+                      "component": "p", "content": { "text": "Studio Ghibli has produced nineteen feature films, several short films, television commercials, and a television film. Eight of Studio Ghibli’s films are among the 15 highest-grossing anime films made in Japan, with Spirited Away being the highest, grossing over $274 million worldwide." }
+                    },
+                    { "component": "panel" }
+                  ],
+                  "sidebar": [
+                    { "component": "quote" },
+                    {
+                      "component": "list-group",
+                      "containers": {
+                        "list": [
+                          { "component": "list-group-item" },
+                          { "component": "list-group-box-item" }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
             ],
             design: {
               name: 'boilerplate'

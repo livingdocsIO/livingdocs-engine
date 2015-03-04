@@ -47,6 +47,7 @@ module.exports = class ComponentModel
           @containers[directive.name] = new ComponentContainer
             name: directive.name
             parentComponent: this
+            config: directive.config
         when 'editable', 'image', 'html'
           @createComponentDirective(directive)
           @content ||= {}
@@ -75,7 +76,15 @@ module.exports = class ComponentModel
 
 
   # ComponentTree operations
-  # ----------------------
+  # ------------------------
+
+  isAllowedAsSibling: (component) ->
+    @parentContainer.isAllowedAsChild(component)
+
+
+  isAllowedAsChild: (containerName, component) ->
+    @containers[containerName].isAllowedAsChild(component)
+
 
   # Insert a component before this one
   before: (componentModel) ->
@@ -133,7 +142,7 @@ module.exports = class ComponentModel
 
 
   # ComponentTree Iterators
-  # ---------------------
+  # -----------------------
   #
   # Navigate and query the componentTree relative to this component.
 
@@ -153,6 +162,11 @@ module.exports = class ComponentModel
       while (componentModel)
         callback(componentModel)
         componentModel = componentModel.next
+
+
+  childrenAndSelf: (callback) ->
+    callback(this)
+    @children(callback)
 
 
   descendants: (callback) ->
@@ -190,11 +204,6 @@ module.exports = class ComponentModel
       callback(componentModel) if componentModel != this
       for name, componentContainer of componentModel.containers
         callback(componentContainer)
-
-
-  childrenAndSelf: (callback) ->
-    callback(this)
-    @children(callback)
 
 
   # Directive Operations
@@ -305,6 +314,18 @@ module.exports = class ComponentModel
 
     @dataValues[name] = value
     true
+
+
+  getPluginName: ->
+    @plugin?.name
+
+
+  setPlugin: (plugin) ->
+    @plugin = plugin
+
+
+  getPlugin: (plugin) ->
+    @plugin
 
 
   # Style Operations

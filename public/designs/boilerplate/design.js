@@ -1,196 +1,223 @@
 (function () { var designJSON = {
   "name": "boilerplate",
+  "label": "Boilerplate",
   "version": "0.0.1",
-  "author": "Peter Pan",
+  "author": "upfront.io",
   "assets": {
-    "basePath": "/designs/boilerplate",
     "css": [
-      "./stylesheets/boilerplate.css"
+      "./css/bootstrap.css"
     ]
   },
-
+  "wrapper": "<div class='container doc-section'></div>",
   "componentProperties": {
-    "featured": {
-      "label": "Featured",
-      "type": "option",
-      "value": "bleed"
-    },
-    "unordered": {
-      "label": "Unordered",
-      "type": "option",
-      "value": "bullet"
-    },
-    "dropcap": {
-      "label": "Drop Capital",
-      "type": "option",
-      "value": "drop-cap"
-    },
-    "large": {
+    "well-large": {
       "label": "Large",
       "type": "option",
-      "value": "large"
+      "value": "well-lg"
     },
-    "position": {
-      "label": "Position",
+    "panel-styles": {
+      "label": "Panel Styles",
       "type": "select",
       "options": [
         {
           "caption": "Default"
         },
         {
-          "caption": "Left",
-          "value": "left"
+          "caption": "Primary",
+          "value": "panel-primary"
         },
         {
-          "caption": "Right",
-          "value": "right"
+          "caption": "Success",
+          "value": "panel-success"
         },
         {
-          "caption": "Middle",
-          "value": "middle"
+          "caption": "Info",
+          "value": "panel-info"
+        },
+        {
+          "caption": "Warning",
+          "value": "panel-warning"
+        },
+        {
+          "caption": "Danger",
+          "value": "panel-danger"
         }
       ]
-    },
-    "aspect-ratio": {
-      "label": "Aspect Ratio",
-      "type": "select",
-      "options": [
-        {
-          "caption": "Default"
-        },
-        {
-          "caption": "Cinemascope",
-          "value": "cinemascope"
-        },
-        {
-          "caption": "Square",
-          "value": "square"
-        }
-      ]
-    },
-    "inside-caption": {
-      "label": "Inside Caption",
-      "type": "option",
-      "value": "caption-inside-fade"
-    },
-    "peephole": {
-      "label": "Size",
-      "type": "select",
-      "options": [
-        {
-          "caption": "Default"
-        },
-        {
-          "caption": "Small",
-          "value": "small"
-        },
-        {
-          "caption": "Stripe",
-          "value": "half-height"
-        }
-      ]
-    },
-    "fixed-background": {
-      "label": "Fixed Background",
-      "type": "option",
-      "value": "peephole"
     }
   },
   "groups": [
     {
       "label": "Headers",
       "components": [
-        "title"
+        "header",
+        "hero",
+        "h1",
+        "h2"
       ]
     },
     {
       "label": "Text",
       "components": [
-        "p"
+        "p",
+        "quote"
+      ]
+    },
+    {
+      "label": "Images",
+      "components": [
+        "image"
+      ]
+    },
+    {
+      "label": "Embeds",
+      "components": [
+        "media"
+      ]
+    },
+    {
+      "label": "Lists",
+      "components": [
+        "list-group",
+        "list-group-item",
+        "list-group-box-item"
+      ]
+    },
+    {
+      "label": "Boxes",
+      "components": [
+        "panel",
+        "well"
+      ]
+    },
+    {
+      "label": "Grid",
+      "components": [
+        "main-and-sidebar"
       ]
     }
   ],
   "defaultComponents": {
-    "paragraph": "p"
+    "paragraph": "p",
+    "image": "image"
   },
+  "defaultContent": [
+    {
+      "component": "header"
+    },
+    {
+      "component": "p"
+    }
+  ],
+  "prefilledComponents": {},
+  "metadata": [
+    {
+      "identifier": "title",
+      "type": "text",
+      "matches": [
+        "header.title",
+        "hero.title",
+        "h1.title",
+        "h2.title"
+      ]
+    },
+    {
+      "identifier": "description",
+      "type": "text",
+      "matches": [
+        "p.text"
+      ]
+    }
+  ],
   "components": [
     {
-      "name": "head",
-      "html": "<div class=\"head\">\n  <h1 doc-editable=\"title\">\n    History\n  </h1>\n  <p class=\"lead\" doc-editable=\"text\">\n    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n  </p>\n</div>",
-      "label": "Title and Lead"
+      "name": "panel",
+      "html": "<div class=\"panel panel-default\">\n  <div class=\"panel-heading\">\n    <h3 class=\"panel-title\" doc-editable=\"title\">Panel Title</h3>\n  </div>\n  <div class=\"panel-body\" doc-editable=\"body\">\n    Panel content\n  </div>\n</div>",
+      "label": "Panel",
+      "properties": [
+        "panel-styles"
+      ]
+    },
+    {
+      "name": "media",
+      "html": "<div class=\"embed-responsive embed-responsive-16by9\" doc-html=\"iframe\"></div>",
+      "label": "Media"
+    },
+    {
+      "name": "well",
+      "html": "<div class=\"well\">\n  Look, I&apos;m in a well!\n</div>",
+      "label": "Well",
+      "properties": [
+        "well-large"
+      ]
+    },
+    {
+      "name": "main-and-sidebar",
+      "html": "<div class=\"row\">\n  <div class=\"col-md-8\" doc-container=\"main\"></div>\n  <div class=\"col-md-4\" doc-container=\"sidebar\"></div>\n</div>",
+      "label": "Main and Sidebar"
+    },
+    {
+      "name": "h1",
+      "html": "<h1 class=\"title\" doc-editable=\"title\">\n  Title\n</h1>",
+      "label": "Title H1"
+    },
+    {
+      "name": "h2",
+      "html": "<h1 class=\"title\" doc-editable=\"title\">\n  Title\n</h1>",
+      "label": "Title H2"
+    },
+    {
+      "name": "header",
+      "html": "<div class=\"page-header\">\n  <h1 doc-editable=\"title\">Example page header Subtext for header</h1>\n</div>",
+      "label": "Header"
     },
     {
       "name": "hero",
-      "html": "<figure class=\"hero\">\n  <div class=\"container image-container\" doc-image=\"image\">\n    <div class=\"base-layout middle-text full-height\">\n      <figcaption class=\"inverted centered\">\n        <h1 doc-editable=\"title\">\n          Studio Ghibli\n        </h1>\n        <h2 doc-editable=\"subtitle\">\n          A world of magical imagination in service of realsim\n        </h2>\n        <p doc-editable=\"text\">\n          From Wikipedia, the funky free encyclopdia\n        </p>\n      </figcaption>\n    </div>\n  </div>\n</figure>",
-      "label": "Large Image",
-      "properties": [
-        "fixed-background"
+      "html": "<div class=\"jumbotron\">\n  <h1 doc-editable=\"title\">Hello, world!</h1>\n  <p doc-editable=\"text\">\n    This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.\n  </p>\n  <p>\n    <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" doc-editable=\"button\">Learn more</a>\n  </p>\n</div>",
+      "label": "Large Image"
+    },
+    {
+      "name": "image",
+      "html": "<figure>\n  <img doc-image=\"image\">\n  <figcaption doc-editable=\"caption\">\n    Image Caption.\n  </figcaption>\n</figure>",
+      "label": "Image"
+    },
+    {
+      "name": "list-group",
+      "html": "<ul class=\"list-group\" doc-container=\"list\"></ul>",
+      "label": "List Group",
+      "directives": {
+        "list": {
+          "allowedChildren": [
+            "list-group-item",
+            "list-group-box-item"
+          ]
+        }
+      }
+    },
+    {
+      "name": "list-group-box-item",
+      "html": "<li class=\"list-group-item\">\n  <h4 class=\"list-group-item-heading\" doc-editable=\"title\">List group item heading</h4>\n  <p class=\"list-group-item-text\" doc-editable=\"text\">\n    Donec id elit non mi porta gravida at eget metus.\n    Maecenas sed diam eget risus varius blandit.\n  </p>\n</li>",
+      "label": "List Group Box Item",
+      "allowedParents": [
+        "list-group"
       ]
     },
     {
-      "name": "title",
-      "html": "<h2 class=\"title\" doc-editable=\"title\">\n  History\n</h2>",
-      "label": "Simple Title"
-    },
-    {
-      "name": "fullSize",
-      "html": "<figure class=\"full-size\">\n  <div class=\"container image-container\" doc-image=\"image\">\n    <div class=\"base-layout middle-text full-height\">\n      <figcaption class=\"inverted centered\">\n        <h2 doc-editable=\"title\">\n          A world of magical imagination in service of realism\n        </h2>\n        <h4 doc-editable=\"subtitle\">\n          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n        </h4>\n      </figcaption>\n    </div>\n  </div>\n</figure>",
-      "label": "Full-Size"
-    },
-    {
-      "name": "normal",
-      "html": "<figure class=\"aspect-ratio\">\n  <div class=\"figure-container\" doc-image=\"image\"></div>\n  <figcaption doc-editable=\"caption\">The Ghibli Museum, is located in Inokashira Park in Mitaka, a western suburb of Tokyo, Japan.</figcaption>\n</figure>",
-      "label": "Normal",
-      "properties": [
-        "position",
-        "aspect-ratio",
-        "inside-caption"
-      ]
-    },
-    {
-      "name": "peephole",
-      "html": "<figure class=\"peephole\">\n  <div class=\"container image-container\" doc-image=\"image\"></div>\n</figure>",
-      "label": "Peephole",
-      "properties": [
-        "peephole"
-      ]
-    },
-    {
-      "name": "aside",
-      "html": "<aside class=\"sidenote right\">\n  <h4 doc-editable=\"title\">\n    Aside with vertical rhythm\n  </h4>\n  <p doc-editable=\"text\">\n    The studio is also known for its strict &#x201C;0-edits&#x201D; policy in licensing their films abroad due to Nausica&#xE4; of the Valley of Wind being heavily edited for the film&#x2019;s release in the United States as Warriors of the Wind. The &#x201C;no cuts&#x201D; policy was highlighted when Miramax co-chairman Harvey Weinstein suggested editing Princess Mononoke to make it more marketable. A Studio Ghibli producer is rumoured to have sent an authentic Japanese sword with a simple message: &#x201C;0 cuts&#x201D;.\n  </p>\n</aside>",
-      "label": "Aside",
-      "properties": [
-        "featured"
-      ]
-    },
-    {
-      "name": "listItem",
-      "html": "<p class=\"list-item\" doc-editable=\"text\">\n  An item\n</p>",
-      "label": "List Item",
-      "properties": [
-        "unordered"
+      "name": "list-group-item",
+      "html": "<li class=\"list-group-item\" doc-editable=\"text\">Cras justo odio</li>",
+      "label": "List Group Item",
+      "allowedParents": [
+        "list-group"
       ]
     },
     {
       "name": "p",
       "html": "<p doc-editable=\"text\">\n  Studio Ghibli, Inc. is a Japanese animation film studio based in Koganei, Tokyo, Japan. The studio is best known for its anime feature films. Studio Ghibli began in June 1985 after the success of Nausica&#xE4; of the Valley of the Wind with funding by Tokuma Shoten. The company&#x2019;s logo features the character Totoro (a large forest spirit) from Miyazaki&#x2019;s film My Neighbor Totoro. At one time the studio was based in Kichij&#x14D;ji, Musashino, Tokyo.\n</p>",
-      "label": "Paragraph",
-      "properties": [
-        "dropcap"
-      ]
+      "label": "Paragraph"
     },
     {
       "name": "quote",
       "html": "<blockquote>\n  <p>\n    <span class=\"quotation-mark\">&#x201C;</span><span class=\"quote\" doc-editable=\"text\">We depict hatred, but it is to depict that there are more important things. We depict a curse, to depict the joy of liberation.</span>\n  </p>\n  <footer doc-editable=\"author\">\n    Hayao Miyazaki\n  </footer>\n</blockquote>",
-      "label": "Quote",
-      "properties": [
-        "large"
-      ]
-    },
-    {
-      "name": "subtitle",
-      "html": "<h4 doc-editable=\"title\">\n  History\n</h4>",
-      "label": "Subtitle"
+      "label": "Quote"
     }
   ]
 }; if(typeof module !== 'undefined' && module.exports) {return module.exports = designJSON;} else { this.design = this.design || {}; this.design.boilerplate = designJSON;} }).call(this);

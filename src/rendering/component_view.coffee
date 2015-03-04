@@ -9,11 +9,17 @@ dom = require('../interaction/dom')
 module.exports = class ComponentView
 
   constructor: ({ @model, @$html, @directives, @isReadOnly }) ->
+    @renderer = undefined # will be set once the view is attached to a renderer
     @$elem = @$html
     @template = @model.template
     @isAttachedToDom = false
     @wasAttachedToDom = $.Callbacks();
 
+    @decorateMarkup()
+    @render()
+
+
+  decorateMarkup: ->
     unless @isReadOnly
       # add attributes and references to the html
       @$html
@@ -21,7 +27,34 @@ module.exports = class ComponentView
         .addClass(css.component)
         .attr(attr.template, @template.identifier)
 
+
+  # Renderer
+  # --------
+
+  setRenderer: (renderer) ->
+    @renderer = renderer
+
+
+  removeRenderer: ->
+    @renderer = undefined
+
+
+  viewForModel: (model) ->
+    @renderer?.getComponentViewById(model.id) if model?
+
+
+  recreateHtml: ->
+    @isAttachedToDom = false
+    { @$elem, @directives } = @model.template.createViewHtml(@model)
+    @$html = @$elem
+
+    @decorateMarkup()
     @render()
+
+
+  # Remove, recreate and reinsert the html of this view.
+  refresh: ->
+    @renderer.refreshComponent(@model)
 
 
   render: (mode) ->
@@ -74,13 +107,8 @@ module.exports = class ComponentView
         config.animations.optionals.hide($(directive.elem))
 
 
-  next: ->
-    @$html.next().data('componentView')
-
-
-  prev: ->
-    @$html.prev().data('componentView')
-
+  # Focus
+  # -----
 
   afterFocused: () ->
     @$html.addClass(css.componentHighlight)
@@ -333,4 +361,32 @@ module.exports = class ComponentView
 
   getOwnerWindow: ->
     @$elem[0].ownerDocument.defaultView
+
+
+  # Iterators and Tree accessors
+  # ----------------------------
+  #
+  # See the end of this file for the generated iterators
+  # ('children', 'descendants', 'parents' etc.).
+
+  next: ->
+    @viewForModel(@model.next)
+
+
+  prev: -> @previous() # alias
+  previous: ->
+    @viewForModel(@model.previous)
+
+
+  parent: ->
+    @viewForModel(@model.getParent())
+
+
+# Generate componentView Iterators
+# --------------------------------
+
+['parents', 'children', 'childrenAndSelf', 'descendants', 'descendantsAndSelf'].forEach (method) ->
+  ComponentView::[method] = (callback) ->
+    @model[method] (model) =>
+      callback( @viewForModel(model) )
 

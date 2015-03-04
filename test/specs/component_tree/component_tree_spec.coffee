@@ -176,6 +176,12 @@ describe 'ComponentTree with a multi-column row component', ->
       expect( titleComponent.getParent() ).to.equal(@rowComponent)
 
 
+    it 'fails to add a listItem component', ->
+      listItem = test.getComponent('listItem')
+      func = => @rowComponent.append('main', listItem)
+      expect(func).to.throw('is not allowed as a child')
+
+
   describe 'each()', ->
 
     it 'visits the row component', ->
@@ -227,6 +233,36 @@ describe 'ComponentTree with a multi-column row component', ->
       expect(visitedContainers).to.equal(3)
 
 
+describe 'ComponentTree with a list component', ->
+
+  beforeEach ->
+    { @componentTree } = test.get('componentTree')
+    @list = test.getComponent('list')
+    @children = @list.containers['children']
+    @componentTree.append(@list)
+
+
+  describe 'append()', ->
+
+    it 'fails to add a restricted title component', ->
+      titleComponent = test.getComponent('title')
+
+      func = => @children.append(titleComponent)
+      expect(func).to.throw("Component 'title' is not allowed as a child")
+
+
+    it 'succeeds to add an allowed listItem component', ->
+      listItem = test.getComponent('listItem')
+      @list.append('children', listItem)
+      expect(@children.first).to.equal(listItem)
+
+
+    it 'succeeds to add an allowed text component', ->
+      text = test.getComponent('text')
+      @list.append('children', text)
+      expect(@children.first).to.equal(text)
+
+
 describe 'ComponentTree with three levels', ->
 
   beforeEach ->
@@ -263,6 +299,41 @@ describe 'ComponentTree with three levels', ->
       expect(visitedComponents[1]).to.equal(@rowInMain)
       expect(visitedComponents[2]).to.equal(@text)
       expect(visitedComponents[3]).to.equal(@title)
+
+
+  describe 'isDropAllowed()', ->
+
+    it 'does allow to insert itself to the root container', ->
+      target =
+        target: 'root'
+      isAllowed = @componentTree.isDropAllowed(@row, target)
+      expect(isAllowed).to.equal(true)
+
+
+    it 'does not allow to insert itself next to a child', ->
+      target =
+        target: 'component'
+        componentView: { model: @text }
+      isAllowed = @componentTree.isDropAllowed(@row, target)
+      expect(isAllowed).to.equal(false)
+
+
+    it 'does not allow to insert to a container of itself', ->
+      target =
+        target: 'container'
+        componentView: { model: @row }
+        containerName: 'main'
+      isAllowed = @componentTree.isDropAllowed(@row, target)
+      expect(isAllowed).to.equal(false)
+
+
+    it 'does not allow to insert itself to a container of a child', ->
+      target =
+        target: 'container'
+        componentView: { model: @rowInMain }
+        containerName: 'sidebar'
+      isAllowed = @componentTree.isDropAllowed(@row, target)
+      expect(isAllowed).to.equal(false)
 
 
 describe 'ComponentTree with three components', ->

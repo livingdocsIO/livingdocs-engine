@@ -11,10 +11,10 @@ module.exports = class Dependency
   #   - code {String} JS or CSS code
   #
   #   All of the following are optional:
-  #   - namespace {String} Optional. A name to identify a dependency more easily.
   #   - namespace {String} Optional. A Namespace to group dependencies together.
+  #   - library {String} Optional. A name to identify and share a library (like jquery) more easily.
   #   - component {ComponentModel} The componentModel that is depending on this resource
-  constructor: ({ @name, @namespace, @src, @code, @type, component }) ->
+  constructor: ({ @type, @src, @code, @namespace, @library, @isExecuteOnly, component }) ->
     assert @src || @code, 'Dependency: No "src" or "code" param provided'
     assert not (@src && @code), 'Dependency: Only provide one of "src" or "code" params'
     assert @type, "Dependency: Param type must be specified"
@@ -70,9 +70,11 @@ module.exports = class Dependency
 
 
   serialize: ->
+    assert(not @isExecuteOnly, 'engine//dependency.coffee: Cannot serialize a temporary dependency')
+
     obj = {}
 
-    for key in ['src', 'code', 'inline', 'name', 'namespace']
+    for key in ['src', 'code', 'inline', 'library', 'namespace']
       obj[key] = this[key] if this[key]?
 
     for componentId of @components

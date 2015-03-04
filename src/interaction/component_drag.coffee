@@ -1,3 +1,4 @@
+$ = require('jquery')
 dom = require('./dom')
 isSupported = require('../modules/feature_detection/is_supported')
 config = require('../configuration/config')
@@ -58,6 +59,7 @@ module.exports = class ComponentDrag
 
     coords = { left: eventPosition.pageX, top: eventPosition.pageY }
     target = dom.dropTarget(elem, coords) if elem?
+    target = undefined if not @canBeDropped(target)
     @undoMakeSpace()
 
     if target? && target.componentView?.model != @componentModel
@@ -82,6 +84,17 @@ module.exports = class ComponentDrag
         @$placeholder.removeClass(css.noDrop)
 
       return undefined
+
+
+  # Check if the component is allowed to be dropped
+  # at the specified target.
+  canBeDropped: (target) ->
+    return false unless target?
+
+    componentTree = target.componentTree
+    componentTree ?= target.componentView.model.componentTree
+    isAllowed = componentTree.isDropAllowed(@componentModel, target)
+    return isAllowed
 
 
   markDropPosition: (target) ->

@@ -40,6 +40,7 @@
       $(document).ready(function() {
 
         // Setup the design and the livingdoc
+        design.boilerplate.assets.basePath = '/designs/boilerplate';
         doc.design.load(design.boilerplate);
         content = getDefaultContent();
         var livingdoc = doc.new(content);
@@ -80,7 +81,7 @@
             data: {
               content: [
                 {
-                  component: 'head',
+                  component: 'hero',
                   content: { title: 'This is it' }
                 }
               ],

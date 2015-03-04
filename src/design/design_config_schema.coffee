@@ -77,6 +77,7 @@ validator.add 'component',
   html: 'string'
   directives: 'object, optional'
   properties: 'array of string, optional'
+  allowedParents: 'array of string, optional'
   __additionalProperty: (key, value) -> false
 
 

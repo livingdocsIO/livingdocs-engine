@@ -14,9 +14,66 @@ assert = require('../modules/logging/assert')
 module.exports = class ComponentContainer
 
 
-  constructor: ({ @parentComponent, @name, isRoot }) ->
+  constructor: ({ @parentComponent, @name, isRoot, config }) ->
     @isRoot = isRoot?
     @first = @last = undefined
+    @allowedChildren = undefined # undefined means all component are allowed
+    @parseConfig(config)
+
+
+  # @param configuration:
+  #   - only {Array} Array of componentNames
+  parseConfig: (configuration) ->
+    return unless configuration?
+
+    for componentName in configuration.allowedChildren || []
+      @allowedChildren ?= {}
+      @allowedChildren[componentName] = true
+
+
+  # Nesting Validations
+  # -------------------
+
+  isAllowedAsChild: (component) ->
+    !!(
+      @canBeNested(component) &&
+      @isChildAllowed(component) &&
+      @isAllowedAsParent(component)
+    )
+
+
+  # Prevent inserting a component into itself.
+  canBeNested: (component) ->
+    parent = @parentComponent
+    while parent?
+      return false if parent.id == component.id
+      parent = parent.getParent()
+
+    return true
+
+
+  # Check if the configuration allows a component to be
+  # inserted here.
+  isChildAllowed: (component) ->
+    @allowedChildren == undefined || @allowedChildren[component.componentName]
+
+
+  isAllowedAsParent: (component) ->
+    return true unless allowedParents = component.template.allowedParents
+
+    parentName = if @isRoot then 'root' else @parentComponent?.componentName
+
+    for allowed in allowedParents
+      return true if parentName == allowed
+
+    return false
+
+
+  # ComponentTree operations
+  # ------------------------
+
+  getComponentTree: ->
+    @componentTree || @parentComponent?.componentTree
 
 
   prepend: (component) ->
@@ -74,9 +131,13 @@ module.exports = class ComponentContainer
       @insertAfter(component.next, component)
 
 
-  getComponentTree: ->
-    @componentTree || @parentComponent?.componentTree
+  remove: (component) ->
+    component.destroy()
+    @_detachComponent(component)
 
+
+  # Iterators
+  # ---------
 
   # Traverse all components
   each: (callback) ->
@@ -102,11 +163,6 @@ module.exports = class ComponentContainer
         callback(componentContainer)
 
 
-  remove: (component) ->
-    component.destroy()
-    @_detachComponent(component)
-
-
   # Private
   # -------
 
@@ -115,6 +171,8 @@ module.exports = class ComponentContainer
   # attached to one.
   # @api private
   attachComponent: (component, position = {}) ->
+    assert(@isAllowedAsChild(component), "Component '#{ component.componentName }' is not allowed as a child of #{ @getContainerIdentifier() }")
+
     func = =>
       @link(component, position)
 
@@ -178,4 +236,11 @@ module.exports = class ComponentContainer
       parentContainer.first = component unless component.previous?
       parentContainer.last = component unless component.next?
 
+
+  # Helper method for debugging and error messages
+  getContainerIdentifier: ->
+    if @isRoot
+      'root'
+    else
+      "#{ @parentComponent.componentName }.containers['#{ @name }']"
 

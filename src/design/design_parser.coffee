@@ -112,23 +112,24 @@ module.exports = designParser =
 
 
   parseComponents: (components=[]) ->
-    for { name, label, html, properties, directives } in components
+    for { name, label, html, properties, directives, allowedParents } in components
       properties = @lookupComponentProperties(properties)
 
-      component = new Template
+      template = new Template
         name: name
         label: label
         html: html
         properties: properties
+        allowedParents: allowedParents
 
-      @parseDirectives(component, directives)
-      @design.add(component)
+      @parseDirectives(template, directives)
+      @design.add(template)
 
 
-  parseDirectives: (component, directives) ->
-    for name, conf of directives
-      directive = component.directives.get(name)
-      assert directive, "Could not find directive #{ name } in #{ component.name } component."
+  parseDirectives: (template, directivesConfig) ->
+    for name, conf of directivesConfig
+      directive = template.directives.get(name)
+      assert directive, "Could not find directive #{ name } in #{ template.name } component."
       directiveConfig = $.extend({}, conf)
       directiveConfig.imageRatios = @lookupImageRatios(conf.imageRatios) if conf.imageRatios
       directive.setConfig(directiveConfig)
@@ -165,14 +166,14 @@ module.exports = designParser =
   parseDefaults: (defaultComponents) ->
     return unless defaultComponents?
     { paragraph, image } = defaultComponents
-    @design.defaultParagraph = @getComponent(paragraph) if paragraph
-    @design.defaultImage = @getComponent(image) if image
+    @design.defaultParagraph = @getTemplate(paragraph) if paragraph
+    @design.defaultImage = @getTemplate(image) if image
 
 
-  getComponent: (name) ->
-    component = @design.get(name)
-    assert component, "Could not find component #{ name }"
-    component
+  getTemplate: (name) ->
+    template = @design.get(name)
+    assert template, "Could not find component #{ name }"
+    template
 
 
   createComponentProperty: (styleDefinition) ->
