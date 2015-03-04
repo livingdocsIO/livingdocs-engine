@@ -2598,11 +2598,70 @@ assert = require('../modules/logging/assert');
 
 module.exports = ComponentContainer = (function() {
   function ComponentContainer(_arg) {
-    var isRoot;
-    this.parentComponent = _arg.parentComponent, this.name = _arg.name, isRoot = _arg.isRoot;
+    var config, isRoot;
+    this.parentComponent = _arg.parentComponent, this.name = _arg.name, isRoot = _arg.isRoot, config = _arg.config;
     this.isRoot = isRoot != null;
     this.first = this.last = void 0;
+    this.allowedChildren = void 0;
+    this.parseConfig(config);
   }
+
+  ComponentContainer.prototype.parseConfig = function(configuration) {
+    var componentName, _i, _len, _ref, _results;
+    if (configuration == null) {
+      return;
+    }
+    _ref = configuration.allowedChildren || [];
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      componentName = _ref[_i];
+      if (this.allowedChildren == null) {
+        this.allowedChildren = {};
+      }
+      _results.push(this.allowedChildren[componentName] = true);
+    }
+    return _results;
+  };
+
+  ComponentContainer.prototype.isAllowedAsChild = function(component) {
+    return !!(this.canBeNested(component) && this.isChildAllowed(component) && this.isAllowedAsParent(component));
+  };
+
+  ComponentContainer.prototype.canBeNested = function(component) {
+    var parent;
+    parent = this.parentComponent;
+    while (parent != null) {
+      if (parent.id === component.id) {
+        return false;
+      }
+      parent = parent.getParent();
+    }
+    return true;
+  };
+
+  ComponentContainer.prototype.isChildAllowed = function(component) {
+    return this.allowedChildren === void 0 || this.allowedChildren[component.componentName];
+  };
+
+  ComponentContainer.prototype.isAllowedAsParent = function(component) {
+    var allowed, allowedParents, parentName, _i, _len, _ref;
+    if (!(allowedParents = component.template.allowedParents)) {
+      return true;
+    }
+    parentName = this.isRoot ? 'root' : (_ref = this.parentComponent) != null ? _ref.componentName : void 0;
+    for (_i = 0, _len = allowedParents.length; _i < _len; _i++) {
+      allowed = allowedParents[_i];
+      if (parentName === allowed) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  ComponentContainer.prototype.getComponentTree = function() {
+    var _ref;
+    return this.componentTree || ((_ref = this.parentComponent) != null ? _ref.componentTree : void 0);
+  };
 
   ComponentContainer.prototype.prepend = function(component) {
     if (this.first) {
@@ -2665,9 +2724,9 @@ module.exports = ComponentContainer = (function() {
     }
   };
 
-  ComponentContainer.prototype.getComponentTree = function() {
-    var _ref;
-    return this.componentTree || ((_ref = this.parentComponent) != null ? _ref.componentTree : void 0);
+  ComponentContainer.prototype.remove = function(component) {
+    component.destroy();
+    return this._detachComponent(component);
   };
 
   ComponentContainer.prototype.each = function(callback) {
@@ -2710,16 +2769,12 @@ module.exports = ComponentContainer = (function() {
     });
   };
 
-  ComponentContainer.prototype.remove = function(component) {
-    component.destroy();
-    return this._detachComponent(component);
-  };
-
   ComponentContainer.prototype.attachComponent = function(component, position) {
     var componentTree, func;
     if (position == null) {
       position = {};
     }
+    assert(this.isAllowedAsChild(component), "Component '" + component.componentName + "' is not allowed as a child of " + (this.getContainerIdentifier()));
     func = (function(_this) {
       return function() {
         return _this.link(component, position);
@@ -2793,6 +2848,14 @@ module.exports = ComponentContainer = (function() {
       if (component.next == null) {
         return parentContainer.last = component;
       }
+    }
+  };
+
+  ComponentContainer.prototype.getContainerIdentifier = function() {
+    if (this.isRoot) {
+      return 'root';
+    } else {
+      return "" + this.parentComponent.componentName + ".containers['" + this.name + "']";
     }
   };
 
@@ -2945,7 +3008,8 @@ module.exports = ComponentModel = (function() {
           this.containers || (this.containers = {});
           _results.push(this.containers[directive.name] = new ComponentContainer({
             name: directive.name,
-            parentComponent: this
+            parentComponent: this,
+            config: directive.config
           }));
           break;
         case 'editable':
@@ -2975,6 +3039,14 @@ module.exports = ComponentModel = (function() {
 
   ComponentModel.prototype.getMainView = function() {
     return this.componentTree.getMainComponentView(this.id);
+  };
+
+  ComponentModel.prototype.isAllowedAsSibling = function(component) {
+    return this.parentContainer.isAllowedAsChild(component);
+  };
+
+  ComponentModel.prototype.isAllowedAsChild = function(containerName, component) {
+    return this.containers[containerName].isAllowedAsChild(component);
   };
 
   ComponentModel.prototype.before = function(componentModel) {
@@ -3545,6 +3617,20 @@ module.exports = ComponentTree = (function() {
   ComponentTree.prototype.getMainComponentView = function(componentId) {
     var _ref;
     return (_ref = this.mainRenderer) != null ? _ref.getComponentViewById(componentId) : void 0;
+  };
+
+  ComponentTree.prototype.isDropAllowed = function(component, targetObj) {
+    var componentView, containerName, target, targetComponent;
+    target = targetObj.target, componentView = targetObj.componentView, containerName = targetObj.containerName;
+    if (target === 'root') {
+      return this.root.isAllowedAsChild(component);
+    } else if (target === 'component') {
+      targetComponent = componentView.model;
+      return targetComponent.isAllowedAsSibling(component);
+    } else if (target === 'container') {
+      targetComponent = componentView.model;
+      return targetComponent.isAllowedAsChild(containerName, component);
+    }
   };
 
   ComponentTree.prototype.print = function() {
@@ -4748,6 +4834,7 @@ validator.add('component', {
   html: 'string',
   directives: 'object, optional',
   properties: 'array of string, optional',
+  allowedParents: 'array of string, optional',
   __additionalProperty: function(key, value) {
     return false;
   }
@@ -4907,32 +4994,33 @@ module.exports = designParser = {
     return _results;
   },
   parseComponents: function(components) {
-    var component, directives, html, label, name, properties, _i, _len, _ref, _results;
+    var allowedParents, directives, html, label, name, properties, template, _i, _len, _ref, _results;
     if (components == null) {
       components = [];
     }
     _results = [];
     for (_i = 0, _len = components.length; _i < _len; _i++) {
-      _ref = components[_i], name = _ref.name, label = _ref.label, html = _ref.html, properties = _ref.properties, directives = _ref.directives;
+      _ref = components[_i], name = _ref.name, label = _ref.label, html = _ref.html, properties = _ref.properties, directives = _ref.directives, allowedParents = _ref.allowedParents;
       properties = this.lookupComponentProperties(properties);
-      component = new Template({
+      template = new Template({
         name: name,
         label: label,
         html: html,
-        properties: properties
+        properties: properties,
+        allowedParents: allowedParents
       });
-      this.parseDirectives(component, directives);
-      _results.push(this.design.add(component));
+      this.parseDirectives(template, directives);
+      _results.push(this.design.add(template));
     }
     return _results;
   },
-  parseDirectives: function(component, directives) {
+  parseDirectives: function(template, directivesConfig) {
     var conf, directive, directiveConfig, name, _results;
     _results = [];
-    for (name in directives) {
-      conf = directives[name];
-      directive = component.directives.get(name);
-      assert(directive, "Could not find directive " + name + " in " + component.name + " component.");
+    for (name in directivesConfig) {
+      conf = directivesConfig[name];
+      directive = template.directives.get(name);
+      assert(directive, "Could not find directive " + name + " in " + template.name + " component.");
       directiveConfig = $.extend({}, conf);
       if (conf.imageRatios) {
         directiveConfig.imageRatios = this.lookupImageRatios(conf.imageRatios);
@@ -4998,17 +5086,17 @@ module.exports = designParser = {
     }
     paragraph = defaultComponents.paragraph, image = defaultComponents.image;
     if (paragraph) {
-      this.design.defaultParagraph = this.getComponent(paragraph);
+      this.design.defaultParagraph = this.getTemplate(paragraph);
     }
     if (image) {
-      return this.design.defaultImage = this.getComponent(image);
+      return this.design.defaultImage = this.getTemplate(image);
     }
   },
-  getComponent: function(name) {
-    var component;
-    component = this.design.get(name);
-    assert(component, "Could not find component " + name);
-    return component;
+  getTemplate: function(name) {
+    var template;
+    template = this.design.get(name);
+    assert(template, "Could not find component " + name);
+    return template;
   },
   createComponentProperty: function(styleDefinition) {
     return new CssModificatorProperty(styleDefinition);
@@ -5273,7 +5361,9 @@ module.exports = (function() {
 
 
 },{"../configuration/config":25,"../modules/logging/assert":48,"./default_image_service":34}],37:[function(require,module,exports){
-var ComponentDrag, config, css, dom, isSupported;
+var $, ComponentDrag, config, css, dom, isSupported;
+
+$ = require('jquery');
 
 dom = require('./dom');
 
@@ -5339,6 +5429,9 @@ module.exports = ComponentDrag = (function() {
     if (elem != null) {
       target = dom.dropTarget(elem, coords);
     }
+    if (!this.canBeDropped(target)) {
+      target = void 0;
+    }
     this.undoMakeSpace();
     if ((target != null) && ((_ref1 = target.componentView) != null ? _ref1.model : void 0) !== this.componentModel) {
       this.$placeholder.removeClass(css.noDrop);
@@ -5354,6 +5447,19 @@ module.exports = ComponentDrag = (function() {
       }
       return void 0;
     }
+  };
+
+  ComponentDrag.prototype.canBeDropped = function(target) {
+    var componentTree, isAllowed;
+    if (target == null) {
+      return false;
+    }
+    componentTree = target.componentTree;
+    if (componentTree == null) {
+      componentTree = target.componentView.model.componentTree;
+    }
+    isAllowed = componentTree.isDropAllowed(this.componentModel, target);
+    return isAllowed;
   };
 
   ComponentDrag.prototype.markDropPosition = function(target) {
@@ -5626,7 +5732,7 @@ module.exports = ComponentDrag = (function() {
 
 
 
-},{"../configuration/config":25,"../modules/feature_detection/is_supported":46,"./dom":39}],38:[function(require,module,exports){
+},{"../configuration/config":25,"../modules/feature_detection/is_supported":46,"./dom":39,"jquery":"jquery"}],38:[function(require,module,exports){
 var ContainerEvent;
 
 module.exports = ContainerEvent = (function() {
@@ -9348,7 +9454,7 @@ sortByName = function(a, b) {
 module.exports = Template = (function() {
   function Template(_arg) {
     var html, label, properties, _ref;
-    _ref = _arg != null ? _arg : {}, this.name = _ref.name, html = _ref.html, label = _ref.label, properties = _ref.properties;
+    _ref = _arg != null ? _arg : {}, this.name = _ref.name, html = _ref.html, label = _ref.label, properties = _ref.properties, this.allowedParents = _ref.allowedParents;
     assert(html, 'Template: param html missing');
     this.$template = $(this.pruneHtml(html)).wrap('<div>');
     this.$wrap = this.$template.parent();
@@ -9522,13 +9628,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":25,"../modules/logging/assert":48,"../modules/logging/log":49,"../modules/words":53,"../rendering/component_view":54,"./directive_collection":68,"./directive_compiler":69,"./directive_finder":70,"./directive_iterator":71,"jquery":"jquery"}],73:[function(require,module,exports){
 module.exports={
-<<<<<<< HEAD
-  "version": "0.5.6",
-  "revision": "f1b2031"
-=======
   "version": "0.6.0",
-  "revision": "98e6abc"
->>>>>>> master
+  "revision": "78dd23f"
 }
 
 },{}],"jquery":[function(require,module,exports){
