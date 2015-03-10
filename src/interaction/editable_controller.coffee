@@ -21,6 +21,7 @@ module.exports = class EditableController
       .focus(@withContext(@focus))
       .blur(@withContext(@blur))
       .insert(@withContext(@insert))
+      .paste(@withContext(@paste))
       .merge(@withContext(@merge))
       .split(@withContext(@split))
       .selection(@withContext(@selectionChanged))
@@ -105,6 +106,36 @@ module.exports = class EditableController
         view.next()
 
       newView.focus() if newView && direction == 'after'
+
+
+    false # disable editable.js default behaviour
+
+
+  # Paste content
+  paste: (view, editableName, blocks, cursor) ->
+
+    # Insert the first block after the cursor
+    firstBlock = blocks[0]
+    cursor.insertBefore(firstBlock)
+
+    if blocks.length <= 1
+      cursor.setVisibleSelection()
+    else
+      # create new components for every subsequent block
+      defaultParagraph = @page.design.defaultParagraph
+      firstEditable = defaultParagraph.directives['editable']?[0]
+      currentBlock = view.model
+
+      for block, index in blocks
+        continue if index == 0
+        newBlock = defaultParagraph.createModel()
+        newBlock.set(firstEditable.name, block)
+        currentBlock.after(newBlock)
+        currentBlock = newBlock
+
+      # Set focus on the last inserted element
+      view = currentBlock.getMainView()
+      view.focus(firstEditable.name) if view?
 
 
     false # disable editable.js default behaviour
