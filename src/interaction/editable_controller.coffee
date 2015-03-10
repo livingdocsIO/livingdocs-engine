@@ -135,7 +135,10 @@ module.exports = class EditableController
 
       # Set focus on the last inserted element
       view = currentBlock.getMainView()
-      view.focus(firstEditable.name) if view?
+      if view?
+        viewDirective = view.directives.get(firstEditable.name)
+        cursor = @editable.createCursorAtEnd(viewDirective.elem)
+        cursor.setVisibleSelection()
 
 
     false # disable editable.js default behaviour
