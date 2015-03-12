@@ -6279,7 +6279,7 @@ module.exports = EditableController = (function() {
     });
     this.editableAttr = config.directives.editable.renderedAttr;
     this.selection = $.Callbacks();
-    this.editable.focus(this.withContext(this.focus)).blur(this.withContext(this.blur)).insert(this.withContext(this.insert)).merge(this.withContext(this.merge)).split(this.withContext(this.split)).selection(this.withContext(this.selectionChanged)).newline(this.withContext(this.newline)).change(this.withContext(this.change));
+    this.editable.focus(this.withContext(this.focus)).blur(this.withContext(this.blur)).insert(this.withContext(this.insert)).paste(this.withContext(this.paste)).merge(this.withContext(this.merge)).split(this.withContext(this.split)).selection(this.withContext(this.selectionChanged)).newline(this.withContext(this.newline)).change(this.withContext(this.change));
   }
 
   EditableController.prototype.add = function(nodes) {
@@ -6349,6 +6349,36 @@ module.exports = EditableController = (function() {
       newView = direction === 'before' ? (view.model.before(copy), view.prev()) : (view.model.after(copy), view.next());
       if (newView && direction === 'after') {
         newView.focus();
+      }
+    }
+    return false;
+  };
+
+  EditableController.prototype.paste = function(view, editableName, blocks, cursor) {
+    var block, currentBlock, defaultParagraph, firstBlock, firstEditable, index, newBlock, viewDirective, _i, _len, _ref;
+    firstBlock = blocks[0];
+    cursor.insertBefore(firstBlock);
+    if (blocks.length <= 1) {
+      cursor.setVisibleSelection();
+    } else {
+      defaultParagraph = this.page.design.defaultParagraph;
+      firstEditable = (_ref = defaultParagraph.directives['editable']) != null ? _ref[0] : void 0;
+      currentBlock = view.model;
+      for (index = _i = 0, _len = blocks.length; _i < _len; index = ++_i) {
+        block = blocks[index];
+        if (index === 0) {
+          continue;
+        }
+        newBlock = defaultParagraph.createModel();
+        newBlock.set(firstEditable.name, block);
+        currentBlock.after(newBlock);
+        currentBlock = newBlock;
+      }
+      view = currentBlock.getMainView();
+      if (view != null) {
+        viewDirective = view.directives.get(firstEditable.name);
+        cursor = this.editable.createCursorAtEnd(viewDirective.elem);
+        cursor.setVisibleSelection();
       }
     }
     return false;
@@ -6617,30 +6647,28 @@ module.exports = Livingdoc = (function(_super) {
     })(this));
   };
 
-  Livingdoc.prototype.createView = function(parent, options) {
-    var $parent, view, whenViewIsReady;
-    if (options == null) {
-      options = {};
+  Livingdoc.prototype.createView = function(_arg) {
+    var host, interactive, loadResources, view, whenViewIsReady, wrapper, _ref;
+    _ref = _arg != null ? _arg : {}, host = _ref.host, interactive = _ref.interactive, loadResources = _ref.loadResources, wrapper = _ref.wrapper;
+    if (wrapper == null) {
+      wrapper = this.getWrapper(host);
     }
-    if (parent == null) {
-      parent = window.document.body;
-    }
-    if (options.readOnly == null) {
-      options.readOnly = true;
-    }
-    $parent = $(parent).first();
-    if (options.$wrapper == null) {
-      options.$wrapper = this.findWrapper($parent);
-    }
-    $parent.html('');
-    view = new View(this, $parent[0]);
-    whenViewIsReady = view.create(options);
+    view = new View({
+      livingdoc: this,
+      parent: $(host),
+      isInteractive: interactive,
+      loadResources: loadResources,
+      wrapper: wrapper
+    });
+    whenViewIsReady = view.create({
+      renderInIframe: true
+    });
     if (view.isInteractive) {
       this.setInteractiveView(view);
       whenViewIsReady.then((function(_this) {
-        return function(_arg) {
+        return function(_arg1) {
           var iframe, renderer;
-          iframe = _arg.iframe, renderer = _arg.renderer;
+          iframe = _arg1.iframe, renderer = _arg1.renderer;
           return _this.componentTree.setMainView(view);
         };
       })(this));
@@ -6652,27 +6680,31 @@ module.exports = Livingdoc = (function(_super) {
     return this.componentTree.createComponent.apply(this.componentTree, arguments);
   };
 
-  Livingdoc.prototype.appendTo = function(parent, options) {
-    var $parent, view;
-    if (options == null) {
-      options = {};
+  Livingdoc.prototype.appendTo = function(_arg) {
+    var host, loadResources, view, wrapper, _ref;
+    _ref = _arg != null ? _arg : {}, host = _ref.host, loadResources = _ref.loadResources, wrapper = _ref.wrapper;
+    if (wrapper == null) {
+      wrapper = this.getWrapper(host);
     }
-    $parent = $(parent).first();
-    if (options.$wrapper == null) {
-      options.$wrapper = this.findWrapper($parent);
-    }
-    $parent.html('');
-    view = new View(this, $parent[0]);
-    return view.createRenderer({
-      options: options
+    view = new View({
+      livingdoc: this,
+      parent: $(host),
+      isInteractive: false,
+      loadResources: loadResources,
+      wrapper: wrapper
+    });
+    return view.create({
+      renderInIframe: false
     });
   };
 
-  Livingdoc.prototype.findWrapper = function($parent) {
-    var $wrapper;
+  Livingdoc.prototype.getWrapper = function(parent) {
+    var $parent, $wrapper;
+    $parent = $(parent).first();
     if ($parent.find("." + config.css.section).length === 1) {
       $wrapper = $($parent.html());
     }
+    $parent.html('');
     return $wrapper;
   };
 
@@ -7245,10 +7277,10 @@ module.exports = ComponentView = (function() {
     return this.hideEmptyOptionals();
   };
 
-  ComponentView.prototype.focus = function(cursor) {
-    var first, _ref;
-    first = (_ref = this.directives.editable) != null ? _ref[0].elem : void 0;
-    return $(first).focus();
+  ComponentView.prototype.focus = function(editableName) {
+    var directive, _ref;
+    directive = editableName ? this.directives.get(editableName) : (_ref = this.directives.editable) != null ? _ref[0] : void 0;
+    return $(directive != null ? directive.elem : void 0).focus();
   };
 
   ComponentView.prototype.hasFocus = function() {
@@ -8328,77 +8360,76 @@ Page = require('../rendering_container/page');
 InteractivePage = require('../rendering_container/interactive_page');
 
 module.exports = View = (function() {
-  function View(livingdoc, parent) {
-    this.livingdoc = livingdoc;
-    this.parent = parent;
+  function View(_arg) {
+    var parent;
+    this.livingdoc = _arg.livingdoc, parent = _arg.parent, this.isInteractive = _arg.isInteractive, this.wrapper = _arg.wrapper, this.loadResources = _arg.loadResources;
+    this.parent = (parent != null ? parent.jquery : void 0) ? parent[0] : parent;
     if (this.parent == null) {
       this.parent = window.document.body;
     }
-    this.isInteractive = false;
+    if (this.isInteractive == null) {
+      this.isInteractive = false;
+    }
   }
 
-  View.prototype.create = function(options) {
-    return this.createIFrame(this.parent).then((function(_this) {
-      return function(iframe, renderNode) {
-        _this.iframe = iframe;
-        _this.renderer = _this.createIFrameRenderer(iframe, options);
-        return {
-          iframe: iframe,
-          renderer: _this.renderer
-        };
-      };
-    })(this));
-  };
-
-  View.prototype.createIFrame = function(parent) {
-    var deferred, iframe;
+  View.prototype.create = function(_arg) {
+    var deferred, renderInIframe;
+    renderInIframe = (_arg != null ? _arg : {}).renderInIframe;
     deferred = $.Deferred();
-    iframe = parent.ownerDocument.createElement('iframe');
-    iframe.src = 'about:blank';
-    iframe.setAttribute('frameBorder', '0');
-    iframe.onload = function() {
-      return deferred.resolve(iframe);
-    };
-    parent.appendChild(iframe);
+    if (renderInIframe) {
+      this.createIFrame(this.parent, (function(_this) {
+        return function() {
+          _this.createIFrameRenderer();
+          return deferred.resolve({
+            iframe: _this.iframe,
+            renderer: _this.renderer
+          });
+        };
+      })(this));
+    } else {
+      this.createRenderer({
+        renderNode: this.parent
+      });
+      deferred.resolve({
+        renderer: this.renderer
+      });
+    }
     return deferred.promise();
   };
 
-  View.prototype.createIFrameRenderer = function(iframe, options) {
+  View.prototype.createIFrame = function(parent, callback) {
+    var iframe;
+    iframe = parent.ownerDocument.createElement('iframe');
+    iframe.src = 'about:blank';
+    iframe.setAttribute('frameBorder', '0');
+    this.iframe = iframe;
+    iframe.onload = function() {
+      return callback(iframe);
+    };
+    return parent.appendChild(iframe);
+  };
+
+  View.prototype.createIFrameRenderer = function() {
     return this.createRenderer({
-      renderNode: iframe.contentDocument.body,
-      options: options
+      renderNode: this.iframe.contentDocument.body
     });
   };
 
   View.prototype.createRenderer = function(_arg) {
-    var options, params, renderNode, _ref;
-    _ref = _arg != null ? _arg : {}, renderNode = _ref.renderNode, options = _ref.options;
+    var params, renderNode;
+    renderNode = (_arg != null ? _arg : {}).renderNode;
     params = {
       renderNode: renderNode || this.parent,
       documentDependencies: this.livingdoc.dependencies,
-      design: this.livingdoc.design
+      design: this.livingdoc.design,
+      loadResources: this.loadResources
     };
-    this.page = this.createPage(params, options);
-    return new Renderer({
+    this.page = this.isInteractive ? new InteractivePage(params) : new Page(params);
+    return this.renderer = new Renderer({
       renderingContainer: this.page,
       componentTree: this.livingdoc.componentTree,
-      $wrapper: options.$wrapper
+      $wrapper: $(this.wrapper)
     });
-  };
-
-  View.prototype.createPage = function(params, _arg) {
-    var interactive, loadResources, readOnly, _ref;
-    _ref = _arg != null ? _arg : {}, interactive = _ref.interactive, readOnly = _ref.readOnly, loadResources = _ref.loadResources;
-    if (params == null) {
-      params = {};
-    }
-    params.loadResources = loadResources;
-    if (interactive != null) {
-      this.isInteractive = true;
-      return new InteractivePage(params);
-    } else {
-      return new Page(params);
-    }
   };
 
   return View;
@@ -9628,8 +9659,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":25,"../modules/logging/assert":48,"../modules/logging/log":49,"../modules/words":53,"../rendering/component_view":54,"./directive_collection":68,"./directive_compiler":69,"./directive_finder":70,"./directive_iterator":71,"jquery":"jquery"}],73:[function(require,module,exports){
 module.exports={
-  "version": "0.7.2",
-  "revision": "faedfae"
+  "version": "0.8.0",
+  "revision": "5715155"
 }
 
 },{}],"jquery":[function(require,module,exports){

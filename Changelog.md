@@ -1,3 +1,9 @@
+# v.0.8.0
+
+- Split pasted content into blocks [#168](https://github.com/upfrontIO/livingdocs-engine/pull/168)
+- View initializing incorrectly in IE [#169](https://github.com/upfrontIO/livingdocs-engine/pull/169)
+
+
 # v.0.7.0
 
 #### Features:
