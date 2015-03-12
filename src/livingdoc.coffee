@@ -81,17 +81,28 @@ module.exports = class Livingdoc extends EventEmitter
       @emit 'change', arguments
 
 
-  createView: (parent, options={}) ->
-    parent ?= window.document.body
-    options.readOnly ?= true
+  # Append the livingdoc to the DOM within an iframe.
+  #
+  # @param {Object}
+  #   host {DOM Node, jQuery object or CSS selector string} Where to append the article in the document.
+  #   interactive {Boolean} Whether the document is edtiable.
+  #   loadResources {Boolean} Load Js and CSS files.
+  #     Only disable this if you are sure you have loaded everything manually.
+  #   wrapper {DOM Node, jQuery object}
+  #
+  # Example:
+  # article.appendTo({ host: '.article', interactive: true, loadResources: false })
+  createView: ({ host, interactive, loadResources, wrapper }={}) ->
+    wrapper ?= @getWrapper(host)
 
-    $parent = $(parent).first()
+    view = new View
+      livingdoc: this
+      parent: $(host)
+      isInteractive: interactive
+      loadResources: loadResources
+      wrapper: wrapper
 
-    options.$wrapper ?= @findWrapper($parent)
-    $parent.html('') # empty container
-
-    view = new View(this, $parent[0])
-    whenViewIsReady = view.create(options)
+    whenViewIsReady = view.create(renderInIframe: true)
 
     if view.isInteractive
       @setInteractiveView(view)
@@ -105,24 +116,27 @@ module.exports = class Livingdoc extends EventEmitter
     @componentTree.createComponent.apply(@componentTree, arguments)
 
 
-  # Append the article to the DOM.
+  # Append the livingdoc to the DOM.
   #
-  # @param { DOM Node, jQuery object or CSS selector string } Where to append the article in the document.
-  # @param { Object } options:
-  #   interactive: { Boolean } Whether the document is edtiable.
-  #   loadAssets: { Boolean } Load Js and CSS files.
+  # @param {Object}
+  #   host {DOM Node, jQuery object or CSS selector string} Where to append the article in the document.
+  #   loadResources {Boolean} Load Js and CSS files.
   #     Only disable this if you are sure you have loaded everything manually.
+  #   wrapper {DOM Node, jQuery object}
   #
   # Example:
-  # article.appendTo('.article', { interactive: true, loadAssets: false });
-  appendTo: (parent, options={}) ->
-    $parent = $(parent).first()
-    options.$wrapper ?= @findWrapper($parent)
-    $parent.html('') # empty container
+  # article.appendTo({ host: '.article', interactive: true, loadResources: false })
+  appendTo: ({ host, loadResources, wrapper }={}) ->
+    wrapper ?= @getWrapper(host)
 
-    view = new View(this, $parent[0])
-    view.createRenderer({ options })
+    view = new View
+      livingdoc: this
+      parent: $(host)
+      isInteractive: false
+      loadResources: loadResources
+      wrapper: wrapper
 
+    view.create(renderInIframe: false)
 
 
   # A view sometimes has to be wrapped in a container.
@@ -132,11 +146,15 @@ module.exports = class Livingdoc extends EventEmitter
   # <div class="iframe-container">
   #   <section class="container doc-section"></section>
   # </div>
-  findWrapper: ($parent) ->
+  getWrapper: (parent) ->
+    $parent = $(parent).first()
     if $parent.find(".#{ config.css.section }").length == 1
       $wrapper = $($parent.html())
 
-    $wrapper
+    $parent.html('') # empty container
+
+    return $wrapper
+
 
 
   setInteractiveView: (view) ->

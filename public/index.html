@@ -46,8 +46,8 @@
         var livingdoc = doc.new(content);
 
         // Create Views
-        viewReady = livingdoc.createView('.editor-section', { interactive: true });
-        previewReady = livingdoc.createView('.editor-preview');
+        var viewReady = livingdoc.createView({ host: '.editor-section', interactive: true });
+        var previewReady = livingdoc.createView({ host: '.editor-preview' });
 
         // Create Components
         var $toolbar = $('.doc-toolbar');
