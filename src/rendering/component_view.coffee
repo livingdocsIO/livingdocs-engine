@@ -121,10 +121,13 @@ module.exports = class ComponentView
 
 
   # @param cursor: undefined, 'start', 'end'
-  focus: (cursor) ->
-    first = @directives.editable?[0].elem
-    $(first).focus()
+  focus: (editableName) ->
+    directive = if editableName
+      @directives.get(editableName)
+    else
+      @directives.editable?[0]
 
+    $(directive?.elem).focus()
 
   hasFocus: ->
     @$html.hasClass(css.componentHighlight)

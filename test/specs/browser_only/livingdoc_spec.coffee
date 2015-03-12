@@ -17,7 +17,7 @@ describe '(browser only) livingdoc:', ->
 
     it 'accepts a wrapper as an argument', (done) ->
       $wrapper = $('<div class="wrapper doc-section"></div>')
-      @doc.createView(undefined, $wrapper: $wrapper)
+      @doc.createView(wrapper: $wrapper)
       .then ({ iframe, renderer }) ->
         expect(renderer.$wrapperHtml).to.exist
         done()
@@ -30,7 +30,7 @@ describe '(browser only) livingdoc:', ->
       @html = test.createComponent('html')
       @html.setContent('source', '<script>scriptTest = "halleluja!";</script>')
       @componentTree.append(@html)
-      @doc.createView(undefined)
+      @doc.createView()
       .then ({ @iframe, @renderer }) =>
         @renderer.ready =>
           done()
