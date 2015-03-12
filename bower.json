@@ -10,6 +10,6 @@
     "!dist/**/**"
   ],
   "dependencies": {
-    "editable": "0.4.2"
+    "editable": "0.5.1"
   }
 }
