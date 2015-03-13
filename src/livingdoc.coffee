@@ -55,7 +55,7 @@ module.exports = class Livingdoc extends EventEmitter
     @model = @componentTree
 
     @interactiveView = undefined
-    @additionalViews = []
+    @readOnlyViews = []
 
     @design = @componentTree.design
     @dependencies = new Dependencies({ @componentTree })
@@ -85,15 +85,17 @@ module.exports = class Livingdoc extends EventEmitter
   #
   # @param {Object}
   #   host {DOM Node, jQuery object or CSS selector string} Where to append the article in the document.
-  #   interactive {Boolean} Whether the document is edtiable.
+  #   interactive {Boolean} Whether the document is edtiable (default: false).
   #   loadResources {Boolean} Load Js and CSS files.
   #     Only disable this if you are sure you have loaded everything manually.
   #   wrapper {DOM Node, jQuery object}
+  #   iframe {Boolean} Whether to render the livingdoc in an iframe (default: true).
   #
   # Example:
   # article.appendTo({ host: '.article', interactive: true, loadResources: false })
-  createView: ({ host, interactive, loadResources, wrapper }={}) ->
+  createView: ({ host, interactive, loadResources, wrapper, iframe }={}) ->
     wrapper ?= @getWrapper(host)
+    iframe ?= true
 
     view = new View
       livingdoc: this
@@ -102,18 +104,8 @@ module.exports = class Livingdoc extends EventEmitter
       loadResources: loadResources
       wrapper: wrapper
 
-    whenViewIsReady = view.create(renderInIframe: true)
-
-    if view.isInteractive
-      @setInteractiveView(view)
-      whenViewIsReady.then ({ iframe, renderer }) =>
-        @componentTree.setMainView(view)
-
-    whenViewIsReady
-
-
-  createComponent: ->
-    @componentTree.createComponent.apply(@componentTree, arguments)
+    @addView(view)
+    whenViewIsReady = view.create(renderInIframe: iframe)
 
 
   # Append the livingdoc to the DOM.
@@ -126,17 +118,13 @@ module.exports = class Livingdoc extends EventEmitter
   #
   # Example:
   # article.appendTo({ host: '.article', interactive: true, loadResources: false })
-  appendTo: ({ host, loadResources, wrapper }={}) ->
-    wrapper ?= @getWrapper(host)
+  appendTo: (options = {}) ->
+    options.iframe = false
+    @createView(options)
 
-    view = new View
-      livingdoc: this
-      parent: $(host)
-      isInteractive: false
-      loadResources: loadResources
-      wrapper: wrapper
 
-    view.create(renderInIframe: false)
+  createComponent: ->
+    @componentTree.createComponent.apply(@componentTree, arguments)
 
 
   # A view sometimes has to be wrapped in a container.
@@ -156,12 +144,16 @@ module.exports = class Livingdoc extends EventEmitter
     return $wrapper
 
 
+  addView: (view) ->
+    if view.isInteractive
+      assert not @interactiveView?,
+        'Error creating interactive view: A Livingdoc can have only one interactive view'
 
-  setInteractiveView: (view) ->
-    assert not @interactiveView?,
-      'Error creating interactive view: Livingdoc can have only one interactive view'
-
-    @interactiveView = view
+      @interactiveView = view
+      view.whenReady.then ({ iframe, renderer }) =>
+        @componentTree.setMainView(view)
+    else
+      @readOnlyViews.push(view)
 
 
   addJsDependency: (obj) ->
