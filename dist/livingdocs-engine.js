@@ -4713,14 +4713,18 @@ Version = require('./version');
 module.exports = (function() {
   return {
     designs: {},
-    load: function(designSpec) {
-      var design, designIdentifier, version;
+    load: function(designSpec, _arg) {
+      var basePath, design, designIdentifier, version;
+      basePath = (_arg != null ? _arg : {}).basePath;
       assert(designSpec != null, 'design.load() was called with undefined.');
       assert(!(typeof designSpec === 'string'), 'design.load() loading a design by name is not implemented.');
       version = Version.parse(designSpec.version);
       designIdentifier = Design.getIdentifier(designSpec.name, version);
       if (this.has(designIdentifier)) {
         return;
+      }
+      if ((basePath != null) && (designSpec.assets != null)) {
+        designSpec.assets.basePath = basePath;
       }
       design = designParser.parse(designSpec);
       if (design) {
@@ -9658,7 +9662,7 @@ Template.parseIdentifier = function(identifier) {
 },{"../component_tree/component_model":17,"../configuration/config":25,"../modules/logging/assert":48,"../modules/logging/log":49,"../modules/words":53,"../rendering/component_view":54,"./directive_collection":68,"./directive_compiler":69,"./directive_finder":70,"./directive_iterator":71,"jquery":"jquery"}],73:[function(require,module,exports){
 module.exports={
   "version": "0.8.0",
-  "revision": "7c386a5"
+  "revision": "8535520"
 }
 
 },{}],"jquery":[function(require,module,exports){

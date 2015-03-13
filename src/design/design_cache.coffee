@@ -7,24 +7,27 @@ module.exports = do ->
 
   designs: {}
 
-  # Can load a design synchronously if you include the
+  # Load a design synchronously if you include the
   # design.js file before livingdocs.
-  # doc.design.load(designs['nameOfYourDesign'])
   #
-  # Proposed extensions:
-  # Will be extended to load designs remotely from a server:
-  # Load from a remote server by name (server has to be configured as default)
-  # doc.design.load('ghibli')
+  # Example:
+  # doc.design.load(design.boilerplate, { basePath: '/' });
   #
-  # Load from a custom server:
-  # doc.design.load('http://yourserver.io/designs/ghibli/design.json')
-  load: (designSpec) ->
+  # @param {Object} Design configuration.
+  #   For details see: https://github.com/upfrontIO/livingdocs-design-boilerplate
+  # @param {Object}
+  #   basePath {String} A basePath to resolve relative URLs.
+  #     Required if the design contains relative URLs.
+  load: (designSpec, { basePath }={}) ->
     assert designSpec?, 'design.load() was called with undefined.'
     assert not (typeof designSpec == 'string'), 'design.load() loading a design by name is not implemented.'
 
     version = Version.parse(designSpec.version)
     designIdentifier = Design.getIdentifier(designSpec.name, version)
     return if @has(designIdentifier)
+
+    # Add the base path to the designSpec if specified
+    designSpec.assets.basePath = basePath if basePath? && designSpec.assets?
 
     design = designParser.parse(designSpec)
     if design
