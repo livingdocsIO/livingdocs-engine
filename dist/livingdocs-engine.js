@@ -6614,7 +6614,7 @@ module.exports = Livingdoc = (function(_super) {
     this.componentTree = _arg.componentTree;
     this.model = this.componentTree;
     this.interactiveView = void 0;
-    this.additionalViews = [];
+    this.readOnlyViews = [];
     this.design = this.componentTree.design;
     this.dependencies = new Dependencies({
       componentTree: this.componentTree
@@ -6648,10 +6648,13 @@ module.exports = Livingdoc = (function(_super) {
   };
 
   Livingdoc.prototype.createView = function(_arg) {
-    var host, interactive, loadResources, view, whenViewIsReady, wrapper, _ref;
-    _ref = _arg != null ? _arg : {}, host = _ref.host, interactive = _ref.interactive, loadResources = _ref.loadResources, wrapper = _ref.wrapper;
+    var host, iframe, interactive, loadResources, view, whenViewIsReady, wrapper, _ref;
+    _ref = _arg != null ? _arg : {}, host = _ref.host, interactive = _ref.interactive, loadResources = _ref.loadResources, wrapper = _ref.wrapper, iframe = _ref.iframe;
     if (wrapper == null) {
       wrapper = this.getWrapper(host);
+    }
+    if (iframe == null) {
+      iframe = true;
     }
     view = new View({
       livingdoc: this,
@@ -6660,42 +6663,22 @@ module.exports = Livingdoc = (function(_super) {
       loadResources: loadResources,
       wrapper: wrapper
     });
-    whenViewIsReady = view.create({
-      renderInIframe: true
+    this.addView(view);
+    return whenViewIsReady = view.create({
+      renderInIframe: iframe
     });
-    if (view.isInteractive) {
-      this.setInteractiveView(view);
-      whenViewIsReady.then((function(_this) {
-        return function(_arg1) {
-          var iframe, renderer;
-          iframe = _arg1.iframe, renderer = _arg1.renderer;
-          return _this.componentTree.setMainView(view);
-        };
-      })(this));
+  };
+
+  Livingdoc.prototype.appendTo = function(options) {
+    if (options == null) {
+      options = {};
     }
-    return whenViewIsReady;
+    options.iframe = false;
+    return this.createView(options);
   };
 
   Livingdoc.prototype.createComponent = function() {
     return this.componentTree.createComponent.apply(this.componentTree, arguments);
-  };
-
-  Livingdoc.prototype.appendTo = function(_arg) {
-    var host, loadResources, view, wrapper, _ref;
-    _ref = _arg != null ? _arg : {}, host = _ref.host, loadResources = _ref.loadResources, wrapper = _ref.wrapper;
-    if (wrapper == null) {
-      wrapper = this.getWrapper(host);
-    }
-    view = new View({
-      livingdoc: this,
-      parent: $(host),
-      isInteractive: false,
-      loadResources: loadResources,
-      wrapper: wrapper
-    });
-    return view.create({
-      renderInIframe: false
-    });
   };
 
   Livingdoc.prototype.getWrapper = function(parent) {
@@ -6708,9 +6691,20 @@ module.exports = Livingdoc = (function(_super) {
     return $wrapper;
   };
 
-  Livingdoc.prototype.setInteractiveView = function(view) {
-    assert(this.interactiveView == null, 'Error creating interactive view: Livingdoc can have only one interactive view');
-    return this.interactiveView = view;
+  Livingdoc.prototype.addView = function(view) {
+    if (view.isInteractive) {
+      assert(this.interactiveView == null, 'Error creating interactive view: A Livingdoc can have only one interactive view');
+      this.interactiveView = view;
+      return view.whenReady.then((function(_this) {
+        return function(_arg) {
+          var iframe, renderer;
+          iframe = _arg.iframe, renderer = _arg.renderer;
+          return _this.componentTree.setMainView(view);
+        };
+      })(this));
+    } else {
+      return this.readOnlyViews.push(view);
+    }
   };
 
   Livingdoc.prototype.addJsDependency = function(obj) {
@@ -8370,17 +8364,20 @@ module.exports = View = (function() {
     if (this.isInteractive == null) {
       this.isInteractive = false;
     }
+    this.isReady = false;
+    this.whenReadyDeferred = $.Deferred();
+    this.whenReady = this.whenReadyDeferred.promise();
   }
 
   View.prototype.create = function(_arg) {
-    var deferred, renderInIframe;
+    var renderInIframe;
     renderInIframe = (_arg != null ? _arg : {}).renderInIframe;
-    deferred = $.Deferred();
     if (renderInIframe) {
       this.createIFrame(this.parent, (function(_this) {
         return function() {
           _this.createIFrameRenderer();
-          return deferred.resolve({
+          _this.isReady = true;
+          return _this.whenReadyDeferred.resolve({
             iframe: _this.iframe,
             renderer: _this.renderer
           });
@@ -8390,11 +8387,12 @@ module.exports = View = (function() {
       this.createRenderer({
         renderNode: this.parent
       });
-      deferred.resolve({
+      this.isReady = true;
+      this.whenReadyDeferred.resolve({
         renderer: this.renderer
       });
     }
-    return deferred.promise();
+    return this.whenReady;
   };
 
   View.prototype.createIFrame = function(parent, callback) {
@@ -8704,7 +8702,7 @@ module.exports = InteractivePage = (function(_super) {
   }
 
   InteractivePage.prototype.beforeInteractivePageReady = function() {
-    if (config.livingdocsCssFile) {
+    if (config.livingdocsCssFile && this.loadResources) {
       return this.assets.cssLoader.loadSingleUrl(config.livingdocsCssFile, this.readySemaphore.wait());
     }
   };
@@ -9660,7 +9658,7 @@ Template.parseIdentifier = function(identifier) {
 },{"../component_tree/component_model":17,"../configuration/config":25,"../modules/logging/assert":48,"../modules/logging/log":49,"../modules/words":53,"../rendering/component_view":54,"./directive_collection":68,"./directive_compiler":69,"./directive_finder":70,"./directive_iterator":71,"jquery":"jquery"}],73:[function(require,module,exports){
 module.exports={
   "version": "0.8.0",
-  "revision": "5715155"
+  "revision": "7c386a5"
 }
 
 },{}],"jquery":[function(require,module,exports){
