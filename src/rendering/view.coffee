@@ -14,6 +14,9 @@ module.exports = class View
     @parent = if parent?.jquery then parent[0] else parent
     @parent ?= window.document.body
     @isInteractive ?= false
+    @isReady = false
+    @whenReadyDeferred = $.Deferred()
+    @whenReady = @whenReadyDeferred.promise()
 
 
   # @param {Object}
@@ -21,19 +24,19 @@ module.exports = class View
   #
   # @returns {Promise}
   create: ({ renderInIframe }={})->
-    deferred = $.Deferred()
-
     if renderInIframe
       @createIFrame @parent, =>
         @createIFrameRenderer()
-        deferred.resolve
+        @isReady = true
+        @whenReadyDeferred.resolve
           iframe: @iframe
           renderer: @renderer
     else
       @createRenderer(renderNode: @parent)
-      deferred.resolve(renderer: @renderer)
+      @isReady = true
+      @whenReadyDeferred.resolve(renderer: @renderer)
 
-    deferred.promise()
+    @whenReady
 
 
   # Private
