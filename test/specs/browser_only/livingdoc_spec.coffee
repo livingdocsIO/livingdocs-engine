@@ -1,4 +1,5 @@
 Livingdoc = require('../../../src/livingdoc')
+View = require('../../../src/rendering/view')
 
 describe '(browser only) livingdoc:', ->
 
@@ -9,18 +10,81 @@ describe '(browser only) livingdoc:', ->
 
   describe 'createView()', ->
 
-    it 'creates a readOnly iframe view', (done) ->
-      @doc.createView().then ({ iframe, renderer }) ->
+    it 'creates a readOnly iframe view by default', (done) ->
+      @doc.createView().then ({ iframe, renderer }) =>
+        expect(iframe).to.have.html('<iframe frameborder="0" src="about:blank">')
+        expect(renderer.renderingContainer.isReadOnly).to.equal(true)
+        done()
+
+
+    it 'creates an interactive iframe view', (done) ->
+      @doc.createView(interactive: true, loadResources: false).then ({ iframe, renderer }) =>
+        expect(renderer.renderingContainer.isReadOnly).to.equal(false)
+        expect(@doc.interactiveView).to.be.an.instanceof(View)
+        expect(@doc.readOnlyViews.length).to.equal(0)
+        done()
+
+
+    it 'adds the view to the readyOnly array', (done) ->
+      @doc.createView().then ({ iframe, renderer }) =>
+        expect(@doc.readOnlyViews.length).to.equal(1)
+        expect(@doc.interactiveView).to.equal(undefined)
+        done()
+
+
+    describe 'wrapper param', ->
+      wrapper = '<div class="wrapper doc-section"></div>'
+      checkWrapper = (renderer) ->
+          expect(renderer.$wrapperHtml[0].outerHTML).to.equal(wrapper)
+
+      it 'accepts a jquery wrapper as an argument', (done) ->
+        @doc.createView( wrapper: $(wrapper) )
+        .then ({ iframe, renderer }) =>
+          checkWrapper(renderer)
+          done()
+
+
+      it 'accepts a DOM node wrapper as an argument', (done) ->
+        @doc.createView( wrapper: $(wrapper)[0] )
+        .then ({ iframe, renderer }) =>
+          checkWrapper(renderer)
+          done()
+
+
+      it 'accepts a string wrapper as an argument', (done) ->
+        @doc.createView( wrapper: wrapper)
+        .then ({ iframe, renderer }) =>
+          checkWrapper(renderer)
+          done()
+
+
+  describe 'appendTo()', ->
+
+    beforeEach ->
+      @$container = $('<div class="append-to-test-container">')
+      $(document.body).append(@$container)
+      @title = test.createComponent('title')
+      @title.set('title', 'Hello Welt')
+      @componentTree.append(@title)
+
+
+    afterEach ->
+      @$container.remove()
+
+
+    it 'creates a readOnly view without an iframe', (done) ->
+      @doc.appendTo(host: @$container).then ({ renderer }) =>
         expect(renderer.renderingContainer.isReadOnly).to.be.true
         done()
 
 
-    it 'accepts a wrapper as an argument', (done) ->
-      $wrapper = $('<div class="wrapper doc-section"></div>')
-      @doc.createView(wrapper: $wrapper)
-      .then ({ iframe, renderer }) ->
-        expect(renderer.$wrapperHtml).to.exist
-        done()
+    it 'adds the content to the host element', (done) ->
+      @doc.appendTo(host: @$container).then ({ renderer }) =>
+        renderer.ready =>
+          expect(@$container.html()).to.have.html '
+            <h1>Hello Welt</h1>
+          '
+          done()
 
 
   describe 'scripts in components', ->
