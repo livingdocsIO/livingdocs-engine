@@ -1,3 +1,8 @@
+# v.0.8.1
+
+- Unify createView() and appendTo() interfaces [#170](https://github.com/upfrontIO/livingdocs-engine/pull/170)
+
+
 # v.0.8.0
 
 - Split pasted content into blocks [#168](https://github.com/upfrontIO/livingdocs-engine/pull/168)

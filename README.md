@@ -45,14 +45,14 @@ var livingdoc = doc.new({
 Simply render a livingdoc into your current page:
 
 ```javascript
-livingdoc.appendTo('.article-container', { interactive: false });
+livingdoc.appendTo({ host: '.article-container', interactive: false });
 ```
 
 Create multiple views in iframes:
 
 ```javascript
-var interactiveView = livingdoc.createView('.editor-section', { interactive: true });
-var preview = livingdoc.createView('.editor-preview');
+var interactiveView = livingdoc.createView({ host: '.editor-section', interactive: true });
+var preview = livingdoc.createView({ host: '.editor-preview' });
 ```
 
 With the iframe technique you can isolate CSS or Javascript that is needed in your documents and also generate views that will work properly with responsive designs. There can only be one interactive view where the user can edit, but you can have as many readOnly views as you want to preview the content at different screen sizes at the same time.
