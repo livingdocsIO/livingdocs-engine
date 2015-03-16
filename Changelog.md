@@ -1,6 +1,7 @@
 # v.0.8.1
 
 - Unify createView() and appendTo() interfaces [#170](https://github.com/upfrontIO/livingdocs-engine/pull/170)
+- Add base path param to DesignCache  [#171](https://github.com/upfrontIO/livingdocs-engine/pull/171)
 
 
 # v.0.8.0

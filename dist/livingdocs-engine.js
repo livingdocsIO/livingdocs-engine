@@ -9661,8 +9661,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":25,"../modules/logging/assert":48,"../modules/logging/log":49,"../modules/words":53,"../rendering/component_view":54,"./directive_collection":68,"./directive_compiler":69,"./directive_finder":70,"./directive_iterator":71,"jquery":"jquery"}],73:[function(require,module,exports){
 module.exports={
-  "version": "0.8.0",
-  "revision": "8535520"
+  "version": "0.8.1",
+  "revision": "f95cf8c"
 }
 
 },{}],"jquery":[function(require,module,exports){
