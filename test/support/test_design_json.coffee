@@ -67,6 +67,16 @@ module.exports = do ->
         </div>
         """
     ,
+      name: 'related-article'
+      html:
+        """
+        <div>
+          <a doc-link="article-link">
+            <h2 doc-editable="article-title"></h2>
+          </a>
+        </div>
+        """
+    ,
       name: 'row'
       label: 'Row with two columns'
       html:

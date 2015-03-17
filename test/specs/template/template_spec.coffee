@@ -45,6 +45,16 @@ describe 'template:', ->
         expect(componentView instanceof ComponentView).to.equal(true)
 
 
+  describe 'doc-link directive', ->
+    it 'is parsed', ->
+      template = new Template
+        name: 'external-link-component'
+        html: """<a #{ test.linkAttr }="a-link-directive"></a>"""
+
+      expect(template.directives.length).to.equal(1)
+      expect(template.directives[0].type).to.equal('link')
+
+
   describe 'Template.parseIdentifier()', ->
 
     it 'parses "bootstrap.title"', ->

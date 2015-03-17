@@ -2,6 +2,7 @@ _ = require('underscore')
 base64Image = require('../../support/test_base64_image')
 config = test.config
 ComponentContainer = require('../../../src/component_tree/component_container')
+LinkDirective = require('../../../src/component_tree/link_directive')
 
 describe 'component_model:', ->
 
@@ -203,3 +204,17 @@ describe 'component_model:', ->
       it 'can get the content', ->
         expect(@html.get('source')).to.equal('<section>text</section>')
 
+
+  describe 'Related Article component', ->
+
+    beforeEach ->
+      @component = test.getComponent('related-article')
+      @component.set('article-link', 'http://upfront.io/')
+
+
+    it 'has a link directive', ->
+      expect(@component.directives[0]).to.be.an.instanceof(LinkDirective)
+
+
+    it 'has the related-articel field set in content', ->
+      expect(@component.get('article-link')).to.equal('http://upfront.io/')
