@@ -48,7 +48,7 @@ module.exports = class ComponentModel
             name: directive.name
             parentComponent: this
             config: directive.config
-        when 'editable', 'image', 'html'
+        when 'editable', 'image', 'html', 'link'
           @createComponentDirective(directive)
           @content ||= {}
           @content[directive.name] = undefined

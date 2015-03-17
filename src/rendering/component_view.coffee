@@ -160,6 +160,7 @@ module.exports = class ComponentView
           @setImage(name, directive.getImageUrl() )
 
       when 'html' then @setHtml(name, value)
+      when 'link' then @setLink(name, value)
 
 
   get: (name) ->
@@ -211,6 +212,21 @@ module.exports = class ComponentView
 
     @directivesToReset ||= {}
     @directivesToReset[name] = name
+
+
+  setLink: (name, value) ->
+    $elem = @directives.$getElem(name)
+    $elem.attr('href', value || '')
+
+    if value
+      $elem.off('click.doc-link')
+        .on 'click.doc-link', (e) ->
+          e.preventDefault()
+
+
+  getLink: (name) ->
+    $elem = @directives.$getElem(name)
+    $elem.attr('href')
 
 
   getDirectiveElement: (directiveName) ->

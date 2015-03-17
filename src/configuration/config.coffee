@@ -98,6 +98,10 @@ module.exports = augmentConfig(
       renderedAttr: 'calculated later'
       elementDirective: true
       defaultName: 'default'
+    link:
+      attr: 'doc-link'
+      renderedAttr: 'calculated later'
+      elementDirective: true
     optional:
       attr: 'doc-optional'
       renderedAttr: 'calculated later'
