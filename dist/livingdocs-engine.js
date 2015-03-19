@@ -2511,11 +2511,12 @@ module.exports = doc = (function() {
     Livingdoc: Livingdoc,
     ComponentTree: ComponentTree,
     createLivingdoc: function(_arg) {
-      var componentTree, data, design;
-      data = _arg.data, design = _arg.design, componentTree = _arg.componentTree;
+      var componentTree, data, design, layout;
+      data = _arg.data, design = _arg.design, layout = _arg.layout, componentTree = _arg.componentTree;
       return Livingdoc.create({
         data: data,
         designName: design,
+        layoutName: layout,
         componentTree: componentTree
       });
     },
@@ -4828,6 +4829,7 @@ validator.add('design', {
   },
   metadata: 'array of object, optional',
   wrapper: 'string, wrapper, optional',
+  layouts: 'array of layout, optional',
   defaultContent: 'array of object, optional',
   prefilledComponents: 'object, optional'
 });
@@ -4864,6 +4866,13 @@ validator.add('imageRatio', {
 validator.add('styleOption', {
   caption: 'string',
   value: 'string, optional'
+});
+
+validator.add('layout', {
+  name: 'string',
+  caption: 'string',
+  wrapper: 'wrapper',
+  icon: 'string, optional'
 });
 
 
@@ -4907,7 +4916,7 @@ module.exports = designParser = {
     assets = designConfig.assets, components = designConfig.components, componentProperties = designConfig.componentProperties, groups = designConfig.groups, defaultComponents = designConfig.defaultComponents, imageRatios = designConfig.imageRatios;
     try {
       this.design = this.parseDesignInfo(designConfig);
-      $.each(['metadata', 'wrapper', 'defaultContent', 'prefilledComponents'], (function(_this) {
+      $.each(['metadata', 'wrapper', 'layouts', 'defaultContent', 'prefilledComponents'], (function(_this) {
         return function(index, attributeName) {
           return _this.design[attributeName] = designConfig[attributeName];
         };
@@ -6601,21 +6610,25 @@ module.exports = Livingdoc = (function(_super) {
   __extends(Livingdoc, _super);
 
   Livingdoc.create = function(_arg) {
-    var componentTree, data, design, designName, _ref;
-    data = _arg.data, designName = _arg.designName, componentTree = _arg.componentTree;
+    var componentTree, data, design, designName, layoutName, _ref;
+    data = _arg.data, designName = _arg.designName, layoutName = _arg.layoutName, componentTree = _arg.componentTree;
     componentTree = data != null ? (designName = (_ref = data.design) != null ? _ref.name : void 0, assert(designName != null, 'Error creating livingdoc: No design is specified.'), design = designCache.get(designName), new ComponentTree({
       content: data,
       design: design
     })) : designName != null ? (design = designCache.get(designName), new ComponentTree({
       design: design
     })) : componentTree;
+    if (data != null ? data.layout : void 0) {
+      layoutName = data.layout;
+    }
     return new Livingdoc({
-      componentTree: componentTree
+      componentTree: componentTree,
+      layoutName: layoutName
     });
   };
 
   function Livingdoc(_arg) {
-    this.componentTree = _arg.componentTree;
+    this.componentTree = _arg.componentTree, this.layoutName = _arg.layoutName;
     this.model = this.componentTree;
     this.interactiveView = void 0;
     this.readOnlyViews = [];
@@ -6735,7 +6748,10 @@ module.exports = Livingdoc = (function(_super) {
   };
 
   Livingdoc.prototype.serialize = function() {
-    return this.componentTree.serialize();
+    var serialized;
+    serialized = this.componentTree.serialize();
+    serialized['layout'] = this.layoutName;
+    return serialized;
   };
 
   Livingdoc.prototype.toJson = function(prettify) {
@@ -9662,7 +9678,7 @@ Template.parseIdentifier = function(identifier) {
 },{"../component_tree/component_model":17,"../configuration/config":25,"../modules/logging/assert":48,"../modules/logging/log":49,"../modules/words":53,"../rendering/component_view":54,"./directive_collection":68,"./directive_compiler":69,"./directive_finder":70,"./directive_iterator":71,"jquery":"jquery"}],73:[function(require,module,exports){
 module.exports={
   "version": "0.8.1",
-  "revision": "f95cf8c"
+  "revision": "b80033a"
 }
 
 },{}],"jquery":[function(require,module,exports){
