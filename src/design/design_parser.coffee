@@ -35,6 +35,7 @@ module.exports = designParser =
       $.each [
         'metadata'
         'wrapper'
+        'layouts'
         'defaultContent'
         'prefilledComponents'
       ], (index, attributeName) =>

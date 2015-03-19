@@ -55,8 +55,8 @@ module.exports = doc = do ->
   # @param designName { string } Name of a design
   # @param componentTree { ComponentTree } A componentTree instance
   # @returns { Livingdoc object }
-  createLivingdoc: ({ data, design, componentTree }) ->
-    Livingdoc.create({ data, designName: design, componentTree })
+  createLivingdoc: ({ data, design, layout, componentTree }) ->
+    Livingdoc.create({ data, designName: design, layoutName: layout, componentTree })
 
 
   # Alias for backwards compatibility

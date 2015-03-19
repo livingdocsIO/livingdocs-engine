@@ -67,6 +67,7 @@ validator.add 'design',
     __additionalProperty: (key, value) -> validator.validate('imageRatio', value)
   metadata: 'array of object, optional'
   wrapper: 'string, wrapper, optional'
+  layouts: 'array of layout, optional'
   defaultContent: 'array of object, optional'
   prefilledComponents: 'object, optional'
 
@@ -103,3 +104,9 @@ validator.add 'styleOption',
   caption: 'string'
   value: 'string, optional'
 
+
+validator.add 'layout',
+  name: 'string'
+  caption: 'string'
+  wrapper: 'wrapper'
+  icon: 'string, optional'

@@ -34,7 +34,7 @@ module.exports = class Livingdoc extends EventEmitter
   # @param designName { string } Name of a design
   # @param componentTree { ComponentTree } A componentTree instance
   # @returns { Livingdoc object }
-  @create: ({ data, designName, componentTree }) ->
+  @create: ({ data, designName, layoutName, componentTree }) ->
     componentTree = if data?
       designName = data.design?.name
       assert designName?, 'Error creating livingdoc: No design is specified.'
@@ -46,10 +46,13 @@ module.exports = class Livingdoc extends EventEmitter
     else
       componentTree
 
-    new Livingdoc({ componentTree })
+    if data?.layout
+      layoutName = data.layout
+
+    new Livingdoc({ componentTree, layoutName })
 
 
-  constructor: ({ @componentTree }) ->
+  constructor: ({ @componentTree, @layoutName }) ->
 
     # @model is a legacy attribute and should be deleted ASAP
     @model = @componentTree
@@ -177,7 +180,10 @@ module.exports = class Livingdoc extends EventEmitter
 
 
   serialize: ->
-    @componentTree.serialize()
+    serialized = @componentTree.serialize()
+    serialized['layout'] = @layoutName
+
+    serialized
 
 
   toJson: (prettify) ->
