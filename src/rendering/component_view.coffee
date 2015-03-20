@@ -177,9 +177,16 @@ module.exports = class ComponentView
 
 
   setEditable: (name, value) ->
-    return if @hasFocus()
-
     $elem = @directives.$getElem(name)
+
+    # Check if the directive element has focus to avoid
+    # circular code execution.
+    element = $elem[0]
+    ownerDocument = element.ownerDocument
+    elementHasFocus = ownerDocument.activeElement == element
+
+    return if elementHasFocus
+
     $elem.toggleClass(css.noPlaceholder, Boolean(value))
     $elem.attr(attr.placeholder, @template.defaults[name])
     $elem.html(value || '')
