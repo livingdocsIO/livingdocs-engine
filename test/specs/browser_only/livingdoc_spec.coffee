@@ -92,7 +92,7 @@ describe '(browser only) livingdoc:', ->
     beforeEach (done) ->
       @componentTree = @doc.componentTree
       @html = test.createComponent('html')
-      @html.setContent('source', '<script>scriptTest = "halleluja!";</script>')
+      @html.set('source', '<script>scriptTest = "halleluja!";</script>')
       @componentTree.append(@html)
       @doc.createView()
       .then ({ @iframe, @renderer }) =>
@@ -106,28 +106,28 @@ describe '(browser only) livingdoc:', ->
 
     it 'executes scripts in the iframe when components are added after the renderer is ready', ->
       newHtml = test.createComponent('html')
-      newHtml.setContent('source', '<script>otherScriptTest = "interesting!";</script>')
+      newHtml.set('source', '<script>otherScriptTest = "interesting!";</script>')
       @componentTree.append(newHtml)
       expect(@iframe.contentWindow.otherScriptTest).to.equal('interesting!')
 
 
     it 'executes scripts when content is updated', ->
       @iframe.contentWindow.scriptCounter = 0
-      @html.setContent('source', '<script>scriptCounter += 1;</script>')
+      @html.set('source', '<script>scriptCounter += 1;</script>')
       expect(@iframe.contentWindow.scriptCounter).to.equal(1)
 
 
     it 'does not execute scripts when content is updated twice with the same value', ->
       @iframe.contentWindow.scriptCounter = 0
-      @html.setContent('source', '<script>scriptCounter += 1;</script>')
-      @html.setContent('source', '<script>scriptCounter += 1;</script>')
+      @html.set('source', '<script>scriptCounter += 1;</script>')
+      @html.set('source', '<script>scriptCounter += 1;</script>')
       expect(@iframe.contentWindow.scriptCounter).to.equal(1)
 
 
     it 'does execute scripts when content is updated with a different value', ->
       @iframe.contentWindow.scriptCounter = 0
-      @html.setContent('source', '<script>scriptCounter += 1;</script>')
-      @html.setContent('source', '<script>scriptCounter += 2;</script>')
+      @html.set('source', '<script>scriptCounter += 1;</script>')
+      @html.set('source', '<script>scriptCounter += 2;</script>')
       expect(@iframe.contentWindow.scriptCounter).to.equal(3)
 
 
@@ -136,8 +136,9 @@ describe '(browser only) livingdoc:', ->
 
       newHtml = test.createComponent('compositeHtml')
       @componentTree.append(newHtml)
-      newHtml.setContent('source', '<script>scriptCounter += 1;</script>')
-      newHtml.setContent('title', 'My counter script')
+
+      newHtml.set('source', '<script>scriptCounter += 1;</script>')
+      newHtml.set('title', 'My counter script')
 
       expect(@iframe.contentWindow.scriptCounter).to.equal(1)
 
