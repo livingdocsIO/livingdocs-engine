@@ -47,7 +47,7 @@ describe 'dom:', ->
       expect( dom.findComponentView($node) ).to.equal(@view)
 
 
-  describe 'findNodeContext() on image component', ->
+  describe 'getDirectiveContext() on image component', ->
 
     beforeEach ->
       @view = test.getTemplate('image').createView()
@@ -55,12 +55,13 @@ describe 'dom:', ->
 
     it 'finds image node context from DOM node', ->
       $node = @$html.findIn('img').first()
-      expect( dom.findNodeContext($node) ).to.deep.equal
-        contextAttr: 'data-doc-image'
-        attrName: 'image'
+      expect( dom.getDirectiveContext($node) ).to.deep.equal
+        'image':
+          name: 'image'
+          type: 'image'
 
 
-  describe 'findNodeContext() on cover component', ->
+  describe 'getDirectiveContext() on cover component', ->
 
     beforeEach ->
       @view = test.getTemplate('cover').createView()
@@ -69,19 +70,21 @@ describe 'dom:', ->
 
     it 'finds editable node context from DOM node', ->
       $node = @$html.find('h2').first()
-      expect( dom.findNodeContext($node) ).to.deep.equal
-        contextAttr: 'data-doc-editable'
-        attrName: 'maintitle'
+      expect( dom.getDirectiveContext($node) ).to.deep.equal
+        'editable':
+          name: 'maintitle'
+          type: 'editable'
 
 
     it 'finds image node context from DOM node', ->
       $node = @$html.find('div').first()
-      expect( dom.findNodeContext($node) ).to.deep.equal
-        contextAttr: 'data-doc-image'
-        attrName: 'image'
+      expect( dom.getDirectiveContext($node) ).to.deep.equal
+        'image':
+          name: 'image'
+          type: 'image'
 
 
-  describe 'findNodeContext() on html component', ->
+  describe 'getDirectiveContext() on html component', ->
 
     beforeEach ->
       @view = test.getTemplate('html').createView()
@@ -90,16 +93,18 @@ describe 'dom:', ->
 
     it 'finds html node context from DOM node', ->
       $node = @$html.findIn('div').first()
-      expect( dom.findNodeContext($node) ).to.deep.equal
-        contextAttr: 'data-doc-html'
-        attrName: 'source'
+      expect( dom.getDirectiveContext($node) ).to.deep.equal
+        'html':
+          name: 'source'
+          type: 'html'
 
 
     it 'finds html node context from child node', ->
       $node = @$html.find('.html-placeholder').first()
-      expect( dom.findNodeContext($node) ).to.deep.equal
-        contextAttr: 'data-doc-html'
-        attrName: 'source'
+      expect( dom.getDirectiveContext($node) ).to.deep.equal
+        'html':
+          name: 'source'
+          type: 'html'
 
 
   describe 'findContainer()', ->
