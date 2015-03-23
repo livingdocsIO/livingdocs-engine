@@ -103,6 +103,7 @@ module.exports = augmentConfig(
     optional:
       attr: 'doc-optional'
       renderedAttr: 'calculated later'
+      modifies: ['editable']
 
 
   animations:
