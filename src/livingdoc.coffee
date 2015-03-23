@@ -96,9 +96,11 @@ module.exports = class Livingdoc extends EventEmitter
   #
   # Example:
   # article.appendTo({ host: '.article', interactive: true, loadResources: false })
-  createView: ({ host, interactive, loadResources, wrapper, iframe }={}) ->
-    wrapper ?= @getWrapper(host)
+  createView: ({ host, interactive, loadResources, wrapper, layoutName, iframe }={}) ->
     iframe ?= true
+    layoutName ?= @layoutName
+    wrapper ?= @design.getLayout(layoutName)?.wrapper
+    wrapper ?= @getWrapper(host)
 
     view = new View
       livingdoc: this
@@ -108,7 +110,7 @@ module.exports = class Livingdoc extends EventEmitter
       wrapper: wrapper
 
     @addView(view)
-    whenViewIsReady = view.create(renderInIframe: iframe)
+    view.create(renderInIframe: iframe)
 
 
   # Append the livingdoc to the DOM.

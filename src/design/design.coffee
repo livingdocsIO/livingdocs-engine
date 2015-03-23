@@ -5,6 +5,7 @@ words = require('../modules/words')
 Template = require('../template/template')
 OrderedHash = require('../modules/ordered_hash')
 Dependencies = require('../rendering/dependencies')
+_ = require('underscore')
 
 module.exports = class Design
 
@@ -83,6 +84,14 @@ module.exports = class Design
 
   getDefaultImageDirectiveName: ->
     @defaultImage?.directives.firstOfType('image')?.name
+
+
+  getLayout: (name) ->
+    return wrapper: @wrapper unless @layouts
+    return _.first(@layouts) unless name? or @defaultLayout?
+
+    name ?= @defaultLayout
+    _.findWhere(@layouts, name: name)
 
 
   @getIdentifier: (name, version) ->
