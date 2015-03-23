@@ -169,6 +169,7 @@ module.exports = class ComponentView
       when 'editable' then @getEditable(name)
       when 'image' then @getImage(name)
       when 'html' then @getHtml(name)
+      when 'link' then @getLink(name)
 
 
   getEditable: (name) ->
