@@ -4600,7 +4600,7 @@ module.exports = CssModificatorProperty = (function() {
 
 
 },{"../modules/logging/assert":48,"../modules/logging/log":49,"../modules/words":53}],28:[function(require,module,exports){
-var Dependencies, Design, OrderedHash, Template, assert, config, log, words;
+var Dependencies, Design, OrderedHash, Template, assert, config, log, words, _;
 
 config = require('../configuration/config');
 
@@ -4615,6 +4615,8 @@ Template = require('../template/template');
 OrderedHash = require('../modules/ordered_hash');
 
 Dependencies = require('../rendering/dependencies');
+
+_ = require('underscore');
 
 module.exports = Design = (function() {
   function Design(_arg) {
@@ -4686,6 +4688,23 @@ module.exports = Design = (function() {
     return (_ref = this.defaultImage) != null ? (_ref1 = _ref.directives.firstOfType('image')) != null ? _ref1.name : void 0 : void 0;
   };
 
+  Design.prototype.getLayout = function(name) {
+    if (!this.layouts) {
+      return {
+        wrapper: this.wrapper
+      };
+    }
+    if (!((name != null) || (this.defaultLayout != null))) {
+      return _.first(this.layouts);
+    }
+    if (name == null) {
+      name = this.defaultLayout;
+    }
+    return _.findWhere(this.layouts, {
+      name: name
+    });
+  };
+
   Design.getIdentifier = function(name, version) {
     if (version) {
       return "" + name + "@" + version;
@@ -4700,7 +4719,7 @@ module.exports = Design = (function() {
 
 
 
-},{"../configuration/config":25,"../modules/logging/assert":48,"../modules/logging/log":49,"../modules/ordered_hash":50,"../modules/words":53,"../rendering/dependencies":55,"../template/template":72}],29:[function(require,module,exports){
+},{"../configuration/config":25,"../modules/logging/assert":48,"../modules/logging/log":49,"../modules/ordered_hash":50,"../modules/words":53,"../rendering/dependencies":55,"../template/template":72,"underscore":10}],29:[function(require,module,exports){
 var Design, Version, assert, designParser;
 
 assert = require('../modules/logging/assert');
@@ -6665,13 +6684,19 @@ module.exports = Livingdoc = (function(_super) {
   };
 
   Livingdoc.prototype.createView = function(_arg) {
-    var host, iframe, interactive, loadResources, view, whenViewIsReady, wrapper, _ref;
-    _ref = _arg != null ? _arg : {}, host = _ref.host, interactive = _ref.interactive, loadResources = _ref.loadResources, wrapper = _ref.wrapper, iframe = _ref.iframe;
-    if (wrapper == null) {
-      wrapper = this.getWrapper(host);
-    }
+    var host, iframe, interactive, layoutName, loadResources, view, wrapper, _ref, _ref1;
+    _ref = _arg != null ? _arg : {}, host = _ref.host, interactive = _ref.interactive, loadResources = _ref.loadResources, wrapper = _ref.wrapper, layoutName = _ref.layoutName, iframe = _ref.iframe;
     if (iframe == null) {
       iframe = true;
+    }
+    if (layoutName == null) {
+      layoutName = this.layoutName;
+    }
+    if (wrapper == null) {
+      wrapper = (_ref1 = this.design.getLayout(layoutName)) != null ? _ref1.wrapper : void 0;
+    }
+    if (wrapper == null) {
+      wrapper = this.getWrapper(host);
     }
     view = new View({
       livingdoc: this,
@@ -6681,7 +6706,7 @@ module.exports = Livingdoc = (function(_super) {
       wrapper: wrapper
     });
     this.addView(view);
-    return whenViewIsReady = view.create({
+    return view.create({
       renderInIframe: iframe
     });
   };
@@ -9678,7 +9703,7 @@ Template.parseIdentifier = function(identifier) {
 },{"../component_tree/component_model":17,"../configuration/config":25,"../modules/logging/assert":48,"../modules/logging/log":49,"../modules/words":53,"../rendering/component_view":54,"./directive_collection":68,"./directive_compiler":69,"./directive_finder":70,"./directive_iterator":71,"jquery":"jquery"}],73:[function(require,module,exports){
 module.exports={
   "version": "0.8.1",
-  "revision": "b80033a"
+  "revision": "c4ebdb2"
 }
 
 },{}],"jquery":[function(require,module,exports){
