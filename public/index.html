@@ -30,7 +30,7 @@
     <script src="/editable/editable.js"></script>
 
     <!-- designs for manual testing -->
-    <script src="/designs/boilerplate/design.js"></script>
+    <script src="/livingdocs-design-boilerplate/dist/design.js"></script>
 
     <!-- livingdocs-engine. yeah! -->
     <script src="/livingdocs-engine.js"></script>
@@ -40,8 +40,8 @@
       $(document).ready(function() {
 
         // Setup the design and the livingdoc
-        design.boilerplate.assets.basePath = '/designs/boilerplate';
-        doc.design.load(design.boilerplate);
+        var basePath = '/livingdocs-design-boilerplate/dist';
+        doc.design.load(design.boilerplate, { basePath: basePath });
         content = getDefaultContent();
         var livingdoc = doc.new(content);
 

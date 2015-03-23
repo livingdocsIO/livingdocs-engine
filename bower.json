@@ -11,5 +11,8 @@
   ],
   "dependencies": {
     "editable": "0.5.1"
+  },
+  "devDependencies": {
+    "livingdocs-design-boilerplate": "git@github.com:upfrontIO/livingdocs-design-boilerplate#v0.2.0",
   }
 }
