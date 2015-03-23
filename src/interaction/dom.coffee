@@ -1,5 +1,6 @@
 $ = require('jquery')
 config = require('../configuration/config')
+directiveFinder = require('../template/directive_finder')
 css = config.css
 
 # DOM helper methods
@@ -25,30 +26,41 @@ module.exports = do ->
     return undefined
 
 
-  findNodeContext: (node) ->
+  # Get the closest directives that affect the element.
+  # Traverses the node and its parents until it finds a
+  # node with directives.
+  #
+  # @param {DOM Node}
+  getDirectiveContext: (node) ->
     node = @getElementNode(node)
 
     while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
-      nodeContext = @getNodeContext(node)
-      return nodeContext if nodeContext
+      directives = @getDirectives(node)
+      return directives if directives
 
       node = node.parentNode
 
     return undefined
 
 
-  getNodeContext: (node) ->
-    for directiveType, obj of config.directives
-      continue if not obj.elementDirective
+  # Find all directives on an DOM node.
+  # This ignores modification directives like doc-optional.
+  # @param {DOM node}
+  # @returns {Object} e.g:
+  #   'html'
+  #     attr: 'doc-html'
+  #     name: 'source'
+  getDirectives: (node) ->
+    directives = undefined
 
-      directiveAttr = obj.renderedAttr
-      if node.hasAttribute(directiveAttr)
-        return {
-          contextAttr: directiveAttr
-          attrName: node.getAttribute(directiveAttr)
-        }
+    directiveFinder.eachDirective node, (type, name) ->
+      return if type == 'optional'
+      directives ?= {}
+      directives[type] =
+        type: type
+        name: name
 
-    return undefined
+    return directives
 
 
   # Find the container this node is contained within.
