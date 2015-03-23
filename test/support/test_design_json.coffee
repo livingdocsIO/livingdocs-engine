@@ -143,9 +143,11 @@ module.exports = do ->
       label: 'Freeform html with a title'
       html:
         """
-        <div #{ htmlAttr }="source">
-          <h1 doc-editable="title">HMTL Freeform Title</h1>
-          <span class="html-placeholder">placholder text</text>
+        <div>
+          <h1 #{ editableAttr }="title">HMTL Freeform Title</h1>
+          <div #{ htmlAttr }="source">
+            <span class="html-placeholder">placholder text</span>
+          </div>
         </div>
         """
     ]
