@@ -19,8 +19,12 @@ module.exports = class Directive
     @config.renderedAttr
 
 
-  isElementDirective: ->
-    @config.elementDirective
+  overwritesContent: ->
+    !!@config.overwritesContent
+
+
+  isModification: ->
+    @config.modifies?
 
 
   # Return the nodeName in lower case

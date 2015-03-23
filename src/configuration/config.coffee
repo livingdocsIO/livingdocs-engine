@@ -81,31 +81,28 @@ module.exports = augmentConfig(
     container:
       attr: 'doc-container'
       renderedAttr: 'calculated later'
-      elementDirective: true
+      overwritesContent: true
       defaultName: 'default'
     editable:
       attr: 'doc-editable'
       renderedAttr: 'calculated later'
-      elementDirective: true
+      overwritesContent: true
+      defaultName: 'default'
+    html:
+      attr: 'doc-html'
+      renderedAttr: 'calculated later'
+      overwritesContent: true
       defaultName: 'default'
     image:
       attr: 'doc-image'
       renderedAttr: 'calculated later'
-      elementDirective: true
       defaultName: 'image'
-    html:
-      attr: 'doc-html'
-      renderedAttr: 'calculated later'
-      elementDirective: true
-      defaultName: 'default'
     link:
       attr: 'doc-link'
       renderedAttr: 'calculated later'
-      elementDirective: true
     optional:
       attr: 'doc-optional'
       renderedAttr: 'calculated later'
-      elementDirective: false
 
 
   animations:
