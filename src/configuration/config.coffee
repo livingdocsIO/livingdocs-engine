@@ -72,10 +72,11 @@ module.exports = augmentConfig(
 
   # Directive definitions
   #
-  # attr: attribute used in templates to define the directive
-  # renderedAttr: attribute used in output html
-  # elementDirective: directive that takes control over the element
+  # attr {String}: attribute used in templates to define the directive
+  # renderedAttr {String}: attribute used in output html (will be set in augment_config)
+  # overwritesContent {Boolean}: directive takes control over the child nodes
   #   (there can only be one per element)
+  # modifies {Array of String}: modifies any of the specified directives
   directives:
     container:
       attr: 'doc-container'
