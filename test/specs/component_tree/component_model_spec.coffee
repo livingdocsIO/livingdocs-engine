@@ -81,9 +81,8 @@ describe 'component_model:', ->
       @container = test.getComponent('container')
 
 
-    it 'has named its unnamed container to the default', ->
-      defaultName = config.directives.container.defaultName
-      expect(@container.containers[defaultName]).to.exist
+    it 'has named its container to "children"', ->
+      expect(@container.containers['children']).to.exist
 
 
   # Component with a container with a config

@@ -347,7 +347,7 @@ describe 'component_view:', ->
       ,
         component: 'container'
         containers:
-          'default': [
+          'children': [
             component: 'text'
             content: { 'text': 'some text' }
           ]

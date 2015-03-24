@@ -106,20 +106,12 @@ module.exports = class ComponentModel
 
   # Append a component to a container of this component
   append: (containerName, componentModel) ->
-    if arguments.length == 1
-      componentModel = containerName
-      containerName = config.directives.container.defaultName
-
     @containers[containerName].append(componentModel)
     this
 
 
   # Prepend a component to a container of this component
   prepend: (containerName, componentModel) ->
-    if arguments.length == 1
-      componentModel = containerName
-      containerName = config.directives.container.defaultName
-
     @containers[containerName].prepend(componentModel)
     this
 

@@ -76,33 +76,28 @@ module.exports = augmentConfig(
   # renderedAttr: attribute used in output html
   # elementDirective: directive that takes control over the element
   #   (there can only be one per element)
-  # defaultName: default name if none was specified in the template
   directives:
     container:
       attr: 'doc-container'
-      renderedAttr: 'calculated later'
+      renderedAttr: 'calculated in augment_config'
       overwritesContent: true
-      defaultName: 'default'
     editable:
       attr: 'doc-editable'
-      renderedAttr: 'calculated later'
+      renderedAttr: 'calculated in augment_config'
       overwritesContent: true
-      defaultName: 'default'
     html:
       attr: 'doc-html'
-      renderedAttr: 'calculated later'
+      renderedAttr: 'calculated in augment_config'
       overwritesContent: true
-      defaultName: 'default'
     image:
       attr: 'doc-image'
-      renderedAttr: 'calculated later'
-      defaultName: 'image'
+      renderedAttr: 'calculated in augment_config'
     link:
       attr: 'doc-link'
-      renderedAttr: 'calculated later'
+      renderedAttr: 'calculated in augment_config'
     optional:
       attr: 'doc-optional'
-      renderedAttr: 'calculated later'
+      renderedAttr: 'calculated in augment_config'
       modifies: ['editable']
 
 

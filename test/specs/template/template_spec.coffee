@@ -137,9 +137,9 @@ describe 'template:', ->
 
   describe 'Container', ->
 
-   it 'creates a default container', ->
+   it 'creates a "children" directive', ->
       container = test.getTemplate('container')
-      expect(container.directives.all.hasOwnProperty('default')).to.equal(true)
+      expect(container.directives.all.hasOwnProperty('children')).to.equal(true)
 
 
   describe 'Stuffed Container', ->

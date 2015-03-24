@@ -18,7 +18,7 @@ describe 'directive_compiler:', ->
   describe 'container node', ->
 
     beforeEach ->
-      @elem = $("<div #{ config.directives.container.attr } />")[0]
+      @elem = $("<div #{ config.directives.container.attr }='children' />")[0]
       @directives = directiveCompiler.parse(@elem)
 
 
@@ -33,9 +33,9 @@ describe 'directive_compiler:', ->
   describe 'convert template attributes into rendered attributes', ->
 
     it 'unifies attribute naming style', ->
-      nude = $("<div #{ config.directives.container.attr } />")[0]
-      x =    $("<div x-#{ config.directives.container.attr } />")[0]
-      data = $("<div data-#{ config.directives.container.attr } />")[0]
+      nude = $("<div #{ config.directives.container.attr }='field' />")[0]
+      x =    $("<div x-#{ config.directives.container.attr }='field' />")[0]
+      data = $("<div data-#{ config.directives.container.attr }='field' />")[0]
       for node in [nude, x, data]
         directive = directiveCompiler.parse(node)[0]
         expect(directive.elem.hasAttribute(test.containerAttr)).to.be.ok
@@ -44,15 +44,17 @@ describe 'directive_compiler:', ->
   describe 'nodes with different attribute naming styles', ->
 
     it 'finds data- prepended editable', ->
-      elem = $("<div data-#{ config.directives.editable.attr } />")[0]
+      elem = $("<div data-#{ config.directives.editable.attr }='data' />")[0]
       directive = directiveCompiler.parse(elem)[0]
       expect(directive.type).to.equal('editable')
+      expect(directive.name).to.equal('data')
 
 
     it 'finds x- prepended editable', ->
-      elem = $("<div x-#{ config.directives.editable.attr } />")[0]
+      elem = $("<div x-#{ config.directives.editable.attr }='x' />")[0]
       directive = directiveCompiler.parse(elem)[0]
       expect(directive.type).to.equal('editable')
+      expect(directive.name).to.equal('x')
 
 
   describe 'optional directive', ->
