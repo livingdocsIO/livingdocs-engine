@@ -30,6 +30,10 @@ describe 'component_model:', ->
       expect(@title.containers).not.to.exist
 
 
+    it 'hasContainers() returns false', ->
+      expect(@title.hasContainers()).to.equal(false)
+
+
     it 'has no next or previous', ->
       expect(@title.next).not.to.exist
       expect(@title.previous).not.to.exist
@@ -69,6 +73,10 @@ describe 'component_model:', ->
     it 'initializes the two containers', ->
       expect(@row.containers.main).to.be.an.instanceof(ComponentContainer)
       expect(@row.containers.sidebar).to.be.an.instanceof(ComponentContainer)
+
+
+    it 'hasContainers()', ->
+      expect(@row.hasContainers()).to.equal(true)
 
 
     it 'does not create directives for the containers ', ->
@@ -202,6 +210,30 @@ describe 'component_model:', ->
 
       it 'can get the content', ->
         expect(@html.get('source')).to.equal('<section>text</section>')
+
+
+  describe 'Button component', ->
+
+    beforeEach ->
+      @component = test.getComponent('button')
+      @component.set('link', 'http://upfront.io/')
+      @component.set('text', 'Who is upfront?')
+
+
+    it 'hasLinks()', ->
+      expect(@component.hasLinks()).to.equal(true)
+
+
+    it 'has two directives()', ->
+      expect(@component.directives.length).to.equal(2)
+      expect(@component.directives[0].name).to.equal('link')
+      expect(@component.directives[1].name).to.equal('text')
+
+
+    it 'has set the directive content', ->
+      expect(@component.get('link')).to.equal('http://upfront.io/')
+      expect(@component.get('text')).to.equal('Who is upfront?')
+
 
 
   describe 'Related Article component', ->

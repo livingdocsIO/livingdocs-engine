@@ -68,6 +68,16 @@ module.exports = do ->
         </div>
         """
     ,
+      # Button Component to test a link and editable directive
+      # on the same element.
+      name: 'button'
+      html:
+        """
+        <a #{ linkAttr }="link" #{ editableAttr }="text">
+          Find out more
+        </a>
+        """
+    ,
       name: 'related-article'
       html:
         """

@@ -205,7 +205,7 @@ module.exports = class ComponentModel
   # imageDirective = componentModel.directives.get('image')
 
   hasContainers: ->
-    @directives.count('container') > 0
+    @containers?
 
 
   hasEditables: ->
@@ -218,6 +218,10 @@ module.exports = class ComponentModel
 
   hasImages: ->
     @directives.count('image') > 0
+
+
+  hasLinks: ->
+    @directives.count('link') > 0
 
 
   # set the content data field of the component
