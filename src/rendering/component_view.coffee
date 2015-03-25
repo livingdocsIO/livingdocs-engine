@@ -224,7 +224,12 @@ module.exports = class ComponentView
 
   setLink: (name, value) ->
     $elem = @directives.$getElem(name)
-    $elem.attr('href', value || '')
+    if value
+      $elem.attr('href', value)
+    else
+      # According to HTML5 we remove the href attribute to
+      # create a placeholder link that is not clickable.
+      $elem.removeAttr('href')
 
 
   getLink: (name) ->
