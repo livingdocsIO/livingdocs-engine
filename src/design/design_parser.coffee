@@ -36,6 +36,7 @@ module.exports = designParser =
         'metadata'
         'wrapper'
         'layouts'
+        'defaultLayout'
         'defaultContent'
         'prefilledComponents'
       ], (index, attributeName) =>

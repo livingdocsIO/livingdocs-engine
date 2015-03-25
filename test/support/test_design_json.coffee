@@ -198,6 +198,18 @@ module.exports = do ->
 
   wrapper: '<div class="doc-section"></div>'
 
+  layouts: [
+    name: 'layout1'
+    caption: 'Layout #1'
+    wrapper: '<div class="doc-section layout-wrapper"></div>'
+  ,
+    name: 'layout2'
+    caption: 'Layout #2'
+    wrapper: '<div class="doc-section layout-wrapper-extended"></div>'
+  ]
+
+  defaultLayout: 'layout2'
+
   defaultContent: [
     identifier: 'hero'
   ,

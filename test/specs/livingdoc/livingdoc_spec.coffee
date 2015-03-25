@@ -30,6 +30,16 @@ describe 'livingdoc:', ->
         content: []
         design:
           name: 'test'
+        layout: undefined
+
+
+    it 'serializes an empty livingdoc with defined layoutName', ->
+      doc = new Livingdoc({ componentTree: @componentTree, layoutName: 'layout1' })
+      expect(doc.serialize()).to.deep.equal
+        content: []
+        design:
+          name: 'test'
+        layout: 'layout1'
 
 
     it 'serializes a minimal livingdoc', ->

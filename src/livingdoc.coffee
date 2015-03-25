@@ -97,17 +97,18 @@ module.exports = class Livingdoc extends EventEmitter
   # Example:
   # article.appendTo({ host: '.article', interactive: true, loadResources: false })
   createView: ({ host, interactive, loadResources, wrapper, layoutName, iframe }={}) ->
+    viewWrapper = @getWrapper
+      wrapper: wrapper
+      layoutName: layoutName
+      host: host
     iframe ?= true
-    layoutName ?= @layoutName
-    wrapper ?= @design.getLayout(layoutName)?.wrapper
-    wrapper ?= @getWrapper(host)
 
     view = new View
       livingdoc: this
       parent: $(host)
       isInteractive: interactive
       loadResources: loadResources
-      wrapper: wrapper
+      wrapper: viewWrapper
 
     @addView(view)
     view.create(renderInIframe: iframe)
@@ -132,6 +133,16 @@ module.exports = class Livingdoc extends EventEmitter
     @componentTree.createComponent.apply(@componentTree, arguments)
 
 
+  getWrapper: ({ wrapper, layoutName, host }) ->
+    return wrapper if wrapper?
+
+    layoutName ?= @layoutName
+    wrapper = @design.getLayout(layoutName)?.wrapper
+    wrapper ?= @extractWrapper(host)
+
+    return wrapper
+
+
   # A view sometimes has to be wrapped in a container.
   #
   # Example:
@@ -139,7 +150,7 @@ module.exports = class Livingdoc extends EventEmitter
   # <div class="iframe-container">
   #   <section class="container doc-section"></section>
   # </div>
-  getWrapper: (parent) ->
+  extractWrapper: (parent) ->
     $parent = $(parent).first()
     if $parent.find(".#{ config.css.section }").length == 1
       $wrapper = $($parent.html())

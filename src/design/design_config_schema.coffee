@@ -68,6 +68,7 @@ validator.add 'design',
   metadata: 'array of object, optional'
   wrapper: 'string, wrapper, optional'
   layouts: 'array of layout, optional'
+  defaultLayout: 'string, optional'
   defaultContent: 'array of object, optional'
   prefilledComponents: 'object, optional'
 

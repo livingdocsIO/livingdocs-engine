@@ -79,10 +79,43 @@ describe '(browser only) livingdoc:', ->
 
 
     it 'adds the content to the host element', (done) ->
-      @doc.appendTo(host: @$container).then ({ renderer }) =>
+      @doc.appendTo(host: @$container, layoutName: false).then ({ renderer }) =>
         renderer.ready =>
           expect(@$container.html()).to.have.html '
             <h1>Hello Welt</h1>
+          '
+          done()
+
+
+    it 'adds the content to the host element with default layout', (done) ->
+      @doc.appendTo(host: @$container).then ({ renderer }) =>
+        renderer.ready =>
+          expect(@$container.html()).to.have.html '
+            <div class="doc-section layout-wrapper-extended">
+              <h1>Hello Welt</h1>
+            </div>
+          '
+          done()
+
+
+    it 'adds the content to the host element with specified layout', (done) ->
+      @doc.appendTo(host: @$container, layoutName: 'layout1').then ({ renderer }) =>
+        renderer.ready =>
+          expect(@$container.html()).to.have.html '
+            <div class="doc-section layout-wrapper">
+              <h1>Hello Welt</h1>
+            </div>
+          '
+          done()
+
+
+    it 'adds the content to the host element with specified wrapper', (done) ->
+      @doc.appendTo(host: @$container, wrapper: '<div class="doc-section wrapper"></div>', layoutName: 'layout1').then ({ renderer }) =>
+        renderer.ready =>
+          expect(@$container.html()).to.have.html '
+            <div class="doc-section wrapper">
+              <h1>Hello Welt</h1>
+            </div>
           '
           done()
 
