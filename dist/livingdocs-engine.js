@@ -4849,6 +4849,7 @@ validator.add('design', {
   metadata: 'array of object, optional',
   wrapper: 'string, wrapper, optional',
   layouts: 'array of layout, optional',
+  defaultLayout: 'string, optional',
   defaultContent: 'array of object, optional',
   prefilledComponents: 'object, optional'
 });
@@ -4935,7 +4936,7 @@ module.exports = designParser = {
     assets = designConfig.assets, components = designConfig.components, componentProperties = designConfig.componentProperties, groups = designConfig.groups, defaultComponents = designConfig.defaultComponents, imageRatios = designConfig.imageRatios;
     try {
       this.design = this.parseDesignInfo(designConfig);
-      $.each(['metadata', 'wrapper', 'layouts', 'defaultContent', 'prefilledComponents'], (function(_this) {
+      $.each(['metadata', 'wrapper', 'layouts', 'defaultLayout', 'defaultContent', 'prefilledComponents'], (function(_this) {
         return function(index, attributeName) {
           return _this.design[attributeName] = designConfig[attributeName];
         };
@@ -6684,26 +6685,22 @@ module.exports = Livingdoc = (function(_super) {
   };
 
   Livingdoc.prototype.createView = function(_arg) {
-    var host, iframe, interactive, layoutName, loadResources, view, wrapper, _ref, _ref1;
+    var host, iframe, interactive, layoutName, loadResources, view, viewWrapper, wrapper, _ref;
     _ref = _arg != null ? _arg : {}, host = _ref.host, interactive = _ref.interactive, loadResources = _ref.loadResources, wrapper = _ref.wrapper, layoutName = _ref.layoutName, iframe = _ref.iframe;
+    viewWrapper = this.getWrapper({
+      wrapper: wrapper,
+      layoutName: layoutName,
+      host: host
+    });
     if (iframe == null) {
       iframe = true;
-    }
-    if (layoutName == null) {
-      layoutName = this.layoutName;
-    }
-    if (wrapper == null) {
-      wrapper = (_ref1 = this.design.getLayout(layoutName)) != null ? _ref1.wrapper : void 0;
-    }
-    if (wrapper == null) {
-      wrapper = this.getWrapper(host);
     }
     view = new View({
       livingdoc: this,
       parent: $(host),
       isInteractive: interactive,
       loadResources: loadResources,
-      wrapper: wrapper
+      wrapper: viewWrapper
     });
     this.addView(view);
     return view.create({
@@ -6723,7 +6720,23 @@ module.exports = Livingdoc = (function(_super) {
     return this.componentTree.createComponent.apply(this.componentTree, arguments);
   };
 
-  Livingdoc.prototype.getWrapper = function(parent) {
+  Livingdoc.prototype.getWrapper = function(_arg) {
+    var host, layoutName, wrapper, _ref;
+    wrapper = _arg.wrapper, layoutName = _arg.layoutName, host = _arg.host;
+    if (wrapper != null) {
+      return wrapper;
+    }
+    if (layoutName == null) {
+      layoutName = this.layoutName;
+    }
+    wrapper = (_ref = this.design.getLayout(layoutName)) != null ? _ref.wrapper : void 0;
+    if (wrapper == null) {
+      wrapper = this.extractWrapper(host);
+    }
+    return wrapper;
+  };
+
+  Livingdoc.prototype.extractWrapper = function(parent) {
     var $parent, $wrapper;
     $parent = $(parent).first();
     if ($parent.find("." + config.css.section).length === 1) {
@@ -9703,7 +9716,7 @@ Template.parseIdentifier = function(identifier) {
 },{"../component_tree/component_model":17,"../configuration/config":25,"../modules/logging/assert":48,"../modules/logging/log":49,"../modules/words":53,"../rendering/component_view":54,"./directive_collection":68,"./directive_compiler":69,"./directive_finder":70,"./directive_iterator":71,"jquery":"jquery"}],73:[function(require,module,exports){
 module.exports={
   "version": "0.8.1",
-  "revision": "c4ebdb2"
+  "revision": "42aaca2"
 }
 
 },{}],"jquery":[function(require,module,exports){
