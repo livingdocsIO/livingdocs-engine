@@ -6,16 +6,6 @@
   min-height: 100px;
 }
 
-/**
- * Mark empty links
- */
-a[data-doc-link]:not([href]) {
-  /* Custom broken link cursor 16x16 (http://thenounproject.com/term/broken-link/65715/) */
-  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAA9ElEQVQoFQXBvSsEABwA0Oc6i0xyyhkkxSnbicFiE0op8lFcNi6lKCQjWSSbKEUGbjGRWC4DGSxE8rH4+AuulEH9vAcAADS5dyMFAACQ8SqEOzUAK0YwbhCtSsKoTeFBA9AjdDuwLa0kDIAN4QUg49qqnBOhH5AX3oCcgh3wbBgwLTxpBDrNGJZQJgXIC5/SANQ69a0ZJCwLH9IAZP0IQ4B6V9YBIOtX6AO0gXlHJiGhw7lyvc7AgktJFard+gIehTHArLAnb9edCYB94UISc8K7SluO1fmzCJQrCEVrwpsU2nWhxQQAh0IoqgIAAGDKEgAA8A9/MkvGVwLypwAAAABJRU5ErkJggg==), auto;
-  /* Custom broken link cursor 24x24 (http://thenounproject.com/term/broken-link/65715/) */
-  /*cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAI3SURBVEiJrdVfaI9RGAfwzzZyseRi5HZIUv5lol1MbaWmZP5O/jWTKNwoSREXyKYopSSaC7mQS7uQi7mQJCGhxI3M/NkQiWzYXJzza+f32/tby/at0/ue9/k+3+ec55zneRk96nAfT7FiDPTysB/dGIjjK1pRNhbiJxPhwnG5WJCDOJPMS3ECuwt4rYlYD5ZiM/4k309lBTgSjVdRgvF4h3sJ53Qi8gGLE9ta/Iy2XmzJCnI8Eq5gAl7hTrQdTsTfYmGGf2PC+ZgVAA5Ewj604zoq8DlZ+aIivuuSAE8KjWWYFsW2oxIzMAUN0akLC4qIr8GPyOvGkkLCUXyKW3uA2sS2SkhLVRHx9ULec6vfmkWqxQVcQgsmJbbJmF5EfAP+JuJ7ivDyMBM7sBdzh+GlK+/HzpGIH8OX6PQb1RmcccI5pQW2ayTi5+QX0ZCDiqgWzus7Hgs1MCxKhPznxN9g3jD8iZhj+PTloS0Rfx2ds9CI+cl8Fh4KN6wTh1JyaXy2oDm+dwl3/lmGeBOuyS+yX0KrfhF9ewqd6oU8DuAlZhdZ+SaDzaxBOIPVqMFZIcWZuG0wNTVFOE2JeKfQo27guXBNB4Q0VWQ5p7k/b2gfb07sfVEQbgoXocxgg7uLqYUBKoWOmRO5mNi2JSvvE9KUwy28R3mcb4y89qxdrBSqMBekTfg35L71G9rbq4TzS1GP5VkBCNtMm1Vu9Aq9ZkxQhw58i6MDy0YjmHW1yoVCKsMjob//N/4BkHqveiNdRG8AAAAASUVORK5CYII=), auto;*/
-}
-
 .doc-section {
   /* Allow for some space at the end of the document to drop components in */
   padding-bottom: 150px;
