@@ -226,10 +226,6 @@ module.exports = class ComponentView
     $elem = @directives.$getElem(name)
     $elem.attr('href', value || '')
 
-    $elem.off('click.doc-link')
-      .on 'click.doc-link', (e) ->
-        e.preventDefault()
-
 
   getLink: (name) ->
     $elem = @directives.$getElem(name)

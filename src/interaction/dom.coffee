@@ -43,6 +43,15 @@ module.exports = do ->
     return undefined
 
 
+  isInsideDocLink: (node) ->
+    while node && node.nodeType == 1 # Node.ELEMENT_NODE == 1
+      directives = @getDirectives(node)
+      return true if directives?['link']
+      node = node.parentNode
+
+    return false
+
+
   # Find all directives on an DOM node.
   # This ignores modification directives like doc-optional.
   # @param {DOM node}

@@ -33,8 +33,9 @@ module.exports = class InteractivePage extends Page
     @beforeInteractivePageReady()
     @$document
       .on('mousedown.livingdocs', $.proxy(@mousedown, this))
+      .on('click.livingdocs', $.proxy(@click, this))
       .on('touchstart.livingdocs', $.proxy(@mousedown, this))
-      .on('dragstart', $.proxy(@browserDragStart, this))
+      .on('dragstart.livingdocs', $.proxy(@browserDragStart, this))
 
 
   beforeInteractivePageReady: ->
@@ -72,6 +73,13 @@ module.exports = class InteractivePage extends Page
       @startDrag
         componentView: componentView
         event: event
+
+
+  # Prevent doc-links from changing the location
+  click: (event) ->
+    target = event.target
+    if dom.isInsideDocLink(target)
+      event.preventDefault()
 
 
   startDrag: ({ componentModel, componentView, event, config }) ->
