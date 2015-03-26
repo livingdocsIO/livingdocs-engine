@@ -1,3 +1,8 @@
+# v.0.10.0
+
+- Basic layouts support [#173](https://github.com/upfrontIO/livingdocs-engine/pull/173)
+
+
 # v.0.9.0
 
 - Add link directive [#174](https://github.com/upfrontIO/livingdocs-engine/pull/174)
