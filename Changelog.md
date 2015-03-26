@@ -1,3 +1,8 @@
+# v.0.9.0
+
+- Add link directive [#174](https://github.com/upfrontIO/livingdocs-engine/pull/174)
+
+
 # v.0.8.1
 
 - Unify createView() and appendTo() interfaces [#170](https://github.com/upfrontIO/livingdocs-engine/pull/170)
