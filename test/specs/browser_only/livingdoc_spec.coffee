@@ -11,7 +11,7 @@ describe '(browser only) livingdoc:', ->
   describe 'createView()', ->
 
     it 'creates a readOnly iframe view by default', (done) ->
-      @doc.createView().then ({ iframe, renderer }) =>
+      @doc.createView({}).then ({ iframe, renderer }) =>
         expect(iframe).to.have.html('<iframe frameborder="0" src="about:blank">')
         expect(renderer.renderingContainer.isReadOnly).to.equal(true)
         done()
@@ -26,7 +26,7 @@ describe '(browser only) livingdoc:', ->
 
 
     it 'adds the view to the readyOnly array', (done) ->
-      @doc.createView().then ({ iframe, renderer }) =>
+      @doc.createView({}).then ({ iframe, renderer }) =>
         expect(@doc.readOnlyViews.length).to.equal(1)
         expect(@doc.interactiveView).to.equal(undefined)
         done()
@@ -78,16 +78,7 @@ describe '(browser only) livingdoc:', ->
         done()
 
 
-    it 'adds the content to the host element', (done) ->
-      @doc.appendTo(host: @$container, layoutName: false).then ({ renderer }) =>
-        renderer.ready =>
-          expect(@$container.html()).to.have.html '
-            <h1>Hello Welt</h1>
-          '
-          done()
-
-
-    it 'adds the content to the host element with default layout', (done) ->
+    it 'adds the content to the host element and applies default layout', (done) ->
       @doc.appendTo(host: @$container).then ({ renderer }) =>
         renderer.ready =>
           expect(@$container.html()).to.have.html '
@@ -98,8 +89,17 @@ describe '(browser only) livingdoc:', ->
           done()
 
 
-    it 'adds the content to the host element with specified layout', (done) ->
-      @doc.appendTo(host: @$container, layoutName: 'layout1').then ({ renderer }) =>
+    it 'does not apply any layout', (done) ->
+      @doc.appendTo(host: @$container, layoutName: false).then ({ renderer }) =>
+        renderer.ready =>
+          expect(@$container.html()).to.have.html '
+            <h1>Hello Welt</h1>
+          '
+          done()
+
+
+    it 'applies specified layout', (done) ->
+      @doc.appendTo(host: @$container, layoutName: 'firstInList').then ({ renderer }) =>
         renderer.ready =>
           expect(@$container.html()).to.have.html '
             <div class="doc-section layout-wrapper">
@@ -109,8 +109,19 @@ describe '(browser only) livingdoc:', ->
           done()
 
 
-    it 'adds the content to the host element with specified wrapper', (done) ->
-      @doc.appendTo(host: @$container, wrapper: '<div class="doc-section wrapper"></div>', layoutName: 'layout1').then ({ renderer }) =>
+    it 'applies specified wrapper', (done) ->
+      @doc.appendTo(host: @$container, wrapper: '<div class="doc-section wrapper"></div>').then ({ renderer }) =>
+        renderer.ready =>
+          expect(@$container.html()).to.have.html '
+            <div class="doc-section wrapper">
+              <h1>Hello Welt</h1>
+            </div>
+          '
+          done()
+
+
+    it 'applies specified wrapper and ignores layoutName because of precedence', (done) ->
+      @doc.appendTo(host: @$container, wrapper: '<div class="doc-section wrapper"></div>', layoutName: 'firstInList').then ({ renderer }) =>
         renderer.ready =>
           expect(@$container.html()).to.have.html '
             <div class="doc-section wrapper">
@@ -127,7 +138,7 @@ describe '(browser only) livingdoc:', ->
       @html = test.createComponent('html')
       @html.set('source', '<script>scriptTest = "halleluja!";</script>')
       @componentTree.append(@html)
-      @doc.createView()
+      @doc.createView({})
       .then ({ @iframe, @renderer }) =>
         @renderer.ready =>
           done()
