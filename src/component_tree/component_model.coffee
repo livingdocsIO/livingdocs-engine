@@ -48,7 +48,7 @@ module.exports = class ComponentModel
             name: directive.name
             parentComponent: this
             config: directive.config
-        when 'editable', 'image', 'html'
+        when 'editable', 'image', 'html', 'link'
           @createComponentDirective(directive)
           @content ||= {}
           @content[directive.name] = undefined
@@ -106,20 +106,12 @@ module.exports = class ComponentModel
 
   # Append a component to a container of this component
   append: (containerName, componentModel) ->
-    if arguments.length == 1
-      componentModel = containerName
-      containerName = config.directives.container.defaultName
-
     @containers[containerName].append(componentModel)
     this
 
 
   # Prepend a component to a container of this component
   prepend: (containerName, componentModel) ->
-    if arguments.length == 1
-      componentModel = containerName
-      containerName = config.directives.container.defaultName
-
     @containers[containerName].prepend(componentModel)
     this
 
@@ -213,7 +205,7 @@ module.exports = class ComponentModel
   # imageDirective = componentModel.directives.get('image')
 
   hasContainers: ->
-    @directives.count('container') > 0
+    @containers?
 
 
   hasEditables: ->
@@ -226,6 +218,10 @@ module.exports = class ComponentModel
 
   hasImages: ->
     @directives.count('image') > 0
+
+
+  hasLinks: ->
+    @directives.count('link') > 0
 
 
   # set the content data field of the component

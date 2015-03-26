@@ -26,6 +26,7 @@ module.exports = class View
   create: ({ renderInIframe }={})->
     if renderInIframe
       @createIFrame @parent, =>
+        @addBaseTarget()
         @createIFrameRenderer()
         @isReady = true
         @whenReadyDeferred.resolve
@@ -37,6 +38,15 @@ module.exports = class View
       @whenReadyDeferred.resolve(renderer: @renderer)
 
     @whenReady
+
+
+  # Prevent links from opening in the iframe
+  # Add <base target='_blank' />
+  addBaseTarget: ->
+    doc = @iframe.contentDocument
+    base = doc.createElement('base')
+    base.setAttribute('target', '_blank')
+    doc.getElementsByTagName('head')[0].appendChild(base)
 
 
   # Private

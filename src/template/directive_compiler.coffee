@@ -1,35 +1,35 @@
 config = require('../configuration/config')
 Directive = require('./directive')
+directiveFinder = require('./directive_finder')
+assert = require('../modules/logging/assert')
+_ = require('underscore')
 
 module.exports = do ->
 
-  attributePrefix = /^(x-|data-)/
 
   parse: (elem) ->
-    elemDirective = undefined
+    directives = []
     modifications = []
-    @parseDirectives elem, (directive) ->
-      if directive.isElementDirective()
-        elemDirective = directive
-      else
+    overwritesContent = false
+    @eachDirective elem, (directive) ->
+      if directive.isModification()
         modifications.push(directive)
+      else
+        if directive.overwritesContent()
+          assert not overwritesContent, "Incompatible directives declared on element (#{ directive.type } directive '#{ directive.name }')"
+          overwritesContent = true
+        directives.push(directive)
 
-    @applyModifications(elemDirective, modifications) if elemDirective
-    return elemDirective
+    @applyModifications(directives, modifications) if directives.length
+    return directives
 
 
-  parseDirectives: (elem, func) ->
+  eachDirective: (elem, func) ->
     directiveData = []
-    for attr in elem.attributes
-      attributeName = attr.name
-      normalizedName = attributeName.replace(attributePrefix, '')
-      if type = config.templateAttrLookup[normalizedName]
-        directiveData.push
-          attributeName: attributeName
-          directive: new Directive
-            name: attr.value
-            type: type
-            elem: elem
+    directiveFinder.eachDirective elem, (type, name, attributeName) =>
+      directiveData.push
+        attributeName: attributeName
+        directive: new Directive({ name, type, elem })
 
     # Since we modify the attributes we have to split
     # this into two loops
@@ -39,23 +39,25 @@ module.exports = do ->
       func(directive)
 
 
-  applyModifications: (mainDirective, modifications) ->
-    for directive in modifications
-      switch directive.type
-        when 'optional'
-          mainDirective.optional = true
+  applyModifications: (directives, modifications) ->
+    for modification in modifications
+      if modification.type == 'optional'
+        for directive in directives
+          if _.contains(modification.config.modifies, directive.type)
+            directive.optional = true
 
 
-  # Normalize or remove the attribute
-  # depending on the directive type.
+  # Rewrite Attributes
+  # - Normalize directive attributes
+  # - Remove modification attributes
   rewriteAttribute: (directive, attributeName) ->
-    if directive.isElementDirective()
+    if directive.isModification()
+      @removeAttribute(directive, attributeName)
+    else
       if attributeName != directive.renderedAttr()
         @normalizeAttribute(directive, attributeName)
       else if not directive.name
         @normalizeAttribute(directive)
-    else
-      @removeAttribute(directive, attributeName)
 
 
   # force attribute style as specified in config

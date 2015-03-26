@@ -3,8 +3,9 @@ config = require('../../src/configuration/config')
 # Define attribute names as specified in the config
 containerAttr = config.directives.container.attr
 editableAttr = config.directives.editable.attr
-imageAttr = config.directives.image.attr
 htmlAttr = config.directives.html.attr
+imageAttr = config.directives.image.attr
+linkAttr = config.directives.link.attr
 optionalAttr = config.directives.optional.attr
 
 module.exports = do ->
@@ -59,11 +60,31 @@ module.exports = do ->
       html:
         """
         <div>
-          <h4 doc-editable="title">Titel</h4>
+          <h4 #{ editableAttr }="title">Titel</h4>
           <div #{ imageAttr }="image" style="background-image:url();">
-            <h3 doc-editable="uppertitle">Oberzeile</h3>
-            <h2 doc-editable="maintitle">Titel</h2>
+            <h3 #{ editableAttr }="uppertitle">Oberzeile</h3>
+            <h2 #{ editableAttr }="maintitle">Titel</h2>
           </div>
+        </div>
+        """
+    ,
+      # Button Component to test a link and editable directive
+      # on the same element.
+      name: 'button'
+      html:
+        """
+        <a #{ linkAttr }="link" #{ editableAttr }="text">
+          Find out more
+        </a>
+        """
+    ,
+      name: 'related-article'
+      html:
+        """
+        <div>
+          <a #{ linkAttr }="article-link">
+            <h2 #{ editableAttr }="article-title"></h2>
+          </a>
         </div>
         """
     ,
@@ -82,7 +103,7 @@ module.exports = do ->
       html:
         """
         <div class="container">
-          <div #{ containerAttr }></div>
+          <div #{ containerAttr }="children"></div>
         </div>
         """
     ,
@@ -133,9 +154,11 @@ module.exports = do ->
       label: 'Freeform html with a title'
       html:
         """
-        <div #{ htmlAttr }="source">
-          <h1 doc-editable="title">HMTL Freeform Title</h1>
-          <span class="html-placeholder">placholder text</text>
+        <div>
+          <h1 #{ editableAttr }="title">HMTL Freeform Title</h1>
+          <div #{ htmlAttr }="source">
+            <span class="html-placeholder">placholder text</span>
+          </div>
         </div>
         """
     ]

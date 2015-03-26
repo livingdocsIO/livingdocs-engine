@@ -5,355 +5,355 @@ config = test.config
 
 describe 'component_tree:', ->
 
-  beforeEach ->
-    { @componentTree } = test.get('componentTree')
+  describe 'an empty tree', ->
+
+    beforeEach ->
+      { @componentTree } = test.get('componentTree')
 
 
-  it 'has a ComponentContainer as root', ->
-    expect(@componentTree.root).to.be.an.instanceof(ComponentContainer)
+    it 'has a ComponentContainer as root', ->
+      expect(@componentTree.root).to.be.an.instanceof(ComponentContainer)
 
 
-  describe 'append()', ->
+    describe 'append()', ->
 
-    it 'sets componentTree property of the appended component', ->
-      component = test.getComponent('title')
-      @componentTree.append(component)
-      expect(component.componentTree).to.equal(@componentTree)
-
-
-    it 'appends a component to root', ->
-      component = test.getComponent('title')
-      @componentTree.append(component)
-      expect(@componentTree.first()).to.equal(component)
-      expect(@componentTree.root.last).to.equal(component)
+      it 'sets componentTree property of the appended component', ->
+        component = test.getComponent('title')
+        @componentTree.append(component)
+        expect(component.componentTree).to.equal(@componentTree)
 
 
-describe 'ComponentTree with two components', ->
-
-  beforeEach ->
-    @componentTree = test.createComponentTree [
-      title: undefined
-    ,
-      title: undefined
-    ]
-    @componentA = @componentTree.first()
-    @componentB = @componentA.next
+      it 'appends a component to root', ->
+        component = test.getComponent('title')
+        @componentTree.append(component)
+        expect(@componentTree.first()).to.equal(component)
+        expect(@componentTree.root.last).to.equal(component)
 
 
-  it 'has previous and next properties of component set', ->
-    expect(@componentA.previous).to.be.undefined
-    expect(@componentA.next).to.equal(@componentB)
+  describe 'with two components', ->
+
+    beforeEach ->
+      @componentTree = test.createComponentTree [
+        title: undefined
+      ,
+        title: undefined
+      ]
+      @componentA = @componentTree.first()
+      @componentB = @componentA.next
 
 
-  it 'has first and last pointer of root set', ->
-    expect(@componentTree.first()).to.equal(@componentA)
-    expect(@componentTree.root.last).to.equal(@componentB)
-
-
-  it 'has linked components correctly', ->
-    expect(@componentTree.first().previous).to.be.undefined
-    expect(@componentTree.first().next).to.equal(@componentB)
-    expect(@componentTree.root.last.previous).to.equal(@componentA)
-    expect(@componentTree.root.last.next).to.be.undefined
-
-
-  describe 'up()', ->
-
-    it 'moves the second component up', ->
-      @componentB.up()
-
-      expect(@componentB.previous).to.be.undefined
-      expect(@componentB.next).to.equal(@componentA)
-
-      expect(@componentA.previous).to.equal(@componentB)
-      expect(@componentA.next).to.be.undefined
-
-
-    it 'updates the first and last pointers of the container', ->
-      @componentB.up()
-
-      expect(@componentTree.first()).to.equal(@componentB)
-      expect(@componentTree.root.last).to.equal(@componentA)
-
-
-  describe 'remove()', ->
-
-    it 'removes the second component', ->
-      @componentB.remove()
-
+    it 'has previous and next properties of component set', ->
       expect(@componentA.previous).to.be.undefined
-      expect(@componentA.next).to.be.undefined
+      expect(@componentA.next).to.equal(@componentB)
 
+
+    it 'has first and last pointer of root set', ->
       expect(@componentTree.first()).to.equal(@componentA)
-      expect(@componentTree.root.last).to.equal(@componentA)
+      expect(@componentTree.root.last).to.equal(@componentB)
 
-      expect(@componentB.parentContainer).to.be.undefined
-      expect(@componentB.componentTree).to.be.undefined
-      expect(@componentB.previous).to.be.undefined
-      expect(@componentB.next).to.be.undefined
 
+    it 'has linked components correctly', ->
+      expect(@componentTree.first().previous).to.be.undefined
+      expect(@componentTree.first().next).to.equal(@componentB)
+      expect(@componentTree.root.last.previous).to.equal(@componentA)
+      expect(@componentTree.root.last.next).to.be.undefined
 
-  describe 'inserting the second component after the first', ->
 
-    it 'is ignored', ->
-      @componentA.after(@componentB)
-      expect(@componentA.previous).to.be.undefined
-      expect(@componentA.next).to.equal(@componentB)
-      expect(@componentB.previous).to.equal(@componentA)
-      expect(@componentB.next).to.be.undefined
+    describe 'up()', ->
 
+      it 'moves the second component up', ->
+        @componentB.up()
 
-  describe 'inserting the first component before the second', ->
+        expect(@componentB.previous).to.be.undefined
+        expect(@componentB.next).to.equal(@componentA)
 
-    it 'is ignored', ->
-      @componentB.before(@componentA)
-      expect(@componentA.previous).to.be.undefined
-      expect(@componentA.next).to.equal(@componentB)
-      expect(@componentB.previous).to.equal(@componentA)
-      expect(@componentB.next).to.be.undefined
+        expect(@componentA.previous).to.equal(@componentB)
+        expect(@componentA.next).to.be.undefined
 
 
-describe 'ComponentTree with a single-column row component', ->
+      it 'updates the first and last pointers of the container', ->
+        @componentB.up()
 
-  beforeEach ->
-    { @componentTree } = test.get('componentTree')
-    @container = test.getComponent('container')
-    @defaultName = config.directives.container.defaultName
-    @componentTree.append(@container)
+        expect(@componentTree.first()).to.equal(@componentB)
+        expect(@componentTree.root.last).to.equal(@componentA)
 
 
-  describe 'append()', ->
+    describe 'remove()', ->
 
-    it 'adds a component to the single column via the componentContainer', ->
-      titleComponent = test.getComponent('title')
-      mainContainer = @container.containers[@defaultName]
-      mainContainer.append(titleComponent)
-      expect(mainContainer.first).to.equal(titleComponent)
+      it 'removes the second component', ->
+        @componentB.remove()
 
+        expect(@componentA.previous).to.be.undefined
+        expect(@componentA.next).to.be.undefined
 
-    it 'adds a component to the main column via component', ->
-      titleComponent = test.getComponent('title')
-      @container.append(titleComponent)
-      mainContainer = @container.containers[@defaultName]
-      expect(mainContainer.first).to.equal(titleComponent)
+        expect(@componentTree.first()).to.equal(@componentA)
+        expect(@componentTree.root.last).to.equal(@componentA)
 
+        expect(@componentB.parentContainer).to.be.undefined
+        expect(@componentB.componentTree).to.be.undefined
+        expect(@componentB.previous).to.be.undefined
+        expect(@componentB.next).to.be.undefined
 
-    it 'the appended component has a parent component', ->
-      titleComponent = test.getComponent('title')
-      @container.append(titleComponent)
-      expect( titleComponent.getParent() ).to.equal(@container)
 
+    describe 'inserting the second component after the first', ->
 
+      it 'is ignored', ->
+        @componentA.after(@componentB)
+        expect(@componentA.previous).to.be.undefined
+        expect(@componentA.next).to.equal(@componentB)
+        expect(@componentB.previous).to.equal(@componentA)
+        expect(@componentB.next).to.be.undefined
 
-describe 'ComponentTree with a multi-column row component', ->
 
-  beforeEach ->
-    { @componentTree } = test.get('componentTree')
-    @rowComponent = test.getComponent('row')
-    @componentTree.append(@rowComponent)
+    describe 'inserting the first component before the second', ->
 
+      it 'is ignored', ->
+        @componentB.before(@componentA)
+        expect(@componentA.previous).to.be.undefined
+        expect(@componentA.next).to.equal(@componentB)
+        expect(@componentB.previous).to.equal(@componentA)
+        expect(@componentB.next).to.be.undefined
 
-  describe 'append()', ->
 
-    it 'adds a component to the main column via the componentContainer', ->
-      titleComponent = test.getComponent('title')
-      mainContainer = @rowComponent.containers['main']
-      mainContainer.append(titleComponent)
-      expect(mainContainer.first).to.equal(titleComponent)
+  describe 'with a single-column row component', ->
 
+    beforeEach ->
+      { @componentTree } = test.get('componentTree')
+      @container = test.getComponent('container')
+      @componentTree.append(@container)
 
-    it 'adds a component to the main column via component', ->
-      titleComponent = test.getComponent('title')
-      @rowComponent.append('main', titleComponent)
 
-      mainContainer = @rowComponent.containers['main']
-      expect(mainContainer.first).to.equal(titleComponent)
+    describe 'append()', ->
 
+      it 'adds a component to the single column via the componentContainer', ->
+        titleComponent = test.getComponent('title')
+        mainContainer = @container.containers['children']
+        mainContainer.append(titleComponent)
+        expect(mainContainer.first).to.equal(titleComponent)
 
-    it 'the appended component has a parent component', ->
-      titleComponent = test.getComponent('title')
-      @rowComponent.append('main', titleComponent)
-      expect( titleComponent.getParent() ).to.equal(@rowComponent)
 
+      it 'adds a component to the main column via component', ->
+        titleComponent = test.getComponent('title')
+        @container.append('children', titleComponent)
+        mainContainer = @container.containers['children']
+        expect(mainContainer.first).to.equal(titleComponent)
 
-    it 'fails to add a listItem component', ->
-      listItem = test.getComponent('listItem')
-      func = => @rowComponent.append('main', listItem)
-      expect(func).to.throw('is not allowed as a child')
 
+      it 'the appended component has a parent component', ->
+        titleComponent = test.getComponent('title')
+        @container.append('children', titleComponent)
+        expect( titleComponent.getParent() ).to.equal(@container)
 
-  describe 'each()', ->
 
-    it 'visits the row component', ->
-      visits = 0
-      @componentTree.each ->
-        visits += 1
-      expect(visits).to.equal(1)
+  describe 'with a multi-column row component', ->
 
+    beforeEach ->
+      { @componentTree } = test.get('componentTree')
+      @rowComponent = test.getComponent('row')
+      @componentTree.append(@rowComponent)
 
-    it 'visits the row component and its children', ->
-      # add 2 components to main container
-      for num in [0..2]
-        @rowComponent.append('main', test.getComponent('title'))
 
-      # add 3 components to sidebar container
-      for num in [0..1]
-        @rowComponent.append('sidebar', test.getComponent('title'))
+    describe 'append()', ->
 
-      visits = 0
-      @componentTree.each ->
-        visits += 1
+      it 'adds a component to the main column via the componentContainer', ->
+        titleComponent = test.getComponent('title')
+        mainContainer = @rowComponent.containers['main']
+        mainContainer.append(titleComponent)
+        expect(mainContainer.first).to.equal(titleComponent)
 
-      # check that all 6 components where visited by each
-      expect(visits).to.equal(6)
 
+      it 'adds a component to the main column via component', ->
+        titleComponent = test.getComponent('title')
+        @rowComponent.append('main', titleComponent)
 
-  describe 'eachContainer()', ->
+        mainContainer = @rowComponent.containers['main']
+        expect(mainContainer.first).to.equal(titleComponent)
 
-    it 'visits all containers', ->
-      visits = 0
-      @componentTree.eachContainer ->
-        visits += 1
 
-      expect(visits).to.equal(3)
+      it 'the appended component has a parent component', ->
+        titleComponent = test.getComponent('title')
+        @rowComponent.append('main', titleComponent)
+        expect( titleComponent.getParent() ).to.equal(@rowComponent)
 
 
-  describe 'all()', ->
+      it 'fails to add a listItem component', ->
+        listItem = test.getComponent('listItem')
+        func = => @rowComponent.append('main', listItem)
+        expect(func).to.throw('is not allowed as a child')
 
-    it 'visits all components and containers', ->
-      visitedComponents = 0
-      visitedContainers = 0
-      @componentTree.all (componentOrContainer) ->
-        if componentOrContainer instanceof ComponentModel
-          visitedComponents += 1
-        else if componentOrContainer instanceof ComponentContainer
-          visitedContainers += 1
 
-      expect(visitedComponents).to.equal(1)
-      expect(visitedContainers).to.equal(3)
+    describe 'each()', ->
 
+      it 'visits the row component', ->
+        visits = 0
+        @componentTree.each ->
+          visits += 1
+        expect(visits).to.equal(1)
 
-describe 'ComponentTree with a list component', ->
 
-  beforeEach ->
-    { @componentTree } = test.get('componentTree')
-    @list = test.getComponent('list')
-    @children = @list.containers['children']
-    @componentTree.append(@list)
+      it 'visits the row component and its children', ->
+        # add 2 components to main container
+        for num in [0..2]
+          @rowComponent.append('main', test.getComponent('title'))
 
+        # add 3 components to sidebar container
+        for num in [0..1]
+          @rowComponent.append('sidebar', test.getComponent('title'))
 
-  describe 'append()', ->
+        visits = 0
+        @componentTree.each ->
+          visits += 1
 
-    it 'fails to add a restricted title component', ->
-      titleComponent = test.getComponent('title')
+        # check that all 6 components where visited by each
+        expect(visits).to.equal(6)
 
-      func = => @children.append(titleComponent)
-      expect(func).to.throw("Component 'title' is not allowed as a child")
 
+    describe 'eachContainer()', ->
 
-    it 'succeeds to add an allowed listItem component', ->
-      listItem = test.getComponent('listItem')
-      @list.append('children', listItem)
-      expect(@children.first).to.equal(listItem)
+      it 'visits all containers', ->
+        visits = 0
+        @componentTree.eachContainer ->
+          visits += 1
 
+        expect(visits).to.equal(3)
 
-    it 'succeeds to add an allowed text component', ->
-      text = test.getComponent('text')
-      @list.append('children', text)
-      expect(@children.first).to.equal(text)
 
+    describe 'all()', ->
 
-describe 'ComponentTree with three levels', ->
+      it 'visits all components and containers', ->
+        visitedComponents = 0
+        visitedContainers = 0
+        @componentTree.all (componentOrContainer) ->
+          if componentOrContainer instanceof ComponentModel
+            visitedComponents += 1
+          else if componentOrContainer instanceof ComponentContainer
+            visitedContainers += 1
 
-  beforeEach ->
-    { @componentTree } = test.get('componentTree')
-    @row = test.getComponent('row')
-    @rowInMain = test.getComponent('row')
-    @title = test.getComponent('title')
-    @text = test.getComponent('text')
+        expect(visitedComponents).to.equal(1)
+        expect(visitedContainers).to.equal(3)
 
-    @componentTree.append(@row)
-    @row.append('main', @rowInMain)
-    @row.append('main', @title)
-    @rowInMain.append('sidebar', @text)
 
-    # Thats how the componentTree looks now:
-    # -row
-    #   main:
-    #     -rowInMain
-    #       sidebar:
-    #         -text
-    #     -title
+  describe 'with a list component', ->
 
+    beforeEach ->
+      { @componentTree } = test.get('componentTree')
+      @list = test.getComponent('list')
+      @children = @list.containers['children']
+      @componentTree.append(@list)
 
-  describe 'each()', ->
 
-    it 'visits all containers in the right order', ->
+    describe 'append()', ->
+
+      it 'fails to add a restricted title component', ->
+        titleComponent = test.getComponent('title')
+
+        func = => @children.append(titleComponent)
+        expect(func).to.throw("Component 'title' is not allowed as a child")
+
+
+      it 'succeeds to add an allowed listItem component', ->
+        listItem = test.getComponent('listItem')
+        @list.append('children', listItem)
+        expect(@children.first).to.equal(listItem)
+
+
+      it 'succeeds to add an allowed text component', ->
+        text = test.getComponent('text')
+        @list.append('children', text)
+        expect(@children.first).to.equal(text)
+
+
+  describe 'with three levels', ->
+
+    beforeEach ->
+      { @componentTree } = test.get('componentTree')
+      @row = test.getComponent('row')
+      @rowInMain = test.getComponent('row')
+      @title = test.getComponent('title')
+      @text = test.getComponent('text')
+
+      @componentTree.append(@row)
+      @row.append('main', @rowInMain)
+      @row.append('main', @title)
+      @rowInMain.append('sidebar', @text)
+
+      # Thats how the componentTree looks now:
+      # -row
+      #   main:
+      #     -rowInMain
+      #       sidebar:
+      #         -text
+      #     -title
+
+
+    describe 'each()', ->
+
+      it 'visits all containers in the right order', ->
+        visitedComponents = []
+        @componentTree.each (component) ->
+          visitedComponents.push(component)
+
+        # components should be traversed in order of appearance
+        expect(visitedComponents.length).to.equal(4)
+        expect(visitedComponents[0]).to.equal(@row)
+        expect(visitedComponents[1]).to.equal(@rowInMain)
+        expect(visitedComponents[2]).to.equal(@text)
+        expect(visitedComponents[3]).to.equal(@title)
+
+
+    describe 'isDropAllowed()', ->
+
+      it 'does allow to insert itself to the root container', ->
+        target =
+          target: 'root'
+        isAllowed = @componentTree.isDropAllowed(@row, target)
+        expect(isAllowed).to.equal(true)
+
+
+      it 'does not allow to insert itself next to a child', ->
+        target =
+          target: 'component'
+          componentView: { model: @text }
+        isAllowed = @componentTree.isDropAllowed(@row, target)
+        expect(isAllowed).to.equal(false)
+
+
+      it 'does not allow to insert to a container of itself', ->
+        target =
+          target: 'container'
+          componentView: { model: @row }
+          containerName: 'main'
+        isAllowed = @componentTree.isDropAllowed(@row, target)
+        expect(isAllowed).to.equal(false)
+
+
+      it 'does not allow to insert itself to a container of a child', ->
+        target =
+          target: 'container'
+          componentView: { model: @rowInMain }
+          containerName: 'sidebar'
+        isAllowed = @componentTree.isDropAllowed(@row, target)
+        expect(isAllowed).to.equal(false)
+
+
+  describe 'with three components', ->
+
+    beforeEach ->
+      { @componentTree } = test.get('componentTree')
+      @components = []
+      for index in [0..2]
+        @components[index] = test.getComponent('text')
+        @componentTree.append(@components[index])
+
+
+    # regression test for https://github.com/upfrontIO/livingdocs-engine/issues/13
+    it 'moving the last component one up does not currupt the componentTree', ->
+      @components[2].up()
       visitedComponents = []
       @componentTree.each (component) ->
         visitedComponents.push(component)
 
-      # components should be traversed in order of appearance
-      expect(visitedComponents.length).to.equal(4)
-      expect(visitedComponents[0]).to.equal(@row)
-      expect(visitedComponents[1]).to.equal(@rowInMain)
-      expect(visitedComponents[2]).to.equal(@text)
-      expect(visitedComponents[3]).to.equal(@title)
-
-
-  describe 'isDropAllowed()', ->
-
-    it 'does allow to insert itself to the root container', ->
-      target =
-        target: 'root'
-      isAllowed = @componentTree.isDropAllowed(@row, target)
-      expect(isAllowed).to.equal(true)
-
-
-    it 'does not allow to insert itself next to a child', ->
-      target =
-        target: 'component'
-        componentView: { model: @text }
-      isAllowed = @componentTree.isDropAllowed(@row, target)
-      expect(isAllowed).to.equal(false)
-
-
-    it 'does not allow to insert to a container of itself', ->
-      target =
-        target: 'container'
-        componentView: { model: @row }
-        containerName: 'main'
-      isAllowed = @componentTree.isDropAllowed(@row, target)
-      expect(isAllowed).to.equal(false)
-
-
-    it 'does not allow to insert itself to a container of a child', ->
-      target =
-        target: 'container'
-        componentView: { model: @rowInMain }
-        containerName: 'sidebar'
-      isAllowed = @componentTree.isDropAllowed(@row, target)
-      expect(isAllowed).to.equal(false)
-
-
-describe 'ComponentTree with three components', ->
-
-  beforeEach ->
-    { @componentTree } = test.get('componentTree')
-    @components = []
-    for index in [0..2]
-      @components[index] = test.getComponent('text')
-      @componentTree.append(@components[index])
-
-
-  # regression test for https://github.com/upfrontIO/livingdocs-engine/issues/13
-  it 'moving the last component one up does not currupt the componentTree', ->
-    @components[2].up()
-    visitedComponents = []
-    @componentTree.each (component) ->
-      visitedComponents.push(component)
-
-    expect(visitedComponents.length).to.equal(3)
-    expect(visitedComponents[0]).to.equal(@components[0])
-    expect(visitedComponents[1]).to.equal(@components[2])
-    expect(visitedComponents[2]).to.equal(@components[1])
+      expect(visitedComponents.length).to.equal(3)
+      expect(visitedComponents[0]).to.equal(@components[0])
+      expect(visitedComponents[1]).to.equal(@components[2])
+      expect(visitedComponents[2]).to.equal(@components[1])

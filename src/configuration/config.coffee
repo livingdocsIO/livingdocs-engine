@@ -72,36 +72,34 @@ module.exports = augmentConfig(
 
   # Directive definitions
   #
-  # attr: attribute used in templates to define the directive
-  # renderedAttr: attribute used in output html
-  # elementDirective: directive that takes control over the element
+  # attr {String}: attribute used in templates to define the directive
+  # renderedAttr {String}: attribute used in output html (will be set in augment_config)
+  # overwritesContent {Boolean}: directive takes control over the child nodes
   #   (there can only be one per element)
-  # defaultName: default name if none was specified in the template
+  # modifies {Array of String}: modifies any of the specified directives
   directives:
     container:
       attr: 'doc-container'
-      renderedAttr: 'calculated later'
-      elementDirective: true
-      defaultName: 'default'
+      renderedAttr: 'calculated in augment_config'
+      overwritesContent: true
     editable:
       attr: 'doc-editable'
-      renderedAttr: 'calculated later'
-      elementDirective: true
-      defaultName: 'default'
-    image:
-      attr: 'doc-image'
-      renderedAttr: 'calculated later'
-      elementDirective: true
-      defaultName: 'image'
+      renderedAttr: 'calculated in augment_config'
+      overwritesContent: true
     html:
       attr: 'doc-html'
-      renderedAttr: 'calculated later'
-      elementDirective: true
-      defaultName: 'default'
+      renderedAttr: 'calculated in augment_config'
+      overwritesContent: true
+    image:
+      attr: 'doc-image'
+      renderedAttr: 'calculated in augment_config'
+    link:
+      attr: 'doc-link'
+      renderedAttr: 'calculated in augment_config'
     optional:
       attr: 'doc-optional'
-      renderedAttr: 'calculated later'
-      elementDirective: false
+      renderedAttr: 'calculated in augment_config'
+      modifies: ['editable']
 
 
   animations:

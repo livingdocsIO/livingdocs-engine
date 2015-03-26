@@ -2,13 +2,24 @@ config = require('../configuration/config')
 
 module.exports = directiveFinder = do ->
 
-  attributePrefix = /^(x-|data-)/
+  prefixes = /^(x-|data-)/
 
+  # Link a directive with its DOM node
   link: (elem, directiveCollection) ->
+    @eachDirective elem, (type, name) ->
+      directive = directiveCollection.get(name)
+      directive.elem = elem
+
+
+  # Find each directive that is defined on an element.
+  # Normalizes the attribute names so that 'doc-editable',
+  # 'data-doc-editable' and 'x-doc-editable' all work the same.
+  eachDirective: (elem, callback) ->
     for attr in elem.attributes
-      normalizedName = attr.name.replace(attributePrefix, '')
+      attrName = attr.name
+      normalizedName = attrName.replace(prefixes, '')
       if type = config.templateAttrLookup[normalizedName]
-        directive = directiveCollection.get(attr.value)
-        directive.elem = elem
+        callback(type, attr.value, attrName)
 
     undefined
+

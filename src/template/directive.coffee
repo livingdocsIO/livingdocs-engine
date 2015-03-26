@@ -1,12 +1,15 @@
 $ = require('jquery')
 editorConfig = require('../configuration/config')
 dom = require('../interaction/dom')
+assert = require('../modules/logging/assert')
 
 module.exports = class Directive
 
-  constructor: ({ name, @type, @elem, config }) ->
+  constructor: ({ @name, @type, @elem, config }) ->
+    if @type != 'optional'
+      assert @name, "TemplateDirective: name is missing from #{ @type } directive"
+
     @config = Object.create(editorConfig.directives[@type])
-    @name = name || @config.defaultName
     @setConfig(config)
     @optional = false
 
@@ -19,8 +22,12 @@ module.exports = class Directive
     @config.renderedAttr
 
 
-  isElementDirective: ->
-    @config.elementDirective
+  overwritesContent: ->
+    !!@config.overwritesContent
+
+
+  isModification: ->
+    @config.modifies?
 
 
   # Return the nodeName in lower case

@@ -140,6 +140,30 @@ describe 'component_view:', ->
         expect(@view.$html).to.have.html(@expected)
 
 
+  describe 'of a link component', ->
+
+    it 'sets the href of the directive', ->
+
+      expectedHtml = """
+        <div class="#{ css.component }"
+          #{ attr.template }="test.related-article"
+          >
+
+          <a #{ test.linkAttr }="article-link" href="http://upfront.io">
+            <h2 class="#{ css.editable }"
+              #{ test.editableAttr }="article-title"
+              #{ attr.placeholder }="">
+            </h2>
+          </a>
+        </div>
+      """
+
+      component = test.getComponent('related-article')
+      component.set('article-link', 'http://upfront.io')
+      view = component.createView()
+      expect(view.$html).to.have.html(expectedHtml)
+
+
   describe 'of an image component', ->
 
     beforeEach ->
@@ -323,7 +347,7 @@ describe 'component_view:', ->
       ,
         component: 'container'
         containers:
-          'default': [
+          'children': [
             component: 'text'
             content: { 'text': 'some text' }
           ]

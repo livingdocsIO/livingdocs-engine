@@ -1,4 +1,5 @@
 config = require('../configuration/config')
+directiveFinder = require('./directive_finder')
 
 # Directive Iterator
 # ---------------------
@@ -11,22 +12,17 @@ module.exports = class DirectiveIterator
 
   constructor: (root) ->
     @root = @_next = root
-    @containerAttr = config.directives.container.renderedAttr
 
 
   current: null
 
 
-  hasNext: ->
-    !!@_next
-
-
-  next: () ->
+  next: ->
     n = @current = @_next
     child = next = undefined
     if @current
       child = n.firstChild
-      if child && n.nodeType == 1 && !n.hasAttribute(@containerAttr)
+      if child && n.nodeType == 1 && not @skipChildren(n)
         @_next = child
       else
         next = null
@@ -38,14 +34,26 @@ module.exports = class DirectiveIterator
     @current
 
 
+  # Skip the children of directives that overwrite their content
+  # like containers or editables.
+  skipChildren: (elem) ->
+    skipChildren = false
+    directiveFinder.eachDirective elem, (type, name) ->
+      if config.directives[type].overwritesContent
+        skipChildren = true
+
+    skipChildren
+
+
   # only iterate over element nodes (Node.ELEMENT_NODE == 1)
-  nextElement: () ->
+  nextElement: ->
     while @next()
+      skipChildren = false # only skip the children the first time around
       break if @current.nodeType == 1
 
     @current
 
 
-  detach: () ->
-    @current = @_next = @root = null
+  detach: ->
+    @current = @root = null
 

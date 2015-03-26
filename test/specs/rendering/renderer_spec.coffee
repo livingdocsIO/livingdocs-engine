@@ -44,14 +44,16 @@ describe 'renderer:', ->
 
 
   describe 'insertComponent()', ->
+
     beforeEach (done) ->
       { @componentTree, @page, @renderer } = test.get('page', 'renderer')
       @renderer.ready -> done()
 
+
     it 'insertes the already appended components of an inserted component', ->
       container = test.getComponent('container')
       title = test.createComponent('title', 'A')
-      container.append(test.config.directives.container.defaultName, title)
+      container.append('children', title)
       @componentTree.append(container)
       expect(@page.renderNode).to.have.html """
         <section>
