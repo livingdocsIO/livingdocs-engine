@@ -4622,7 +4622,7 @@ module.exports = CssModificatorProperty = (function() {
 
 
 },{"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/words":54}],29:[function(require,module,exports){
-var Dependencies, Design, OrderedHash, Template, assert, config, log, words;
+var Dependencies, Design, OrderedHash, Template, assert, config, log, words, _;
 
 config = require('../configuration/config');
 
@@ -4741,7 +4741,7 @@ module.exports = Design = (function() {
 
 
 
-},{"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/ordered_hash":51,"../modules/words":54,"../rendering/dependencies":56,"../template/template":73}],30:[function(require,module,exports){
+},{"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/ordered_hash":51,"../modules/words":54,"../rendering/dependencies":56,"../template/template":73,"underscore":10}],30:[function(require,module,exports){
 var Design, Version, assert, designParser;
 
 assert = require('../modules/logging/assert');
@@ -6719,8 +6719,8 @@ module.exports = Livingdoc = (function(_super) {
   };
 
   Livingdoc.prototype.createView = function(_arg) {
-    var host, iframe, interactive, layoutName, loadResources, view, viewWrapper, wrapper, _ref;
-    _ref = _arg != null ? _arg : {}, host = _ref.host, interactive = _ref.interactive, loadResources = _ref.loadResources, wrapper = _ref.wrapper, layoutName = _ref.layoutName, iframe = _ref.iframe;
+    var host, iframe, interactive, layoutName, loadResources, view, viewWrapper, wrapper;
+    host = _arg.host, interactive = _arg.interactive, loadResources = _arg.loadResources, wrapper = _arg.wrapper, layoutName = _arg.layoutName, iframe = _arg.iframe;
     viewWrapper = this.getWrapper({
       wrapper: wrapper,
       layoutName: layoutName,
@@ -9832,8 +9832,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/words":54,"../rendering/component_view":55,"./directive_collection":69,"./directive_compiler":70,"./directive_finder":71,"./directive_iterator":72,"jquery":"jquery"}],74:[function(require,module,exports){
 module.exports={
-  "version": "0.9.0",
-  "revision": "1ad2d48"
+  "version": "0.10.0",
+  "revision": "7e1e9d2"
 }
 
 },{}],"jquery":[function(require,module,exports){
