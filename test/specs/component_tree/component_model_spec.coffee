@@ -226,8 +226,8 @@ describe 'component_model:', ->
 
     it 'has two directives()', ->
       expect(@component.directives.length).to.equal(2)
-      expect(@component.directives[0].name).to.equal('link')
-      expect(@component.directives[1].name).to.equal('text')
+      expect(@component.directives.get('link')).not.to.be.undefined
+      expect(@component.directives.get('text')).not.to.be.undefined
 
 
     it 'has set the directive content', ->
