@@ -99,8 +99,9 @@ module.exports = class Template
     directives = new DirectiveCollection()
 
     while elem = iterator.nextElement()
-      directive = directiveCompiler.parse(elem)
-      directives.add(directive) if directive
+      foundDirectives = directiveCompiler.parse(elem)
+      for directive in foundDirectives
+        directives.add(directive)
 
     directives
 

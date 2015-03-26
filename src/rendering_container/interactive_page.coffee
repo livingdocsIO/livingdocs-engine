@@ -24,6 +24,7 @@ module.exports = class InteractivePage extends Page
     # events
     @imageClick = $.Callbacks() # (componentView, fieldName, event) ->
     @htmlElementClick = $.Callbacks() # (componentView, fieldName, event) ->
+    @linkClick = $.Callbacks() # (componentView, fieldName, event) ->
     @componentWillBeDragged = $.Callbacks() # (componentModel) ->
     @componentWasDropped = $.Callbacks() # (componentModel) ->
     @dragBase = new DragBase(this)
@@ -32,8 +33,9 @@ module.exports = class InteractivePage extends Page
     @beforeInteractivePageReady()
     @$document
       .on('mousedown.livingdocs', $.proxy(@mousedown, this))
+      .on('click.livingdocs', $.proxy(@click, this))
       .on('touchstart.livingdocs', $.proxy(@mousedown, this))
-      .on('dragstart', $.proxy(@browserDragStart, this))
+      .on('dragstart.livingdocs', $.proxy(@browserDragStart, this))
 
 
   beforeInteractivePageReady: ->
@@ -73,6 +75,13 @@ module.exports = class InteractivePage extends Page
         event: event
 
 
+  # Prevent doc-links from changing the location
+  click: (event) ->
+    target = event.target
+    if dom.isInsideDocLink(target)
+      event.preventDefault()
+
+
   startDrag: ({ componentModel, componentView, event, config }) ->
     return unless componentModel || componentView
     componentModel = componentView.model if componentView
@@ -98,13 +107,14 @@ module.exports = class InteractivePage extends Page
     if componentView
       @focus.componentFocused(componentView)
 
-      nodeContext = dom.findNodeContext(event.target)
-      if nodeContext
-        switch nodeContext.contextAttr
-          when config.directives.image.renderedAttr
-            @imageClick.fire(componentView, nodeContext.attrName, event)
-          when config.directives.html.renderedAttr
-            @htmlElementClick.fire(componentView, nodeContext.attrName, event)
+      directives = dom.getDirectiveContext(event.target)
+      if directives?
+        if directives['image']
+          @imageClick.fire(componentView, directives['image'].name, event)
+        else if directives['link']
+          @linkClick.fire(componentView, directives['link'].name, event)
+        else if directives['html']
+          @htmlElementClick.fire(componentView, directives['html'].name, event)
     else
       @focus.blur()
 

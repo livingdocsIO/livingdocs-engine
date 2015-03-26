@@ -4,6 +4,7 @@ imageService = require('../image_services/image_service')
 EditableDirective = require('./editable_directive')
 ImageDirective = require('./image_directive')
 HtmlDirective = require('./html_directive')
+LinkDirective = require('./link_directive')
 
 module.exports =
 
@@ -20,6 +21,7 @@ module.exports =
         ImageDirective
       when 'html'
         HtmlDirective
+      when 'link'
+        LinkDirective
       else
         assert false, "Unsupported component directive: #{ directiveType }"
-

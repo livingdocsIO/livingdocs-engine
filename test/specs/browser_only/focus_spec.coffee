@@ -87,7 +87,7 @@ describe '(browser only) focus:', ->
       beforeEach (done) ->
         { @componentTree, @page, @renderer } = test.get('page', 'renderer')
         @containerView = test.getTemplate('container').createView()
-        @container = @containerView.model.containers.default
+        @container = @containerView.model.containers['children']
         @componentViewInContainer = test.getTemplate('image').createView()
         @container.append(@componentViewInContainer.model)
         @componentTree.append(@containerView.model)

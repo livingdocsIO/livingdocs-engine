@@ -2,6 +2,7 @@ _ = require('underscore')
 base64Image = require('../../support/test_base64_image')
 config = test.config
 ComponentContainer = require('../../../src/component_tree/component_container')
+LinkDirective = require('../../../src/component_tree/link_directive')
 
 describe 'component_model:', ->
 
@@ -27,6 +28,10 @@ describe 'component_model:', ->
 
     it 'has no containers', ->
       expect(@title.containers).not.to.exist
+
+
+    it 'hasContainers() returns false', ->
+      expect(@title.hasContainers()).to.equal(false)
 
 
     it 'has no next or previous', ->
@@ -70,6 +75,10 @@ describe 'component_model:', ->
       expect(@row.containers.sidebar).to.be.an.instanceof(ComponentContainer)
 
 
+    it 'hasContainers()', ->
+      expect(@row.hasContainers()).to.equal(true)
+
+
     it 'does not create directives for the containers ', ->
       expect(@row.directives.length).to.equal(0)
 
@@ -80,9 +89,8 @@ describe 'component_model:', ->
       @container = test.getComponent('container')
 
 
-    it 'has named its unnamed container to the default', ->
-      defaultName = config.directives.container.defaultName
-      expect(@container.containers[defaultName]).to.exist
+    it 'has named its container to "children"', ->
+      expect(@container.containers['children']).to.exist
 
 
   # Component with a container with a config
@@ -203,3 +211,41 @@ describe 'component_model:', ->
       it 'can get the content', ->
         expect(@html.get('source')).to.equal('<section>text</section>')
 
+
+  describe 'Button component', ->
+
+    beforeEach ->
+      @component = test.getComponent('button')
+      @component.set('link', 'http://upfront.io/')
+      @component.set('text', 'Who is upfront?')
+
+
+    it 'hasLinks()', ->
+      expect(@component.hasLinks()).to.equal(true)
+
+
+    it 'has two directives()', ->
+      expect(@component.directives.length).to.equal(2)
+      expect(@component.directives[0].name).to.equal('link')
+      expect(@component.directives[1].name).to.equal('text')
+
+
+    it 'has set the directive content', ->
+      expect(@component.get('link')).to.equal('http://upfront.io/')
+      expect(@component.get('text')).to.equal('Who is upfront?')
+
+
+
+  describe 'Related Article component', ->
+
+    beforeEach ->
+      @component = test.getComponent('related-article')
+      @component.set('article-link', 'http://upfront.io/')
+
+
+    it 'has a link directive', ->
+      expect(@component.directives[0]).to.be.an.instanceof(LinkDirective)
+
+
+    it 'has the related-articel field set in content', ->
+      expect(@component.get('article-link')).to.equal('http://upfront.io/')

@@ -160,6 +160,7 @@ module.exports = class ComponentView
           @setImage(name, directive.getImageUrl() )
 
       when 'html' then @setHtml(name, value)
+      when 'link' then @setLink(name, value)
 
 
   get: (name) ->
@@ -168,6 +169,7 @@ module.exports = class ComponentView
       when 'editable' then @getEditable(name)
       when 'image' then @getImage(name)
       when 'html' then @getHtml(name)
+      when 'link' then @getLink(name)
 
 
   getEditable: (name) ->
@@ -176,9 +178,16 @@ module.exports = class ComponentView
 
 
   setEditable: (name, value) ->
-    return if @hasFocus()
-
     $elem = @directives.$getElem(name)
+
+    # Check if the directive element has focus to avoid
+    # circular code execution.
+    element = $elem[0]
+    ownerDocument = element.ownerDocument
+    elementHasFocus = ownerDocument.activeElement == element
+
+    return if elementHasFocus
+
     $elem.toggleClass(css.noPlaceholder, Boolean(value))
     $elem.attr(attr.placeholder, @template.defaults[name])
     $elem.html(value || '')
@@ -211,6 +220,21 @@ module.exports = class ComponentView
 
     @directivesToReset ||= {}
     @directivesToReset[name] = name
+
+
+  setLink: (name, value) ->
+    $elem = @directives.$getElem(name)
+    if value
+      $elem.attr('href', value)
+    else
+      # According to HTML5 we remove the href attribute to
+      # create a placeholder link that is not clickable.
+      $elem.removeAttr('href')
+
+
+  getLink: (name) ->
+    $elem = @directives.$getElem(name)
+    $elem.attr('href')
 
 
   getDirectiveElement: (directiveName) ->
