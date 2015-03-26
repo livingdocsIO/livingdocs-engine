@@ -221,6 +221,18 @@ module.exports = do ->
 
   wrapper: '<div class="doc-section"></div>'
 
+  layouts: [
+    name: 'firstInList'
+    caption: 'Layout #1'
+    wrapper: '<div class="doc-section layout-wrapper"></div>'
+  ,
+    name: 'default'
+    caption: 'Layout #2'
+    wrapper: '<div class="doc-section layout-wrapper-extended"></div>'
+  ]
+
+  defaultLayout: 'default'
+
   defaultContent: [
     identifier: 'hero'
   ,

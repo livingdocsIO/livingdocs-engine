@@ -2511,11 +2511,12 @@ module.exports = doc = (function() {
     Livingdoc: Livingdoc,
     ComponentTree: ComponentTree,
     createLivingdoc: function(_arg) {
-      var componentTree, data, design;
-      data = _arg.data, design = _arg.design, componentTree = _arg.componentTree;
+      var componentTree, data, design, layout;
+      data = _arg.data, design = _arg.design, layout = _arg.layout, componentTree = _arg.componentTree;
       return Livingdoc.create({
         data: data,
         designName: design,
+        layoutName: layout,
         componentTree: componentTree
       });
     },
@@ -4621,7 +4622,7 @@ module.exports = CssModificatorProperty = (function() {
 
 
 },{"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/words":54}],29:[function(require,module,exports){
-var Dependencies, Design, OrderedHash, Template, assert, config, log, words;
+var Dependencies, Design, OrderedHash, Template, assert, config, log, words, _;
 
 config = require('../configuration/config');
 
@@ -4636,6 +4637,8 @@ Template = require('../template/template');
 OrderedHash = require('../modules/ordered_hash');
 
 Dependencies = require('../rendering/dependencies');
+
+_ = require('underscore');
 
 module.exports = Design = (function() {
   function Design(_arg) {
@@ -4707,6 +4710,23 @@ module.exports = Design = (function() {
     return (_ref = this.defaultImage) != null ? (_ref1 = _ref.directives.firstOfType('image')) != null ? _ref1.name : void 0 : void 0;
   };
 
+  Design.prototype.getLayout = function(name) {
+    if (!this.layouts) {
+      return {
+        wrapper: this.wrapper
+      };
+    }
+    if (!((name != null) || (this.defaultLayout != null))) {
+      return _.first(this.layouts);
+    }
+    if (name == null) {
+      name = this.defaultLayout;
+    }
+    return _.findWhere(this.layouts, {
+      name: name
+    });
+  };
+
   Design.getIdentifier = function(name, version) {
     if (version) {
       return "" + name + "@" + version;
@@ -4721,7 +4741,7 @@ module.exports = Design = (function() {
 
 
 
-},{"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/ordered_hash":51,"../modules/words":54,"../rendering/dependencies":56,"../template/template":73}],30:[function(require,module,exports){
+},{"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/ordered_hash":51,"../modules/words":54,"../rendering/dependencies":56,"../template/template":73,"underscore":10}],30:[function(require,module,exports){
 var Design, Version, assert, designParser;
 
 assert = require('../modules/logging/assert');
@@ -4850,6 +4870,8 @@ validator.add('design', {
   },
   metadata: 'array of object, optional',
   wrapper: 'string, wrapper, optional',
+  layouts: 'array of layout, optional',
+  defaultLayout: 'string, optional',
   defaultContent: 'array of object, optional',
   prefilledComponents: 'object, optional'
 });
@@ -4886,6 +4908,13 @@ validator.add('imageRatio', {
 validator.add('styleOption', {
   caption: 'string',
   value: 'string, optional'
+});
+
+validator.add('layout', {
+  name: 'string',
+  caption: 'string',
+  wrapper: 'wrapper',
+  icon: 'string, optional'
 });
 
 
@@ -4929,7 +4958,7 @@ module.exports = designParser = {
     assets = designConfig.assets, components = designConfig.components, componentProperties = designConfig.componentProperties, groups = designConfig.groups, defaultComponents = designConfig.defaultComponents, imageRatios = designConfig.imageRatios;
     try {
       this.design = this.parseDesignInfo(designConfig);
-      $.each(['metadata', 'wrapper', 'defaultContent', 'prefilledComponents'], (function(_this) {
+      $.each(['metadata', 'wrapper', 'layouts', 'defaultLayout', 'defaultContent', 'prefilledComponents'], (function(_this) {
         return function(index, attributeName) {
           return _this.design[attributeName] = designConfig[attributeName];
         };
@@ -6635,21 +6664,25 @@ module.exports = Livingdoc = (function(_super) {
   __extends(Livingdoc, _super);
 
   Livingdoc.create = function(_arg) {
-    var componentTree, data, design, designName, _ref;
-    data = _arg.data, designName = _arg.designName, componentTree = _arg.componentTree;
+    var componentTree, data, design, designName, layoutName, _ref;
+    data = _arg.data, designName = _arg.designName, layoutName = _arg.layoutName, componentTree = _arg.componentTree;
     componentTree = data != null ? (designName = (_ref = data.design) != null ? _ref.name : void 0, assert(designName != null, 'Error creating livingdoc: No design is specified.'), design = designCache.get(designName), new ComponentTree({
       content: data,
       design: design
     })) : designName != null ? (design = designCache.get(designName), new ComponentTree({
       design: design
     })) : componentTree;
+    if (data != null ? data.layout : void 0) {
+      layoutName = data.layout;
+    }
     return new Livingdoc({
-      componentTree: componentTree
+      componentTree: componentTree,
+      layoutName: layoutName
     });
   };
 
   function Livingdoc(_arg) {
-    this.componentTree = _arg.componentTree;
+    this.componentTree = _arg.componentTree, this.layoutName = _arg.layoutName;
     this.model = this.componentTree;
     this.interactiveView = void 0;
     this.readOnlyViews = [];
@@ -6686,11 +6719,13 @@ module.exports = Livingdoc = (function(_super) {
   };
 
   Livingdoc.prototype.createView = function(_arg) {
-    var host, iframe, interactive, loadResources, view, whenViewIsReady, wrapper, _ref;
-    _ref = _arg != null ? _arg : {}, host = _ref.host, interactive = _ref.interactive, loadResources = _ref.loadResources, wrapper = _ref.wrapper, iframe = _ref.iframe;
-    if (wrapper == null) {
-      wrapper = this.getWrapper(host);
-    }
+    var host, iframe, interactive, layoutName, loadResources, view, viewWrapper, wrapper;
+    host = _arg.host, interactive = _arg.interactive, loadResources = _arg.loadResources, wrapper = _arg.wrapper, layoutName = _arg.layoutName, iframe = _arg.iframe;
+    viewWrapper = this.getWrapper({
+      wrapper: wrapper,
+      layoutName: layoutName,
+      host: host
+    });
     if (iframe == null) {
       iframe = true;
     }
@@ -6699,10 +6734,10 @@ module.exports = Livingdoc = (function(_super) {
       parent: $(host),
       isInteractive: interactive,
       loadResources: loadResources,
-      wrapper: wrapper
+      wrapper: viewWrapper
     });
     this.addView(view);
-    return whenViewIsReady = view.create({
+    return view.create({
       renderInIframe: iframe
     });
   };
@@ -6719,7 +6754,23 @@ module.exports = Livingdoc = (function(_super) {
     return this.componentTree.createComponent.apply(this.componentTree, arguments);
   };
 
-  Livingdoc.prototype.getWrapper = function(parent) {
+  Livingdoc.prototype.getWrapper = function(_arg) {
+    var host, layoutName, wrapper, _ref;
+    wrapper = _arg.wrapper, layoutName = _arg.layoutName, host = _arg.host;
+    if (wrapper != null) {
+      return wrapper;
+    }
+    if (layoutName == null) {
+      layoutName = this.layoutName;
+    }
+    wrapper = (_ref = this.design.getLayout(layoutName)) != null ? _ref.wrapper : void 0;
+    if (wrapper == null) {
+      wrapper = this.extractWrapper(host);
+    }
+    return wrapper;
+  };
+
+  Livingdoc.prototype.extractWrapper = function(parent) {
     var $parent, $wrapper;
     $parent = $(parent).first();
     if ($parent.find("." + config.css.section).length === 1) {
@@ -6769,7 +6820,10 @@ module.exports = Livingdoc = (function(_super) {
   };
 
   Livingdoc.prototype.serialize = function() {
-    return this.componentTree.serialize();
+    var serialized;
+    serialized = this.componentTree.serialize();
+    serialized['layout'] = this.layoutName;
+    return serialized;
   };
 
   Livingdoc.prototype.toJson = function(prettify) {
@@ -9779,7 +9833,7 @@ Template.parseIdentifier = function(identifier) {
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/words":54,"../rendering/component_view":55,"./directive_collection":69,"./directive_compiler":70,"./directive_finder":71,"./directive_iterator":72,"jquery":"jquery"}],74:[function(require,module,exports){
 module.exports={
   "version": "0.9.0",
-  "revision": "1ad2d48"
+  "revision": "4f806df"
 }
 
 },{}],"jquery":[function(require,module,exports){

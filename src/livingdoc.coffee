@@ -34,7 +34,7 @@ module.exports = class Livingdoc extends EventEmitter
   # @param designName { string } Name of a design
   # @param componentTree { ComponentTree } A componentTree instance
   # @returns { Livingdoc object }
-  @create: ({ data, designName, componentTree }) ->
+  @create: ({ data, designName, layoutName, componentTree }) ->
     componentTree = if data?
       designName = data.design?.name
       assert designName?, 'Error creating livingdoc: No design is specified.'
@@ -46,10 +46,13 @@ module.exports = class Livingdoc extends EventEmitter
     else
       componentTree
 
-    new Livingdoc({ componentTree })
+    if data?.layout
+      layoutName = data.layout
+
+    new Livingdoc({ componentTree, layoutName })
 
 
-  constructor: ({ @componentTree }) ->
+  constructor: ({ @componentTree, @layoutName }) ->
 
     # @model is a legacy attribute and should be deleted ASAP
     @model = @componentTree
@@ -93,8 +96,8 @@ module.exports = class Livingdoc extends EventEmitter
   #
   # Example:
   # article.appendTo({ host: '.article', interactive: true, loadResources: false })
-  createView: ({ host, interactive, loadResources, wrapper, iframe }={}) ->
-    wrapper ?= @getWrapper(host)
+  createView: ({ host, interactive, loadResources, wrapper, layoutName, iframe }) ->
+    viewWrapper = @getWrapper({ wrapper, layoutName, host })
     iframe ?= true
 
     view = new View
@@ -102,10 +105,10 @@ module.exports = class Livingdoc extends EventEmitter
       parent: $(host)
       isInteractive: interactive
       loadResources: loadResources
-      wrapper: wrapper
+      wrapper: viewWrapper
 
     @addView(view)
-    whenViewIsReady = view.create(renderInIframe: iframe)
+    view.create(renderInIframe: iframe)
 
 
   # Append the livingdoc to the DOM.
@@ -127,6 +130,16 @@ module.exports = class Livingdoc extends EventEmitter
     @componentTree.createComponent.apply(@componentTree, arguments)
 
 
+  getWrapper: ({ wrapper, layoutName, host }) ->
+    return wrapper if wrapper?
+
+    layoutName ?= @layoutName
+    wrapper = @design.getLayout(layoutName)?.wrapper
+    wrapper ?= @extractWrapper(host)
+
+    return wrapper
+
+
   # A view sometimes has to be wrapped in a container.
   #
   # Example:
@@ -134,7 +147,7 @@ module.exports = class Livingdoc extends EventEmitter
   # <div class="iframe-container">
   #   <section class="container doc-section"></section>
   # </div>
-  getWrapper: (parent) ->
+  extractWrapper: (parent) ->
     $parent = $(parent).first()
     if $parent.find(".#{ config.css.section }").length == 1
       $wrapper = $($parent.html())
@@ -177,7 +190,10 @@ module.exports = class Livingdoc extends EventEmitter
 
 
   serialize: ->
-    @componentTree.serialize()
+    serialized = @componentTree.serialize()
+    serialized['layout'] = @layoutName
+
+    serialized
 
 
   toJson: (prettify) ->

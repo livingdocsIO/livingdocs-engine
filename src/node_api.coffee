@@ -28,8 +28,8 @@ module.exports = do ->
   window: window
 
 
-  createLivingdoc: ({ data, design, componentTree }) ->
-    Livingdoc.create({ data, designName: design, componentTree })
+  createLivingdoc: ({ data, design, layout, componentTree }) ->
+    Livingdoc.create({ data, designName: design, layoutName: layout, componentTree })
 
 
   config: (userConfig) ->
