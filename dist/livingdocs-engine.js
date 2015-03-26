@@ -9833,7 +9833,7 @@ Template.parseIdentifier = function(identifier) {
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/words":54,"../rendering/component_view":55,"./directive_collection":69,"./directive_compiler":70,"./directive_finder":71,"./directive_iterator":72,"jquery":"jquery"}],74:[function(require,module,exports){
 module.exports={
   "version": "0.10.0",
-  "revision": "faeaed6"
+  "revision": "1517e98"
 }
 
 },{}],"jquery":[function(require,module,exports){
