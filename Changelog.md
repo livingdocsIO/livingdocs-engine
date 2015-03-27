@@ -1,26 +1,31 @@
-# v.0.10.0
+# v0.10.1
+
+- Fix underscore dependency [#db1de58](https://github.com/upfrontIO/livingdocs-engine/commit/db1de58858a9889b11d92cbd7e4771b36f3c27ef)
+
+
+# v0.10.0
 
 - Basic layouts support [#173](https://github.com/upfrontIO/livingdocs-engine/pull/173)
 
 
-# v.0.9.0
+# v0.9.0
 
 - Add link directive [#174](https://github.com/upfrontIO/livingdocs-engine/pull/174)
 
 
-# v.0.8.1
+# v0.8.1
 
 - Unify createView() and appendTo() interfaces [#170](https://github.com/upfrontIO/livingdocs-engine/pull/170)
 - Add base path param to DesignCache  [#171](https://github.com/upfrontIO/livingdocs-engine/pull/171)
 
 
-# v.0.8.0
+# v0.8.0
 
 - Split pasted content into blocks [#168](https://github.com/upfrontIO/livingdocs-engine/pull/168)
 - View initializing incorrectly in IE [#169](https://github.com/upfrontIO/livingdocs-engine/pull/169)
 
 
-# v.0.7.0
+# v0.7.0
 
 #### Features:
 
@@ -28,28 +33,28 @@
 - Basic support for editor plugins [#165](https://github.com/upfrontIO/livingdocs-engine/pull/165)
 
 
-# v.0.6.0
+# v0.6.0
 
 #### Features:
 
 - Adds field extractor [#164](https://github.com/upfrontIO/livingdocs-engine/pull/164)
 
 
-# v.0.5.6
+# v0.5.6
 
 #### Features:
 
 - Container focus event [#161](https://github.com/upfrontIO/livingdocs-engine/pull/161)
 
 
-# v.0.5.5
+# v0.5.5
 
 #### Features:
 
 - Expose image service to browser and node APIs [#160](https://github.com/upfrontIO/livingdocs-engine/pull/160)
 
 
-# v.0.5.4
+# v0.5.4
 
 #### Features:
 
@@ -60,14 +65,14 @@
 - Scripts of doc-html are initialized in the main window not inside the document iframe [#144](https://github.com/upfrontIO/livingdocs-engine/pull/144)
 
 
-# v.0.5.3
+# v0.5.3
 
 #### Bugfixes
 
 - Fix bug when adding a dependency to the document [#157](https://github.com/upfrontIO/livingdocs-engine/pull/157)
 
 
-# v.0.5.2
+# v0.5.2
 
 #### Bugfixes
 
@@ -75,14 +80,14 @@
 - Fix failing spec in FF [#156](https://github.com/upfrontIO/livingdocs-engine/pull/156)
 
 
-# v.0.5.1
+# v0.5.1
 
 #### Features:
 
 - Consolidate design config [#152](https://github.com/upfrontIO/livingdocs-engine/pull/152)
 
 
-# v.0.5.0
+# v0.5.0
 
 #### Features:
 
