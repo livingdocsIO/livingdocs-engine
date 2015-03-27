@@ -1,3 +1,9 @@
+# v0.10.2
+
+- Fix image placeholders in Safari [#172](https://github.com/upfrontIO/livingdocs-engine/pull/172)
+- Fix Shrinkwrap file [#176](https://github.com/upfrontIO/livingdocs-engine/pull/176)
+
+
 # v0.10.1
 
 - Fix underscore dependency [#db1de58](https://github.com/upfrontIO/livingdocs-engine/commit/db1de58858a9889b11d92cbd7e4771b36f3c27ef)
