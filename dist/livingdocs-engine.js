@@ -4064,6 +4064,7 @@ module.exports = FieldExtractor = (function() {
         url: imageDirective.getImageUrl(),
         width: (ref = imageDirective.getOriginalImageDimensions()) != null ? ref.width : void 0,
         height: (ref1 = imageDirective.getOriginalImageDimensions()) != null ? ref1.height : void 0,
+        mimeType: imageDirective.getMimeType(),
         imageService: imageDirective.getImageServiceName()
       }
     };
@@ -4231,6 +4232,18 @@ module.exports = ImageDirective = (function(superClass) {
       width: content != null ? content.width : void 0,
       height: content != null ? content.height : void 0
     };
+  };
+
+  ImageDirective.prototype.setMimeType = function(mimeType) {
+    var content;
+    content = this.component.content[this.name];
+    return content.mimeType = mimeType;
+  };
+
+  ImageDirective.prototype.getMimeType = function() {
+    var content;
+    content = this.component.content[this.name];
+    return content.mimeType;
   };
 
   ImageDirective.prototype.resetCrop = function() {
