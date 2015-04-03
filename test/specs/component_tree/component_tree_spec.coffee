@@ -59,6 +59,16 @@ describe 'component_tree:', ->
       expect(@componentTree.root.last.next).to.be.undefined
 
 
+    it 'can find the second component', ->
+      secondComponent = @componentTree.eq(1)
+      expect(@componentTree.first().next).to.equal(secondComponent)
+
+
+    it 'can\'t find the third component', ->
+      thirdComponent = @componentTree.eq(2)
+      expect(undefined).to.equal(thirdComponent)
+
+
     describe 'up()', ->
 
       it 'moves the second component up', ->

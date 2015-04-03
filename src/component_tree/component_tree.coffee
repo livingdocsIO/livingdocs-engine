@@ -111,6 +111,16 @@ module.exports = class ComponentTree
     @root.first
 
 
+  # Get the nth component with zero based index
+  eq: (index) ->
+    res = []
+    @each (component) ->
+      res.push(component)
+
+    components = new ComponentArray(res)
+    components[index]
+
+
   # Traverse all containers and components
   all: (callback) ->
     @root.all(callback)
