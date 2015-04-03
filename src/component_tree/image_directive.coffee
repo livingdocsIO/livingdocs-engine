@@ -91,6 +91,16 @@ module.exports = class ImageDirective extends ComponentDirective
     height: content?.height
 
 
+  setMimeType: (mimeType) ->
+    content = @component.content[@name]
+    content.mimeType = mimeType
+
+
+  getMimeType: ->
+    content = @component.content[@name]
+    content.mimeType
+
+
   resetCrop: ->
     currentValue = @component.content[@name]
     if currentValue?
