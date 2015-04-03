@@ -195,6 +195,7 @@ module.exports = class FieldExtractor
       url: imageDirective.getImageUrl()
       width: imageDirective.getOriginalImageDimensions()?.width
       height: imageDirective.getOriginalImageDimensions()?.height
+      mimeType: imageDirective.getMimeType()
       imageService: imageDirective.getImageServiceName()
 
 
