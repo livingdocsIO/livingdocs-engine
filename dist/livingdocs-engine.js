@@ -91,7 +91,7 @@ function objEquiv(a, b, opts) {
     key = ka[i];
     if (!deepEqual(a[key], b[key], opts)) return false;
   }
-  return true;
+  return typeof a === typeof b;
 }
 
 },{"./lib/is_arguments.js":2,"./lib/keys.js":3}],2:[function(require,module,exports){
@@ -2510,9 +2510,9 @@ module.exports = doc = (function() {
     design: designCache,
     Livingdoc: Livingdoc,
     ComponentTree: ComponentTree,
-    createLivingdoc: function(_arg) {
+    createLivingdoc: function(arg) {
       var componentTree, data, design, layout;
-      data = _arg.data, design = _arg.design, layout = _arg.layout, componentTree = _arg.componentTree;
+      data = arg.data, design = arg.design, layout = arg.layout, componentTree = arg.componentTree;
       return Livingdoc.create({
         data: data,
         designName: design,
@@ -2556,10 +2556,10 @@ module.exports = ComponentArray = (function() {
   }
 
   ComponentArray.prototype.createPseudoArray = function() {
-    var index, result, _i, _len, _ref;
-    _ref = this.components;
-    for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
-      result = _ref[index];
+    var i, index, len, ref, result;
+    ref = this.components;
+    for (index = i = 0, len = ref.length; i < len; index = ++i) {
+      result = ref[index];
       this[index] = result;
     }
     this.length = this.components.length;
@@ -2570,10 +2570,10 @@ module.exports = ComponentArray = (function() {
   };
 
   ComponentArray.prototype.each = function(callback) {
-    var component, _i, _len, _ref;
-    _ref = this.components;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      component = _ref[_i];
+    var component, i, len, ref;
+    ref = this.components;
+    for (i = 0, len = ref.length; i < len; i++) {
+      component = ref[i];
       callback(component);
     }
     return this;
@@ -2598,9 +2598,9 @@ var ComponentContainer, assert;
 assert = require('../modules/logging/assert');
 
 module.exports = ComponentContainer = (function() {
-  function ComponentContainer(_arg) {
+  function ComponentContainer(arg) {
     var config, isRoot;
-    this.parentComponent = _arg.parentComponent, this.name = _arg.name, isRoot = _arg.isRoot, config = _arg.config;
+    this.parentComponent = arg.parentComponent, this.name = arg.name, isRoot = arg.isRoot, config = arg.config;
     this.isRoot = isRoot != null;
     this.first = this.last = void 0;
     this.allowedChildren = void 0;
@@ -2608,20 +2608,20 @@ module.exports = ComponentContainer = (function() {
   }
 
   ComponentContainer.prototype.parseConfig = function(configuration) {
-    var componentName, _i, _len, _ref, _results;
+    var componentName, i, len, ref, results;
     if (configuration == null) {
       return;
     }
-    _ref = configuration.allowedChildren || [];
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      componentName = _ref[_i];
+    ref = configuration.allowedChildren || [];
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      componentName = ref[i];
       if (this.allowedChildren == null) {
         this.allowedChildren = {};
       }
-      _results.push(this.allowedChildren[componentName] = true);
+      results.push(this.allowedChildren[componentName] = true);
     }
-    return _results;
+    return results;
   };
 
   ComponentContainer.prototype.isAllowedAsChild = function(component) {
@@ -2645,13 +2645,13 @@ module.exports = ComponentContainer = (function() {
   };
 
   ComponentContainer.prototype.isAllowedAsParent = function(component) {
-    var allowed, allowedParents, parentName, _i, _len, _ref;
+    var allowed, allowedParents, i, len, parentName, ref;
     if (!(allowedParents = component.template.allowedParents)) {
       return true;
     }
-    parentName = this.isRoot ? 'root' : (_ref = this.parentComponent) != null ? _ref.componentName : void 0;
-    for (_i = 0, _len = allowedParents.length; _i < _len; _i++) {
-      allowed = allowedParents[_i];
+    parentName = this.isRoot ? 'root' : (ref = this.parentComponent) != null ? ref.componentName : void 0;
+    for (i = 0, len = allowedParents.length; i < len; i++) {
+      allowed = allowedParents[i];
       if (parentName === allowed) {
         return true;
       }
@@ -2660,8 +2660,8 @@ module.exports = ComponentContainer = (function() {
   };
 
   ComponentContainer.prototype.getComponentTree = function() {
-    var _ref;
-    return this.componentTree || ((_ref = this.parentComponent) != null ? _ref.componentTree : void 0);
+    var ref;
+    return this.componentTree || ((ref = this.parentComponent) != null ? ref.componentTree : void 0);
   };
 
   ComponentContainer.prototype.prepend = function(component) {
@@ -2731,42 +2731,42 @@ module.exports = ComponentContainer = (function() {
   };
 
   ComponentContainer.prototype.each = function(callback) {
-    var component, _results;
+    var component, results;
     component = this.first;
-    _results = [];
+    results = [];
     while (component) {
       component.descendantsAndSelf(callback);
-      _results.push(component = component.next);
+      results.push(component = component.next);
     }
-    return _results;
+    return results;
   };
 
   ComponentContainer.prototype.eachContainer = function(callback) {
     callback(this);
     return this.each(function(component) {
-      var componentContainer, name, _ref, _results;
-      _ref = component.containers;
-      _results = [];
-      for (name in _ref) {
-        componentContainer = _ref[name];
-        _results.push(callback(componentContainer));
+      var componentContainer, name, ref, results;
+      ref = component.containers;
+      results = [];
+      for (name in ref) {
+        componentContainer = ref[name];
+        results.push(callback(componentContainer));
       }
-      return _results;
+      return results;
     });
   };
 
   ComponentContainer.prototype.all = function(callback) {
     callback(this);
     return this.each(function(component) {
-      var componentContainer, name, _ref, _results;
+      var componentContainer, name, ref, results;
       callback(component);
-      _ref = component.containers;
-      _results = [];
-      for (name in _ref) {
-        componentContainer = _ref[name];
-        _results.push(callback(componentContainer));
+      ref = component.containers;
+      results = [];
+      for (name in ref) {
+        componentContainer = ref[name];
+        results.push(callback(componentContainer));
       }
-      return _results;
+      return results;
     });
   };
 
@@ -2811,7 +2811,7 @@ module.exports = ComponentContainer = (function() {
   };
 
   ComponentContainer.prototype.unlink = function(component) {
-    var container, _ref, _ref1;
+    var container, ref, ref1;
     container = component.parentContainer;
     if (container) {
       if (component.previous == null) {
@@ -2820,19 +2820,19 @@ module.exports = ComponentContainer = (function() {
       if (component.next == null) {
         container.last = component.previous;
       }
-      if ((_ref = component.next) != null) {
-        _ref.previous = component.previous;
+      if ((ref = component.next) != null) {
+        ref.previous = component.previous;
       }
-      if ((_ref1 = component.previous) != null) {
-        _ref1.next = component.next;
+      if ((ref1 = component.previous) != null) {
+        ref1.next = component.next;
       }
       return this.setComponentPosition(component, {});
     }
   };
 
-  ComponentContainer.prototype.setComponentPosition = function(component, _arg) {
+  ComponentContainer.prototype.setComponentPosition = function(component, arg) {
     var next, parentContainer, previous;
-    parentContainer = _arg.parentContainer, previous = _arg.previous, next = _arg.next;
+    parentContainer = arg.parentContainer, previous = arg.previous, next = arg.next;
     component.parentContainer = parentContainer;
     component.previous = previous;
     component.next = next;
@@ -2856,7 +2856,7 @@ module.exports = ComponentContainer = (function() {
     if (this.isRoot) {
       return 'root';
     } else {
-      return "" + this.parentComponent.componentName + ".containers['" + this.name + "']";
+      return this.parentComponent.componentName + ".containers['" + this.name + "']";
     }
   };
 
@@ -2870,8 +2870,8 @@ module.exports = ComponentContainer = (function() {
 var ComponentDirective;
 
 module.exports = ComponentDirective = (function() {
-  function ComponentDirective(_arg) {
-    this.component = _arg.component, this.templateDirective = _arg.templateDirective;
+  function ComponentDirective(arg) {
+    this.component = arg.component, this.templateDirective = arg.templateDirective;
     this.name = this.templateDirective.name;
     this.type = this.templateDirective.type;
   }
@@ -2900,9 +2900,9 @@ module.exports = ComponentDirective = (function() {
   };
 
   ComponentDirective.prototype.getData = function(key) {
-    var _ref;
+    var ref;
     if (key) {
-      return (_ref = this.component.dataValues["_" + this.name + "Directive"]) != null ? _ref[key] : void 0;
+      return (ref = this.component.dataValues["_" + this.name + "Directive"]) != null ? ref[key] : void 0;
     } else {
       return this.component.dataValues["_" + this.name + "Directive"];
     }
@@ -2914,8 +2914,8 @@ module.exports = ComponentDirective = (function() {
   };
 
   ComponentDirective.prototype.getTmp = function(key) {
-    var _ref;
-    return (_ref = this.tmp) != null ? _ref[key] : void 0;
+    var ref;
+    return (ref = this.tmp) != null ? ref[key] : void 0;
   };
 
   return ComponentDirective;
@@ -2940,9 +2940,9 @@ HtmlDirective = require('./html_directive');
 LinkDirective = require('./link_directive');
 
 module.exports = {
-  create: function(_arg) {
+  create: function(arg) {
     var Directive, component, templateDirective;
-    component = _arg.component, templateDirective = _arg.templateDirective;
+    component = arg.component, templateDirective = arg.templateDirective;
     Directive = this.getDirectiveConstructor(templateDirective.type);
     return new Directive({
       component: component,
@@ -2987,9 +2987,9 @@ directiveFactory = require('./component_directive_factory');
 DirectiveCollection = require('../template/directive_collection');
 
 module.exports = ComponentModel = (function() {
-  function ComponentModel(_arg) {
-    var id, _ref;
-    _ref = _arg != null ? _arg : {}, this.template = _ref.template, id = _ref.id;
+  function ComponentModel(arg1) {
+    var id, ref;
+    ref = arg1 != null ? arg1 : {}, this.template = ref.template, id = ref.id;
     assert(this.template, 'cannot instantiate component without template reference');
     this.initializeDirectives();
     this.styles = {};
@@ -3002,16 +3002,16 @@ module.exports = ComponentModel = (function() {
   }
 
   ComponentModel.prototype.initializeDirectives = function() {
-    var directive, _i, _len, _ref, _results;
+    var directive, i, len, ref, results;
     this.directives = new DirectiveCollection();
-    _ref = this.template.directives;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      directive = _ref[_i];
+    ref = this.template.directives;
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      directive = ref[i];
       switch (directive.type) {
         case 'container':
           this.containers || (this.containers = {});
-          _results.push(this.containers[directive.name] = new ComponentContainer({
+          results.push(this.containers[directive.name] = new ComponentContainer({
             name: directive.name,
             parentComponent: this,
             config: directive.config
@@ -3023,13 +3023,13 @@ module.exports = ComponentModel = (function() {
         case 'link':
           this.createComponentDirective(directive);
           this.content || (this.content = {});
-          _results.push(this.content[directive.name] = void 0);
+          results.push(this.content[directive.name] = void 0);
           break;
         default:
-          _results.push(log.error("Template directive type '" + directive.type + "' not implemented in ComponentModel"));
+          results.push(log.error("Template directive type '" + directive.type + "' not implemented in ComponentModel"));
       }
     }
-    return _results;
+    return results;
   };
 
   ComponentModel.prototype.createComponentDirective = function(templateDirective) {
@@ -3098,38 +3098,38 @@ module.exports = ComponentModel = (function() {
   };
 
   ComponentModel.prototype.getParent = function() {
-    var _ref;
-    return (_ref = this.parentContainer) != null ? _ref.parentComponent : void 0;
+    var ref;
+    return (ref = this.parentContainer) != null ? ref.parentComponent : void 0;
   };
 
   ComponentModel.prototype.parents = function(callback) {
-    var componentModel, _results;
+    var componentModel, results;
     componentModel = this;
-    _results = [];
+    results = [];
     while ((componentModel = componentModel.getParent())) {
-      _results.push(callback(componentModel));
+      results.push(callback(componentModel));
     }
-    return _results;
+    return results;
   };
 
   ComponentModel.prototype.children = function(callback) {
-    var componentContainer, componentModel, name, _ref, _results;
-    _ref = this.containers;
-    _results = [];
-    for (name in _ref) {
-      componentContainer = _ref[name];
+    var componentContainer, componentModel, name, ref, results;
+    ref = this.containers;
+    results = [];
+    for (name in ref) {
+      componentContainer = ref[name];
       componentModel = componentContainer.first;
-      _results.push((function() {
-        var _results1;
-        _results1 = [];
+      results.push((function() {
+        var results1;
+        results1 = [];
         while (componentModel) {
           callback(componentModel);
-          _results1.push(componentModel = componentModel.next);
+          results1.push(componentModel = componentModel.next);
         }
-        return _results1;
+        return results1;
       })());
     }
-    return _results;
+    return results;
   };
 
   ComponentModel.prototype.childrenAndSelf = function(callback) {
@@ -3138,24 +3138,24 @@ module.exports = ComponentModel = (function() {
   };
 
   ComponentModel.prototype.descendants = function(callback) {
-    var componentContainer, componentModel, name, _ref, _results;
-    _ref = this.containers;
-    _results = [];
-    for (name in _ref) {
-      componentContainer = _ref[name];
+    var componentContainer, componentModel, name, ref, results;
+    ref = this.containers;
+    results = [];
+    for (name in ref) {
+      componentContainer = ref[name];
       componentModel = componentContainer.first;
-      _results.push((function() {
-        var _results1;
-        _results1 = [];
+      results.push((function() {
+        var results1;
+        results1 = [];
         while (componentModel) {
           callback(componentModel);
           componentModel.descendants(callback);
-          _results1.push(componentModel = componentModel.next);
+          results1.push(componentModel = componentModel.next);
         }
-        return _results1;
+        return results1;
       })());
     }
-    return _results;
+    return results;
   };
 
   ComponentModel.prototype.descendantsAndSelf = function(callback) {
@@ -3164,43 +3164,43 @@ module.exports = ComponentModel = (function() {
   };
 
   ComponentModel.prototype.parentContainers = function(callback) {
-    var componentModel, _results;
+    var componentModel, results;
     componentModel = this;
-    _results = [];
+    results = [];
     while (componentModel != null) {
       callback(componentModel.parentContainer);
-      _results.push(componentModel = componentModel.getParent());
+      results.push(componentModel = componentModel.getParent());
     }
-    return _results;
+    return results;
   };
 
   ComponentModel.prototype.descendantContainers = function(callback) {
     return this.descendantsAndSelf(function(componentModel) {
-      var componentContainer, name, _ref, _results;
-      _ref = componentModel.containers;
-      _results = [];
-      for (name in _ref) {
-        componentContainer = _ref[name];
-        _results.push(callback(componentContainer));
+      var componentContainer, name, ref, results;
+      ref = componentModel.containers;
+      results = [];
+      for (name in ref) {
+        componentContainer = ref[name];
+        results.push(callback(componentContainer));
       }
-      return _results;
+      return results;
     });
   };
 
   ComponentModel.prototype.allDescendants = function(callback) {
     return this.descendantsAndSelf((function(_this) {
       return function(componentModel) {
-        var componentContainer, name, _ref, _results;
+        var componentContainer, name, ref, results;
         if (componentModel !== _this) {
           callback(componentModel);
         }
-        _ref = componentModel.containers;
-        _results = [];
-        for (name in _ref) {
-          componentContainer = _ref[name];
-          _results.push(callback(componentContainer));
+        ref = componentModel.containers;
+        results = [];
+        for (name in ref) {
+          componentContainer = ref[name];
+          results.push(callback(componentContainer));
         }
-        return _results;
+        return results;
       };
     })(this));
   };
@@ -3251,8 +3251,8 @@ module.exports = ComponentModel = (function() {
   };
 
   ComponentModel.prototype.set = function(name, value) {
-    var directive, _ref;
-    assert((_ref = this.content) != null ? _ref.hasOwnProperty(name) : void 0, "set error: " + this.componentName + " has no content named " + name);
+    var directive, ref;
+    assert((ref = this.content) != null ? ref.hasOwnProperty(name) : void 0, "set error: " + this.componentName + " has no content named " + name);
     directive = this.directives.get(name);
     if (directive.isImage) {
       if (directive.getImageUrl() !== value) {
@@ -3267,8 +3267,8 @@ module.exports = ComponentModel = (function() {
   };
 
   ComponentModel.prototype.get = function(name) {
-    var _ref;
-    assert((_ref = this.content) != null ? _ref.hasOwnProperty(name) : void 0, "get error: " + this.componentName + " has no content named " + name);
+    var ref;
+    assert((ref = this.content) != null ? ref.hasOwnProperty(name) : void 0, "get error: " + this.componentName + " has no content named " + name);
     return this.directives.get(name).getContent();
   };
 
@@ -3279,7 +3279,7 @@ module.exports = ComponentModel = (function() {
   };
 
   ComponentModel.prototype.data = function(arg) {
-    var changedDataProperties, name, value, _ref;
+    var changedDataProperties, name, ref, value;
     if (typeof arg === 'object') {
       changedDataProperties = [];
       for (name in arg) {
@@ -3289,7 +3289,7 @@ module.exports = ComponentModel = (function() {
         }
       }
       if (changedDataProperties.length > 0) {
-        return (_ref = this.componentTree) != null ? _ref.dataChanging(this, changedDataProperties) : void 0;
+        return (ref = this.componentTree) != null ? ref.dataChanging(this, changedDataProperties) : void 0;
       }
     } else if (arg) {
       return this.dataValues[arg];
@@ -3299,9 +3299,9 @@ module.exports = ComponentModel = (function() {
   };
 
   ComponentModel.prototype.setData = function(key, value) {
-    var _ref;
+    var ref;
     if (key && this.changeData(key, value)) {
-      return (_ref = this.componentTree) != null ? _ref.dataChanging(this, [key]) : void 0;
+      return (ref = this.componentTree) != null ? ref.dataChanging(this, [key]) : void 0;
     }
   };
 
@@ -3322,8 +3322,8 @@ module.exports = ComponentModel = (function() {
   };
 
   ComponentModel.prototype.getPluginName = function() {
-    var _ref;
-    return (_ref = this.plugin) != null ? _ref.name : void 0;
+    var ref;
+    return (ref = this.plugin) != null ? ref.name : void 0;
   };
 
   ComponentModel.prototype.setPlugin = function(plugin) {
@@ -3429,16 +3429,16 @@ module.exports = (function() {
   };
   return {
     fromJson: function(json, design) {
-      var child, componentArray, containerName, model, name, styleName, template, value, _i, _len, _ref, _ref1, _ref2;
+      var child, componentArray, containerName, i, len, model, name, ref, ref1, ref2, styleName, template, value;
       template = design.get(json.component || json.identifier);
       assert(template, "error while deserializing component: unknown template identifier '" + json.identifier + "'");
       model = new ComponentModel({
         template: template,
         id: json.id
       });
-      _ref = json.content;
-      for (name in _ref) {
-        value = _ref[name];
+      ref = json.content;
+      for (name in ref) {
+        value = ref[name];
         assert(model.content.hasOwnProperty(name), "error while deserializing component " + model.componentName + ": unknown content '" + name + "'");
         if (model.directives.get(name).type === 'image' && typeof value === 'string') {
           model.content[name] = {
@@ -3448,22 +3448,22 @@ module.exports = (function() {
           model.content[name] = value;
         }
       }
-      _ref1 = json.styles;
-      for (styleName in _ref1) {
-        value = _ref1[styleName];
+      ref1 = json.styles;
+      for (styleName in ref1) {
+        value = ref1[styleName];
         model.setStyle(styleName, value);
       }
       if (json.data) {
         model.data(json.data);
       }
-      _ref2 = json.containers;
-      for (containerName in _ref2) {
-        componentArray = _ref2[containerName];
+      ref2 = json.containers;
+      for (containerName in ref2) {
+        componentArray = ref2[containerName];
         assert(model.containers.hasOwnProperty(containerName), "error while deserializing component: unknown container " + containerName);
         if (componentArray) {
           assert($.isArray(componentArray), "error while deserializing component: container is not array " + containerName);
-          for (_i = 0, _len = componentArray.length; _i < _len; _i++) {
-            child = componentArray[_i];
+          for (i = 0, len = componentArray.length; i < len; i++) {
+            child = componentArray[i];
             model.append(containerName, this.fromJson(child, design));
           }
         }
@@ -3477,7 +3477,7 @@ module.exports = (function() {
 
 },{"../configuration/config":26,"../modules/guid":48,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/serialization":53,"./component_model":17,"deep-equal":1,"jquery":"jquery"}],19:[function(require,module,exports){
 var $, ComponentArray, ComponentContainer, ComponentModel, ComponentTree, assert, componentModelSerializer,
-  __slice = [].slice;
+  slice = [].slice;
 
 $ = require('jquery');
 
@@ -3492,9 +3492,9 @@ ComponentModel = require('./component_model');
 componentModelSerializer = require('./component_model_serializer');
 
 module.exports = ComponentTree = (function() {
-  function ComponentTree(_arg) {
-    var content, _ref;
-    _ref = _arg != null ? _arg : {}, content = _ref.content, this.design = _ref.design;
+  function ComponentTree(arg) {
+    var content, ref;
+    ref = arg != null ? arg : {}, content = ref.content, this.design = ref.design;
     assert(this.design != null, "Error instantiating ComponentTree: design param is misssing.");
     this.componentById = {};
     this.root = new ComponentContainer({
@@ -3608,17 +3608,17 @@ module.exports = ComponentTree = (function() {
     return oldRoot;
   };
 
-  ComponentTree.prototype.setMainView = function(_arg) {
+  ComponentTree.prototype.setMainView = function(arg) {
     var renderer;
-    renderer = _arg.renderer;
+    renderer = arg.renderer;
     assert(renderer, 'componentTree.setMainView: view does not have an initialized renderer');
     assert(renderer.componentTree === this, 'componentTree.setMainView: Cannot set renderer from different componentTree');
     return this.mainRenderer = renderer;
   };
 
   ComponentTree.prototype.getMainComponentView = function(componentId) {
-    var _ref;
-    return (_ref = this.mainRenderer) != null ? _ref.getComponentViewById(componentId) : void 0;
+    var ref;
+    return (ref = this.mainRenderer) != null ? ref.getComponentViewById(componentId) : void 0;
   };
 
   ComponentTree.prototype.isDropAllowed = function(component, targetObj) {
@@ -3645,16 +3645,16 @@ module.exports = ComponentTree = (function() {
       return output += "" + (Array(indentation + 1).join(" ")) + text + "\n";
     };
     walker = function(component, indentation) {
-      var componentContainer, name, template, _ref;
+      var componentContainer, name, ref, template;
       if (indentation == null) {
         indentation = 0;
       }
       template = component.template;
       addLine("- " + template.label + " (" + template.name + ")", indentation);
-      _ref = component.containers;
-      for (name in _ref) {
-        componentContainer = _ref[name];
-        addLine("" + name + ":", indentation + 2);
+      ref = component.containers;
+      for (name in ref) {
+        componentContainer = ref[name];
+        addLine(name + ":", indentation + 2);
         if (componentContainer.first) {
           walker(componentContainer.first, indentation + 4);
         }
@@ -3690,7 +3690,7 @@ module.exports = ComponentTree = (function() {
 
   ComponentTree.prototype.fireEvent = function() {
     var args, event;
-    event = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    event = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
     this[event].fire.apply(void 0, args);
     return this.changed.fire();
   };
@@ -3737,11 +3737,11 @@ module.exports = ComponentTree = (function() {
       return componentData;
     };
     walker = function(component, level, dataObj) {
-      var componentContainer, componentData, containerArray, name, _ref;
+      var componentContainer, componentData, containerArray, name, ref;
       componentData = componentToData(component, level, dataObj);
-      _ref = component.containers;
-      for (name in _ref) {
-        componentContainer = _ref[name];
+      ref = component.containers;
+      for (name in ref) {
+        componentContainer = ref[name];
         containerArray = componentData.containers[componentContainer.name] = [];
         if (componentContainer.first) {
           walker(componentContainer.first, level + 1, containerArray);
@@ -3758,7 +3758,7 @@ module.exports = ComponentTree = (function() {
   };
 
   ComponentTree.prototype.fromData = function(data, design, silent) {
-    var component, componentData, _i, _len, _ref;
+    var component, componentData, i, len, ref;
     if (silent == null) {
       silent = true;
     }
@@ -3771,9 +3771,9 @@ module.exports = ComponentTree = (function() {
       this.root.componentTree = void 0;
     }
     if (data.content) {
-      _ref = data.content;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        componentData = _ref[_i];
+      ref = data.content;
+      for (i = 0, len = ref.length; i < len; i++) {
+        componentData = ref[i];
         component = componentModelSerializer.fromJson(componentData, design);
         this.root.append(component);
       }
@@ -3794,14 +3794,14 @@ module.exports = ComponentTree = (function() {
   };
 
   ComponentTree.prototype.addDataWithAnimation = function(data, delay) {
-    var componentData, timeout, _fn, _i, _len, _ref, _results;
+    var componentData, fn, i, len, ref, results, timeout;
     if (delay == null) {
       delay = 200;
     }
     assert(this.design != null, 'Error adding data. ComponentTree has no design');
     timeout = Number(delay);
-    _ref = data.content;
-    _fn = (function(_this) {
+    ref = data.content;
+    fn = (function(_this) {
       return function() {
         var content;
         content = componentData;
@@ -3812,13 +3812,13 @@ module.exports = ComponentTree = (function() {
         }, timeout);
       };
     })(this);
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      componentData = _ref[_i];
-      _fn();
-      _results.push(timeout += Number(delay));
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      componentData = ref[i];
+      fn();
+      results.push(timeout += Number(delay));
     }
-    return _results;
+    return results;
   };
 
   ComponentTree.prototype.toData = function() {
@@ -3827,13 +3827,13 @@ module.exports = ComponentTree = (function() {
 
   ComponentTree.prototype.fromJson = function() {
     var args;
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
     return this.fromData.apply(this, args);
   };
 
   ComponentTree.prototype.toJson = function() {
     var args;
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
     return this.toData.apply(this, args);
   };
 
@@ -3845,8 +3845,8 @@ module.exports = ComponentTree = (function() {
 
 },{"../modules/logging/assert":49,"./component_array":13,"./component_container":14,"./component_model":17,"./component_model_serializer":18,"jquery":"jquery"}],20:[function(require,module,exports){
 var ComponentDirective, EditableDirective, assert, words,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 assert = require('../modules/logging/assert');
 
@@ -3854,8 +3854,8 @@ words = require('../modules/words');
 
 ComponentDirective = require('./component_directive');
 
-module.exports = EditableDirective = (function(_super) {
-  __extends(EditableDirective, _super);
+module.exports = EditableDirective = (function(superClass) {
+  extend(EditableDirective, superClass);
 
   function EditableDirective() {
     return EditableDirective.__super__.constructor.apply(this, arguments);
@@ -3879,8 +3879,8 @@ module.exports = EditableDirective = (function(_super) {
 
 
 },{"../modules/logging/assert":49,"../modules/words":54,"./component_directive":15}],21:[function(require,module,exports){
-var $, FieldExtractor, assert, _,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var $, FieldExtractor, _, assert,
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 assert = require('../modules/logging/assert');
 
@@ -3892,9 +3892,9 @@ module.exports = FieldExtractor = (function() {
   function FieldExtractor(componentTree, metadataConfig) {
     this.componentTree = componentTree;
     this.metadataConfig = metadataConfig;
-    this.onComponentChange = __bind(this.onComponentChange, this);
-    this.extractAll = __bind(this.extractAll, this);
-    this.onTreeChange = __bind(this.onTreeChange, this);
+    this.onComponentChange = bind(this.onComponentChange, this);
+    this.extractAll = bind(this.extractAll, this);
+    this.onTreeChange = bind(this.onTreeChange, this);
     this.fields = {};
     this.initEvents();
     this.extractAll();
@@ -3909,14 +3909,14 @@ module.exports = FieldExtractor = (function() {
   };
 
   FieldExtractor.prototype.onTreeChange = function(componentModel) {
-    var changedFields, componentName, field, fieldName, fieldsHaveChanged, fieldsToExtract, _ref;
+    var changedFields, componentName, field, fieldName, fieldsHaveChanged, fieldsToExtract, ref;
     componentName = componentModel.componentName;
     fieldsToExtract = this.metadataConfig.getComponentMap()[componentName];
     changedFields = {};
     fieldsHaveChanged = false;
-    _ref = this.extractFields(fieldsToExtract);
-    for (fieldName in _ref) {
-      field = _ref[fieldName];
+    ref = this.extractFields(fieldsToExtract);
+    for (fieldName in ref) {
+      field = ref[fieldName];
       if (!(!_.isEqual(this.fields[fieldName], field))) {
         continue;
       }
@@ -3946,9 +3946,9 @@ module.exports = FieldExtractor = (function() {
     });
     this.componentTree.each((function(_this) {
       return function(componentModel) {
-        var componentName, newFields, _ref;
+        var componentName, newFields, ref;
         componentName = componentModel.componentName;
-        if (!((_ref = fieldsByComponentToExtract[componentName]) != null ? _ref.length : void 0)) {
+        if (!((ref = fieldsByComponentToExtract[componentName]) != null ? ref.length : void 0)) {
           return;
         }
         newFields = _this.extractFieldsFromComponent(componentModel, fieldsByComponentToExtract[componentName]);
@@ -3997,11 +3997,11 @@ module.exports = FieldExtractor = (function() {
     directiveModel = componentModel.directives.get(directiveName);
     _(fieldNames).forEach((function(_this) {
       return function(fieldName) {
-        var field, fieldIsEmpty, fieldWasEmpty, fieldWasFilledFromThisComponent, _ref;
+        var field, fieldIsEmpty, fieldWasEmpty, fieldWasFilledFromThisComponent, ref;
         field = directiveModel.isEmpty() ? void 0 : _this.extractFieldFromDirective(directiveModel, fieldName);
         fieldIsEmpty = field == null;
         fieldWasEmpty = _this.fields[fieldName] == null;
-        fieldWasFilledFromThisComponent = ((_ref = _this.fields[fieldName]) != null ? _ref.component.id : void 0) === componentModel.id;
+        fieldWasFilledFromThisComponent = ((ref = _this.fields[fieldName]) != null ? ref.component.id : void 0) === componentModel.id;
         if (fieldIsEmpty && fieldWasFilledFromThisComponent) {
           fieldsThatNeedFullExtraction.push(fieldName);
           return _this.fields[fieldName] = changedFields[fieldName] = void 0;
@@ -4053,7 +4053,7 @@ module.exports = FieldExtractor = (function() {
   };
 
   FieldExtractor.prototype.extractImageField = function(imageDirective) {
-    var _ref, _ref1;
+    var ref, ref1;
     return {
       component: imageDirective.component,
       directiveName: imageDirective.name,
@@ -4061,8 +4061,8 @@ module.exports = FieldExtractor = (function() {
       image: {
         originalUrl: imageDirective.getOriginalUrl(),
         url: imageDirective.getImageUrl(),
-        width: (_ref = imageDirective.getOriginalImageDimensions()) != null ? _ref.width : void 0,
-        height: (_ref1 = imageDirective.getOriginalImageDimensions()) != null ? _ref1.height : void 0,
+        width: (ref = imageDirective.getOriginalImageDimensions()) != null ? ref.width : void 0,
+        height: (ref1 = imageDirective.getOriginalImageDimensions()) != null ? ref1.height : void 0,
         imageService: imageDirective.getImageServiceName()
       }
     };
@@ -4080,15 +4080,15 @@ module.exports = FieldExtractor = (function() {
 
 },{"../modules/logging/assert":49,"jquery":"jquery","underscore":10}],22:[function(require,module,exports){
 var ComponentDirective, HtmlDirective, assert,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 assert = require('../modules/logging/assert');
 
 ComponentDirective = require('./component_directive');
 
-module.exports = HtmlDirective = (function(_super) {
-  __extends(HtmlDirective, _super);
+module.exports = HtmlDirective = (function(superClass) {
+  extend(HtmlDirective, superClass);
 
   function HtmlDirective() {
     return HtmlDirective.__super__.constructor.apply(this, arguments);
@@ -4112,8 +4112,8 @@ module.exports = HtmlDirective = (function(_super) {
 
 },{"../modules/logging/assert":49,"./component_directive":15}],23:[function(require,module,exports){
 var ComponentDirective, ImageDirective, assert, imageService,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 assert = require('../modules/logging/assert');
 
@@ -4121,8 +4121,8 @@ imageService = require('../image_services/image_service');
 
 ComponentDirective = require('./component_directive');
 
-module.exports = ImageDirective = (function(_super) {
-  __extends(ImageDirective, _super);
+module.exports = ImageDirective = (function(superClass) {
+  extend(ImageDirective, superClass);
 
   function ImageDirective() {
     return ImageDirective.__super__.constructor.apply(this, arguments);
@@ -4158,9 +4158,9 @@ module.exports = ImageDirective = (function(_super) {
   };
 
   ImageDirective.prototype.setImageUrl = function(value) {
-    var _base, _name;
-    if ((_base = this.component.content)[_name = this.name] == null) {
-      _base[_name] = {};
+    var base, name1;
+    if ((base = this.component.content)[name1 = this.name] == null) {
+      base[name1] = {};
     }
     this.component.content[this.name].url = value;
     this.resetCrop();
@@ -4183,8 +4183,8 @@ module.exports = ImageDirective = (function(_super) {
   };
 
   ImageDirective.prototype.getOriginalUrl = function() {
-    var _ref;
-    return ((_ref = this.component.content[this.name]) != null ? _ref.originalUrl : void 0) || this.getImageUrl();
+    var ref;
+    return ((ref = this.component.content[this.name]) != null ? ref.originalUrl : void 0) || this.getImageUrl();
   };
 
   ImageDirective.prototype.setCrop = function(crop) {
@@ -4215,9 +4215,9 @@ module.exports = ImageDirective = (function(_super) {
     return this.component.content[this.name].crop;
   };
 
-  ImageDirective.prototype.setOriginalImageDimensions = function(_arg) {
+  ImageDirective.prototype.setOriginalImageDimensions = function(arg) {
     var content, height, width;
-    width = _arg.width, height = _arg.height;
+    width = arg.width, height = arg.height;
     content = this.component.content[this.name];
     content.width = width;
     return content.height = height;
@@ -4259,8 +4259,8 @@ module.exports = ImageDirective = (function(_super) {
   };
 
   ImageDirective.prototype.getImageService = function() {
-    var serviceName, _ref;
-    serviceName = (_ref = this.component.content[this.name]) != null ? _ref.imageService : void 0;
+    var ref, serviceName;
+    serviceName = (ref = this.component.content[this.name]) != null ? ref.imageService : void 0;
     return imageService.get(serviceName || void 0);
   };
 
@@ -4284,13 +4284,13 @@ module.exports = ImageDirective = (function(_super) {
 
 },{"../image_services/image_service":36,"../modules/logging/assert":49,"./component_directive":15}],24:[function(require,module,exports){
 var ComponentDirective, LinkDirective,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 ComponentDirective = require('./component_directive');
 
-module.exports = LinkDirective = (function(_super) {
-  __extends(LinkDirective, _super);
+module.exports = LinkDirective = (function(superClass) {
+  extend(LinkDirective, superClass);
 
   function LinkDirective() {
     return LinkDirective.__super__.constructor.apply(this, arguments);
@@ -4306,13 +4306,13 @@ module.exports = LinkDirective = (function(_super) {
 
 },{"./component_directive":15}],25:[function(require,module,exports){
 module.exports = function(config) {
-  var name, prefix, value, _ref;
+  var name, prefix, ref, value;
   config.docDirective = {};
   config.templateAttrLookup = {};
-  _ref = config.directives;
-  for (name in _ref) {
-    value = _ref[name];
-    prefix = config.attributePrefix ? "" + config.attributePrefix + "-" : '';
+  ref = config.directives;
+  for (name in ref) {
+    value = ref[name];
+    prefix = config.attributePrefix ? config.attributePrefix + "-" : '';
     value.renderedAttr = "" + prefix + value.attr;
     config.docDirective[name] = value.renderedAttr;
     config.templateAttrLookup[value.attr] = name;
@@ -4406,7 +4406,7 @@ module.exports = augmentConfig({
       }
     }
   },
-  imagePlaceholder: "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjIwIiBoZWlnaHQ9IjM1MCIgdmlld0JveD0iMCAwIDYyMCAzNTAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjxyZWN0IHdpZHRoPSI2MjAiIGhlaWdodD0iMzUwIiBmaWxsPSIjRDRENENFIi8+PGxpbmUgeDE9IjAiIHkxPSIwIiB4Mj0iNjIwIiB5Mj0iMzUwIiBzdHlsZT0ic3Ryb2tlOiNmZmZmZmY7c3Ryb2tlLXdpZHRoOjIiLz48bGluZSB4MT0iNjIwIiB5MT0iMCIgeDI9IjAiIHkyPSIzNTAiIHN0eWxlPSJzdHJva2U6I2ZmZmZmZjtzdHJva2Utd2lkdGg6MiIvPjwvc3ZnPgo",
+  imagePlaceholder: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="620" height="350" viewBox="0 0 620 350" preserveAspectRatio="none"><rect width="620" height="350" fill="#D4D4CE"/><line x1="0" y1="0" x2="620" y2="350" style="stroke:#ffffff;stroke-width:2"/><line x1="620" y1="0" x2="0" y2="350" style="stroke:#ffffff;stroke-width:2"/></svg>'),
   imageServices: {
     'resrc.it': {
       quality: 75,
@@ -4434,48 +4434,48 @@ module.exports = MetadataConfig = (function() {
   }
 
   MetadataConfig.prototype.parse = function(config) {
-    var componentName, directive, fieldItemConfig, fieldName, isEditable, pattern, type, _base, _i, _len, _results;
-    _results = [];
-    for (_i = 0, _len = config.length; _i < _len; _i++) {
-      fieldItemConfig = config[_i];
+    var base, componentName, directive, fieldItemConfig, fieldName, i, isEditable, len, pattern, results, type;
+    results = [];
+    for (i = 0, len = config.length; i < len; i++) {
+      fieldItemConfig = config[i];
       fieldName = fieldItemConfig.identifier;
       type = fieldItemConfig.type;
       this.fieldsArray.push(fieldName);
       this.configMap[fieldName] = fieldItemConfig;
-      if ((_base = this.fieldMap)[fieldName] == null) {
-        _base[fieldName] = {};
+      if ((base = this.fieldMap)[fieldName] == null) {
+        base[fieldName] = {};
       }
       isEditable = fieldItemConfig.isEditable != null ? !!fieldItemConfig.isEditable : true;
       if (isEditable) {
         this.editableFieldsArray.push(fieldName);
       }
-      _results.push((function() {
-        var _base1, _base2, _base3, _base4, _j, _len1, _ref, _ref1, _results1;
-        _ref = fieldItemConfig.matches;
-        _results1 = [];
-        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-          pattern = _ref[_j];
-          _ref1 = pattern.split('.'), componentName = _ref1[0], directive = _ref1[1];
-          if ((_base1 = this.componentDirectiveMap)[componentName] == null) {
-            _base1[componentName] = {};
+      results.push((function() {
+        var base1, base2, base3, base4, j, len1, ref, ref1, results1;
+        ref = fieldItemConfig.matches;
+        results1 = [];
+        for (j = 0, len1 = ref.length; j < len1; j++) {
+          pattern = ref[j];
+          ref1 = pattern.split('.'), componentName = ref1[0], directive = ref1[1];
+          if ((base1 = this.componentDirectiveMap)[componentName] == null) {
+            base1[componentName] = {};
           }
-          if ((_base2 = this.componentDirectiveMap[componentName])[directive] == null) {
-            _base2[directive] = [];
+          if ((base2 = this.componentDirectiveMap[componentName])[directive] == null) {
+            base2[directive] = [];
           }
           this.componentDirectiveMap[componentName][directive].push(fieldName);
-          if ((_base3 = this.componentMap)[componentName] == null) {
-            _base3[componentName] = [];
+          if ((base3 = this.componentMap)[componentName] == null) {
+            base3[componentName] = [];
           }
           this.componentMap[componentName].push(fieldName);
-          if ((_base4 = this.fieldMap[fieldName])[componentName] == null) {
-            _base4[componentName] = [];
+          if ((base4 = this.fieldMap[fieldName])[componentName] == null) {
+            base4[componentName] = [];
           }
-          _results1.push(this.fieldMap[fieldName][componentName].push(directive));
+          results1.push(this.fieldMap[fieldName][componentName].push(directive));
         }
-        return _results1;
+        return results1;
       }).call(this));
     }
-    return _results;
+    return results;
   };
 
   MetadataConfig.prototype.getListOfEditableFields = function() {
@@ -4495,8 +4495,8 @@ module.exports = MetadataConfig = (function() {
   };
 
   MetadataConfig.prototype.getFieldsBySource = function(componentName, directive) {
-    var _ref;
-    return ((_ref = this.componentDirectiveMap[componentName]) != null ? _ref[directive] : void 0) || [];
+    var ref;
+    return ((ref = this.componentDirectiveMap[componentName]) != null ? ref[directive] : void 0) || [];
   };
 
   MetadataConfig.prototype.getDirectivesByComponentAndField = function(componentName, fieldName) {
@@ -4519,9 +4519,9 @@ assert = require('../modules/logging/assert');
 words = require('../modules/words');
 
 module.exports = CssModificatorProperty = (function() {
-  function CssModificatorProperty(_arg) {
+  function CssModificatorProperty(arg) {
     var label, options, value;
-    this.name = _arg.name, label = _arg.label, this.type = _arg.type, value = _arg.value, options = _arg.options;
+    this.name = arg.name, label = arg.label, this.type = arg.type, value = arg.value, options = arg.options;
     this.label = label || words.humanize(this.name);
     switch (this.type) {
       case 'option':
@@ -4578,10 +4578,10 @@ module.exports = CssModificatorProperty = (function() {
   };
 
   CssModificatorProperty.prototype.containsOption = function(value) {
-    var option, _i, _len, _ref;
-    _ref = this.options;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      option = _ref[_i];
+    var i, len, option, ref;
+    ref = this.options;
+    for (i = 0, len = ref.length; i < len; i++) {
+      option = ref[i];
       if (value === option.value) {
         return true;
       }
@@ -4590,11 +4590,11 @@ module.exports = CssModificatorProperty = (function() {
   };
 
   CssModificatorProperty.prototype.otherOptions = function(value) {
-    var option, others, _i, _len, _ref;
+    var i, len, option, others, ref;
     others = [];
-    _ref = this.options;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      option = _ref[_i];
+    ref = this.options;
+    for (i = 0, len = ref.length; i < len; i++) {
+      option = ref[i];
       if (option.value !== value) {
         others.push(option);
       }
@@ -4603,11 +4603,11 @@ module.exports = CssModificatorProperty = (function() {
   };
 
   CssModificatorProperty.prototype.otherClasses = function(value) {
-    var option, others, _i, _len, _ref;
+    var i, len, option, others, ref;
     others = [];
-    _ref = this.options;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      option = _ref[_i];
+    ref = this.options;
+    for (i = 0, len = ref.length; i < len; i++) {
+      option = ref[i];
       if (option.value !== value) {
         others.push(option.value);
       }
@@ -4622,7 +4622,7 @@ module.exports = CssModificatorProperty = (function() {
 
 
 },{"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/words":54}],29:[function(require,module,exports){
-var Dependencies, Design, OrderedHash, Template, assert, config, log, words, _;
+var Dependencies, Design, OrderedHash, Template, _, assert, config, log, words;
 
 config = require('../configuration/config');
 
@@ -4641,9 +4641,9 @@ Dependencies = require('../rendering/dependencies');
 _ = require('underscore');
 
 module.exports = Design = (function() {
-  function Design(_arg) {
+  function Design(arg) {
     var label;
-    this.name = _arg.name, this.version = _arg.version, label = _arg.label, this.author = _arg.author, this.description = _arg.description;
+    this.name = arg.name, this.version = arg.version, label = arg.label, this.author = arg.author, this.description = arg.description;
     assert(this.name != null, 'Design: param "name" is required');
     this.label = label || words.humanize(this.name);
     this.identifier = Design.getIdentifier(this.name, this.version);
@@ -4696,18 +4696,18 @@ module.exports = Design = (function() {
   };
 
   Design.prototype.getDefaultParagraphComponentName = function() {
-    var _ref;
-    return (_ref = this.getDefaultParagraphTemplate()) != null ? _ref.name : void 0;
+    var ref;
+    return (ref = this.getDefaultParagraphTemplate()) != null ? ref.name : void 0;
   };
 
   Design.prototype.getDefaultImageComponentName = function() {
-    var _ref;
-    return (_ref = this.getDefaultImageTemplate()) != null ? _ref.name : void 0;
+    var ref;
+    return (ref = this.getDefaultImageTemplate()) != null ? ref.name : void 0;
   };
 
   Design.prototype.getDefaultImageDirectiveName = function() {
-    var _ref, _ref1;
-    return (_ref = this.defaultImage) != null ? (_ref1 = _ref.directives.firstOfType('image')) != null ? _ref1.name : void 0 : void 0;
+    var ref, ref1;
+    return (ref = this.defaultImage) != null ? (ref1 = ref.directives.firstOfType('image')) != null ? ref1.name : void 0 : void 0;
   };
 
   Design.prototype.getLayout = function(name) {
@@ -4729,7 +4729,7 @@ module.exports = Design = (function() {
 
   Design.getIdentifier = function(name, version) {
     if (version) {
-      return "" + name + "@" + version;
+      return name + "@" + version;
     } else {
       return "" + name;
     }
@@ -4755,9 +4755,9 @@ Version = require('./version');
 module.exports = (function() {
   return {
     designs: {},
-    load: function(designSpec, _arg) {
+    load: function(designSpec, arg) {
       var basePath, design, designIdentifier, version;
-      basePath = (_arg != null ? _arg : {}).basePath;
+      basePath = (arg != null ? arg : {}).basePath;
       assert(designSpec != null, 'design.load() was called with undefined.');
       assert(!(typeof designSpec === 'string'), 'design.load() loading a design by name is not implemented.');
       version = Version.parse(designSpec.version);
@@ -4826,10 +4826,10 @@ validator.add('wrapper', function(value) {
 });
 
 validator.add('one empty option', function(value) {
-  var emptyCount, entry, _i, _len;
+  var emptyCount, entry, i, len;
   emptyCount = 0;
-  for (_i = 0, _len = value.length; _i < _len; _i++) {
-    entry = value[_i];
+  for (i = 0, len = value.length; i < len; i++) {
+    entry = value[i];
     if (!entry.value) {
       emptyCount += 1;
     }
@@ -5009,53 +5009,53 @@ module.exports = designParser = {
     })(this));
   },
   eachAsset: function(data, callback) {
-    var entry, _i, _len, _results;
+    var entry, i, len, results;
     if (data == null) {
       return;
     }
     if ($.type(data) === 'string') {
       return callback(data);
     } else {
-      _results = [];
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        entry = data[_i];
-        _results.push(callback(entry));
+      results = [];
+      for (i = 0, len = data.length; i < len; i++) {
+        entry = data[i];
+        results.push(callback(entry));
       }
-      return _results;
+      return results;
     }
   },
   parseComponentProperties: function(componentProperties) {
-    var config, name, _results;
+    var config, name, results;
     this.componentProperties = {};
-    _results = [];
+    results = [];
     for (name in componentProperties) {
       config = componentProperties[name];
       config.name = name;
-      _results.push(this.componentProperties[name] = this.createComponentProperty(config));
+      results.push(this.componentProperties[name] = this.createComponentProperty(config));
     }
-    return _results;
+    return results;
   },
   parseImageRatios: function(ratios) {
-    var name, ratio, _results;
-    _results = [];
+    var name, ratio, results;
+    results = [];
     for (name in ratios) {
       ratio = ratios[name];
-      _results.push(this.design.imageRatios[name] = new ImageRatio({
+      results.push(this.design.imageRatios[name] = new ImageRatio({
         name: name,
         label: ratio.label,
         ratio: ratio.ratio
       }));
     }
-    return _results;
+    return results;
   },
   parseComponents: function(components) {
-    var allowedParents, directives, html, label, name, properties, template, _i, _len, _ref, _results;
+    var allowedParents, directives, html, i, label, len, name, properties, ref, results, template;
     if (components == null) {
       components = [];
     }
-    _results = [];
-    for (_i = 0, _len = components.length; _i < _len; _i++) {
-      _ref = components[_i], name = _ref.name, label = _ref.label, html = _ref.html, properties = _ref.properties, directives = _ref.directives, allowedParents = _ref.allowedParents;
+    results = [];
+    for (i = 0, len = components.length; i < len; i++) {
+      ref = components[i], name = ref.name, label = ref.label, html = ref.html, properties = ref.properties, directives = ref.directives, allowedParents = ref.allowedParents;
       properties = this.lookupComponentProperties(properties);
       template = new Template({
         name: name,
@@ -5065,13 +5065,13 @@ module.exports = designParser = {
         allowedParents: allowedParents
       });
       this.parseDirectives(template, directives);
-      _results.push(this.design.add(template));
+      results.push(this.design.add(template));
     }
-    return _results;
+    return results;
   },
   parseDirectives: function(template, directivesConfig) {
-    var conf, directive, directiveConfig, name, _results;
-    _results = [];
+    var conf, directive, directiveConfig, name, results;
+    results = [];
     for (name in directivesConfig) {
       conf = directivesConfig[name];
       directive = template.directives.get(name);
@@ -5080,16 +5080,16 @@ module.exports = designParser = {
       if (conf.imageRatios) {
         directiveConfig.imageRatios = this.lookupImageRatios(conf.imageRatios);
       }
-      _results.push(directive.setConfig(directiveConfig));
+      results.push(directive.setConfig(directiveConfig));
     }
-    return _results;
+    return results;
   },
   lookupComponentProperties: function(propertyNames) {
-    var name, properties, property, _i, _len, _ref;
+    var i, len, name, properties, property, ref;
     properties = {};
-    _ref = propertyNames || [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      name = _ref[_i];
+    ref = propertyNames || [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      name = ref[i];
       property = this.componentProperties[name];
       assert(property, "The componentProperty '" + name + "' was not found.");
       properties[name] = property;
@@ -5110,29 +5110,29 @@ module.exports = designParser = {
     })(this));
   },
   parseGroups: function(groups) {
-    var componentName, components, group, _i, _len, _results;
+    var componentName, components, group, i, len, results;
     if (groups == null) {
       groups = [];
     }
-    _results = [];
-    for (_i = 0, _len = groups.length; _i < _len; _i++) {
-      group = groups[_i];
+    results = [];
+    for (i = 0, len = groups.length; i < len; i++) {
+      group = groups[i];
       components = (function() {
-        var _j, _len1, _ref, _results1;
-        _ref = group.components;
-        _results1 = [];
-        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-          componentName = _ref[_j];
-          _results1.push(this.design.get(componentName));
+        var j, len1, ref, results1;
+        ref = group.components;
+        results1 = [];
+        for (j = 0, len1 = ref.length; j < len1; j++) {
+          componentName = ref[j];
+          results1.push(this.design.get(componentName));
         }
-        return _results1;
+        return results1;
       }).call(this);
-      _results.push(this.design.groups.push({
+      results.push(this.design.groups.push({
         label: group.label,
         components: components
       }));
     }
-    return _results;
+    return results;
   },
   parseDefaults: function(defaultComponents) {
     var image, paragraph;
@@ -5157,10 +5157,10 @@ module.exports = designParser = {
     return new CssModificatorProperty(styleDefinition);
   },
   mapArray: function(entries, lookup) {
-    var entry, newArray, val, _i, _len;
+    var entry, i, len, newArray, val;
     newArray = [];
-    for (_i = 0, _len = entries.length; _i < _len; _i++) {
-      entry = entries[_i];
+    for (i = 0, len = entries.length; i < len; i++) {
+      entry = entries[i];
       val = lookup(entry);
       if (val != null) {
         newArray.push(val);
@@ -5188,9 +5188,9 @@ module.exports = ImageRatio = (function() {
 
   ratioString = /(\d+)[\/:x](\d+)/;
 
-  function ImageRatio(_arg) {
+  function ImageRatio(arg) {
     var label, ratio;
-    this.name = _arg.name, label = _arg.label, ratio = _arg.ratio;
+    this.name = arg.name, label = arg.label, ratio = arg.ratio;
     this.label = label || words.humanize(this.name);
     this.ratio = this.parseRatio(ratio);
   }
@@ -5237,7 +5237,7 @@ module.exports = Version = (function() {
   };
 
   Version.prototype.toString = function() {
-    return "" + this.major + "." + this.minor + "." + this.patch + (this.addendum || '');
+    return this.major + "." + this.minor + "." + this.patch + (this.addendum || '');
   };
 
   Version.parse = function(versionString) {
@@ -5340,13 +5340,13 @@ module.exports = (function() {
       return services[serviceName];
     },
     eachService: function(callback) {
-      var name, service, _results;
-      _results = [];
+      var name, results, service;
+      results = [];
       for (name in services) {
         service = services[name];
-        _results.push(callback(name, service));
+        results.push(callback(name, service));
       }
-      return _results;
+      return results;
     }
   };
 })();
@@ -5377,9 +5377,9 @@ module.exports = (function() {
         return this.setBackgroundImage($elem, url);
       }
     },
-    getUrl: function(value, _arg) {
-      var crop, height, q, quality, style, width, x, y, _ref;
-      _ref = _arg != null ? _arg : {}, crop = _ref.crop, quality = _ref.quality;
+    getUrl: function(value, arg) {
+      var crop, height, q, quality, ref, style, width, x, y;
+      ref = arg != null ? arg : {}, crop = ref.crop, quality = ref.quality;
       style = "";
       if (crop != null) {
         x = crop.x, y = crop.y, width = crop.width, height = crop.height;
@@ -5435,9 +5435,9 @@ module.exports = ComponentDrag = (function() {
 
   startAndEndOffset = 0;
 
-  function ComponentDrag(_arg) {
+  function ComponentDrag(arg) {
     var componentView;
-    this.componentModel = _arg.componentModel, componentView = _arg.componentView;
+    this.componentModel = arg.componentModel, componentView = arg.componentView;
     if (componentView) {
       this.$view = componentView.$html;
     }
@@ -5462,15 +5462,15 @@ module.exports = ComponentDrag = (function() {
 
   ComponentDrag.prototype.move = function(eventPosition) {
     this.$placeholder.css({
-      left: "" + eventPosition.pageX + "px",
-      top: "" + eventPosition.pageY + "px"
+      left: eventPosition.pageX + "px",
+      top: eventPosition.pageY + "px"
     });
     return this.target = this.findDropTarget(eventPosition);
   };
 
   ComponentDrag.prototype.findDropTarget = function(eventPosition) {
-    var coords, elem, target, _ref, _ref1;
-    _ref = this.getElemUnderCursor(eventPosition), eventPosition = _ref.eventPosition, elem = _ref.elem;
+    var coords, elem, ref, ref1, target;
+    ref = this.getElemUnderCursor(eventPosition), eventPosition = ref.eventPosition, elem = ref.elem;
     if (elem == null) {
       return void 0;
     }
@@ -5488,7 +5488,7 @@ module.exports = ComponentDrag = (function() {
       target = void 0;
     }
     this.undoMakeSpace();
-    if ((target != null) && ((_ref1 = target.componentView) != null ? _ref1.model : void 0) !== this.componentModel) {
+    if ((target != null) && ((ref1 = target.componentView) != null ? ref1.model : void 0) !== this.componentModel) {
       this.$placeholder.removeClass(css.noDrop);
       this.markDropPosition(target);
       return target;
@@ -5600,9 +5600,9 @@ module.exports = ComponentDrag = (function() {
     });
   };
 
-  ComponentDrag.prototype.showMarker = function(_arg) {
+  ComponentDrag.prototype.showMarker = function(arg) {
     var $body, left, top, width;
-    left = _arg.left, top = _arg.top, width = _arg.width;
+    left = arg.left, top = arg.top, width = arg.width;
     if (this.iframeBox != null) {
       $body = $(this.iframeBox.window.document.body);
       top -= $body.scrollTop();
@@ -5618,9 +5618,9 @@ module.exports = ComponentDrag = (function() {
       });
     }
     return this.$dropMarker.css({
-      left: "" + left + "px",
-      top: "" + top + "px",
-      width: "" + width + "px"
+      left: left + "px",
+      top: top + "px",
+      width: width + "px"
     }).show();
   };
 
@@ -5652,20 +5652,20 @@ module.exports = ComponentDrag = (function() {
   };
 
   ComponentDrag.prototype.highlighContainer = function($container) {
-    var _base, _base1;
+    var base, base1;
     if ($container[0] !== this.$highlightedContainer[0]) {
-      if (typeof (_base = this.$highlightedContainer).removeClass === "function") {
-        _base.removeClass(css.containerHighlight);
+      if (typeof (base = this.$highlightedContainer).removeClass === "function") {
+        base.removeClass(css.containerHighlight);
       }
       this.$highlightedContainer = $container;
-      return typeof (_base1 = this.$highlightedContainer).addClass === "function" ? _base1.addClass(css.containerHighlight) : void 0;
+      return typeof (base1 = this.$highlightedContainer).addClass === "function" ? base1.addClass(css.containerHighlight) : void 0;
     }
   };
 
   ComponentDrag.prototype.removeContainerHighlight = function() {
-    var _base;
-    if (typeof (_base = this.$highlightedContainer).removeClass === "function") {
-      _base.removeClass(css.containerHighlight);
+    var base;
+    if (typeof (base = this.$highlightedContainer).removeClass === "function") {
+      base.removeClass(css.containerHighlight);
     }
     return this.$highlightedContainer = {};
   };
@@ -5675,13 +5675,13 @@ module.exports = ComponentDrag = (function() {
     elem = void 0;
     this.unblockElementFromPoint((function(_this) {
       return function() {
-        var clientX, clientY, _ref;
+        var clientX, clientY, ref;
         clientX = eventPosition.clientX, clientY = eventPosition.clientY;
         if ((clientX != null) && (clientY != null)) {
           elem = _this.page.document.elementFromPoint(clientX, clientY);
         }
         if ((elem != null ? elem.nodeName : void 0) === 'IFRAME') {
-          return _ref = _this.findElemInIframe(elem, eventPosition), eventPosition = _ref.eventPosition, elem = _ref.elem, _ref;
+          return ref = _this.findElemInIframe(elem, eventPosition), eventPosition = ref.eventPosition, elem = ref.elem, ref;
         } else {
           return _this.iframeBox = void 0;
         }
@@ -5791,9 +5791,9 @@ module.exports = ComponentDrag = (function() {
 var ContainerEvent;
 
 module.exports = ContainerEvent = (function() {
-  function ContainerEvent(_arg) {
+  function ContainerEvent(arg) {
     var blur, focus;
-    this.target = _arg.target, focus = _arg.focus, blur = _arg.blur;
+    this.target = arg.target, focus = arg.focus, blur = arg.blur;
     this.type = focus ? 'containerFocus' : blur ? 'containerBlur' : void 0;
   }
 
@@ -5915,9 +5915,9 @@ module.exports = (function() {
         return editableName;
       }
     },
-    dropTarget: function(node, _arg) {
+    dropTarget: function(node, arg) {
       var closestComponentData, containerAttr, left, top;
-      top = _arg.top, left = _arg.left;
+      top = arg.top, left = arg.left;
       node = this.getElementNode(node);
       containerAttr = config.directives.container.renderedAttr;
       while (node && node.nodeType === 1) {
@@ -5950,9 +5950,9 @@ module.exports = (function() {
         node = node.parentNode;
       }
     },
-    getComponentTarget: function(elem, _arg) {
+    getComponentTarget: function(elem, arg) {
       var left, position, top;
-      top = _arg.top, left = _arg.left, position = _arg.position;
+      top = arg.top, left = arg.left, position = arg.position;
       return {
         target: 'component',
         componentView: this.getComponentView(elem),
@@ -5990,9 +5990,9 @@ module.exports = (function() {
         componentTree: componentTree
       };
     },
-    getPositionOnComponent: function(elem, _arg) {
+    getPositionOnComponent: function(elem, arg) {
       var $elem, elemBottom, elemHeight, elemTop, left, top;
-      top = _arg.top, left = _arg.left;
+      top = arg.top, left = arg.left;
       $elem = $(elem);
       elemTop = $elem.offset().top;
       elemHeight = $elem.outerHeight();
@@ -6003,9 +6003,9 @@ module.exports = (function() {
         return 'after';
       }
     },
-    getClosestComponent: function(container, _arg) {
+    getClosestComponent: function(container, arg) {
       var $components, closest, closestComponent, left, top;
-      top = _arg.top, left = _arg.left;
+      top = arg.top, left = arg.left;
       $components = $(container).find("." + css.component);
       closest = void 0;
       closestComponent = void 0;
@@ -6042,12 +6042,12 @@ module.exports = (function() {
       }
     },
     maximizeContainerHeight: function(view) {
-      var $elem, $parent, elem, name, outer, parentHeight, _ref, _results;
+      var $elem, $parent, elem, name, outer, parentHeight, ref, results;
       if (view.template.containerCount > 1) {
-        _ref = view.containers;
-        _results = [];
-        for (name in _ref) {
-          elem = _ref[name];
+        ref = view.containers;
+        results = [];
+        for (name in ref) {
+          elem = ref[name];
           $elem = $(elem);
           if ($elem.hasClass(css.maximizedContainer)) {
             continue;
@@ -6056,9 +6056,9 @@ module.exports = (function() {
           parentHeight = $parent.height();
           outer = $elem.outerHeight(true) - $elem.height();
           $elem.height(parentHeight - outer);
-          _results.push($elem.addClass(css.maximizedContainer));
+          results.push($elem.addClass(css.maximizedContainer));
         }
-        return _results;
+        return results;
       }
     },
     restoreContainerHeight: function() {
@@ -6077,9 +6077,9 @@ module.exports = (function() {
       return $(node).data('componentView');
     },
     getAbsoluteBoundingClientRect: function(node) {
-      var coords, scrollX, scrollY, win, _ref;
+      var coords, ref, scrollX, scrollY, win;
       win = node.ownerDocument.defaultView;
-      _ref = this.getScrollPosition(win), scrollX = _ref.scrollX, scrollY = _ref.scrollY;
+      ref = this.getScrollPosition(win), scrollX = ref.scrollX, scrollY = ref.scrollY;
       coords = node.getBoundingClientRect();
       coords = {
         top: coords.top + scrollY,
@@ -6235,9 +6235,9 @@ module.exports = DragBase = (function() {
     return this.page.$body.find("." + css.dragBlocker).remove();
   };
 
-  DragBase.prototype.addLongpressIndicator = function(_arg) {
+  DragBase.prototype.addLongpressIndicator = function(arg) {
     var $indicator, pageX, pageY;
-    pageX = _arg.pageX, pageY = _arg.pageY;
+    pageX = arg.pageX, pageY = arg.pageY;
     if (!this.options.longpress.showIndicator) {
       return;
     }
@@ -6330,7 +6330,7 @@ module.exports = DragBase = (function() {
 
 },{"../configuration/config":26}],42:[function(require,module,exports){
 var EditableController, config, dom,
-  __slice = [].slice;
+  slice = [].slice;
 
 dom = require('./dom');
 
@@ -6365,7 +6365,7 @@ module.exports = EditableController = (function() {
     return (function(_this) {
       return function() {
         var args, editableName, element, view;
-        element = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+        element = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
         view = dom.findComponentView(element);
         editableName = element.getAttribute(_this.editableAttr);
         args.unshift(view, editableName);
@@ -6422,16 +6422,16 @@ module.exports = EditableController = (function() {
   };
 
   EditableController.prototype.paste = function(view, editableName, blocks, cursor) {
-    var block, currentBlock, defaultParagraph, firstBlock, firstEditable, index, newBlock, viewDirective, _i, _len, _ref;
+    var block, currentBlock, defaultParagraph, firstBlock, firstEditable, i, index, len, newBlock, ref, viewDirective;
     firstBlock = blocks[0];
     cursor.insertBefore(firstBlock);
     if (blocks.length <= 1) {
       cursor.setVisibleSelection();
     } else {
       defaultParagraph = this.page.design.defaultParagraph;
-      firstEditable = (_ref = defaultParagraph.directives['editable']) != null ? _ref[0] : void 0;
+      firstEditable = (ref = defaultParagraph.directives['editable']) != null ? ref[0] : void 0;
       currentBlock = view.model;
-      for (index = _i = 0, _len = blocks.length; _i < _len; index = ++_i) {
+      for (index = i = 0, len = blocks.length; i < len; index = ++i) {
         block = blocks[index];
         if (index === 0) {
           continue;
@@ -6469,13 +6469,13 @@ module.exports = EditableController = (function() {
   };
 
   EditableController.prototype.split = function(view, editableName, before, after, cursor) {
-    var copy, _ref;
+    var copy, ref;
     if (this.hasSingleEditable(view)) {
       copy = view.template.createModel();
       copy.set(editableName, this.extractContent(after));
       view.model.after(copy);
-      if ((_ref = view.next()) != null) {
-        _ref.focus();
+      if ((ref = view.next()) != null) {
+        ref.focus();
       }
       view.model.set(editableName, this.extractContent(before));
     }
@@ -6605,9 +6605,9 @@ module.exports = Focus = (function() {
     }
   };
 
-  Focus.prototype.fireContainerEvent = function(_arg) {
+  Focus.prototype.fireContainerEvent = function(arg) {
     var blur, component, event, focus, view;
-    view = _arg.view, focus = _arg.focus, blur = _arg.blur;
+    view = arg.view, focus = arg.focus, blur = arg.blur;
     event = new ContainerEvent({
       target: view,
       focus: focus,
@@ -6629,8 +6629,8 @@ module.exports = Focus = (function() {
 
 },{"./container_event":39,"./dom":40}],44:[function(require,module,exports){
 var ComponentTree, Dependencies, EventEmitter, FieldExtractor, InteractivePage, Livingdoc, MetadataConfig, Page, Renderer, RenderingContainer, View, assert, config, designCache, dom,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 assert = require('./modules/logging/assert');
 
@@ -6660,13 +6660,13 @@ FieldExtractor = require('./component_tree/field_extractor');
 
 MetadataConfig = require('./configuration/metadata_config');
 
-module.exports = Livingdoc = (function(_super) {
-  __extends(Livingdoc, _super);
+module.exports = Livingdoc = (function(superClass) {
+  extend(Livingdoc, superClass);
 
-  Livingdoc.create = function(_arg) {
-    var componentTree, data, design, designName, layoutName, _ref;
-    data = _arg.data, designName = _arg.designName, layoutName = _arg.layoutName, componentTree = _arg.componentTree;
-    componentTree = data != null ? (designName = (_ref = data.design) != null ? _ref.name : void 0, assert(designName != null, 'Error creating livingdoc: No design is specified.'), design = designCache.get(designName), new ComponentTree({
+  Livingdoc.create = function(arg) {
+    var componentTree, data, design, designName, layoutName, ref;
+    data = arg.data, designName = arg.designName, layoutName = arg.layoutName, componentTree = arg.componentTree;
+    componentTree = data != null ? (designName = (ref = data.design) != null ? ref.name : void 0, assert(designName != null, 'Error creating livingdoc: No design is specified.'), design = designCache.get(designName), new ComponentTree({
       content: data,
       design: design
     })) : designName != null ? (design = designCache.get(designName), new ComponentTree({
@@ -6681,8 +6681,8 @@ module.exports = Livingdoc = (function(_super) {
     });
   };
 
-  function Livingdoc(_arg) {
-    this.componentTree = _arg.componentTree, this.layoutName = _arg.layoutName;
+  function Livingdoc(arg) {
+    this.componentTree = arg.componentTree, this.layoutName = arg.layoutName;
     this.model = this.componentTree;
     this.interactiveView = void 0;
     this.readOnlyViews = [];
@@ -6695,9 +6695,9 @@ module.exports = Livingdoc = (function(_super) {
     this.forwardComponentTreeEvents();
   }
 
-  Livingdoc.prototype.getDropTarget = function(_arg) {
+  Livingdoc.prototype.getDropTarget = function(arg) {
     var clientX, clientY, coords, document, elem, event, target;
-    event = _arg.event;
+    event = arg.event;
     document = event.target.ownerDocument;
     clientX = event.clientX, clientY = event.clientY;
     elem = document.elementFromPoint(clientX, clientY);
@@ -6718,9 +6718,9 @@ module.exports = Livingdoc = (function(_super) {
     })(this));
   };
 
-  Livingdoc.prototype.createView = function(_arg) {
+  Livingdoc.prototype.createView = function(arg) {
     var host, iframe, interactive, layoutName, loadResources, view, viewWrapper, wrapper;
-    host = _arg.host, interactive = _arg.interactive, loadResources = _arg.loadResources, wrapper = _arg.wrapper, layoutName = _arg.layoutName, iframe = _arg.iframe;
+    host = arg.host, interactive = arg.interactive, loadResources = arg.loadResources, wrapper = arg.wrapper, layoutName = arg.layoutName, iframe = arg.iframe;
     viewWrapper = this.getWrapper({
       wrapper: wrapper,
       layoutName: layoutName,
@@ -6754,16 +6754,16 @@ module.exports = Livingdoc = (function(_super) {
     return this.componentTree.createComponent.apply(this.componentTree, arguments);
   };
 
-  Livingdoc.prototype.getWrapper = function(_arg) {
-    var host, layoutName, wrapper, _ref;
-    wrapper = _arg.wrapper, layoutName = _arg.layoutName, host = _arg.host;
+  Livingdoc.prototype.getWrapper = function(arg) {
+    var host, layoutName, ref, wrapper;
+    wrapper = arg.wrapper, layoutName = arg.layoutName, host = arg.host;
     if (wrapper != null) {
       return wrapper;
     }
     if (layoutName == null) {
       layoutName = this.layoutName;
     }
-    wrapper = (_ref = this.design.getLayout(layoutName)) != null ? _ref.wrapper : void 0;
+    wrapper = (ref = this.design.getLayout(layoutName)) != null ? ref.wrapper : void 0;
     if (wrapper == null) {
       wrapper = this.extractWrapper(host);
     }
@@ -6785,9 +6785,9 @@ module.exports = Livingdoc = (function(_super) {
       assert(this.interactiveView == null, 'Error creating interactive view: A Livingdoc can have only one interactive view');
       this.interactiveView = view;
       return view.whenReady.then((function(_this) {
-        return function(_arg) {
+        return function(arg) {
           var iframe, renderer;
-          iframe = _arg.iframe, renderer = _arg.renderer;
+          iframe = arg.iframe, renderer = arg.renderer;
           return _this.componentTree.setMainView(view);
         };
       })(this));
@@ -6805,13 +6805,13 @@ module.exports = Livingdoc = (function(_super) {
   };
 
   Livingdoc.prototype.hasDependencies = function() {
-    var _ref, _ref1;
-    return ((_ref = this.dependencies) != null ? _ref.hasJs() : void 0) || ((_ref1 = this.dependencies) != null ? _ref1.hasCss() : void 0);
+    var ref, ref1;
+    return ((ref = this.dependencies) != null ? ref.hasJs() : void 0) || ((ref1 = this.dependencies) != null ? ref1.hasCss() : void 0);
   };
 
-  Livingdoc.prototype.toHtml = function(_arg) {
+  Livingdoc.prototype.toHtml = function(arg) {
     var excludeComponents;
-    excludeComponents = (_arg != null ? _arg : {}).excludeComponents;
+    excludeComponents = (arg != null ? arg : {}).excludeComponents;
     return new Renderer({
       componentTree: this.componentTree,
       renderingContainer: new RenderingContainer(),
@@ -6851,7 +6851,7 @@ module.exports = Livingdoc = (function(_super) {
 
 
 },{"./component_tree/component_tree":19,"./component_tree/field_extractor":21,"./configuration/config":26,"./configuration/metadata_config":27,"./design/design_cache":30,"./interaction/dom":40,"./modules/logging/assert":49,"./rendering/dependencies":56,"./rendering/renderer":59,"./rendering/view":60,"./rendering_container/interactive_page":64,"./rendering_container/page":66,"./rendering_container/rendering_container":67,"wolfy87-eventemitter":11}],45:[function(require,module,exports){
-var __slice = [].slice;
+var slice = [].slice;
 
 module.exports = (function() {
   return {
@@ -6859,7 +6859,7 @@ module.exports = (function() {
       var selfRemovingFunc;
       selfRemovingFunc = function() {
         var args;
-        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
         callbacks.remove(selfRemovingFunc);
         return listener.apply(this, args);
       };
@@ -6924,7 +6924,7 @@ module.exports = (function() {
         idCounter = 0;
         lastId = nextId;
       }
-      return "" + user + "-" + nextId + idCounter;
+      return user + "-" + nextId + idCounter;
     }
   };
 })();
@@ -6946,13 +6946,13 @@ module.exports = assert = function(condition, message) {
 
 },{"./log":50}],50:[function(require,module,exports){
 var log,
-  __slice = [].slice,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  slice = [].slice,
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 module.exports = log = function() {
   var args;
-  args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+  args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
   if (window.console != null) {
     if (args.length && args[args.length - 1] === 'trace') {
       args.pop();
@@ -6967,8 +6967,8 @@ module.exports = log = function() {
 
 (function() {
   var LivingdocsError, notify;
-  LivingdocsError = (function(_super) {
-    __extends(LivingdocsError, _super);
+  LivingdocsError = (function(superClass) {
+    extend(LivingdocsError, superClass);
 
     function LivingdocsError(message) {
       LivingdocsError.__super__.constructor.apply(this, arguments);
@@ -6985,8 +6985,8 @@ module.exports = log = function() {
     }
     if (typeof _rollbar !== "undefined" && _rollbar !== null) {
       _rollbar.push(new Error(message), function() {
-        var _ref;
-        if ((level === 'critical' || level === 'error') && (((_ref = window.console) != null ? _ref.error : void 0) != null)) {
+        var ref;
+        if ((level === 'critical' || level === 'error') && (((ref = window.console) != null ? ref.error : void 0) != null)) {
           return window.console.error.call(window.console, message);
         } else {
           return log.call(void 0, message);
@@ -7038,23 +7038,23 @@ module.exports = OrderedHash = (function() {
   };
 
   OrderedHash.prototype.each = function(callback) {
-    var value, _i, _len, _results;
-    _results = [];
-    for (_i = 0, _len = this.length; _i < _len; _i++) {
-      value = this[_i];
-      _results.push(callback(value));
+    var i, len, results, value;
+    results = [];
+    for (i = 0, len = this.length; i < len; i++) {
+      value = this[i];
+      results.push(callback(value));
     }
-    return _results;
+    return results;
   };
 
   OrderedHash.prototype.toArray = function() {
-    var value, _i, _len, _results;
-    _results = [];
-    for (_i = 0, _len = this.length; _i < _len; _i++) {
-      value = this[_i];
-      _results.push(value);
+    var i, len, results, value;
+    results = [];
+    for (i = 0, len = this.length; i < len; i++) {
+      value = this[i];
+      results.push(value);
     }
-    return _results;
+    return results;
   };
 
   return OrderedHash;
@@ -7121,16 +7121,16 @@ module.exports = Semaphore = (function() {
   };
 
   Semaphore.prototype.fireIfReady = function() {
-    var callback, _i, _len, _ref, _results;
+    var callback, i, len, ref, results;
     if (this.count === 0 && this.started === true) {
       this.wasFired = true;
-      _ref = this.callbacks;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        callback = _ref[_i];
-        _results.push(callback());
+      ref = this.callbacks;
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        callback = ref[i];
+        results.push(callback());
       }
-      return _results;
+      return results;
     }
   };
 
@@ -7245,8 +7245,8 @@ eventing = require('../modules/eventing');
 dom = require('../interaction/dom');
 
 module.exports = ComponentView = (function() {
-  function ComponentView(_arg) {
-    this.model = _arg.model, this.$html = _arg.$html, this.directives = _arg.directives, this.isReadOnly = _arg.isReadOnly;
+  function ComponentView(arg) {
+    this.model = arg.model, this.$html = arg.$html, this.directives = arg.directives, this.isReadOnly = arg.isReadOnly;
     this.renderer = void 0;
     this.$elem = this.$html;
     this.template = this.model.template;
@@ -7271,16 +7271,16 @@ module.exports = ComponentView = (function() {
   };
 
   ComponentView.prototype.viewForModel = function(model) {
-    var _ref;
+    var ref;
     if (model != null) {
-      return (_ref = this.renderer) != null ? _ref.getComponentViewById(model.id) : void 0;
+      return (ref = this.renderer) != null ? ref.getComponentViewById(model.id) : void 0;
     }
   };
 
   ComponentView.prototype.recreateHtml = function() {
-    var _ref;
+    var ref;
     this.isAttachedToDom = false;
-    _ref = this.model.template.createViewHtml(this.model), this.$elem = _ref.$elem, this.directives = _ref.directives;
+    ref = this.model.template.createViewHtml(this.model), this.$elem = ref.$elem, this.directives = ref.directives;
     this.$html = this.$elem;
     this.decorateMarkup();
     return this.render();
@@ -7308,10 +7308,10 @@ module.exports = ComponentView = (function() {
   };
 
   ComponentView.prototype.updateHtml = function() {
-    var name, value, _ref;
-    _ref = this.model.styles;
-    for (name in _ref) {
-      value = _ref[name];
+    var name, ref, value;
+    ref = this.model.styles;
+    for (name in ref) {
+      value = ref[name];
       this.setStyle(name, value);
     }
     return this.stripHtmlIfReadOnly();
@@ -7364,8 +7364,8 @@ module.exports = ComponentView = (function() {
   };
 
   ComponentView.prototype.focus = function(editableName) {
-    var directive, _ref;
-    directive = editableName ? this.directives.get(editableName) : (_ref = this.directives.editable) != null ? _ref[0] : void 0;
+    var directive, ref;
+    directive = editableName ? this.directives.get(editableName) : (ref = this.directives.editable) != null ? ref[0] : void 0;
     return $(directive != null ? directive.elem : void 0).focus();
   };
 
@@ -7382,10 +7382,10 @@ module.exports = ComponentView = (function() {
   };
 
   ComponentView.prototype.setAll = function() {
-    var name, value, _ref;
-    _ref = this.model.content;
-    for (name in _ref) {
-      value = _ref[name];
+    var name, ref, value;
+    ref = this.model.content;
+    for (name in ref) {
+      value = ref[name];
       this.set(name, value);
     }
     return void 0;
@@ -7496,22 +7496,22 @@ module.exports = ComponentView = (function() {
   };
 
   ComponentView.prototype.getDirectiveElement = function(directiveName) {
-    var _ref;
-    return (_ref = this.directives.get(directiveName)) != null ? _ref.elem : void 0;
+    var ref;
+    return (ref = this.directives.get(directiveName)) != null ? ref.elem : void 0;
   };
 
   ComponentView.prototype.resetDirectives = function() {
-    var $elem, name, _results;
-    _results = [];
+    var $elem, name, results;
+    results = [];
     for (name in this.directivesToReset) {
       $elem = this.directives.$getElem(name);
       if ($elem.find('iframe').length) {
-        _results.push(this.set(name, this.model.content[name]));
+        results.push(this.set(name, this.model.content[name]));
       } else {
-        _results.push(void 0);
+        results.push(void 0);
       }
     }
-    return _results;
+    return results;
   };
 
   ComponentView.prototype.getImage = function(name) {
@@ -7542,12 +7542,12 @@ module.exports = ComponentView = (function() {
   };
 
   ComponentView.prototype.setStyle = function(name, className) {
-    var changes, removeClass, _i, _len, _ref;
+    var changes, i, len, ref, removeClass;
     changes = this.template.styles[name].cssClassChanges(className);
     if (changes.remove) {
-      _ref = changes.remove;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        removeClass = _ref[_i];
+      ref = changes.remove;
+      for (i = 0, len = ref.length; i < len; i++) {
+        removeClass = ref[i];
         this.$html.removeClass(removeClass);
       }
     }
@@ -7598,78 +7598,78 @@ module.exports = ComponentView = (function() {
   };
 
   ComponentView.prototype.cancelDelayed = function(name) {
-    var _ref;
-    if ((_ref = this.delayed) != null ? _ref[name] : void 0) {
+    var ref;
+    if ((ref = this.delayed) != null ? ref[name] : void 0) {
       this.wasAttachedToDom.remove(this.delayed[name]);
       return this.delayed[name] = void 0;
     }
   };
 
   ComponentView.prototype.stripHtmlIfReadOnly = function() {
-    var elem, iterator, _results;
+    var elem, iterator, results;
     if (!this.isReadOnly) {
       return;
     }
     iterator = new DirectiveIterator(this.$html[0]);
-    _results = [];
+    results = [];
     while (elem = iterator.nextElement()) {
       this.stripDocClasses(elem);
       this.stripDocAttributes(elem);
-      _results.push(this.stripEmptyAttributes(elem));
+      results.push(this.stripEmptyAttributes(elem));
     }
-    return _results;
+    return results;
   };
 
   ComponentView.prototype.stripDocClasses = function(elem) {
-    var $elem, klass, _i, _len, _ref, _results;
+    var $elem, i, klass, len, ref, results;
     $elem = $(elem);
-    _ref = elem.className.split(/\s+/);
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      klass = _ref[_i];
+    ref = elem.className.split(/\s+/);
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      klass = ref[i];
       if (/doc\-.*/i.test(klass)) {
-        _results.push($elem.removeClass(klass));
+        results.push($elem.removeClass(klass));
       } else {
-        _results.push(void 0);
+        results.push(void 0);
       }
     }
-    return _results;
+    return results;
   };
 
   ComponentView.prototype.stripDocAttributes = function(elem) {
-    var $elem, attribute, name, _i, _len, _ref, _results;
+    var $elem, attribute, i, len, name, ref, results;
     $elem = $(elem);
-    _ref = Array.prototype.slice.apply(elem.attributes);
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      attribute = _ref[_i];
+    ref = Array.prototype.slice.apply(elem.attributes);
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      attribute = ref[i];
       name = attribute.name;
       if (/data\-doc\-.*/i.test(name)) {
-        _results.push($elem.removeAttr(name));
+        results.push($elem.removeAttr(name));
       } else {
-        _results.push(void 0);
+        results.push(void 0);
       }
     }
-    return _results;
+    return results;
   };
 
   ComponentView.prototype.stripEmptyAttributes = function(elem) {
-    var $elem, attribute, isEmptyAttribute, isStrippableAttribute, strippableAttributes, _i, _len, _ref, _results;
+    var $elem, attribute, i, isEmptyAttribute, isStrippableAttribute, len, ref, results, strippableAttributes;
     $elem = $(elem);
     strippableAttributes = ['style', 'class'];
-    _ref = Array.prototype.slice.apply(elem.attributes);
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      attribute = _ref[_i];
+    ref = Array.prototype.slice.apply(elem.attributes);
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      attribute = ref[i];
       isStrippableAttribute = strippableAttributes.indexOf(attribute.name) >= 0;
       isEmptyAttribute = attribute.value.trim() === '';
       if (isStrippableAttribute && isEmptyAttribute) {
-        _results.push($elem.removeAttr(attribute.name));
+        results.push($elem.removeAttr(attribute.name));
       } else {
-        _results.push(void 0);
+        results.push(void 0);
       }
     }
-    return _results;
+    return results;
   };
 
   ComponentView.prototype.setAttachedToDom = function(newVal) {
@@ -7721,7 +7721,7 @@ module.exports = ComponentView = (function() {
 
 },{"../configuration/config":26,"../interaction/dom":40,"../modules/eventing":45,"../template/directive_iterator":72,"jquery":"jquery"}],56:[function(require,module,exports){
 var $, Dependencies, Dependency, assert, dependenciesToHtml, log,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 $ = require('jquery');
 
@@ -7734,9 +7734,9 @@ Dependency = require('./dependency');
 dependenciesToHtml = require('./dependencies_to_html');
 
 module.exports = Dependencies = (function() {
-  function Dependencies(_arg) {
-    this.componentTree = (_arg != null ? _arg : {}).componentTree;
-    this.onComponentRemoved = __bind(this.onComponentRemoved, this);
+  function Dependencies(arg) {
+    this.componentTree = (arg != null ? arg : {}).componentTree;
+    this.onComponentRemoved = bind(this.onComponentRemoved, this);
     this.js = [];
     this.css = [];
     this.namespaces = {};
@@ -7791,7 +7791,7 @@ module.exports = Dependencies = (function() {
     if (!this.isAbsoluteUrl(src)) {
       assert(obj.basePath, "Dependencies: relative urls are not allowed: " + src);
       src = src.replace(/^[\.\/]*/, '');
-      return obj.src = "" + (obj.basePath.replace(/\/$/, '')) + "/" + src;
+      return obj.src = (obj.basePath.replace(/\/$/, '')) + "/" + src;
     }
   };
 
@@ -7830,10 +7830,10 @@ module.exports = Dependencies = (function() {
   };
 
   Dependencies.prototype.addToNamespace = function(dependency) {
-    var namespace, _base, _name;
+    var base, name1, namespace;
     if (dependency.namespace) {
-      if ((_base = this.namespaces)[_name = dependency.namespace] == null) {
-        _base[_name] = [];
+      if ((base = this.namespaces)[name1 = dependency.namespace] == null) {
+        base[name1] = [];
       }
       namespace = this.namespaces[dependency.namespace];
       return namespace.push(dependency);
@@ -7851,14 +7851,14 @@ module.exports = Dependencies = (function() {
   };
 
   Dependencies.prototype.getNamespaces = function() {
-    var array, name, _ref, _results;
-    _ref = this.namespaces;
-    _results = [];
-    for (name in _ref) {
-      array = _ref[name];
-      _results.push(name);
+    var array, name, ref, results;
+    ref = this.namespaces;
+    results = [];
+    for (name in ref) {
+      array = ref[name];
+      results.push(name);
     }
-    return _results;
+    return results;
   };
 
   Dependencies.prototype.getNamespace = function(name) {
@@ -7872,10 +7872,10 @@ module.exports = Dependencies = (function() {
   };
 
   Dependencies.prototype.getExisting = function(dep) {
-    var collection, entry, _i, _len;
+    var collection, entry, i, len;
     collection = dep.isJs() ? this.js : this.css;
-    for (_i = 0, _len = collection.length; _i < _len; _i++) {
-      entry = collection[_i];
+    for (i = 0, len = collection.length; i < len; i++) {
+      entry = collection[i];
       if (entry.isSameAs(dep)) {
         return entry;
       }
@@ -7892,30 +7892,30 @@ module.exports = Dependencies = (function() {
   };
 
   Dependencies.prototype.onComponentRemoved = function(component) {
-    var dependency, needed, toBeRemoved, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _results;
+    var dependency, i, j, k, len, len1, len2, needed, ref, ref1, results, toBeRemoved;
     toBeRemoved = [];
-    _ref = this.js;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      dependency = _ref[_i];
+    ref = this.js;
+    for (i = 0, len = ref.length; i < len; i++) {
+      dependency = ref[i];
       needed = dependency.removeComponent(component);
       if (!needed) {
         toBeRemoved.push(dependency);
       }
     }
-    _ref1 = this.css;
-    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-      dependency = _ref1[_j];
+    ref1 = this.css;
+    for (j = 0, len1 = ref1.length; j < len1; j++) {
+      dependency = ref1[j];
       needed = dependency.removeComponent(component);
       if (!needed) {
         toBeRemoved.push(dependency);
       }
     }
-    _results = [];
-    for (_k = 0, _len2 = toBeRemoved.length; _k < _len2; _k++) {
-      dependency = toBeRemoved[_k];
-      _results.push(this.removeDependency(dependency));
+    results = [];
+    for (k = 0, len2 = toBeRemoved.length; k < len2; k++) {
+      dependency = toBeRemoved[k];
+      results.push(this.removeDependency(dependency));
     }
-    return _results;
+    return results;
   };
 
   Dependencies.prototype.removeDependency = function(dependency) {
@@ -7932,19 +7932,19 @@ module.exports = Dependencies = (function() {
   };
 
   Dependencies.prototype.serialize = function() {
-    var data, dependency, _i, _j, _len, _len1, _ref, _ref1;
+    var data, dependency, i, j, len, len1, ref, ref1;
     data = {};
-    _ref = this.js;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      dependency = _ref[_i];
+    ref = this.js;
+    for (i = 0, len = ref.length; i < len; i++) {
+      dependency = ref[i];
       if (data['js'] == null) {
         data['js'] = [];
       }
       data['js'].push(dependency.serialize());
     }
-    _ref1 = this.css;
-    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-      dependency = _ref1[_j];
+    ref1 = this.css;
+    for (j = 0, len1 = ref1.length; j < len1; j++) {
+      dependency = ref1[j];
       if (data['css'] == null) {
         data['css'] = [];
       }
@@ -7954,13 +7954,13 @@ module.exports = Dependencies = (function() {
   };
 
   Dependencies.prototype.deserialize = function(data) {
-    var entry, obj, _i, _j, _len, _len1, _ref, _ref1, _results;
+    var entry, i, j, len, len1, obj, ref, ref1, results;
     if (data == null) {
       return;
     }
-    _ref = data.js || [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      entry = _ref[_i];
+    ref = data.js || [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      entry = ref[i];
       obj = {
         type: 'js',
         src: entry.src,
@@ -7970,10 +7970,10 @@ module.exports = Dependencies = (function() {
       };
       this.addDeserialzedObj(obj, entry);
     }
-    _ref1 = data.css || [];
-    _results = [];
-    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-      entry = _ref1[_j];
+    ref1 = data.css || [];
+    results = [];
+    for (j = 0, len1 = ref1.length; j < len1; j++) {
+      entry = ref1[j];
       obj = {
         type: 'css',
         src: entry.src,
@@ -7981,18 +7981,18 @@ module.exports = Dependencies = (function() {
         namespace: entry.namespace,
         library: entry.library
       };
-      _results.push(this.addDeserialzedObj(obj, entry));
+      results.push(this.addDeserialzedObj(obj, entry));
     }
-    return _results;
+    return results;
   };
 
   Dependencies.prototype.addDeserialzedObj = function(obj, entry) {
-    var component, components, dependency, id, _i, _j, _len, _len1, _ref, _ref1, _results;
-    if ((_ref = entry.componentIds) != null ? _ref.length : void 0) {
+    var component, components, dependency, i, id, j, len, len1, ref, ref1, results;
+    if ((ref = entry.componentIds) != null ? ref.length : void 0) {
       components = [];
-      _ref1 = entry.componentIds;
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        id = _ref1[_i];
+      ref1 = entry.componentIds;
+      for (i = 0, len = ref1.length; i < len; i++) {
+        id = ref1[i];
         component = this.componentTree.findById(id);
         if (component != null) {
           components.push(component);
@@ -8000,12 +8000,12 @@ module.exports = Dependencies = (function() {
       }
       if (components.length) {
         dependency = this.add(obj);
-        _results = [];
-        for (_j = 0, _len1 = components.length; _j < _len1; _j++) {
-          component = components[_j];
-          _results.push(dependency.addComponent(component));
+        results = [];
+        for (j = 0, len1 = components.length; j < len1; j++) {
+          component = components[j];
+          results.push(dependency.addComponent(component));
         }
-        return _results;
+        return results;
       } else {
         return log.warn('Dropped dependency: could not find components that depend on it', entry);
       }
@@ -8037,11 +8037,11 @@ CssLoader = require('../rendering_container/css_loader');
 
 module.exports = {
   printJs: function(dependencies) {
-    var dependency, html, _i, _len, _ref;
+    var dependency, html, i, len, ref;
     html = '';
-    _ref = dependencies.js;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      dependency = _ref[_i];
+    ref = dependencies.js;
+    for (i = 0, len = ref.length; i < len; i++) {
+      dependency = ref[i];
       if (dependency.inline) {
         html += this.printInlineScript({
           codeBlock: dependency.code
@@ -8056,11 +8056,11 @@ module.exports = {
     return html;
   },
   printCss: function(dependencies) {
-    var dependency, html, _i, _len, _ref;
+    var dependency, html, i, len, ref;
     html = '';
-    _ref = dependencies.css;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      dependency = _ref[_i];
+    ref = dependencies.css;
+    for (i = 0, len = ref.length; i < len; i++) {
+      dependency = ref[i];
       if (dependency.inline) {
         html += this.printInlineCss({
           styles: dependency.code
@@ -8074,20 +8074,20 @@ module.exports = {
     }
     return html;
   },
-  printScriptTag: function(_arg) {
+  printScriptTag: function(arg) {
     var src;
-    src = _arg.src;
+    src = arg.src;
     return "<script src=\"" + src + "\"></script>";
   },
-  printInlineScript: function(_arg) {
+  printInlineScript: function(arg) {
     var codeBlock;
-    codeBlock = _arg.codeBlock;
+    codeBlock = arg.codeBlock;
     codeBlock = JsLoader.prototype.prepareInlineCode(codeBlock);
     return "<script> " + codeBlock + " </script>";
   },
-  printCssLink: function(_arg) {
+  printCssLink: function(arg) {
     var head, src;
-    src = _arg.src, head = _arg.head;
+    src = arg.src, head = arg.head;
     if (head == null) {
       head = true;
     }
@@ -8097,9 +8097,9 @@ module.exports = {
       return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + src + "\">";
     }
   },
-  printInlineCss: function(_arg) {
+  printInlineCss: function(arg) {
     var styles;
-    styles = _arg.styles;
+    styles = arg.styles;
     styles = CssLoader.prototype.prepareInlineStyles(styles);
     return "<style> " + styles + " </style>";
   },
@@ -8116,13 +8116,13 @@ var Dependency, assert;
 assert = require('../modules/logging/assert');
 
 module.exports = Dependency = (function() {
-  function Dependency(_arg) {
-    var component, _ref;
-    this.type = _arg.type, this.src = _arg.src, this.code = _arg.code, this.namespace = _arg.namespace, this.library = _arg.library, this.isExecuteOnly = _arg.isExecuteOnly, component = _arg.component;
+  function Dependency(arg) {
+    var component, ref;
+    this.type = arg.type, this.src = arg.src, this.code = arg.code, this.namespace = arg.namespace, this.library = arg.library, this.isExecuteOnly = arg.isExecuteOnly, component = arg.component;
     assert(this.src || this.code, 'Dependency: No "src" or "code" param provided');
     assert(!(this.src && this.code), 'Dependency: Only provide one of "src" or "code" params');
     assert(this.type, "Dependency: Param type must be specified");
-    assert((_ref = this.type) === 'js' || _ref === 'css', "Dependency: Unrecognized type: " + this.type);
+    assert((ref = this.type) === 'js' || ref === 'css', "Dependency: Unrecognized type: " + this.type);
     if (this.code != null) {
       this.inline = true;
     }
@@ -8177,12 +8177,12 @@ module.exports = Dependency = (function() {
   };
 
   Dependency.prototype.serialize = function() {
-    var componentId, key, obj, _i, _len, _ref;
+    var componentId, i, key, len, obj, ref;
     assert(!this.isExecuteOnly, 'engine//dependency.coffee: Cannot serialize a temporary dependency');
     obj = {};
-    _ref = ['src', 'code', 'inline', 'library', 'namespace'];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      key = _ref[_i];
+    ref = ['src', 'code', 'inline', 'library', 'namespace'];
+    for (i = 0, len = ref.length; i < len; i++) {
+      key = ref[i];
       if (this[key] != null) {
         obj[key] = this[key];
       }
@@ -8216,9 +8216,9 @@ Semaphore = require('../modules/semaphore');
 config = require('../configuration/config');
 
 module.exports = Renderer = (function() {
-  function Renderer(_arg) {
+  function Renderer(arg) {
     var $wrapper, excludeComponents;
-    this.componentTree = _arg.componentTree, this.renderingContainer = _arg.renderingContainer, $wrapper = _arg.$wrapper, excludeComponents = _arg.excludeComponents;
+    this.componentTree = arg.componentTree, this.renderingContainer = arg.renderingContainer, $wrapper = arg.$wrapper, excludeComponents = arg.excludeComponents;
     assert(this.componentTree, 'no componentTree specified');
     assert(this.renderingContainer, 'no rendering container specified');
     this.$root = $(this.renderingContainer.renderNode);
@@ -8232,17 +8232,17 @@ module.exports = Renderer = (function() {
   }
 
   Renderer.prototype.excludeComponent = function(componentId) {
-    var compId, view, _i, _len, _results;
+    var compId, i, len, results, view;
     if (componentId == null) {
       return;
     }
     if ($.isArray(componentId)) {
-      _results = [];
-      for (_i = 0, _len = componentId.length; _i < _len; _i++) {
-        compId = componentId[_i];
-        _results.push(this.excludeComponent(compId));
+      results = [];
+      for (i = 0, len = componentId.length; i < len; i++) {
+        compId = componentId[i];
+        results.push(this.excludeComponent(compId));
       }
-      return _results;
+      return results;
     } else {
       this.excludedComponentIds[componentId] = true;
       view = this.componentViews[componentId];
@@ -8253,8 +8253,8 @@ module.exports = Renderer = (function() {
   };
 
   Renderer.prototype.setRoot = function() {
-    var $insert, selector, _ref;
-    if (((_ref = this.$wrapperHtml) != null ? _ref.length : void 0) && this.$wrapperHtml.jquery) {
+    var $insert, ref, selector;
+    if (((ref = this.$wrapperHtml) != null ? ref.length : void 0) && this.$wrapperHtml.jquery) {
       selector = "." + config.css.section;
       $insert = this.$wrapperHtml.find(selector).add(this.$wrapperHtml.filter(selector));
       if ($insert.length) {
@@ -8340,9 +8340,9 @@ module.exports = Renderer = (function() {
   };
 
   Renderer.prototype.deleteCachedComponentView = function(model) {
-    var _ref;
-    if ((_ref = this.componentViews[model.id]) != null) {
-      _ref.removeRenderer();
+    var ref;
+    if ((ref = this.componentViews[model.id]) != null) {
+      ref.removeRenderer();
     }
     return delete this.componentViews[model.id];
   };
@@ -8403,8 +8403,8 @@ module.exports = Renderer = (function() {
   };
 
   Renderer.prototype.isComponentAttached = function(model) {
-    var _ref;
-    return model && ((_ref = this.getComponentViewById(model.id)) != null ? _ref.isAttachedToDom : void 0);
+    var ref;
+    return model && ((ref = this.getComponentViewById(model.id)) != null ? ref.isAttachedToDom : void 0);
   };
 
   Renderer.prototype.attachChildComponents = function(model) {
@@ -8469,9 +8469,9 @@ Page = require('../rendering_container/page');
 InteractivePage = require('../rendering_container/interactive_page');
 
 module.exports = View = (function() {
-  function View(_arg) {
+  function View(arg) {
     var parent;
-    this.livingdoc = _arg.livingdoc, parent = _arg.parent, this.isInteractive = _arg.isInteractive, this.wrapper = _arg.wrapper, this.loadResources = _arg.loadResources;
+    this.livingdoc = arg.livingdoc, parent = arg.parent, this.isInteractive = arg.isInteractive, this.wrapper = arg.wrapper, this.loadResources = arg.loadResources;
     this.parent = (parent != null ? parent.jquery : void 0) ? parent[0] : parent;
     if (this.parent == null) {
       this.parent = window.document.body;
@@ -8484,9 +8484,9 @@ module.exports = View = (function() {
     this.whenReady = this.whenReadyDeferred.promise();
   }
 
-  View.prototype.create = function(_arg) {
+  View.prototype.create = function(arg) {
     var renderInIframe;
-    renderInIframe = (_arg != null ? _arg : {}).renderInIframe;
+    renderInIframe = (arg != null ? arg : {}).renderInIframe;
     if (renderInIframe) {
       this.createIFrame(this.parent, (function(_this) {
         return function() {
@@ -8537,9 +8537,9 @@ module.exports = View = (function() {
     });
   };
 
-  View.prototype.createRenderer = function(_arg) {
+  View.prototype.createRenderer = function(arg) {
     var params, renderNode;
-    renderNode = (_arg != null ? _arg : {}).renderNode;
+    renderNode = (arg != null ? arg : {}).renderNode;
     params = {
       renderNode: renderNode || this.parent,
       documentDependencies: this.livingdoc.dependencies,
@@ -8572,22 +8572,22 @@ CssLoader = require('./css_loader');
 Semaphore = require('../modules/semaphore');
 
 module.exports = Assets = (function() {
-  function Assets(_arg) {
+  function Assets(arg) {
     var disable;
-    this.window = _arg.window, disable = _arg.disable;
+    this.window = arg.window, disable = arg.disable;
     this.isDisabled = disable || false;
     this.cssLoader = new CssLoader(this.window);
     this.jsLoader = new JsLoader(this.window);
   }
 
   Assets.prototype.loadDependencies = function(jsDependencies, cssDependencies, callback) {
-    var dep, semaphore, _i, _len, _ref;
+    var dep, i, len, ref, semaphore;
     semaphore = new Semaphore();
     semaphore.addCallback(callback);
     this.loadSequentially(jsDependencies, semaphore);
-    _ref = cssDependencies || [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      dep = _ref[_i];
+    ref = cssDependencies || [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      dep = ref[i];
       this.loadCss(dep, semaphore.wait());
     }
     return semaphore.start();
@@ -8742,9 +8742,9 @@ module.exports = EditorPage = (function() {
     this.blurFocusedElement = function() {};
   }
 
-  EditorPage.prototype.startDrag = function(_arg) {
+  EditorPage.prototype.startDrag = function(arg) {
     var componentDrag, componentModel, componentView, config, event;
-    componentModel = _arg.componentModel, componentView = _arg.componentView, event = _arg.event, config = _arg.config;
+    componentModel = arg.componentModel, componentView = arg.componentView, event = arg.event, config = arg.config;
     if (!(componentModel || componentView)) {
       return;
     }
@@ -8782,8 +8782,8 @@ module.exports = EditorPage = (function() {
 
 },{"../configuration/config":26,"../interaction/component_drag":38,"../interaction/drag_base":41}],64:[function(require,module,exports){
 var ComponentDrag, DragBase, EditableController, Focus, InteractivePage, Page, config, dom,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 config = require('../configuration/config');
 
@@ -8799,18 +8799,18 @@ DragBase = require('../interaction/drag_base');
 
 ComponentDrag = require('../interaction/component_drag');
 
-module.exports = InteractivePage = (function(_super) {
+module.exports = InteractivePage = (function(superClass) {
   var LEFT_MOUSE_BUTTON;
 
-  __extends(InteractivePage, _super);
+  extend(InteractivePage, superClass);
 
   LEFT_MOUSE_BUTTON = 1;
 
   InteractivePage.prototype.isReadOnly = false;
 
-  function InteractivePage(_arg) {
-    var hostWindow, renderNode, _ref;
-    _ref = _arg != null ? _arg : {}, renderNode = _ref.renderNode, hostWindow = _ref.hostWindow;
+  function InteractivePage(arg) {
+    var hostWindow, ref, renderNode;
+    ref = arg != null ? arg : {}, renderNode = ref.renderNode, hostWindow = ref.hostWindow;
     InteractivePage.__super__.constructor.apply(this, arguments);
     this.focus = new Focus();
     this.editableController = new EditableController(this);
@@ -8869,9 +8869,9 @@ module.exports = InteractivePage = (function(_super) {
     }
   };
 
-  InteractivePage.prototype.startDrag = function(_arg) {
+  InteractivePage.prototype.startDrag = function(arg) {
     var componentDrag, componentModel, componentView, config, event;
-    componentModel = _arg.componentModel, componentView = _arg.componentView, event = _arg.event, config = _arg.config;
+    componentModel = arg.componentModel, componentView = arg.componentView, event = arg.event, config = arg.config;
     if (!(componentModel || componentView)) {
       return;
     }
@@ -8938,14 +8938,14 @@ module.exports = InteractivePage = (function(_super) {
     var directive, editableNodes;
     if (componentView.directives.editable) {
       editableNodes = (function() {
-        var _i, _len, _ref, _results;
-        _ref = componentView.directives.editable;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          directive = _ref[_i];
-          _results.push(directive.elem);
+        var i, len, ref, results;
+        ref = componentView.directives.editable;
+        results = [];
+        for (i = 0, len = ref.length; i < len; i++) {
+          directive = ref[i];
+          results.push(directive.elem);
         }
-        return _results;
+        return results;
       })();
       return this.editableController.add(editableNodes);
     }
@@ -9044,9 +9044,9 @@ module.exports = JsLoader = (function() {
 
 },{}],66:[function(require,module,exports){
 var $, Assets, Page, RenderingContainer, config,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 $ = require('jquery');
 
@@ -9056,13 +9056,13 @@ Assets = require('./assets');
 
 config = require('../configuration/config');
 
-module.exports = Page = (function(_super) {
-  __extends(Page, _super);
+module.exports = Page = (function(superClass) {
+  extend(Page, superClass);
 
-  function Page(_arg) {
-    var hostWindow, preventAssetLoading, readOnly, renderNode, _ref;
-    _ref = _arg != null ? _arg : {}, renderNode = _ref.renderNode, readOnly = _ref.readOnly, hostWindow = _ref.hostWindow, this.documentDependencies = _ref.documentDependencies, this.design = _ref.design, this.componentTree = _ref.componentTree, this.loadResources = _ref.loadResources;
-    this.loadAssets = __bind(this.loadAssets, this);
+  function Page(arg) {
+    var hostWindow, preventAssetLoading, readOnly, ref, renderNode;
+    ref = arg != null ? arg : {}, renderNode = ref.renderNode, readOnly = ref.readOnly, hostWindow = ref.hostWindow, this.documentDependencies = ref.documentDependencies, this.design = ref.design, this.componentTree = ref.componentTree, this.loadResources = ref.loadResources;
+    this.loadAssets = bind(this.loadAssets, this);
     if (this.loadResources == null) {
       this.loadResources = config.loadResources;
     }
@@ -9193,9 +9193,9 @@ dom = require('../interaction/dom');
 assert = require('../modules/logging/assert');
 
 module.exports = Directive = (function() {
-  function Directive(_arg) {
+  function Directive(arg) {
     var config;
-    this.name = _arg.name, this.type = _arg.type, this.elem = _arg.elem, config = _arg.config;
+    this.name = arg.name, this.type = arg.type, this.elem = arg.elem, config = arg.config;
     if (this.type !== 'optional') {
       assert(this.name, "TemplateDirective: name is missing from " + this.type + " directive");
     }
@@ -9267,13 +9267,13 @@ module.exports = DirectiveCollection = (function() {
   }
 
   DirectiveCollection.prototype.add = function(directive) {
-    var _name;
+    var name1;
     this.assertNameNotUsed(directive);
     this[this.length] = directive;
     directive.index = this.length;
     this.length += 1;
     this.all[directive.name] = directive;
-    this[_name = directive.type] || (this[_name] = []);
+    this[name1 = directive.type] || (this[name1] = []);
     this[directive.type].push(directive);
     return directive;
   };
@@ -9310,54 +9310,54 @@ module.exports = DirectiveCollection = (function() {
   };
 
   DirectiveCollection.prototype.count = function(type) {
-    var _ref;
+    var ref;
     if (type) {
-      return (_ref = this[type]) != null ? _ref.length : void 0;
+      return (ref = this[type]) != null ? ref.length : void 0;
     } else {
       return this.length;
     }
   };
 
   DirectiveCollection.prototype.names = function(type) {
-    var directive, _i, _len, _ref, _ref1, _results;
-    if (!((_ref = this[type]) != null ? _ref.length : void 0)) {
+    var directive, i, len, ref, ref1, results;
+    if (!((ref = this[type]) != null ? ref.length : void 0)) {
       return [];
     }
-    _ref1 = this[type];
-    _results = [];
-    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-      directive = _ref1[_i];
-      _results.push(directive.name);
+    ref1 = this[type];
+    results = [];
+    for (i = 0, len = ref1.length; i < len; i++) {
+      directive = ref1[i];
+      results.push(directive.name);
     }
-    return _results;
+    return results;
   };
 
   DirectiveCollection.prototype.each = function(callback) {
-    var directive, _i, _len, _results;
-    _results = [];
-    for (_i = 0, _len = this.length; _i < _len; _i++) {
-      directive = this[_i];
-      _results.push(callback(directive));
+    var directive, i, len, results;
+    results = [];
+    for (i = 0, len = this.length; i < len; i++) {
+      directive = this[i];
+      results.push(callback(directive));
     }
-    return _results;
+    return results;
   };
 
   DirectiveCollection.prototype.eachOfType = function(type, callback) {
-    var directive, _i, _len, _ref, _results;
+    var directive, i, len, ref, results;
     if (this[type]) {
-      _ref = this[type];
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        directive = _ref[_i];
-        _results.push(callback(directive));
+      ref = this[type];
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        directive = ref[i];
+        results.push(callback(directive));
       }
-      return _results;
+      return results;
     }
   };
 
   DirectiveCollection.prototype.firstOfType = function(type) {
-    var _ref;
-    return (_ref = this[type]) != null ? _ref[0] : void 0;
+    var ref;
+    return (ref = this[type]) != null ? ref[0] : void 0;
   };
 
   DirectiveCollection.prototype.eachEditable = function(callback) {
@@ -9399,7 +9399,7 @@ module.exports = DirectiveCollection = (function() {
   };
 
   DirectiveCollection.prototype.assertNameNotUsed = function(directive) {
-    return assert(directive && !this.all[directive.name], "" + directive.type + " Template parsing error:\n" + config.directives[directive.type].renderedAttr + "=\"" + directive.name + "\".\n\"" + directive.name + "\" is a duplicate name.");
+    return assert(directive && !this.all[directive.name], directive.type + " Template parsing error:\n" + config.directives[directive.type].renderedAttr + "=\"" + directive.name + "\".\n\"" + directive.name + "\" is a duplicate name.");
   };
 
   return DirectiveCollection;
@@ -9409,7 +9409,7 @@ module.exports = DirectiveCollection = (function() {
 
 
 },{"../configuration/config":26,"../modules/logging/assert":49,"./directive":68,"jquery":"jquery"}],70:[function(require,module,exports){
-var Directive, assert, config, directiveFinder, _;
+var Directive, _, assert, config, directiveFinder;
 
 config = require('../configuration/config');
 
@@ -9445,7 +9445,7 @@ module.exports = (function() {
       return directives;
     },
     eachDirective: function(elem, func) {
-      var data, directive, directiveData, _i, _len, _results;
+      var data, directive, directiveData, i, len, results;
       directiveData = [];
       directiveFinder.eachDirective(elem, (function(_this) {
         return function(type, name, attributeName) {
@@ -9459,39 +9459,39 @@ module.exports = (function() {
           });
         };
       })(this));
-      _results = [];
-      for (_i = 0, _len = directiveData.length; _i < _len; _i++) {
-        data = directiveData[_i];
+      results = [];
+      for (i = 0, len = directiveData.length; i < len; i++) {
+        data = directiveData[i];
         directive = data.directive;
         this.rewriteAttribute(directive, data.attributeName);
-        _results.push(func(directive));
+        results.push(func(directive));
       }
-      return _results;
+      return results;
     },
     applyModifications: function(directives, modifications) {
-      var directive, modification, _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = modifications.length; _i < _len; _i++) {
-        modification = modifications[_i];
+      var directive, i, len, modification, results;
+      results = [];
+      for (i = 0, len = modifications.length; i < len; i++) {
+        modification = modifications[i];
         if (modification.type === 'optional') {
-          _results.push((function() {
-            var _j, _len1, _results1;
-            _results1 = [];
-            for (_j = 0, _len1 = directives.length; _j < _len1; _j++) {
-              directive = directives[_j];
+          results.push((function() {
+            var j, len1, results1;
+            results1 = [];
+            for (j = 0, len1 = directives.length; j < len1; j++) {
+              directive = directives[j];
               if (_.contains(modification.config.modifies, directive.type)) {
-                _results1.push(directive.optional = true);
+                results1.push(directive.optional = true);
               } else {
-                _results1.push(void 0);
+                results1.push(void 0);
               }
             }
-            return _results1;
+            return results1;
           })());
         } else {
-          _results.push(void 0);
+          results.push(void 0);
         }
       }
-      return _results;
+      return results;
     },
     rewriteAttribute: function(directive, attributeName) {
       if (directive.isModification()) {
@@ -9537,10 +9537,10 @@ module.exports = directiveFinder = (function() {
       });
     },
     eachDirective: function(elem, callback) {
-      var attr, attrName, normalizedName, type, _i, _len, _ref;
-      _ref = elem.attributes;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        attr = _ref[_i];
+      var attr, attrName, i, len, normalizedName, ref, type;
+      ref = elem.attributes;
+      for (i = 0, len = ref.length; i < len; i++) {
+        attr = ref[i];
         attrName = attr.name;
         normalizedName = attrName.replace(prefixes, '');
         if (type = config.templateAttrLookup[normalizedName]) {
@@ -9655,9 +9655,9 @@ sortByName = function(a, b) {
 };
 
 module.exports = Template = (function() {
-  function Template(_arg) {
-    var html, label, properties, _ref;
-    _ref = _arg != null ? _arg : {}, this.name = _ref.name, html = _ref.html, label = _ref.label, properties = _ref.properties, this.allowedParents = _ref.allowedParents;
+  function Template(arg) {
+    var html, label, properties, ref;
+    ref = arg != null ? arg : {}, this.name = ref.name, html = ref.html, label = ref.label, properties = ref.properties, this.allowedParents = ref.allowedParents;
     assert(html, 'Template: param html missing');
     this.$template = $(this.pruneHtml(html)).wrap('<div>');
     this.$wrap = this.$template.parent();
@@ -9669,7 +9669,7 @@ module.exports = Template = (function() {
 
   Template.prototype.setDesign = function(design) {
     this.design = design;
-    return this.identifier = "" + design.name + "." + this.name;
+    return this.identifier = design.name + "." + this.name;
   };
 
   Template.prototype.createModel = function() {
@@ -9679,8 +9679,8 @@ module.exports = Template = (function() {
   };
 
   Template.prototype.createView = function(componentModel, isReadOnly) {
-    var $elem, componentView, directives, _ref;
-    _ref = this.createViewHtml(), $elem = _ref.$elem, directives = _ref.directives;
+    var $elem, componentView, directives, ref;
+    ref = this.createViewHtml(), $elem = ref.$elem, directives = ref.directives;
     componentModel || (componentModel = this.createModel());
     return componentView = new ComponentView({
       model: componentModel,
@@ -9727,13 +9727,13 @@ module.exports = Template = (function() {
   };
 
   Template.prototype.compileDirectives = function(elem) {
-    var directive, directives, foundDirectives, iterator, _i, _len;
+    var directive, directives, foundDirectives, i, iterator, len;
     iterator = new DirectiveIterator(elem);
     directives = new DirectiveCollection();
     while (elem = iterator.nextElement()) {
       foundDirectives = directiveCompiler.parse(elem);
-      for (_i = 0, _len = foundDirectives.length; _i < _len; _i++) {
-        directive = foundDirectives[_i];
+      for (i = 0, len = foundDirectives.length; i < len; i++) {
+        directive = foundDirectives[i];
         directives.add(directive);
       }
     }
@@ -9773,10 +9773,10 @@ module.exports = Template = (function() {
   };
 
   Template.prototype.info = function() {
-    var doc, name, style, _ref, _ref1;
+    var doc, name, ref, ref1, style;
     doc = {
       name: this.name,
-      design: (_ref = this.design) != null ? _ref.name : void 0,
+      design: (ref = this.design) != null ? ref.name : void 0,
       directives: [],
       properties: []
     };
@@ -9790,9 +9790,9 @@ module.exports = Template = (function() {
         });
       };
     })(this));
-    _ref1 = this.styles;
-    for (name in _ref1) {
-      style = _ref1[name];
+    ref1 = this.styles;
+    for (name in ref1) {
+      style = ref1[name];
       doc.properties.push({
         name: name,
         type: 'cssModificator'
@@ -9832,8 +9832,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/words":54,"../rendering/component_view":55,"./directive_collection":69,"./directive_compiler":70,"./directive_finder":71,"./directive_iterator":72,"jquery":"jquery"}],74:[function(require,module,exports){
 module.exports={
-  "version": "0.10.0",
-  "revision": "1517e98"
+  "version": "0.10.2",
+  "revision": "6b3988d"
 }
 
 },{}],"jquery":[function(require,module,exports){
