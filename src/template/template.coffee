@@ -142,7 +142,7 @@ module.exports = class Template
   # @returns { Object } An object which contains the interface description
   #   of this template. This object will be the same if the interface does
   #   not change since directives and properties are sorted.
-  info: () ->
+  info: ->
     doc =
       name: @name
       design: @design?.name
@@ -153,7 +153,6 @@ module.exports = class Template
       { name, type } = directive
       doc.directives.push({ name, type })
 
-
     for name, style of @styles
       doc.properties.push({ name, type: 'cssModificator' })
 
@@ -161,6 +160,30 @@ module.exports = class Template
     doc.properties.sort(sortByName)
     doc
 
+
+  # Check if a template can be transformed into another
+  # template. This will only check for directive compatibility
+  # and ignore everything else.
+  isCompatible: (other) ->
+    directiveInfo = @info().directives
+    otherDirectiveInfo = other.info().directives
+
+    obj =
+      allCompatible: true
+      mapping: {}
+
+    @directives.each ({ name, type }) =>
+      # is there only one directive of this type?
+      if @directives.count(type) == 1 && other.directives.count(type) == 1
+        obj.mapping[name] = other.directives[type][0].name
+      # has the other a directive with the same name and type?
+      else if other.directives.get(name)?.type == type
+        obj.mapping[name] = name
+      else
+        obj.mapping[name] = null
+        obj.allCompatible = false
+
+    return obj
 
 
 # Static functions
