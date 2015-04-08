@@ -14,7 +14,7 @@ module.exports = class Design
   #  - version { String } e.g. '1.0.0'
   #  - author { String }
   #  - description { String }
-  constructor: ({ @name, @version, @url, label, @author, @description }) ->
+  constructor: ({ @name, @version, label, @author, @description }) ->
     assert @name?, 'Design: param "name" is required'
     @label = label || words.humanize(@name)
 

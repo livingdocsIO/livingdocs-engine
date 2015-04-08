@@ -267,7 +267,7 @@ module.exports = class ComponentTree
   serialize: ->
     data = {}
     data['content'] = []
-    data['design'] = { name: @design.name, version: @design.version, url: @design.url }
+    data['design'] = { name: @design.name, version: @design.version }
 
     componentToData = (component, level, containerArray) ->
       componentData = component.toJson()

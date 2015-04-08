@@ -15,7 +15,6 @@ module.exports = do ->
 
   name: 'test'
   version: '0.0.1'
-  url: 'http://test.io/test/0.0.1'
   author: 'upfront.io'
 
   components: [
