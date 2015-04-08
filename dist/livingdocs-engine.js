@@ -4235,7 +4235,10 @@ module.exports = ImageDirective = (function(superClass) {
   };
 
   ImageDirective.prototype.setMimeType = function(mimeType) {
-    var content;
+    var base, content, name1;
+    if ((base = this.component.content)[name1 = this.name] == null) {
+      base[name1] = {};
+    }
     content = this.component.content[this.name];
     return content.mimeType = mimeType;
   };
@@ -4243,7 +4246,11 @@ module.exports = ImageDirective = (function(superClass) {
   ImageDirective.prototype.getMimeType = function() {
     var content;
     content = this.component.content[this.name];
-    return content.mimeType;
+    if (content) {
+      return content.mimeType;
+    } else {
+      return void 0;
+    }
   };
 
   ImageDirective.prototype.resetCrop = function() {
@@ -9847,7 +9854,7 @@ Template.parseIdentifier = function(identifier) {
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/words":54,"../rendering/component_view":55,"./directive_collection":69,"./directive_compiler":70,"./directive_finder":71,"./directive_iterator":72,"jquery":"jquery"}],74:[function(require,module,exports){
 module.exports={
   "version": "0.10.3",
-  "revision": "edf9c71"
+  "revision": "b927237"
 }
 
 },{}],"jquery":[function(require,module,exports){
