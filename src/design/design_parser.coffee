@@ -61,6 +61,7 @@ module.exports = designParser =
       name: design.name
       label: design.label
       version: version.toString()
+      url: design.url
 
 
   # Assets
