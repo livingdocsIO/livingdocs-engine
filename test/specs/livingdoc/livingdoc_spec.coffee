@@ -30,6 +30,7 @@ describe 'livingdoc:', ->
         content: []
         design:
           name: 'test'
+          version: '0.0.1'
         layout: undefined
 
 
@@ -39,6 +40,7 @@ describe 'livingdoc:', ->
         content: []
         design:
           name: 'test'
+          version: '0.0.1'
         layout: 'firstInList'
 
 
@@ -68,7 +70,7 @@ describe 'livingdoc:', ->
 
     it 'renders an empty livingdoc', ->
       expect(@doc.toJson()).to.equal(
-        '{"content":[],"design":{"name":"test"}}')
+        '{"content":[],"design":{"name":"test","version":"0.0.1"}}')
 
 
     it 'renders an empty livingdoc with prettify', ->
