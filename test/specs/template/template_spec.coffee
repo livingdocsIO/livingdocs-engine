@@ -51,7 +51,8 @@ describe 'template:', ->
         other = test.getTemplate('subtitle')
         compatibility = @template.isCompatible(other)
         expect(compatibility).to.deep.equal
-          allCompatible: true
+          name: 'subtitle'
+          isCompatible: true
           mapping:
             'title': 'title'
 
@@ -60,7 +61,8 @@ describe 'template:', ->
         other = test.getTemplate('image')
         compatibility = @template.isCompatible(other)
         expect(compatibility).to.deep.equal
-          allCompatible: false
+          name: 'image'
+          isCompatible: false
           mapping:
             'title': null
 

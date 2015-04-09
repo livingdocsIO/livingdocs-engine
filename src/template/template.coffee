@@ -39,6 +39,10 @@ module.exports = class Template
     @parseTemplate()
 
 
+  equals: (other) ->
+    @name == other?.name
+
+
   setDesign: (design) ->
     @design = design
     @identifier = "#{ design.name }.#{ @name }"
@@ -164,15 +168,26 @@ module.exports = class Template
   # Check if a template can be transformed into another
   # template. This will only check for directive compatibility
   # and ignore everything else.
-  isCompatible: (other) ->
-    directiveInfo = @info().directives
-    otherDirectiveInfo = other.info().directives
+  # @param {Template}
+  # @param {Object}
+  #  - oneWay: Can may be transformed only in one direction
+  isCompatible: (other, options={}) ->
 
     obj =
-      allCompatible: true
+      name: other.name
+      isCompatible: true
       mapping: {}
 
-    @directives.each ({ name, type }) =>
+    directives = if options.directives?
+      options.oneWay = true
+      for name in options.directives
+        @directives.get(name)
+    else
+      @directives
+
+    for directive in directives || []
+      { name, type } = directive
+
       # is there only one directive of this type?
       if @directives.count(type) == 1 && other.directives.count(type) == 1
         obj.mapping[name] = other.directives[type][0].name
@@ -181,7 +196,10 @@ module.exports = class Template
         obj.mapping[name] = name
       else
         obj.mapping[name] = null
-        obj.allCompatible = false
+        obj.isCompatible = false
+
+    if not options.oneWay
+      obj.isCompatible = false if @directives.length != other.directives.length
 
     return obj
 
