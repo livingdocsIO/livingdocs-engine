@@ -20,6 +20,17 @@ describe 'component_directive:', ->
         expect(@imgDirective.getImageUrl()).to.equal(undefined)
 
 
+    describe 'getMimeType()', ->
+
+      it 'returns undefined for an empty image', ->
+        expect(@imgDirective.getMimeType()).to.equal(undefined)
+
+
+      it 'returns set value', ->
+        @imgDirective.setMimeType('image/png')
+        expect(@imgDirective.getMimeType()).to.equal('image/png')
+
+
     describe 'setImageService()', ->
 
       it 'sets resrc.it as image service', ->
