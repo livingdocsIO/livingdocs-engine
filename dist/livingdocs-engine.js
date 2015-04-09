@@ -3569,6 +3569,19 @@ module.exports = ComponentTree = (function() {
     return this.root.first;
   };
 
+  ComponentTree.prototype.getAllComponents = function() {
+    var components;
+    components = [];
+    this.each(function(c) {
+      return components.push(c);
+    });
+    return components;
+  };
+
+  ComponentTree.prototype.eq = function(index) {
+    return this.getAllComponents()[index];
+  };
+
   ComponentTree.prototype.all = function(callback) {
     return this.root.all(callback);
   };
@@ -9849,8 +9862,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/words":54,"../rendering/component_view":55,"./directive_collection":69,"./directive_compiler":70,"./directive_finder":71,"./directive_iterator":72,"jquery":"jquery"}],74:[function(require,module,exports){
 module.exports={
-  "version": "0.10.4",
-  "revision": "7979c61"
+  "version": "0.10.5",
+  "revision": "cac505f"
 }
 
 },{}],"jquery":[function(require,module,exports){
