@@ -4064,6 +4064,7 @@ module.exports = FieldExtractor = (function() {
         url: imageDirective.getImageUrl(),
         width: (ref = imageDirective.getOriginalImageDimensions()) != null ? ref.width : void 0,
         height: (ref1 = imageDirective.getOriginalImageDimensions()) != null ? ref1.height : void 0,
+        mimeType: imageDirective.getMimeType(),
         imageService: imageDirective.getImageServiceName()
       }
     };
@@ -4231,6 +4232,21 @@ module.exports = ImageDirective = (function(superClass) {
       width: content != null ? content.width : void 0,
       height: content != null ? content.height : void 0
     };
+  };
+
+  ImageDirective.prototype.setMimeType = function(mimeType) {
+    var base, content, name1;
+    if ((base = this.component.content)[name1 = this.name] == null) {
+      base[name1] = {};
+    }
+    content = this.component.content[this.name];
+    return content.mimeType = mimeType;
+  };
+
+  ImageDirective.prototype.getMimeType = function() {
+    var content;
+    content = this.component.content[this.name];
+    return content != null ? content.mimeType : void 0;
   };
 
   ImageDirective.prototype.resetCrop = function() {
@@ -9833,8 +9849,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/words":54,"../rendering/component_view":55,"./directive_collection":69,"./directive_compiler":70,"./directive_finder":71,"./directive_iterator":72,"jquery":"jquery"}],74:[function(require,module,exports){
 module.exports={
-  "version": "0.10.3",
-  "revision": "edf9c71"
+  "version": "0.10.4",
+  "revision": "7979c61"
 }
 
 },{}],"jquery":[function(require,module,exports){
