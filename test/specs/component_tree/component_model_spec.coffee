@@ -48,12 +48,20 @@ describe 'component_model:', ->
       expect(@title.content['title']).not.to.exist
 
 
-    describe '#set()', ->
+    describe 'set()', ->
 
       it 'sets editable content', ->
         caption = 'Talk to the hand'
         @title.set('title', caption)
         expect(@title.get('title')).to.equal(caption)
+
+
+    describe 'getTransformOptions()', ->
+
+      it 'gets the transform options', ->
+        options = @title.getTransformOptions()
+        expect(options).to.have.members(['subtitle', 'text', 'listItem'])
+
 
 
   describe 'Row Component', ->

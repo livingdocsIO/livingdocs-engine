@@ -133,6 +133,27 @@ module.exports = class ComponentModel
     @parentContainer.remove(this)
 
 
+  getTransformOptions: ({ oneWay, directives }={}) ->
+    design = @template.design
+    return unless design?
+    options = design.getTransformOptions({ @template })
+
+    for option in options || []
+      option.name
+
+    # todo LP: check if a commponent can be inserted in this place
+    # (restrictions)
+
+
+  # Change this component into another component
+  transform: (componentName) ->
+    # todo LP
+
+
+  replace: (otherComponent) ->
+    # todo LP
+
+
   # ComponentTree Iterators
   # -----------------------
   #
