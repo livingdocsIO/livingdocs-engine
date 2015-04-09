@@ -3728,7 +3728,8 @@ module.exports = ComponentTree = (function() {
     data = {};
     data['content'] = [];
     data['design'] = {
-      name: this.design.name
+      name: this.design.name,
+      version: this.design.version
     };
     componentToData = function(component, level, containerArray) {
       var componentData;
@@ -9832,8 +9833,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/words":54,"../rendering/component_view":55,"./directive_collection":69,"./directive_compiler":70,"./directive_finder":71,"./directive_iterator":72,"jquery":"jquery"}],74:[function(require,module,exports){
 module.exports={
-  "version": "0.10.2",
-  "revision": "6b3988d"
+  "version": "0.10.3",
+  "revision": "edf9c71"
 }
 
 },{}],"jquery":[function(require,module,exports){
