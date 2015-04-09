@@ -66,6 +66,27 @@ module.exports = class Design
     name
 
 
+  # Transforms
+  # ----------
+
+  # todo LP: Add directiveNames as options to check only for some directives
+  getTransformOptions: ({ template, oneWay, directives }) ->
+    oneWay ?= false
+    transforms = []
+    @components.each (other) ->
+      return if template.equals(other)
+
+      compatibility = template.isCompatible(other, { oneWay, directives })
+
+      if compatibility.isCompatible
+        transforms.push(compatibility)
+
+    return if transforms.length then transforms else undefined
+
+
+  # Default Components
+  # ------------------
+
   getDefaultParagraphTemplate: ->
     @defaultParagraph
 
