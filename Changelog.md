@@ -1,3 +1,12 @@
+# v0.10.4
+
+- Add mimetype to ImageDirective [#182](https://github.com/upfrontIO/livingdocs-engine/pull/182)
+- Update to jsdom@3.1.2 [#183](https://github.com/upfrontIO/livingdocs-engine/pull/183)
+
+# v0.10.3
+
+- Add design version to serialized document [#180](https://github.com/upfrontIO/livingdocs-engine/pull/180)
+
 # v0.10.2
 
 - Fix image placeholders in Safari [#172](https://github.com/upfrontIO/livingdocs-engine/pull/172)
