@@ -149,6 +149,17 @@ module.exports = class FieldExtractor
       else if (fieldWasEmpty || fieldWasFilledFromThisComponent) and !_.isEqual(@fields[fieldName], field)
         @fields[fieldName] = changedFields[fieldName] = field
 
+      else if !fieldIsEmpty && !fieldWasFilledFromThisComponent
+        previousComponentIndex = componentModel.componentTree.indexOf(
+          @fields[fieldName].component
+        )
+        currentComponentIndex = componentModel.componentTree.indexOf(
+          componentModel
+        )
+
+        if previousComponentIndex > currentComponentIndex
+          @fields[fieldName] = changedFields[fieldName] = field
+
     if fieldsThatNeedFullExtraction.length
       _(@extractFields(fieldsThatNeedFullExtraction)).forEach (field, fieldName) =>
         @fields[fieldName] = changedFields[fieldName] = field
