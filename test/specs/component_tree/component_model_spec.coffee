@@ -98,6 +98,13 @@ describe 'component_model:', ->
       expect( title.get('title') ).to.equal('Moby Dick')
 
 
+    it 'returns an instance of the new model', ->
+      componentTree = test.createComponentTree [{ text: undefined } ]
+      text = componentTree.first()
+      title = text.transform('title')
+      expect(title.componentName).to.equal('title')
+
+
   describe 'Row Component', ->
 
     beforeEach ->

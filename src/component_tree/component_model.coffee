@@ -180,9 +180,11 @@ module.exports = class ComponentModel
     @replaceWith(newModel)
 
 
+  # @param {ComponentModel}
   replaceWith: (otherComponent) ->
     @after(otherComponent)
     @remove()
+    return otherComponent
 
 
   # ComponentTree Iterators
