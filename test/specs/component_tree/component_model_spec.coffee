@@ -56,11 +56,22 @@ describe 'component_model:', ->
         expect(@title.get('title')).to.equal(caption)
 
 
-    describe 'getTransformOptions()', ->
+  describe 'getTransformOptions()', ->
 
-      it 'gets the transform options', ->
-        options = @title.getTransformOptions()
-        expect(options).to.have.members(['subtitle', 'text', 'listItem'])
+    it 'gets the transform options', ->
+      @title = test.getComponent('title')
+      options = @title.getTransformOptions()
+      expect(options).to.have.members(['subtitle', 'text', 'listItem'])
+
+
+    # listItems can only be inserted into lists. So they
+    # are not an option at the root level of a componentTree.
+    it 'Does not include forbidden element listItem', ->
+      componentTree = test.createComponentTree [{ title: undefined } ]
+      title = componentTree.first()
+      options = title.getTransformOptions()
+      expect(options).to.have.members(['subtitle', 'text'])
+
 
 
 

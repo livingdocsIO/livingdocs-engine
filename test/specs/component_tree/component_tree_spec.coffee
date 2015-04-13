@@ -30,7 +30,7 @@ describe 'component_tree:', ->
         expect(@componentTree.root.last).to.equal(component)
 
 
-  describe 'with two components', ->
+  describe 'with two title components', ->
 
     beforeEach ->
       @componentTree = test.createComponentTree [

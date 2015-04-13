@@ -78,8 +78,15 @@ module.exports = class ComponentModel
   # ComponentTree operations
   # ------------------------
 
+  # @param {ComponentModel}
   isAllowedAsSibling: (component) ->
     @parentContainer.isAllowedAsChild(component)
+
+
+  # @param {Template}
+  isTypeAllowedAsSibling: (template) ->
+    return true unless @parentContainer?
+    @parentContainer.isTypeAllowedAsChild(template)
 
 
   isAllowedAsChild: (containerName, component) ->
@@ -133,16 +140,22 @@ module.exports = class ComponentModel
     @parentContainer.remove(this)
 
 
+  # Transform operations
+  # --------------------
+
+  # @return {Array of String} Array of component names
   getTransformOptions: ({ oneWay, directives }={}) ->
     design = @template.design
     return unless design?
     options = design.getTransformOptions({ @template })
-
+    names = []
     for option in options || []
-      option.name
+      componentName = option.name
+      template = design.get(componentName)
+      if @isTypeAllowedAsSibling(template)
+        names.push(componentName)
 
-    # todo LP: check if a commponent can be inserted in this place
-    # (restrictions)
+    names
 
 
   # Change this component into another component

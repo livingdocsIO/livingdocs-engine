@@ -172,7 +172,6 @@ module.exports = class Template
   # @param {Object}
   #  - oneWay: Can may be transformed only in one direction
   isCompatible: (other, options={}) ->
-
     obj =
       name: other.name
       isCompatible: true
