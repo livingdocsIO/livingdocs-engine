@@ -45,15 +45,17 @@ module.exports = do ->
 
 
   # Check if a design is loaded
-  has: (designIdentifier) ->
-    @designs[designIdentifier]?
+  has: (designName, designVersion) ->
+    identifier = Design.getIdentifier(designName, designVersion)
+    @designs[identifier]?
 
 
   # Get a loaded design
   # @return { Design object }
-  get: (designIdentifier) ->
-    assert @has(designIdentifier), "Error: design '#{ designIdentifier }' is not loaded."
-    @designs[designIdentifier]
+  get: (designName, designVersion) ->
+    assert @has(designName, designVersion), "Error: design '#{ designName }' version '#{ designVersion }' is not loaded."
+    identifier = Design.getIdentifier(designName, designVersion)
+    @designs[identifier]
 
 
   # Clear the cache if you want to reload designs

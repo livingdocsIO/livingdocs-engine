@@ -20,15 +20,15 @@ describe 'browser_api:', ->
   describe 'design', ->
 
     it 'loads a design synchronously', ->
-      expect(doc.design.has('test')).to.be.false
+      expect(doc.design.has('test', '0.0.1')).to.be.false
       doc.design.load(test.designJson)
-      expect(doc.design.has('test')).to.be.true
+      expect(doc.design.has('test', '0.0.1')).to.be.true
 
 
     it 'reseets the design cache', ->
       doc.design.load(test.designJson)
       doc.design.resetCache()
-      expect(doc.design.has('test')).to.be.false
+      expect(doc.design.has('test', '0.0.1')).to.be.false
 
 
     it 'does not load a design twice', ->
@@ -47,13 +47,12 @@ describe 'browser_api:', ->
 
 
       it 'saves versioned designs', ->
-        expect(doc.design.has('test@0.0.1')).to.equal(true)
-        expect(doc.design.has('test@0.0.2')).to.equal(true)
-        expect(doc.design.has('test')).to.equal(true)
+        expect(doc.design.has('test', '0.0.1')).to.equal(true)
+        expect(doc.design.has('test', '0.0.2')).to.equal(true)
 
 
       it 'saves the newest design under its name only', ->
-        newestDesign = doc.design.get('test')
+        newestDesign = doc.design.get('test', '0.0.2')
         expect(newestDesign.version).to.equal('0.0.2')
 
 
