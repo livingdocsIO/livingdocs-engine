@@ -73,6 +73,17 @@ describe 'component_model:', ->
       expect(options).to.have.members(['subtitle', 'text'])
 
 
+  describe 'transform()', ->
+
+    it 'transforms a paragraph into a title component', ->
+      componentTree = test.createComponentTree [{ text: undefined } ]
+      text = componentTree.first()
+      text.set('text', 'Moby Dick')
+      text.transform('title')
+      title = componentTree.first()
+      expect(componentTree.serialize().content.length).to.equal(1)
+      expect(title.componentName).to.equal('title')
+      expect( title.get('title') ).to.equal('Moby Dick')
 
 
   describe 'Row Component', ->

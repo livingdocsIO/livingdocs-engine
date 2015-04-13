@@ -158,13 +158,29 @@ module.exports = class ComponentModel
     names
 
 
-  # Change this component into another component
+  # Change this component into another component.
+  # Check for available options with getTransformOptions().
+  #
+  # This method will throw an error if an invalid componentName
+  # is supplied.
+  #
+  # @param {String} componentName
   transform: (componentName) ->
-    # todo LP
+    design = @template.design
+    newTemplate = design.get(componentName)
+    compatibility = @template.isCompatible(newTemplate)
+    assert compatibility.isCompatible, "Component #{ @componentName } can not be transformed into #{ componentName }."
+
+    newModel = newTemplate.createModel()
+    for from, to of compatibility.mapping || []
+      newModel.set(to, @get(from))
+
+    @replaceWith(newModel)
 
 
-  replace: (otherComponent) ->
-    # todo LP
+  replaceWith: (otherComponent) ->
+    @after(otherComponent)
+    @remove()
 
 
   # ComponentTree Iterators
