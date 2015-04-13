@@ -143,17 +143,18 @@ module.exports = class ComponentModel
   # Transform operations
   # --------------------
 
-  # @return {Array of String} Array of component names
+  # @return {Array of { label, componentName }} Array of component names
   getTransformOptions: ({ oneWay, directives }={}) ->
     design = @template.design
     return unless design?
     options = design.getTransformOptions({ @template })
+
     names = []
     for option in options || []
       componentName = option.name
-      template = design.get(componentName)
+      template = option.template
       if @isTypeAllowedAsSibling(template)
-        names.push(componentName)
+        names.push(label: template.label, componentName: componentName)
 
     names
 
@@ -165,6 +166,7 @@ module.exports = class ComponentModel
   # is supplied.
   #
   # @param {String} componentName
+  # @returns {ComponentModel} The new componentModel in this spot
   transform: (componentName) ->
     design = @template.design
     newTemplate = design.get(componentName)

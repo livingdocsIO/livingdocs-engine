@@ -61,7 +61,18 @@ describe 'component_model:', ->
     it 'gets the transform options', ->
       @title = test.getComponent('title')
       options = @title.getTransformOptions()
-      expect(options).to.have.members(['subtitle', 'text', 'listItem'])
+      expect(options).to.have.deep.members [
+        componentName: 'subtitle'
+        label: 'Subtitle with a default value'
+      ,
+        componentName: 'text'
+        label: 'Paragraph'
+      ,
+        componentName: 'listItem'
+        label: 'Component that can only be placed in a restricted container'
+      ]
+
+
 
 
     # listItems can only be inserted into lists. So they
@@ -70,7 +81,8 @@ describe 'component_model:', ->
       componentTree = test.createComponentTree [{ title: undefined } ]
       title = componentTree.first()
       options = title.getTransformOptions()
-      expect(options).to.have.members(['subtitle', 'text'])
+      componentNames = _.map(options, (item) -> item.componentName)
+      expect(componentNames).to.have.members(['subtitle', 'text'])
 
 
   describe 'transform()', ->
