@@ -142,12 +142,11 @@ describe 'design:', ->
         options = @design.getTransformOptions
           template: @design.get('title')
 
-        expect(options).to.deep.include.members [
-          name: 'subtitle'
-          isCompatible: true
-          mapping:
-            'title': 'title'
-        ]
+        subtitle = _.find(options, (item) -> item.name == 'subtitle')
+        expect(subtitle.isCompatible).to.equal(true)
+        expect(subtitle.template.name).to.equal('subtitle')
+        expect(subtitle.mapping).to.deep.equal
+          'title': 'title'
 
 
       it 'returns all fully-compatible templates for title', ->

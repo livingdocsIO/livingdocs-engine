@@ -69,7 +69,6 @@ module.exports = class Design
   # Transforms
   # ----------
 
-  # todo LP: Add directiveNames as options to check only for some directives
   getTransformOptions: ({ template, oneWay, directives }) ->
     oneWay ?= false
     transforms = []
@@ -79,6 +78,7 @@ module.exports = class Design
       compatibility = template.isCompatible(other, { oneWay, directives })
 
       if compatibility.isCompatible
+        compatibility.template = other
         transforms.push(compatibility)
 
     return if transforms.length then transforms else undefined
