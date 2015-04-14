@@ -113,14 +113,22 @@ module.exports = class ComponentTree
 
   # Get all components flattened into an array
   getAllComponents: ->
-    components = []
-    @each (c) -> components.push(c)
-    components
+
+    return @_componentsArrayCache if @_componentsArrayCache
+
+    @_componentsArrayCache = []
+    @each (c) => @_componentsArrayCache.push(c)
+    @_componentsArrayCache
 
 
   # Get the nth component with zero based index
   eq: (index) ->
     @getAllComponents()[index]
+
+
+  # Get the index of a component when traversing the tree
+  indexOf: (component) ->
+    @getAllComponents().indexOf(component)
 
 
   # Traverse all containers and components
@@ -217,9 +225,11 @@ module.exports = class ComponentTree
   # These functions should only be called by componentContainers
 
   attachingComponent: (component, attachComponentFunc) ->
+
     if component.componentTree == this
       # move component
       attachComponentFunc()
+      delete @_componentsArrayCache
       @fireEvent('componentMoved', component)
     else
       if component.componentTree?
@@ -230,6 +240,7 @@ module.exports = class ComponentTree
         @componentById[descendant.id] = component
 
       attachComponentFunc()
+      delete @_componentsArrayCache
       @fireEvent('componentAdded', component)
 
 
@@ -247,6 +258,7 @@ module.exports = class ComponentTree
       @componentById[descendant.id] = undefined
 
     detachComponentFunc()
+    delete @_componentsArrayCache
     @fireEvent('componentRemoved', component)
 
 

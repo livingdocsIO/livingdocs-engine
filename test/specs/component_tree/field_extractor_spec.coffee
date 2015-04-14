@@ -124,6 +124,19 @@ describe 'Field Extractor', ->
       expect(@fieldsChanged).to.not.have.been.called
 
 
+    it 'fires when a previously empty component is filled', (done) ->
+      testString = 'new hero title'
+      heroComponent = @tree.find('hero').first
+      newHeroComponent = @tree.getComponent('hero')
+      heroComponent.before(newHeroComponent)
+
+      @extractor.fieldsChanged.add (changedFields) ->
+        expect(changedFields.documentTitle.text).to.equal(testString)
+        expect(_(changedFields).size()).to.equal(1)
+        done()
+
+      newHeroComponent.set('title', testString)
+
     it 'fires the fieldsChanged event when removing a component', (done) ->
       @extractor.fieldsChanged.add (changedFields) ->
         expect(changedFields.documentTitle.text).to.equal('Subtitle Title')
