@@ -34,14 +34,16 @@ module.exports = class Livingdoc extends EventEmitter
   # @param designName { string } Name of a design
   # @param componentTree { ComponentTree } A componentTree instance
   # @returns { Livingdoc object }
-  @create: ({ data, designName, layoutName, componentTree }) ->
+  @create: ({ data, designConfig, layoutName, componentTree }) ->
     componentTree = if data?
       designName = data.design?.name
-      assert designName?, 'Error creating livingdoc: No design is specified.'
-      design = designCache.get(designName)
+      designVersion = data.design?.version
+      assert designName?, 'Error creating livingdoc: No design name is specified.'
+      assert designVersion?, 'Error creating livingdoc: No design version is specified.'
+      design = designCache.get(designName, designVersion)
       new ComponentTree(content: data, design: design)
-    else if designName?
-      design = designCache.get(designName)
+    else if designConfig.name? && designConfig.version?
+      design = designCache.get(designConfig.name, designConfig.version)
       new ComponentTree(design: design)
     else
       componentTree

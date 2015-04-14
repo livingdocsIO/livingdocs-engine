@@ -25,7 +25,7 @@ describe 'browser_api:', ->
       expect(doc.design.has('test', '0.0.1')).to.be.true
 
 
-    it 'reseets the design cache', ->
+    it 'resets the design cache', ->
       doc.design.load(test.designJson)
       doc.design.resetCache()
       expect(doc.design.has('test', '0.0.1')).to.be.false
@@ -51,7 +51,11 @@ describe 'browser_api:', ->
         expect(doc.design.has('test', '0.0.2')).to.equal(true)
 
 
-      it 'saves the newest design under its name only', ->
+      it 'does not save a design only under its name', ->
+        expect(doc.design.has('test')).to.equal(false)
+
+
+      it 'saves the newest design under its name and version', ->
         newestDesign = doc.design.get('test', '0.0.2')
         expect(newestDesign.version).to.equal('0.0.2')
 
@@ -66,7 +70,10 @@ describe 'browser_api:', ->
 
 
     it 'creates a new empty livingdoc', ->
-      livingdoc = doc.new(design: 'test')
+      livingdoc = doc.new
+        designConfig:
+          name: 'test'
+          version: '0.0.1'
       firstComponent = livingdoc.componentTree.first()
       expect(firstComponent).to.be.undefined
 
@@ -90,6 +97,7 @@ describe 'browser_api:', ->
           ],
           design: {
             name: "test"
+            version: "0.0.1"
           }
         }
       })
