@@ -2511,11 +2511,12 @@ module.exports = doc = (function() {
     Livingdoc: Livingdoc,
     ComponentTree: ComponentTree,
     createLivingdoc: function(_arg) {
-      var componentTree, data, design, layout;
-      data = _arg.data, design = _arg.design, layout = _arg.layout, componentTree = _arg.componentTree;
+      var componentTree, data, designName, designVersion, layout;
+      data = _arg.data, designName = _arg.designName, designVersion = _arg.designVersion, layout = _arg.layout, componentTree = _arg.componentTree;
       return Livingdoc.create({
         data: data,
-        designName: design,
+        designName: designName,
+        designVersion: designVersion,
         layoutName: layout,
         componentTree: componentTree
       });
@@ -4803,13 +4804,11 @@ module.exports = (function() {
   return {
     designs: {},
     load: function(designSpec, _arg) {
-      var basePath, design, designIdentifier, version;
+      var basePath, design;
       basePath = (_arg != null ? _arg : {}).basePath;
       assert(designSpec != null, 'design.load() was called with undefined.');
       assert(!(typeof designSpec === 'string'), 'design.load() loading a design by name is not implemented.');
-      version = Version.parse(designSpec.version);
-      designIdentifier = Design.getIdentifier(designSpec.name, version);
-      if (this.has(designIdentifier)) {
+      if (this.has(designSpec.name, designSpec.version)) {
         return;
       }
       if ((basePath != null) && (designSpec.assets != null)) {
@@ -4828,12 +4827,19 @@ module.exports = (function() {
       }
       return this.designs[design.identifier] = design;
     },
-    has: function(designIdentifier) {
-      return this.designs[designIdentifier] != null;
+    has: function(designName, designVersion) {
+      var identifier;
+      if (designVersion == null) {
+        return false;
+      }
+      identifier = Design.getIdentifier(designName, designVersion);
+      return this.designs[identifier] != null;
     },
-    get: function(designIdentifier) {
-      assert(this.has(designIdentifier), "Error: design '" + designIdentifier + "' is not loaded.");
-      return this.designs[designIdentifier];
+    get: function(designName, designVersion) {
+      var identifier;
+      assert(this.has(designName, designVersion), "Error: design '" + designName + "' version '" + designVersion + "' is not loaded.");
+      identifier = Design.getIdentifier(designName, designVersion);
+      return this.designs[identifier];
     },
     resetCache: function() {
       return this.designs = {};
@@ -6711,14 +6717,14 @@ module.exports = Livingdoc = (function(_super) {
   __extends(Livingdoc, _super);
 
   Livingdoc.create = function(_arg) {
-    var componentTree, data, design, designName, layoutName, _ref;
-    data = _arg.data, designName = _arg.designName, layoutName = _arg.layoutName, componentTree = _arg.componentTree;
-    componentTree = data != null ? (designName = (_ref = data.design) != null ? _ref.name : void 0, assert(designName != null, 'Error creating livingdoc: No design is specified.'), design = designCache.get(designName), new ComponentTree({
+    var componentTree, data, design, designName, designVersion, layoutName, _ref, _ref1;
+    data = _arg.data, designName = _arg.designName, designVersion = _arg.designVersion, layoutName = _arg.layoutName, componentTree = _arg.componentTree;
+    componentTree = data != null ? (designName = (_ref = data.design) != null ? _ref.name : void 0, designVersion = (_ref1 = data.design) != null ? _ref1.version : void 0, assert(designName != null, 'Error creating livingdoc: No design name is specified.'), assert(designVersion != null, 'Error creating livingdoc: No design version is specified.'), design = designCache.get(designName, designVersion), new ComponentTree({
       content: data,
       design: design
-    })) : designName != null ? (design = designCache.get(designName), new ComponentTree({
+    })) : (designName != null) && (designVersion != null) ? (design = designCache.get(designName, designVersion), new ComponentTree({
       design: design
-    })) : componentTree;
+    })) : componentTree != null ? componentTree : assert(false, 'Insufficient parameters to livingdoc#create. Pass either data, design name and version or component tree');
     if (data != null ? data.layout : void 0) {
       layoutName = data.layout;
     }
@@ -9879,8 +9885,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/words":54,"../rendering/component_view":55,"./directive_collection":69,"./directive_compiler":70,"./directive_finder":71,"./directive_iterator":72,"jquery":"jquery"}],74:[function(require,module,exports){
 module.exports={
-  "version": "0.10.6",
-  "revision": "97ac636"
+  "version": "0.11.0",
+  "revision": "130ed98"
 }
 
 },{}],"jquery":[function(require,module,exports){

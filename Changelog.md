@@ -1,3 +1,7 @@
+# v0.11.0
+
+- Require design version for doc#new. NOTE: THIS IS A BREAKING CHANGE. [#185](https://github.com/upfrontIO/livingdocs-engine/pull/185)
+
 # v0.10.6
 - fix bug with order of empty components in field extractor [#184](https://github.com/upfrontIO/livingdocs-engine/pull/184)
 
