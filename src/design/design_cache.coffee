@@ -42,7 +42,8 @@ module.exports = do ->
 
 
   # Check if a design is loaded
-  # The version is mandatory
+  # @param designName { string } name of a design. Mandatory.
+  # @param designVersion { string } version of a design. Mandatory.
   has: (designName, designVersion) ->
     return false unless designVersion?
     identifier = Design.getIdentifier(designName, designVersion)
@@ -51,7 +52,8 @@ module.exports = do ->
 
   # Get a loaded design
   # The version is mandatory
-  # @return { Design object }
+  # @param designName { string } name of a design. Mandatory.
+  # @param designVersion { string } version of a design. Mandatory.
   get: (designName, designVersion) ->
     assert @has(designName, designVersion), "Error: design '#{ designName }' version '#{ designVersion }' is not loaded."
     identifier = Design.getIdentifier(designName, designVersion)
