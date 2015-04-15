@@ -43,9 +43,9 @@ module.exports = doc = do ->
   # - new({ data })
   #   Load a livingdoc with JSON data
   #
-  # - new({ design })
+  # - new({ designName, designVersion })
   #   This will create a new empty livingdoc with your
-  #   specified design
+  #   specified design name and version
   #
   # - new({ componentTree })
   #   This will create a new livingdoc from a
