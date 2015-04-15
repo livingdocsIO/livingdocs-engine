@@ -22,19 +22,20 @@ module.exports = class Livingdoc extends EventEmitter
   # - new({ data })
   #   Load a livingdoc with JSON data
   #
-  # - new({ design })
+  # - new({ designName, designVersion })
   #   This will create a new empty livingdoc with your
-  #   specified design
+  #   specified design name and version
   #
   # - new({ componentTree })
   #   This will create a new livingdoc from a
   #   componentTree
   #
   # @param data { json string } Serialized Livingdoc
-  # @param designConfig { hash } Needs to contain the name and version of a design
+  # @param designName { string } name of a design
+  # @param designVersion { string } version of a design
   # @param componentTree { ComponentTree } A componentTree instance
   # @returns { Livingdoc object }
-  @create: ({ data, designConfig, layoutName, componentTree }) ->
+  @create: ({ data, designName, designVersion, layoutName, componentTree }) ->
     componentTree = if data?
       designName = data.design?.name
       designVersion = data.design?.version
@@ -42,8 +43,8 @@ module.exports = class Livingdoc extends EventEmitter
       assert designVersion?, 'Error creating livingdoc: No design version is specified.'
       design = designCache.get(designName, designVersion)
       new ComponentTree(content: data, design: design)
-    else if designConfig.name? && designConfig.version?
-      design = designCache.get(designConfig.name, designConfig.version)
+    else if designName? && designVersion?
+      design = designCache.get(designName, designVersion)
       new ComponentTree(design: design)
     else
       componentTree

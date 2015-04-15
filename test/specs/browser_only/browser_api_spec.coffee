@@ -71,9 +71,8 @@ describe 'browser_api:', ->
 
     it 'creates a new empty livingdoc', ->
       livingdoc = doc.new
-        designConfig:
-          name: 'test'
-          version: '0.0.1'
+        designName: 'test'
+        designVersion: '0.0.1'
       firstComponent = livingdoc.componentTree.first()
       expect(firstComponent).to.be.undefined
 

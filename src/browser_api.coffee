@@ -52,11 +52,12 @@ module.exports = doc = do ->
   #   componentTree
   #
   # @param data { json string } Serialized Livingdoc
-  # @param designConfig { hash } Needs to contain the name and version of a design
+  # @param designName { string } name of a design
+  # @param designVersion { string } version of a design
   # @param componentTree { ComponentTree } A componentTree instance
   # @returns { Livingdoc object }
-  createLivingdoc: ({ data, designConfig, layout, componentTree }) ->
-    Livingdoc.create({ data, designConfig, layoutName: layout, componentTree })
+  createLivingdoc: ({ data, designName, designVersion, layout, componentTree }) ->
+    Livingdoc.create({ data, designName, designVersion, layoutName: layout, componentTree })
 
 
   # Alias for backwards compatibility
