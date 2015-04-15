@@ -46,8 +46,10 @@ module.exports = class Livingdoc extends EventEmitter
     else if designName? && designVersion?
       design = designCache.get(designName, designVersion)
       new ComponentTree(design: design)
-    else
+    else if componentTree?
       componentTree
+    else
+      assert false, 'Insufficient parameters to livingdoc#create. Pass either data, design name and version or component tree'
 
     if data?.layout
       layoutName = data.layout
