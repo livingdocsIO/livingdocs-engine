@@ -139,7 +139,7 @@ module.exports = class Template
 
 
   # Return an object describing the interface of this template
-  # @returns { Object } An object wich contains the interface description
+  # @returns { Object } An object which contains the interface description
   #   of this template. This object will be the same if the interface does
   #   not change since directives and properties are sorted.
   info: () ->

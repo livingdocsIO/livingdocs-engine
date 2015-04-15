@@ -22,29 +22,34 @@ module.exports = class Livingdoc extends EventEmitter
   # - new({ data })
   #   Load a livingdoc with JSON data
   #
-  # - new({ design })
+  # - new({ designName, designVersion })
   #   This will create a new empty livingdoc with your
-  #   specified design
+  #   specified design name and version
   #
   # - new({ componentTree })
   #   This will create a new livingdoc from a
   #   componentTree
   #
   # @param data { json string } Serialized Livingdoc
-  # @param designName { string } Name of a design
+  # @param designName { string } name of a design
+  # @param designVersion { string } version of a design
   # @param componentTree { ComponentTree } A componentTree instance
   # @returns { Livingdoc object }
-  @create: ({ data, designName, layoutName, componentTree }) ->
+  @create: ({ data, designName, designVersion, layoutName, componentTree }) ->
     componentTree = if data?
       designName = data.design?.name
-      assert designName?, 'Error creating livingdoc: No design is specified.'
-      design = designCache.get(designName)
+      designVersion = data.design?.version
+      assert designName?, 'Error creating livingdoc: No design name is specified.'
+      assert designVersion?, 'Error creating livingdoc: No design version is specified.'
+      design = designCache.get(designName, designVersion)
       new ComponentTree(content: data, design: design)
-    else if designName?
-      design = designCache.get(designName)
+    else if designName? && designVersion?
+      design = designCache.get(designName, designVersion)
       new ComponentTree(design: design)
-    else
+    else if componentTree?
       componentTree
+    else
+      assert false, 'Insufficient parameters to livingdoc#create. Pass either data, design name and version or component tree'
 
     if data?.layout
       layoutName = data.layout

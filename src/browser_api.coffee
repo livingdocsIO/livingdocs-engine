@@ -43,20 +43,21 @@ module.exports = doc = do ->
   # - new({ data })
   #   Load a livingdoc with JSON data
   #
-  # - new({ design })
+  # - new({ designName, designVersion })
   #   This will create a new empty livingdoc with your
-  #   specified design
+  #   specified design name and version
   #
   # - new({ componentTree })
   #   This will create a new livingdoc from a
   #   componentTree
   #
   # @param data { json string } Serialized Livingdoc
-  # @param designName { string } Name of a design
+  # @param designName { string } name of a design
+  # @param designVersion { string } version of a design
   # @param componentTree { ComponentTree } A componentTree instance
   # @returns { Livingdoc object }
-  createLivingdoc: ({ data, design, layout, componentTree }) ->
-    Livingdoc.create({ data, designName: design, layoutName: layout, componentTree })
+  createLivingdoc: ({ data, designName, designVersion, layout, componentTree }) ->
+    Livingdoc.create({ data, designName, designVersion, layoutName: layout, componentTree })
 
 
   # Alias for backwards compatibility

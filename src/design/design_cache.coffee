@@ -21,10 +21,7 @@ module.exports = do ->
   load: (designSpec, { basePath }={}) ->
     assert designSpec?, 'design.load() was called with undefined.'
     assert not (typeof designSpec == 'string'), 'design.load() loading a design by name is not implemented.'
-
-    version = Version.parse(designSpec.version)
-    designIdentifier = Design.getIdentifier(designSpec.name, version)
-    return if @has(designIdentifier)
+    return if @has(designSpec.name, designSpec.version)
 
     # Add the base path to the designSpec if specified
     designSpec.assets.basePath = basePath if basePath? && designSpec.assets?
@@ -45,15 +42,22 @@ module.exports = do ->
 
 
   # Check if a design is loaded
-  has: (designIdentifier) ->
-    @designs[designIdentifier]?
+  # @param designName { string } name of a design. Mandatory.
+  # @param designVersion { string } version of a design. Mandatory.
+  has: (designName, designVersion) ->
+    return false unless designVersion?
+    identifier = Design.getIdentifier(designName, designVersion)
+    @designs[identifier]?
 
 
   # Get a loaded design
-  # @return { Design object }
-  get: (designIdentifier) ->
-    assert @has(designIdentifier), "Error: design '#{ designIdentifier }' is not loaded."
-    @designs[designIdentifier]
+  # The version is mandatory
+  # @param designName { string } name of a design. Mandatory.
+  # @param designVersion { string } version of a design. Mandatory.
+  get: (designName, designVersion) ->
+    assert @has(designName, designVersion), "Error: design '#{ designName }' version '#{ designVersion }' is not loaded."
+    identifier = Design.getIdentifier(designName, designVersion)
+    @designs[identifier]
 
 
   # Clear the cache if you want to reload designs
