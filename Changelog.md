@@ -1,3 +1,7 @@
+# v0.10.5
+
+- fix bug with order of empty components in field extractor [#184](https://github.com/upfrontIO/livingdocs-engine/pull/184)
+
 # v0.10.4
 
 - Add mimetype to ImageDirective [#182](https://github.com/upfrontIO/livingdocs-engine/pull/182)
