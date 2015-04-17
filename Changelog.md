@@ -1,3 +1,7 @@
+# v0.11.1
+
+- Update editable.js@0.5.2
+
 # v0.11.0
 
 - Require design version for doc#new. NOTE: THIS IS A BREAKING CHANGE. [#185](https://github.com/upfrontIO/livingdocs-engine/pull/185)
