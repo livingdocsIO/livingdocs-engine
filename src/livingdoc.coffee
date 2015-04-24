@@ -102,12 +102,15 @@ module.exports = class Livingdoc extends EventEmitter
   # Example:
   # article.appendTo({ host: '.article', interactive: true, loadResources: false })
   createView: ({ host, interactive, loadResources, wrapper, layoutName, iframe }) ->
-    viewWrapper = @getWrapper({ wrapper, layoutName, host })
+    $host = $(host)
     iframe ?= true
+
+    $host.html('') # empty container
+    viewWrapper = @getWrapper({ wrapper, layoutName })
 
     view = new View
       livingdoc: this
-      parent: $(host)
+      parent: $host
       isInteractive: interactive
       loadResources: loadResources
       wrapper: viewWrapper
@@ -135,31 +138,12 @@ module.exports = class Livingdoc extends EventEmitter
     @componentTree.createComponent.apply(@componentTree, arguments)
 
 
-  getWrapper: ({ wrapper, layoutName, host }) ->
-    return wrapper if wrapper?
-
-    layoutName ?= @layoutName
-    wrapper = @design.getLayout(layoutName)?.wrapper
-    wrapper ?= @extractWrapper(host)
-
-    return wrapper
-
-
-  # A view sometimes has to be wrapped in a container.
-  #
-  # Example:
-  # Here the document is rendered into $('.doc-section')
-  # <div class="iframe-container">
-  #   <section class="container doc-section"></section>
-  # </div>
-  extractWrapper: (parent) ->
-    $parent = $(parent).first()
-    if $parent.find(".#{ config.css.section }").length == 1
-      $wrapper = $($parent.html())
-
-    $parent.html('') # empty container
-
-    return $wrapper
+  getWrapper: ({ wrapper, layoutName }) ->
+    if wrapper?
+      return wrapper
+    else
+      layoutName ?= @layoutName
+      return @design.getLayout(layoutName)?.wrapper
 
 
   addView: (view) ->
