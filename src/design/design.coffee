@@ -5,6 +5,7 @@ words = require('../modules/words')
 Template = require('../template/template')
 OrderedHash = require('../modules/ordered_hash')
 Dependencies = require('../rendering/dependencies')
+Transforms = require('./transforms')
 _ = require('underscore')
 
 module.exports = class Design
@@ -33,6 +34,8 @@ module.exports = class Design
     # default components
     @defaultParagraph = undefined
     @defaultImage = undefined
+
+    @transforms = new Transforms(@components)
 
 
   equals: (design) ->
@@ -64,24 +67,6 @@ module.exports = class Design
   getComponentNameFromIdentifier: (identifier) ->
     { name } = Template.parseIdentifier(identifier)
     name
-
-
-  # Transforms
-  # ----------
-
-  getTransformOptions: ({ template, oneWay, directives }) ->
-    oneWay ?= false
-    transforms = []
-    @components.each (other) ->
-      return if template.equals(other)
-
-      compatibility = template.isCompatible(other, { oneWay, directives })
-
-      if compatibility.isCompatible
-        compatibility.template = other
-        transforms.push(compatibility)
-
-    return if transforms.length then transforms else undefined
 
 
   # Default Components

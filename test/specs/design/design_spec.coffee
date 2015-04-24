@@ -1,4 +1,3 @@
-_ = require('underscore')
 Design = require('../../../src/design/design')
 CssModificatorProperty = require('../../../src/design/css_modificator_property')
 Template = require('../../../src/template/template')
@@ -121,69 +120,4 @@ describe 'design:', ->
 
     it 'get the default image directive name', ->
       expect(@design.getDefaultImageDirectiveName()).to.equal('image')
-
-
-  describe 'test design', ->
-
-    expectToContain = (array, searched) ->
-      first = _.find array, (obj) ->
-        _.isEqual(obj, searched)
-
-      expect(first).to.exist
-
-
-    beforeEach ->
-      @design = test.getDesign()
-
-
-    describe 'getTransformOptions()', ->
-
-      it 'returns hero as fully-compatible templates for title', ->
-        options = @design.getTransformOptions
-          template: @design.get('title')
-
-        subtitle = _.find(options, (item) -> item.name == 'subtitle')
-        expect(subtitle.isCompatible).to.equal(true)
-        expect(subtitle.template.name).to.equal('subtitle')
-        expect(subtitle.mapping).to.deep.equal
-          'title': 'title'
-
-
-      it 'returns all fully-compatible templates for title', ->
-        options = @design.getTransformOptions
-          template: @design.get('title')
-
-        componentNames = _.map(options, (item) -> item.name)
-        expect(componentNames).to.have.members [
-          'subtitle', 'text', 'listItem'
-        ]
-
-
-      it 'does not return itself', ->
-        options = @design.getTransformOptions
-          template: @design.get('title')
-
-        componentNames = _.map(options, (item) -> item.name)
-        expect(componentNames).not.to.include('title')
-
-
-      it 'returns all one way compatible templates for title', ->
-        options = @design.getTransformOptions
-          template: @design.get('title')
-          oneWay: true
-
-        componentNames = _.map(options, (item) -> item.name)
-        expect(componentNames).to.have.members [
-          'hero', 'subtitle', 'text', 'cover', 'button',
-          'related-article', 'listItem', 'compositeHtml'
-        ]
-
-
-      it 'returns all compatible templates for cover directive image', ->
-        options = @design.getTransformOptions
-          template: @design.get('cover')
-          directives: ['image']
-
-        componentNames = _.map(options, (item) -> item.name)
-        expect(componentNames).to.have.members ['image', 'background-image']
 

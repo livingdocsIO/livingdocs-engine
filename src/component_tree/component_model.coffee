@@ -145,18 +145,15 @@ module.exports = class ComponentModel
 
   # @return {Array of { label, componentName }} Array of component names
   getTransformOptions: ({ oneWay, directives }={}) ->
-    design = @template.design
-    return unless design?
-    options = design.getTransformOptions({ @template })
+    transforms = @template.design?.transforms
+    return unless transforms?
 
-    names = []
-    for option in options || []
-      componentName = option.name
-      template = option.template
-      if @isTypeAllowedAsSibling(template)
-        names.push(label: template.label, componentName: componentName)
-
-    names
+    transforms.getOptionsList
+      template: @template
+      oneWay: oneWay
+      directives: directives
+      filter: (template) =>
+        @isTypeAllowedAsSibling(template)
 
 
   # Change this component into another component.
