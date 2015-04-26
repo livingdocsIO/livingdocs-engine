@@ -105,6 +105,27 @@ describe 'component_model:', ->
       expect(title.componentName).to.equal('title')
 
 
+    it 'transforms an image into a background image', ->
+      componentTree = test.createComponentTree [{ image: undefined } ]
+      image = componentTree.first()
+
+      directive = image.directives.get('image')
+      directive.setContent('http://wwww.test.com/1')
+      directive.setOriginalImageDimensions(width: 400, height: 300)
+      directive.setMimeType('image/jpeg')
+
+      bgImage = image.transform('background-image')
+      bgImageDirective = bgImage.directives.get('image')
+      expect(bgImage.componentName).to.equal('background-image')
+      expect( bgImageDirective.getImageObject() ).to.deep.equal
+        # Since no image service is defined the orignalUrl will not be set.
+        url: 'http://wwww.test.com/1'
+        crop: null
+        width: 400
+        height: 300
+        mimeType: 'image/jpeg'
+
+
   describe 'Row Component', ->
 
     beforeEach ->

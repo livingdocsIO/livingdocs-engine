@@ -178,7 +178,9 @@ module.exports = class ComponentModel
 
     newModel = newTemplate.createModel()
     for from, to of compatibility.mapping || []
-      newModel.set(to, @get(from))
+      fromDirective = @directives.get(from)
+      newDirective = newModel.directives.get(to)
+      fromDirective.copyTo(newDirective)
 
     @replaceWith(newModel)
 
