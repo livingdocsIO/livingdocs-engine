@@ -3,12 +3,13 @@ Dependency = require('../../../src/rendering/dependency')
 
 # Helper methods
 # --------------
-toBase64Url = (code) ->
+toBase64Url = (code, mimetype) ->
+  mimetype ?= 'text/javascript'
   base64Code = window.btoa(code)
-  "data:text/javascript;base64,#{ base64Code }"
+  "data:#{ mimetype };base64,#{ base64Code }"
 
 
-describe 'assets:', ->
+context 'assets:', ->
 
   describe 'constructor', ->
 
@@ -17,7 +18,7 @@ describe 'assets:', ->
       expect(assets).to.be.an.instanceof(Assets)
 
 
-  describe 'load js', ->
+  context 'load js >', ->
 
     beforeEach (done) ->
       whenIframeLoaded = test.iframe.create()
@@ -68,7 +69,7 @@ describe 'assets:', ->
           done()
 
 
-  describe 'load css', ->
+  context 'load css >', ->
 
     beforeEach (done) ->
       whenIframeLoaded = test.iframe.create()
@@ -83,7 +84,7 @@ describe 'assets:', ->
 
 
     it 'loads a css file from a base64 src', (done) ->
-      base64Url = toBase64Url('.test-element { position: absolute; }')
+      base64Url = toBase64Url('.test-element { position: absolute; }', 'text/css')
       dependency = new Dependency(src: base64Url, type: 'css')
 
       @assets.loadDependency dependency, =>
