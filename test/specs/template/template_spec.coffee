@@ -45,28 +45,6 @@ describe 'template:', ->
         expect(componentView instanceof ComponentView).to.equal(true)
 
 
-    describe 'isCompatible()', ->
-
-      it 'is compatible with a subtitle', ->
-        other = test.getTemplate('subtitle')
-        compatibility = @template.isCompatible(other)
-        expect(compatibility).to.deep.equal
-          name: 'subtitle'
-          isCompatible: true
-          mapping:
-            'title': 'title'
-
-
-      it 'is not compatible with a an image', ->
-        other = test.getTemplate('image')
-        compatibility = @template.isCompatible(other)
-        expect(compatibility).to.deep.equal
-          name: 'image'
-          isCompatible: false
-          mapping:
-            'title': null
-
-
   describe 'doc-link directive', ->
     it 'is parsed', ->
       template = new Template

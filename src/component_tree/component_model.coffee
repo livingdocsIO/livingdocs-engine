@@ -143,9 +143,13 @@ module.exports = class ComponentModel
   # Transform operations
   # --------------------
 
+  getTransforms: ->
+    transforms = @template.design?.transforms
+
+
   # @return {Array of { label, componentName }} Array of component names
   getTransformOptions: ({ oneWay, directives }={}) ->
-    transforms = @template.design?.transforms
+    transforms = @getTransforms()
     return unless transforms?
 
     transforms.getOptionsList
@@ -165,9 +169,11 @@ module.exports = class ComponentModel
   # @param {String} componentName
   # @returns {ComponentModel} The new componentModel in this spot
   transform: (componentName) ->
+    transforms = @getTransforms()
     design = @template.design
     newTemplate = design.get(componentName)
-    compatibility = @template.isCompatible(newTemplate)
+
+    compatibility = transforms.isCompatible(this, newTemplate, oneWay: true)
     assert compatibility.isCompatible, "Component #{ @componentName } can not be transformed into #{ componentName }."
 
     newModel = newTemplate.createModel()
