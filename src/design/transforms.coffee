@@ -41,8 +41,8 @@ module.exports = class Transforms
   # @param {Template} First Template
   # @param {Template} Second Template
   # @param {Object}
-  #  - oneWay {Boolean}: Can may be transformed only in one direction
-  #  - directives {Array of String}: The directives of a to export into b
+  #  - oneWay {Boolean}: Also return components that can only be transformed in one direction.
+  #  - directives {Array of String}: The directives of a to export into b (will set the oneWay flag).
   isCompatible: (a, b, options={}) ->
     obj =
       name: b.name
