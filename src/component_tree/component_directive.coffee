@@ -17,6 +17,12 @@ module.exports = class ComponentDirective
     @component.setContent(@name, value)
 
 
+  # Copy the contents of this directive to another directive
+  # (possibly of a different component).
+  copyTo: (otherDirective) ->
+    otherDirective.setContent( @getContent() )
+
+
   isEmpty: ->
     !@getContent()
 

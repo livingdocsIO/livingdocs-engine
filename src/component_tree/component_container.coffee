@@ -34,19 +34,26 @@ module.exports = class ComponentContainer
   # Nesting Validations
   # -------------------
 
+  # @param {ComponentModel}
   isAllowedAsChild: (component) ->
-    !!(
-      @canBeNested(component) &&
-      @isChildAllowed(component) &&
-      @isAllowedAsParent(component)
-    )
+    !!( @canBeNested(component.id) &&
+      @isChildAllowed(component.template) &&
+      @isAllowedAsParent(component.template) )
+
+
+  # @param {Template}
+  isTypeAllowedAsChild: (template) ->
+    return false unless template?
+    !!( @isChildAllowed(template) &&
+      @isAllowedAsParent(template) )
+
 
 
   # Prevent inserting a component into itself.
-  canBeNested: (component) ->
+  canBeNested: (componentId) ->
     parent = @parentComponent
     while parent?
-      return false if parent.id == component.id
+      return false if parent.id == componentId
       parent = parent.getParent()
 
     return true
@@ -54,12 +61,12 @@ module.exports = class ComponentContainer
 
   # Check if the configuration allows a component to be
   # inserted here.
-  isChildAllowed: (component) ->
-    @allowedChildren == undefined || @allowedChildren[component.componentName]
+  isChildAllowed: (template) ->
+    @allowedChildren == undefined || @allowedChildren[template.name]
 
 
-  isAllowedAsParent: (component) ->
-    return true unless allowedParents = component.template.allowedParents
+  isAllowedAsParent: (template) ->
+    return true unless allowedParents = template.allowedParents
 
     parentName = if @isRoot then 'root' else @parentComponent?.componentName
 

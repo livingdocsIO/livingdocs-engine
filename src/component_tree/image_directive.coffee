@@ -15,6 +15,19 @@ module.exports = class ImageDirective extends ComponentDirective
     @getImageUrl()
 
 
+  # Copy the contents of this directive to another directive
+  # (possibly of a different component).
+  #
+  # Cropping info should not be copied. And the other directive
+  # could possibly have a different image service. Thus we
+  # just copy over the original image url.
+  copyTo: (otherDirective) ->
+    otherDirective.setImageUrl( @getOriginalUrl() )
+    otherDirective.setOriginalImageDimensions( @getOriginalImageDimensions() )
+    otherDirective.setMimeType( @getMimeType() )
+
+
+
   # Image Directive Methods
   # -----------------------
 
@@ -104,8 +117,7 @@ module.exports = class ImageDirective extends ComponentDirective
 
   resetCrop: ->
     currentValue = @component.content[@name]
-    if currentValue?
-      currentValue.crop = null
+    currentValue.crop = null if currentValue?
 
 
   setImageService: (imageServiceName) ->

@@ -39,6 +39,10 @@ module.exports = class Template
     @parseTemplate()
 
 
+  equals: (other) ->
+    @name == other?.name
+
+
   setDesign: (design) ->
     @design = design
     @identifier = "#{ design.name }.#{ @name }"
@@ -142,7 +146,7 @@ module.exports = class Template
   # @returns { Object } An object which contains the interface description
   #   of this template. This object will be the same if the interface does
   #   not change since directives and properties are sorted.
-  info: () ->
+  info: ->
     doc =
       name: @name
       design: @design?.name
@@ -153,14 +157,12 @@ module.exports = class Template
       { name, type } = directive
       doc.directives.push({ name, type })
 
-
     for name, style of @styles
       doc.properties.push({ name, type: 'cssModificator' })
 
     doc.directives.sort(sortByName)
     doc.properties.sort(sortByName)
     doc
-
 
 
 # Static functions

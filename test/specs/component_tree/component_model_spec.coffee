@@ -48,12 +48,82 @@ describe 'component_model:', ->
       expect(@title.content['title']).not.to.exist
 
 
-    describe '#set()', ->
+    describe 'set()', ->
 
       it 'sets editable content', ->
         caption = 'Talk to the hand'
         @title.set('title', caption)
         expect(@title.get('title')).to.equal(caption)
+
+
+  describe 'getTransformOptions()', ->
+
+    it 'gets the transform options', ->
+      @title = test.getComponent('title')
+      options = @title.getTransformOptions()
+      expect(options).to.have.deep.members [
+        componentName: 'subtitle'
+        label: 'Subtitle with a default value'
+      ,
+        componentName: 'text'
+        label: 'Paragraph'
+      ,
+        componentName: 'listItem'
+        label: 'Component that can only be placed in a restricted container'
+      ]
+
+
+
+
+    # listItems can only be inserted into lists. So they
+    # are not an option at the root level of a componentTree.
+    it 'Does not include forbidden element listItem', ->
+      componentTree = test.createComponentTree [{ title: undefined } ]
+      title = componentTree.first()
+      options = title.getTransformOptions()
+      componentNames = _.map(options, (item) -> item.componentName)
+      expect(componentNames).to.have.members(['subtitle', 'text'])
+
+
+  describe 'transform()', ->
+
+    it 'transforms a paragraph into a title component', ->
+      componentTree = test.createComponentTree [{ text: undefined } ]
+      text = componentTree.first()
+      text.set('text', 'Moby Dick')
+      text.transform('title')
+      title = componentTree.first()
+      expect(componentTree.serialize().content.length).to.equal(1)
+      expect(title.componentName).to.equal('title')
+      expect( title.get('title') ).to.equal('Moby Dick')
+
+
+    it 'returns an instance of the new model', ->
+      componentTree = test.createComponentTree [{ text: undefined } ]
+      text = componentTree.first()
+      title = text.transform('title')
+      expect(title.componentName).to.equal('title')
+
+
+    it 'transforms an image into a background image', ->
+      componentTree = test.createComponentTree [{ image: undefined } ]
+      image = componentTree.first()
+
+      directive = image.directives.get('image')
+      directive.setContent('http://wwww.test.com/1')
+      directive.setOriginalImageDimensions(width: 400, height: 300)
+      directive.setMimeType('image/jpeg')
+
+      bgImage = image.transform('background-image')
+      bgImageDirective = bgImage.directives.get('image')
+      expect(bgImage.componentName).to.equal('background-image')
+      expect( bgImageDirective.getImageObject() ).to.deep.equal
+        # Since no image service is defined the orignalUrl will not be set.
+        url: 'http://wwww.test.com/1'
+        crop: null
+        width: 400
+        height: 300
+        mimeType: 'image/jpeg'
 
 
   describe 'Row Component', ->

@@ -5,6 +5,7 @@ words = require('../modules/words')
 Template = require('../template/template')
 OrderedHash = require('../modules/ordered_hash')
 Dependencies = require('../rendering/dependencies')
+Transforms = require('./transforms')
 _ = require('underscore')
 
 module.exports = class Design
@@ -33,6 +34,8 @@ module.exports = class Design
     # default components
     @defaultParagraph = undefined
     @defaultImage = undefined
+
+    @transforms = new Transforms(@components)
 
 
   equals: (design) ->
@@ -65,6 +68,9 @@ module.exports = class Design
     { name } = Template.parseIdentifier(identifier)
     name
 
+
+  # Default Components
+  # ------------------
 
   getDefaultParagraphTemplate: ->
     @defaultParagraph

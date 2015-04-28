@@ -78,8 +78,15 @@ module.exports = class ComponentModel
   # ComponentTree operations
   # ------------------------
 
+  # @param {ComponentModel}
   isAllowedAsSibling: (component) ->
     @parentContainer.isAllowedAsChild(component)
+
+
+  # @param {Template}
+  isTypeAllowedAsSibling: (template) ->
+    return true unless @parentContainer?
+    @parentContainer.isTypeAllowedAsChild(template)
 
 
   isAllowedAsChild: (containerName, component) ->
@@ -131,6 +138,58 @@ module.exports = class ComponentModel
   # Remove this component from its container and ComponentTree
   remove: ->
     @parentContainer.remove(this)
+
+
+  # Transform operations
+  # --------------------
+
+  getTransforms: ->
+    transforms = @template.design?.transforms
+
+
+  # @return {Array of { label, componentName }} Array of component names
+  getTransformOptions: ({ oneWay, directives }={}) ->
+    transforms = @getTransforms()
+    return unless transforms?
+
+    transforms.getOptionsList
+      template: @template
+      oneWay: oneWay
+      directives: directives
+      filter: (template) =>
+        @isTypeAllowedAsSibling(template)
+
+
+  # Change this component into another component.
+  # Check for available options with getTransformOptions().
+  #
+  # This method will throw an error if an invalid componentName
+  # is supplied.
+  #
+  # @param {String} componentName
+  # @returns {ComponentModel} The new componentModel in this spot
+  transform: (componentName) ->
+    transforms = @getTransforms()
+    design = @template.design
+    newTemplate = design.get(componentName)
+
+    compatibility = transforms.isCompatible(this, newTemplate, oneWay: true)
+    assert compatibility.isCompatible, "Component #{ @componentName } can not be transformed into #{ componentName }."
+
+    newModel = newTemplate.createModel()
+    for from, to of compatibility.mapping || []
+      fromDirective = @directives.get(from)
+      newDirective = newModel.directives.get(to)
+      fromDirective.copyTo(newDirective)
+
+    @replaceWith(newModel)
+
+
+  # @param {ComponentModel}
+  replaceWith: (otherComponent) ->
+    @after(otherComponent)
+    @remove()
+    return otherComponent
 
 
   # ComponentTree Iterators
