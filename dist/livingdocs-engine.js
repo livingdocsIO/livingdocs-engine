@@ -2544,7 +2544,7 @@ window.doc = doc;
 
 
 
-},{"../version":74,"./component_tree/component_tree":19,"./configuration/augment_config":25,"./configuration/config":26,"./design/design_cache":30,"./image_services/image_service":36,"./livingdoc":44,"./rendering_container/css_loader":62,"./rendering_container/editor_page":63,"./rendering_container/js_loader":65}],13:[function(require,module,exports){
+},{"../version":75,"./component_tree/component_tree":19,"./configuration/augment_config":25,"./configuration/config":26,"./design/design_cache":30,"./image_services/image_service":37,"./livingdoc":45,"./rendering_container/css_loader":63,"./rendering_container/editor_page":64,"./rendering_container/js_loader":66}],13:[function(require,module,exports){
 var ComponentArray;
 
 module.exports = ComponentArray = (function() {
@@ -2626,14 +2626,21 @@ module.exports = ComponentContainer = (function() {
   };
 
   ComponentContainer.prototype.isAllowedAsChild = function(component) {
-    return !!(this.canBeNested(component) && this.isChildAllowed(component) && this.isAllowedAsParent(component));
+    return !!(this.canBeNested(component.id) && this.isChildAllowed(component.template) && this.isAllowedAsParent(component.template));
   };
 
-  ComponentContainer.prototype.canBeNested = function(component) {
+  ComponentContainer.prototype.isTypeAllowedAsChild = function(template) {
+    if (template == null) {
+      return false;
+    }
+    return !!(this.isChildAllowed(template) && this.isAllowedAsParent(template));
+  };
+
+  ComponentContainer.prototype.canBeNested = function(componentId) {
     var parent;
     parent = this.parentComponent;
     while (parent != null) {
-      if (parent.id === component.id) {
+      if (parent.id === componentId) {
         return false;
       }
       parent = parent.getParent();
@@ -2641,13 +2648,13 @@ module.exports = ComponentContainer = (function() {
     return true;
   };
 
-  ComponentContainer.prototype.isChildAllowed = function(component) {
-    return this.allowedChildren === void 0 || this.allowedChildren[component.componentName];
+  ComponentContainer.prototype.isChildAllowed = function(template) {
+    return this.allowedChildren === void 0 || this.allowedChildren[template.name];
   };
 
-  ComponentContainer.prototype.isAllowedAsParent = function(component) {
+  ComponentContainer.prototype.isAllowedAsParent = function(template) {
     var allowed, allowedParents, i, len, parentName, ref;
-    if (!(allowedParents = component.template.allowedParents)) {
+    if (!(allowedParents = template.allowedParents)) {
       return true;
     }
     parentName = this.isRoot ? 'root' : (ref = this.parentComponent) != null ? ref.componentName : void 0;
@@ -2867,7 +2874,7 @@ module.exports = ComponentContainer = (function() {
 
 
 
-},{"../modules/logging/assert":49}],15:[function(require,module,exports){
+},{"../modules/logging/assert":50}],15:[function(require,module,exports){
 var ComponentDirective;
 
 module.exports = ComponentDirective = (function() {
@@ -2883,6 +2890,10 @@ module.exports = ComponentDirective = (function() {
 
   ComponentDirective.prototype.setContent = function(value) {
     return this.component.setContent(this.name, value);
+  };
+
+  ComponentDirective.prototype.copyTo = function(otherDirective) {
+    return otherDirective.setContent(this.getContent());
   };
 
   ComponentDirective.prototype.isEmpty = function() {
@@ -2968,7 +2979,7 @@ module.exports = {
 
 
 
-},{"../image_services/image_service":36,"../modules/logging/assert":49,"./editable_directive":20,"./html_directive":22,"./image_directive":23,"./link_directive":24}],17:[function(require,module,exports){
+},{"../image_services/image_service":37,"../modules/logging/assert":50,"./editable_directive":20,"./html_directive":22,"./image_directive":23,"./link_directive":24}],17:[function(require,module,exports){
 var ComponentContainer, ComponentModel, DirectiveCollection, assert, config, deepEqual, directiveFactory, guid, log;
 
 deepEqual = require('deep-equal');
@@ -3052,6 +3063,13 @@ module.exports = ComponentModel = (function() {
     return this.parentContainer.isAllowedAsChild(component);
   };
 
+  ComponentModel.prototype.isTypeAllowedAsSibling = function(template) {
+    if (this.parentContainer == null) {
+      return true;
+    }
+    return this.parentContainer.isTypeAllowedAsChild(template);
+  };
+
   ComponentModel.prototype.isAllowedAsChild = function(containerName, component) {
     return this.containers[containerName].isAllowedAsChild(component);
   };
@@ -3096,6 +3114,56 @@ module.exports = ComponentModel = (function() {
 
   ComponentModel.prototype.remove = function() {
     return this.parentContainer.remove(this);
+  };
+
+  ComponentModel.prototype.getTransforms = function() {
+    var ref, transforms;
+    return transforms = (ref = this.template.design) != null ? ref.transforms : void 0;
+  };
+
+  ComponentModel.prototype.getTransformOptions = function(arg1) {
+    var directives, oneWay, ref, transforms;
+    ref = arg1 != null ? arg1 : {}, oneWay = ref.oneWay, directives = ref.directives;
+    transforms = this.getTransforms();
+    if (transforms == null) {
+      return;
+    }
+    return transforms.getOptionsList({
+      template: this.template,
+      oneWay: oneWay,
+      directives: directives,
+      filter: (function(_this) {
+        return function(template) {
+          return _this.isTypeAllowedAsSibling(template);
+        };
+      })(this)
+    });
+  };
+
+  ComponentModel.prototype.transform = function(componentName) {
+    var compatibility, design, from, fromDirective, newDirective, newModel, newTemplate, ref, to, transforms;
+    transforms = this.getTransforms();
+    design = this.template.design;
+    newTemplate = design.get(componentName);
+    compatibility = transforms.isCompatible(this, newTemplate, {
+      oneWay: true
+    });
+    assert(compatibility.isCompatible, "Component " + this.componentName + " can not be transformed into " + componentName + ".");
+    newModel = newTemplate.createModel();
+    ref = compatibility.mapping || [];
+    for (from in ref) {
+      to = ref[from];
+      fromDirective = this.directives.get(from);
+      newDirective = newModel.directives.get(to);
+      fromDirective.copyTo(newDirective);
+    }
+    return this.replaceWith(newModel);
+  };
+
+  ComponentModel.prototype.replaceWith = function(otherComponent) {
+    this.after(otherComponent);
+    this.remove();
+    return otherComponent;
   };
 
   ComponentModel.prototype.getParent = function() {
@@ -3384,7 +3452,7 @@ module.exports = ComponentModel = (function() {
 
 
 
-},{"../configuration/config":26,"../modules/guid":48,"../modules/logging/assert":49,"../modules/logging/log":50,"../template/directive_collection":69,"./component_container":14,"./component_directive_factory":16,"deep-equal":1}],18:[function(require,module,exports){
+},{"../configuration/config":26,"../modules/guid":49,"../modules/logging/assert":50,"../modules/logging/log":51,"../template/directive_collection":70,"./component_container":14,"./component_directive_factory":16,"deep-equal":1}],18:[function(require,module,exports){
 var $, ComponentModel, assert, config, deepEqual, guid, log, serialization;
 
 $ = require('jquery');
@@ -3476,7 +3544,7 @@ module.exports = (function() {
 
 
 
-},{"../configuration/config":26,"../modules/guid":48,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/serialization":53,"./component_model":17,"deep-equal":1,"jquery":"jquery"}],19:[function(require,module,exports){
+},{"../configuration/config":26,"../modules/guid":49,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/serialization":54,"./component_model":17,"deep-equal":1,"jquery":"jquery"}],19:[function(require,module,exports){
 var $, ComponentArray, ComponentContainer, ComponentModel, ComponentTree, assert, componentModelSerializer,
   slice = [].slice;
 
@@ -3869,7 +3937,7 @@ module.exports = ComponentTree = (function() {
 
 
 
-},{"../modules/logging/assert":49,"./component_array":13,"./component_container":14,"./component_model":17,"./component_model_serializer":18,"jquery":"jquery"}],20:[function(require,module,exports){
+},{"../modules/logging/assert":50,"./component_array":13,"./component_container":14,"./component_model":17,"./component_model_serializer":18,"jquery":"jquery"}],20:[function(require,module,exports){
 var ComponentDirective, EditableDirective, assert, words,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -3904,7 +3972,7 @@ module.exports = EditableDirective = (function(superClass) {
 
 
 
-},{"../modules/logging/assert":49,"../modules/words":54,"./component_directive":15}],21:[function(require,module,exports){
+},{"../modules/logging/assert":50,"../modules/words":55,"./component_directive":15}],21:[function(require,module,exports){
 var $, FieldExtractor, _, assert,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -4111,7 +4179,7 @@ module.exports = FieldExtractor = (function() {
 
 
 
-},{"../modules/logging/assert":49,"jquery":"jquery","underscore":10}],22:[function(require,module,exports){
+},{"../modules/logging/assert":50,"jquery":"jquery","underscore":10}],22:[function(require,module,exports){
 var ComponentDirective, HtmlDirective, assert,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -4143,7 +4211,7 @@ module.exports = HtmlDirective = (function(superClass) {
 
 
 
-},{"../modules/logging/assert":49,"./component_directive":15}],23:[function(require,module,exports){
+},{"../modules/logging/assert":50,"./component_directive":15}],23:[function(require,module,exports){
 var ComponentDirective, ImageDirective, assert, imageService,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -4169,6 +4237,12 @@ module.exports = ImageDirective = (function(superClass) {
 
   ImageDirective.prototype.getContent = function() {
     return this.getImageUrl();
+  };
+
+  ImageDirective.prototype.copyTo = function(otherDirective) {
+    otherDirective.setImageUrl(this.getOriginalUrl());
+    otherDirective.setOriginalImageDimensions(this.getOriginalImageDimensions());
+    return otherDirective.setMimeType(this.getMimeType());
   };
 
   ImageDirective.prototype.isBackgroundImage = function(directive) {
@@ -4330,7 +4404,7 @@ module.exports = ImageDirective = (function(superClass) {
 
 
 
-},{"../image_services/image_service":36,"../modules/logging/assert":49,"./component_directive":15}],24:[function(require,module,exports){
+},{"../image_services/image_service":37,"../modules/logging/assert":50,"./component_directive":15}],24:[function(require,module,exports){
 var ComponentDirective, LinkDirective,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -4669,8 +4743,8 @@ module.exports = CssModificatorProperty = (function() {
 
 
 
-},{"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/words":54}],29:[function(require,module,exports){
-var Dependencies, Design, OrderedHash, Template, _, assert, config, log, words;
+},{"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/words":55}],29:[function(require,module,exports){
+var Dependencies, Design, OrderedHash, Template, Transforms, _, assert, config, log, words;
 
 config = require('../configuration/config');
 
@@ -4685,6 +4759,8 @@ Template = require('../template/template');
 OrderedHash = require('../modules/ordered_hash');
 
 Dependencies = require('../rendering/dependencies');
+
+Transforms = require('./transforms');
 
 _ = require('underscore');
 
@@ -4701,6 +4777,7 @@ module.exports = Design = (function() {
     this.dependencies = new Dependencies();
     this.defaultParagraph = void 0;
     this.defaultImage = void 0;
+    this.transforms = new Transforms(this.components);
   }
 
   Design.prototype.equals = function(design) {
@@ -4789,7 +4866,7 @@ module.exports = Design = (function() {
 
 
 
-},{"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/ordered_hash":51,"../modules/words":54,"../rendering/dependencies":56,"../template/template":73,"underscore":10}],30:[function(require,module,exports){
+},{"../configuration/config":26,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/ordered_hash":52,"../modules/words":55,"../rendering/dependencies":57,"../template/template":74,"./transforms":34,"underscore":10}],30:[function(require,module,exports){
 var Design, Version, assert, designParser;
 
 assert = require('../modules/logging/assert');
@@ -4849,7 +4926,7 @@ module.exports = (function() {
 
 
 
-},{"../modules/logging/assert":49,"./design":29,"./design_parser":32,"./version":34}],31:[function(require,module,exports){
+},{"../modules/logging/assert":50,"./design":29,"./design_parser":32,"./version":35}],31:[function(require,module,exports){
 var Version, config, jScheme, validator;
 
 config = require('../configuration/config');
@@ -4972,7 +5049,7 @@ validator.add('layout', {
 
 
 
-},{"../configuration/config":26,"./version":34,"jscheme":4}],32:[function(require,module,exports){
+},{"../configuration/config":26,"./version":35,"jscheme":4}],32:[function(require,module,exports){
 var $, CssModificatorProperty, Design, ImageRatio, Template, Version, assert, designConfigSchema, designParser, log;
 
 log = require('../modules/logging/log');
@@ -5227,7 +5304,7 @@ Design.parser = designParser;
 
 
 
-},{"../modules/logging/assert":49,"../modules/logging/log":50,"../template/template":73,"./css_modificator_property":28,"./design":29,"./design_config_schema":31,"./image_ratio":33,"./version":34,"jquery":"jquery"}],33:[function(require,module,exports){
+},{"../modules/logging/assert":50,"../modules/logging/log":51,"../template/template":74,"./css_modificator_property":28,"./design":29,"./design_config_schema":31,"./image_ratio":33,"./version":35,"jquery":"jquery"}],33:[function(require,module,exports){
 var $, ImageRatio, assert, words;
 
 $ = require('jquery');
@@ -5264,7 +5341,133 @@ module.exports = ImageRatio = (function() {
 
 
 
-},{"../modules/logging/assert":49,"../modules/words":54,"jquery":"jquery"}],34:[function(require,module,exports){
+},{"../modules/logging/assert":50,"../modules/words":55,"jquery":"jquery"}],34:[function(require,module,exports){
+var Transforms;
+
+module.exports = Transforms = (function() {
+  function Transforms(templates) {
+    this.templates = templates;
+  }
+
+  Transforms.prototype.getTransformations = function(arg) {
+    var componentName, directives, filter, oneWay, options, template;
+    template = arg.template, componentName = arg.componentName, oneWay = arg.oneWay, directives = arg.directives, filter = arg.filter;
+    if (componentName) {
+      template = this.templates.get(componentName);
+    }
+    if (oneWay == null) {
+      oneWay = false;
+    }
+    options = [];
+    this.templates.each((function(_this) {
+      return function(other) {
+        var compatibility;
+        if (template.equals(other)) {
+          return;
+        }
+        if ((filter != null) && !filter(other)) {
+          return;
+        }
+        compatibility = _this.isCompatible(template, other, {
+          oneWay: oneWay,
+          directives: directives
+        });
+        if (compatibility.isCompatible) {
+          compatibility.template = other;
+          return options.push(compatibility);
+        }
+      };
+    })(this));
+    if (options.length) {
+      return options;
+    } else {
+      return void 0;
+    }
+  };
+
+  Transforms.prototype.getOptionsList = function(arg) {
+    var componentName, directives, filter, i, len, names, oneWay, option, options, ref, template;
+    template = arg.template, componentName = arg.componentName, oneWay = arg.oneWay, directives = arg.directives, filter = arg.filter;
+    if (componentName) {
+      template = this.templates.get(componentName);
+    }
+    options = this.getTransformations({
+      template: template,
+      oneWay: oneWay,
+      directives: directives,
+      filter: filter
+    });
+    names = [];
+    ref = options || [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      option = ref[i];
+      componentName = option.name;
+      template = option.template;
+      names.push({
+        label: template.label,
+        componentName: componentName
+      });
+    }
+    return names;
+  };
+
+  Transforms.prototype.isCompatible = function(a, b, options) {
+    var directive, directives, i, len, name, obj, ref, ref1, type;
+    if (options == null) {
+      options = {};
+    }
+    obj = {
+      name: b.name,
+      isCompatible: true,
+      mapping: {}
+    };
+    directives = (function() {
+      var i, len, ref, results;
+      if (options.directives != null) {
+        options.oneWay = true;
+        ref = options.directives;
+        results = [];
+        for (i = 0, len = ref.length; i < len; i++) {
+          name = ref[i];
+          results.push(a.directives.get(name));
+        }
+        return results;
+      } else {
+        return a.directives;
+      }
+    })();
+    ref = directives || [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      directive = ref[i];
+      name = directive.name, type = directive.type;
+      if (type !== 'editable' && type !== 'image' && type !== 'link') {
+        obj.isCompatible = false;
+        continue;
+      }
+      if (a.directives.count(type) === 1 && b.directives.count(type) === 1) {
+        obj.mapping[name] = b.directives[type][0].name;
+      } else if (((ref1 = b.directives.get(name)) != null ? ref1.type : void 0) === type) {
+        obj.mapping[name] = name;
+      } else {
+        obj.mapping[name] = null;
+        obj.isCompatible = false;
+      }
+    }
+    if (!options.oneWay) {
+      if (a.directives.length !== b.directives.length) {
+        obj.isCompatible = false;
+      }
+    }
+    return obj;
+  };
+
+  return Transforms;
+
+})();
+
+
+
+},{}],35:[function(require,module,exports){
 var Version;
 
 module.exports = Version = (function() {
@@ -5309,7 +5512,7 @@ module.exports = Version = (function() {
 
 
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 module.exports = {
   name: 'default',
   set: function($elem, value) {
@@ -5363,7 +5566,7 @@ module.exports = {
 
 
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 var assert, defaultImageService, resrcitImageService;
 
 assert = require('../modules/logging/assert');
@@ -5406,7 +5609,7 @@ module.exports = (function() {
 
 
 
-},{"../modules/logging/assert":49,"./default_image_service":35,"./resrcit_image_service":37}],37:[function(require,module,exports){
+},{"../modules/logging/assert":50,"./default_image_service":36,"./resrcit_image_service":38}],38:[function(require,module,exports){
 var assert, imgService, resrcitConfig;
 
 assert = require('../modules/logging/assert');
@@ -5468,7 +5671,7 @@ module.exports = (function() {
 
 
 
-},{"../configuration/config":26,"../modules/logging/assert":49,"./default_image_service":35}],38:[function(require,module,exports){
+},{"../configuration/config":26,"../modules/logging/assert":50,"./default_image_service":36}],39:[function(require,module,exports){
 var $, ComponentDrag, config, css, dom, isSupported;
 
 $ = require('jquery');
@@ -5840,7 +6043,7 @@ module.exports = ComponentDrag = (function() {
 
 
 
-},{"../configuration/config":26,"../modules/feature_detection/is_supported":47,"./dom":40,"jquery":"jquery"}],39:[function(require,module,exports){
+},{"../configuration/config":26,"../modules/feature_detection/is_supported":48,"./dom":41,"jquery":"jquery"}],40:[function(require,module,exports){
 var ContainerEvent;
 
 module.exports = ContainerEvent = (function() {
@@ -5856,7 +6059,7 @@ module.exports = ContainerEvent = (function() {
 
 
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 var $, config, css, directiveFinder;
 
 $ = require('jquery');
@@ -6155,7 +6358,7 @@ module.exports = (function() {
 
 
 
-},{"../configuration/config":26,"../template/directive_finder":71,"jquery":"jquery"}],41:[function(require,module,exports){
+},{"../configuration/config":26,"../template/directive_finder":72,"jquery":"jquery"}],42:[function(require,module,exports){
 var DragBase, config, css;
 
 config = require('../configuration/config');
@@ -6381,7 +6584,7 @@ module.exports = DragBase = (function() {
 
 
 
-},{"../configuration/config":26}],42:[function(require,module,exports){
+},{"../configuration/config":26}],43:[function(require,module,exports){
 var EditableController, config, dom,
   slice = [].slice;
 
@@ -6581,7 +6784,7 @@ module.exports = EditableController = (function() {
 
 
 
-},{"../configuration/config":26,"./dom":40}],43:[function(require,module,exports){
+},{"../configuration/config":26,"./dom":41}],44:[function(require,module,exports){
 var ContainerEvent, Focus, dom;
 
 dom = require('./dom');
@@ -6680,7 +6883,7 @@ module.exports = Focus = (function() {
 
 
 
-},{"./container_event":39,"./dom":40}],44:[function(require,module,exports){
+},{"./container_event":40,"./dom":41}],45:[function(require,module,exports){
 var ComponentTree, Dependencies, EventEmitter, FieldExtractor, InteractivePage, Livingdoc, MetadataConfig, Page, Renderer, RenderingContainer, View, assert, config, designCache, dom,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -6772,19 +6975,20 @@ module.exports = Livingdoc = (function(superClass) {
   };
 
   Livingdoc.prototype.createView = function(arg) {
-    var host, iframe, interactive, layoutName, loadResources, view, viewWrapper, wrapper;
+    var $host, host, iframe, interactive, layoutName, loadResources, view, viewWrapper, wrapper;
     host = arg.host, interactive = arg.interactive, loadResources = arg.loadResources, wrapper = arg.wrapper, layoutName = arg.layoutName, iframe = arg.iframe;
-    viewWrapper = this.getWrapper({
-      wrapper: wrapper,
-      layoutName: layoutName,
-      host: host
-    });
+    $host = $(host);
     if (iframe == null) {
       iframe = true;
     }
+    $host.html('');
+    viewWrapper = this.getWrapper({
+      wrapper: wrapper,
+      layoutName: layoutName
+    });
     view = new View({
       livingdoc: this,
-      parent: $(host),
+      parent: $host,
       isInteractive: interactive,
       loadResources: loadResources,
       wrapper: viewWrapper
@@ -6808,29 +7012,16 @@ module.exports = Livingdoc = (function(superClass) {
   };
 
   Livingdoc.prototype.getWrapper = function(arg) {
-    var host, layoutName, ref, wrapper;
-    wrapper = arg.wrapper, layoutName = arg.layoutName, host = arg.host;
+    var layoutName, ref, wrapper;
+    wrapper = arg.wrapper, layoutName = arg.layoutName;
     if (wrapper != null) {
       return wrapper;
+    } else {
+      if (layoutName == null) {
+        layoutName = this.layoutName;
+      }
+      return (ref = this.design.getLayout(layoutName)) != null ? ref.wrapper : void 0;
     }
-    if (layoutName == null) {
-      layoutName = this.layoutName;
-    }
-    wrapper = (ref = this.design.getLayout(layoutName)) != null ? ref.wrapper : void 0;
-    if (wrapper == null) {
-      wrapper = this.extractWrapper(host);
-    }
-    return wrapper;
-  };
-
-  Livingdoc.prototype.extractWrapper = function(parent) {
-    var $parent, $wrapper;
-    $parent = $(parent).first();
-    if ($parent.find("." + config.css.section).length === 1) {
-      $wrapper = $($parent.html());
-    }
-    $parent.html('');
-    return $wrapper;
   };
 
   Livingdoc.prototype.addView = function(view) {
@@ -6903,7 +7094,7 @@ module.exports = Livingdoc = (function(superClass) {
 
 
 
-},{"./component_tree/component_tree":19,"./component_tree/field_extractor":21,"./configuration/config":26,"./configuration/metadata_config":27,"./design/design_cache":30,"./interaction/dom":40,"./modules/logging/assert":49,"./rendering/dependencies":56,"./rendering/renderer":59,"./rendering/view":60,"./rendering_container/interactive_page":64,"./rendering_container/page":66,"./rendering_container/rendering_container":67,"wolfy87-eventemitter":11}],45:[function(require,module,exports){
+},{"./component_tree/component_tree":19,"./component_tree/field_extractor":21,"./configuration/config":26,"./configuration/metadata_config":27,"./design/design_cache":30,"./interaction/dom":41,"./modules/logging/assert":50,"./rendering/dependencies":57,"./rendering/renderer":60,"./rendering/view":61,"./rendering_container/interactive_page":65,"./rendering_container/page":67,"./rendering_container/rendering_container":68,"wolfy87-eventemitter":11}],46:[function(require,module,exports){
 var slice = [].slice;
 
 module.exports = (function() {
@@ -6924,7 +7115,7 @@ module.exports = (function() {
 
 
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 var $;
 
 $ = require('jquery');
@@ -6942,7 +7133,7 @@ module.exports = (function() {
 
 
 
-},{"jquery":"jquery"}],47:[function(require,module,exports){
+},{"jquery":"jquery"}],48:[function(require,module,exports){
 var detects, executedTests;
 
 detects = require('./feature_detects');
@@ -6960,7 +7151,7 @@ module.exports = function(name) {
 
 
 
-},{"./feature_detects":46}],48:[function(require,module,exports){
+},{"./feature_detects":47}],49:[function(require,module,exports){
 module.exports = (function() {
   var idCounter, lastId;
   idCounter = lastId = void 0;
@@ -6984,7 +7175,7 @@ module.exports = (function() {
 
 
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 var assert, log;
 
 log = require('./log');
@@ -6997,7 +7188,7 @@ module.exports = assert = function(condition, message) {
 
 
 
-},{"./log":50}],50:[function(require,module,exports){
+},{"./log":51}],51:[function(require,module,exports){
 var log,
   slice = [].slice,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -7071,7 +7262,7 @@ module.exports = log = function() {
 
 
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 var OrderedHash;
 
 module.exports = OrderedHash = (function() {
@@ -7116,7 +7307,7 @@ module.exports = OrderedHash = (function() {
 
 
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 var Semaphore, assert;
 
 assert = require('../modules/logging/assert');
@@ -7193,7 +7384,7 @@ module.exports = Semaphore = (function() {
 
 
 
-},{"../modules/logging/assert":49}],53:[function(require,module,exports){
+},{"../modules/logging/assert":50}],54:[function(require,module,exports){
 module.exports = (function() {
   return {
     isEmpty: function(obj) {
@@ -7223,7 +7414,7 @@ module.exports = (function() {
 
 
 
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 var $;
 
 $ = require('jquery');
@@ -7280,7 +7471,7 @@ module.exports = (function() {
 
 
 
-},{"jquery":"jquery"}],55:[function(require,module,exports){
+},{"jquery":"jquery"}],56:[function(require,module,exports){
 var $, ComponentView, DirectiveIterator, attr, config, css, dom, eventing;
 
 $ = require('jquery');
@@ -7772,7 +7963,7 @@ module.exports = ComponentView = (function() {
 
 
 
-},{"../configuration/config":26,"../interaction/dom":40,"../modules/eventing":45,"../template/directive_iterator":72,"jquery":"jquery"}],56:[function(require,module,exports){
+},{"../configuration/config":26,"../interaction/dom":41,"../modules/eventing":46,"../template/directive_iterator":73,"jquery":"jquery"}],57:[function(require,module,exports){
 var $, Dependencies, Dependency, assert, dependenciesToHtml, log,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -8081,7 +8272,7 @@ module.exports = Dependencies = (function() {
 
 
 
-},{"../modules/logging/assert":49,"../modules/logging/log":50,"./dependencies_to_html":57,"./dependency":58,"jquery":"jquery"}],57:[function(require,module,exports){
+},{"../modules/logging/assert":50,"../modules/logging/log":51,"./dependencies_to_html":58,"./dependency":59,"jquery":"jquery"}],58:[function(require,module,exports){
 var CssLoader, JsLoader;
 
 JsLoader = require('../rendering_container/js_loader');
@@ -8163,7 +8354,7 @@ module.exports = {
 
 
 
-},{"../rendering_container/css_loader":62,"../rendering_container/js_loader":65}],58:[function(require,module,exports){
+},{"../rendering_container/css_loader":63,"../rendering_container/js_loader":66}],59:[function(require,module,exports){
 var Dependency, assert;
 
 assert = require('../modules/logging/assert');
@@ -8255,7 +8446,7 @@ module.exports = Dependency = (function() {
 
 
 
-},{"../modules/logging/assert":49}],59:[function(require,module,exports){
+},{"../modules/logging/assert":50}],60:[function(require,module,exports){
 var $, Renderer, Semaphore, assert, config, log;
 
 $ = require('jquery');
@@ -8512,7 +8703,7 @@ module.exports = Renderer = (function() {
 
 
 
-},{"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/semaphore":52,"jquery":"jquery"}],60:[function(require,module,exports){
+},{"../configuration/config":26,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/semaphore":53,"jquery":"jquery"}],61:[function(require,module,exports){
 var InteractivePage, Page, Renderer, View;
 
 Renderer = require('./renderer');
@@ -8613,7 +8804,7 @@ module.exports = View = (function() {
 
 
 
-},{"../rendering_container/interactive_page":64,"../rendering_container/page":66,"./renderer":59}],61:[function(require,module,exports){
+},{"../rendering_container/interactive_page":65,"../rendering_container/page":67,"./renderer":60}],62:[function(require,module,exports){
 var $, Assets, CssLoader, JsLoader, Semaphore;
 
 $ = require('jquery');
@@ -8704,7 +8895,7 @@ module.exports = Assets = (function() {
 
 
 
-},{"../modules/semaphore":52,"./css_loader":62,"./js_loader":65,"jquery":"jquery"}],62:[function(require,module,exports){
+},{"../modules/semaphore":53,"./css_loader":63,"./js_loader":66,"jquery":"jquery"}],63:[function(require,module,exports){
 var $, CssLoader;
 
 $ = require('jquery');
@@ -8770,7 +8961,7 @@ module.exports = CssLoader = (function() {
 
 
 
-},{"jquery":"jquery"}],63:[function(require,module,exports){
+},{"jquery":"jquery"}],64:[function(require,module,exports){
 var ComponentDrag, DragBase, EditorPage, config, css;
 
 config = require('../configuration/config');
@@ -8833,7 +9024,7 @@ module.exports = EditorPage = (function() {
 
 
 
-},{"../configuration/config":26,"../interaction/component_drag":38,"../interaction/drag_base":41}],64:[function(require,module,exports){
+},{"../configuration/config":26,"../interaction/component_drag":39,"../interaction/drag_base":42}],65:[function(require,module,exports){
 var ComponentDrag, DragBase, EditableController, Focus, InteractivePage, Page, config, dom,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -9018,7 +9209,7 @@ module.exports = InteractivePage = (function(superClass) {
 
 
 
-},{"../configuration/config":26,"../interaction/component_drag":38,"../interaction/dom":40,"../interaction/drag_base":41,"../interaction/editable_controller":42,"../interaction/focus":43,"./page":66}],65:[function(require,module,exports){
+},{"../configuration/config":26,"../interaction/component_drag":39,"../interaction/dom":41,"../interaction/drag_base":42,"../interaction/editable_controller":43,"../interaction/focus":44,"./page":67}],66:[function(require,module,exports){
 var JsLoader;
 
 module.exports = JsLoader = (function() {
@@ -9095,7 +9286,7 @@ module.exports = JsLoader = (function() {
 
 
 
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 var $, Assets, Page, RenderingContainer, config,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -9197,7 +9388,7 @@ module.exports = Page = (function(superClass) {
 
 
 
-},{"../configuration/config":26,"./assets":61,"./rendering_container":67,"jquery":"jquery"}],67:[function(require,module,exports){
+},{"../configuration/config":26,"./assets":62,"./rendering_container":68,"jquery":"jquery"}],68:[function(require,module,exports){
 var $, RenderingContainer, Semaphore;
 
 $ = require('jquery');
@@ -9234,7 +9425,7 @@ module.exports = RenderingContainer = (function() {
 
 
 
-},{"../modules/semaphore":52,"jquery":"jquery"}],68:[function(require,module,exports){
+},{"../modules/semaphore":53,"jquery":"jquery"}],69:[function(require,module,exports){
 var $, Directive, assert, dom, editorConfig;
 
 $ = require('jquery');
@@ -9302,7 +9493,7 @@ module.exports = Directive = (function() {
 
 
 
-},{"../configuration/config":26,"../interaction/dom":40,"../modules/logging/assert":49,"jquery":"jquery"}],69:[function(require,module,exports){
+},{"../configuration/config":26,"../interaction/dom":41,"../modules/logging/assert":50,"jquery":"jquery"}],70:[function(require,module,exports){
 var $, Directive, DirectiveCollection, assert, config;
 
 $ = require('jquery');
@@ -9461,7 +9652,7 @@ module.exports = DirectiveCollection = (function() {
 
 
 
-},{"../configuration/config":26,"../modules/logging/assert":49,"./directive":68,"jquery":"jquery"}],70:[function(require,module,exports){
+},{"../configuration/config":26,"../modules/logging/assert":50,"./directive":69,"jquery":"jquery"}],71:[function(require,module,exports){
 var Directive, _, assert, config, directiveFinder;
 
 config = require('../configuration/config');
@@ -9573,7 +9764,7 @@ module.exports = (function() {
 
 
 
-},{"../configuration/config":26,"../modules/logging/assert":49,"./directive":68,"./directive_finder":71,"underscore":10}],71:[function(require,module,exports){
+},{"../configuration/config":26,"../modules/logging/assert":50,"./directive":69,"./directive_finder":72,"underscore":10}],72:[function(require,module,exports){
 var config, directiveFinder;
 
 config = require('../configuration/config');
@@ -9607,7 +9798,7 @@ module.exports = directiveFinder = (function() {
 
 
 
-},{"../configuration/config":26}],72:[function(require,module,exports){
+},{"../configuration/config":26}],73:[function(require,module,exports){
 var DirectiveIterator, config, directiveFinder;
 
 config = require('../configuration/config');
@@ -9672,7 +9863,7 @@ module.exports = DirectiveIterator = (function() {
 
 
 
-},{"../configuration/config":26,"./directive_finder":71}],73:[function(require,module,exports){
+},{"../configuration/config":26,"./directive_finder":72}],74:[function(require,module,exports){
 var $, ComponentModel, ComponentView, DirectiveCollection, DirectiveIterator, Template, assert, config, directiveCompiler, directiveFinder, log, sortByName, words;
 
 $ = require('jquery');
@@ -9719,6 +9910,10 @@ module.exports = Template = (function() {
     this.defaults = {};
     this.parseTemplate();
   }
+
+  Template.prototype.equals = function(other) {
+    return this.name === (other != null ? other.name : void 0);
+  };
 
   Template.prototype.setDesign = function(design) {
     this.design = design;
@@ -9883,10 +10078,10 @@ Template.parseIdentifier = function(identifier) {
 
 
 
-},{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":49,"../modules/logging/log":50,"../modules/words":54,"../rendering/component_view":55,"./directive_collection":69,"./directive_compiler":70,"./directive_finder":71,"./directive_iterator":72,"jquery":"jquery"}],74:[function(require,module,exports){
+},{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/words":55,"../rendering/component_view":56,"./directive_collection":70,"./directive_compiler":71,"./directive_finder":72,"./directive_iterator":73,"jquery":"jquery"}],75:[function(require,module,exports){
 module.exports={
-  "version": "0.11.1",
-  "revision": "c490d6e"
+  "version": "0.12.0",
+  "revision": "2140bda"
 }
 
 },{}],"jquery":[function(require,module,exports){

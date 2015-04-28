@@ -1,3 +1,9 @@
+# v0.12.0
+
+- Transform components [#181](https://github.com/upfrontIO/livingdocs-engine/pull/181)
+- Simplify wrapper logic in livingdoc.createView() [#190](https://github.com/upfrontIO/livingdocs-engine/pull/190)
+
+
 # v0.11.1
 
 - Update editable.js@0.5.2
