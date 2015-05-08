@@ -1,3 +1,4 @@
+_ = require('underscore')
 assert = require('../modules/logging/assert')
 imageService = require('../image_services/image_service')
 ComponentDirective = require('./component_directive')
@@ -154,10 +155,19 @@ module.exports = class ImageDirective extends ComponentDirective
       imgObj.originalUrl = url
 
 
-  setOrigins: ->
-    # TODO
+  setOrigins: (origins) ->
+    @component.content[@name] ?= {}
+
+    if _.isArray(origins)
+      @component.content[@name].origins = origins
+    else
+      assert origins.name? && origins.identifier, "Error: setOrigins must be called with an array or a hash with name and identifier keys"
+      @component.content[@name].origins = [
+        name: origins.name
+        identifier: origins.identifier
+      ]
 
 
   getOrigins: ->
-    @origins
+    @component.content[@name]?.origins
 

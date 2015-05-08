@@ -31,10 +31,8 @@ describe 'serialization:', ->
       image = test.getComponent('image')
       image.set('image', 'https://s-media-cache-ak0.pinimg.com/474x/0d/d9/9b/0dd99b6123e3dd952a1db051709265d5.jpg')
       json = image.toJson()
-      expect(json).to.deep.equal
-        id: json.id
-        identifier: 'test.image'
-        content:
+      expect(json.content).to.deep.equal
+        image:
           url: 'https://s-media-cache-ak0.pinimg.com/474x/0d/d9/9b/0dd99b6123e3dd952a1db051709265d5.jpg'
           crop: null
 
@@ -65,6 +63,7 @@ describe 'serialization:', ->
               name: 'hugo'
               identifier: 'picture-1234'
             ]
+            crop: null
 
 
 

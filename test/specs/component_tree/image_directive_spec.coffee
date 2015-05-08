@@ -34,7 +34,7 @@ describe 'image_directive:', ->
 
     it 'sets a single hugo origin', ->
       @directive.setOrigins(name: 'hugo', identifier: 'picture-1234')
-      expect(@directive.getOrigins).to.have.members [
+      expect(@directive.getOrigins()).to.deep.have.same.members [
         name: 'hugo'
         identifier: 'picture-1234'
       ]
@@ -48,7 +48,7 @@ describe 'image_directive:', ->
         name: 'watson'
         identifier: 'grumpy-cat-2345'
       ]
-      expect(@directive.getOrigins()).to.have.members [
+      expect(@directive.getOrigins()).to.deep.have.same.members [
         name: 'hugo'
         identifier: 'picture-1234'
       ,
@@ -60,4 +60,4 @@ describe 'image_directive:', ->
     it 'sets the origins to an empty array', ->
       @directive.setOrigins(name: 'hugo', identifier: 'picture-1234')
       @directive.setOrigins([])
-      expect(@directiv.getOrigins()).to.be.empty
+      expect(@directive.getOrigins()).to.be.empty
