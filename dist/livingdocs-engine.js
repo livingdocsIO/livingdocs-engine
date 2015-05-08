@@ -4227,12 +4227,11 @@ ComponentDirective = require('./component_directive');
 module.exports = ImageDirective = (function(_super) {
   __extends(ImageDirective, _super);
 
-  ImageDirective.prototype.isImage = true;
-
   function ImageDirective() {
-    this.origins = [];
-    ImageDirective.__super__.constructor.apply(this, arguments);
+    return ImageDirective.__super__.constructor.apply(this, arguments);
   }
+
+  ImageDirective.prototype.isImage = true;
 
   ImageDirective.prototype.setContent = function(value) {
     return this.setImageUrl(value);
@@ -4402,21 +4401,24 @@ module.exports = ImageDirective = (function(_super) {
   };
 
   ImageDirective.prototype.setOrigins = function(origins) {
-    var _base, _name;
+    var identifier, name, origin, _base, _name;
     if ((_base = this.component.content)[_name = this.name] == null) {
       _base[_name] = {};
     }
-    if (_.isArray(origins)) {
-      return this.component.content[this.name].origins = origins;
-    } else {
-      assert((origins.name != null) && origins.identifier, "Error: setOrigins must be called with an array or a hash with name and identifier keys");
-      return this.component.content[this.name].origins = [
-        {
-          name: origins.name,
-          identifier: origins.identifier
-        }
-      ];
+    if (!_.isArray(origins)) {
+      origins = [origins];
     }
+    origins = (function() {
+      var _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = origins.length; _i < _len; _i++) {
+        origin = origins[_i];
+        assert((origin != null ? origin.name : void 0) && origin.identifier, "Error: setOrigins must be called with an array or a hash with name and identifier keys");
+        _results.push((name = origin.name, identifier = origin.identifier, origin));
+      }
+      return _results;
+    })();
+    return this.component.content[this.name].origins = origins;
   };
 
   ImageDirective.prototype.getOrigins = function() {
@@ -10106,8 +10108,8 @@ Template.parseIdentifier = function(identifier) {
 
 },{"../component_tree/component_model":17,"../configuration/config":26,"../modules/logging/assert":50,"../modules/logging/log":51,"../modules/words":55,"../rendering/component_view":56,"./directive_collection":70,"./directive_compiler":71,"./directive_finder":72,"./directive_iterator":73,"jquery":"jquery"}],75:[function(require,module,exports){
 module.exports={
-  "version": "0.12.0",
-  "revision": "821d340"
+  "version": "0.12.1",
+  "revision": "f9843a4"
 }
 
 },{}],"jquery":[function(require,module,exports){

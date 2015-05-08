@@ -1,3 +1,8 @@
+# v0.12.1
+
+- Add origins to image directive [#197](https://github.com/upfrontIO/livingdocs-engine/pull/197)
+
+
 # v0.12.0
 
 - Transform components [#181](https://github.com/upfrontIO/livingdocs-engine/pull/181)
