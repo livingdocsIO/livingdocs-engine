@@ -7,11 +7,6 @@ module.exports = class ImageDirective extends ComponentDirective
 
   isImage: true
 
-  constructor: ->
-    @origins = []
-    super
-
-
   setContent: (value) ->
     @setImageUrl(value)
 
@@ -158,14 +153,12 @@ module.exports = class ImageDirective extends ComponentDirective
   setOrigins: (origins) ->
     @component.content[@name] ?= {}
 
-    if _.isArray(origins)
-      @component.content[@name].origins = origins
-    else
-      assert origins.name? && origins.identifier, "Error: setOrigins must be called with an array or a hash with name and identifier keys"
-      @component.content[@name].origins = [
-        name: origins.name
-        identifier: origins.identifier
-      ]
+    origins = [origins] if not _.isArray(origins)
+    origins = for origin in origins
+      assert origin?.name && origin.identifier, "Error: setOrigins must be called with an array or a hash with name and identifier keys"
+      { name, identifier } = origin
+
+    @component.content[@name].origins = origins
 
 
   getOrigins: ->
