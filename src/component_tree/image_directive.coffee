@@ -6,6 +6,10 @@ module.exports = class ImageDirective extends ComponentDirective
 
   isImage: true
 
+  constructor: ->
+    @origins = []
+    super
+
 
   setContent: (value) ->
     @setImageUrl(value)
@@ -148,4 +152,12 @@ module.exports = class ImageDirective extends ComponentDirective
       imgObj = @getImageObject()
       imgObj.url = imgService.getUrl(url, crop: imgObj.crop)
       imgObj.originalUrl = url
+
+
+  setOrigins: ->
+    # TODO
+
+
+  getOrigins: ->
+    @origins
 

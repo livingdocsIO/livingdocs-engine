@@ -20,3 +20,44 @@ describe 'image_directive:', ->
 
       expect(method).to.throw()
 
+
+  describe 'origins', ->
+
+    beforeEach ->
+      @imageComponent = test.getComponent('image')
+      @directive = @imageComponent.directives.get('image')
+
+
+    it 'starts with an empty origins array', ->
+      expect(@directive.getOrigins()).to.be.empty
+
+
+    it 'sets a single hugo origin', ->
+      @directive.setOrigins(name: 'hugo', identifier: 'picture-1234')
+      expect(@directive.getOrigins).to.have.members [
+        name: 'hugo'
+        identifier: 'picture-1234'
+      ]
+
+
+    it 'sets several hugo origins', ->
+      @directive.setOrigins [
+        name: 'hugo'
+        identifier: 'picture-1234'
+      ,
+        name: 'watson'
+        identifier: 'grumpy-cat-2345'
+      ]
+      expect(@directive.getOrigins()).to.have.members [
+        name: 'hugo'
+        identifier: 'picture-1234'
+      ,
+        name: 'watson'
+        identifier: 'grumpy-cat-2345'
+      ]
+
+
+    it 'sets the origins to an empty array', ->
+      @directive.setOrigins(name: 'hugo', identifier: 'picture-1234')
+      @directive.setOrigins([])
+      expect(@directiv.getOrigins()).to.be.empty
