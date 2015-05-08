@@ -25,6 +25,48 @@ describe 'serialization:', ->
           title: 'This is it!'
 
 
+  describe 'image component', ->
+
+    it 'saves the url', ->
+      image = test.getComponent('image')
+      image.set('image', 'https://s-media-cache-ak0.pinimg.com/474x/0d/d9/9b/0dd99b6123e3dd952a1db051709265d5.jpg')
+      json = image.toJson()
+      expect(json.content).to.deep.equal
+        image:
+          url: 'https://s-media-cache-ak0.pinimg.com/474x/0d/d9/9b/0dd99b6123e3dd952a1db051709265d5.jpg'
+          crop: null
+
+    describe 'with an url', ->
+
+      beforeEach ->
+        @image = test.getComponent('image')
+        @image.set('image', 'https://s-media-cache-ak0.pinimg.com/474x/0d/d9/9b/0dd99b6123e3dd952a1db051709265d5.jpg')
+        @imageDirective = @image.directives.get('image')
+
+
+      it 'saves an image service', ->
+        @imageDirective.setImageService('resrc.it')
+        json = @image.toJson()
+        expect(json.content).to.deep.equal
+          image:
+            url: 'https://s-media-cache-ak0.pinimg.com/474x/0d/d9/9b/0dd99b6123e3dd952a1db051709265d5.jpg'
+            imageService: 'resrc.it'
+
+
+      it 'saves an origins array', ->
+        @imageDirective.setOrigins(name: 'hugo', 'identifier': 'picture-1234')
+        json = @image.toJson()
+        expect(json.content).to.deep.equal
+          image:
+            url: 'https://s-media-cache-ak0.pinimg.com/474x/0d/d9/9b/0dd99b6123e3dd952a1db051709265d5.jpg'
+            origins: [
+              name: 'hugo'
+              identifier: 'picture-1234'
+            ]
+            crop: null
+
+
+
   describe 'of styles', ->
 
     it 'saves all styles', ->
