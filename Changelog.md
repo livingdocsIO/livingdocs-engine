@@ -1,3 +1,6 @@
+# v0.10.7
+- shrinkwrap only prod deps
+
 # v0.10.6
 - fix bug with order of empty components in field extractor [#184](https://github.com/upfrontIO/livingdocs-engine/pull/184)
 
