@@ -2572,7 +2572,7 @@
     "jquery": {
       "version": "2.1.3",
       "from": "../../../../var/folders/ph/wmk261314qscpq9bs1wlb3140000gn/T/npm-34357-c3878685/git-cache-176904d67e84/d4457f50708522d7b108f74c30d3c87040260a0d",
-      "resolved": "git://github.com/upfrontIO/jquery#d4457f50708522d7b108f74c30d3c87040260a0d"
+      "resolved": "git://github.com/livingdocsIO/jquery#d4457f50708522d7b108f74c30d3c87040260a0d"
     },
     "jscheme": {
       "version": "0.2.1",

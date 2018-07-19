@@ -14,7 +14,7 @@ module.exports = do ->
   # doc.design.load(design.boilerplate, { basePath: '/' });
   #
   # @param {Object} Design configuration.
-  #   For details see: https://github.com/upfrontIO/livingdocs-design-boilerplate
+  #   For details see: https://github.com/livingdocsIO/livingdocs-design-boilerplate
   # @param {Object}
   #   basePath {String} A basePath to resolve relative URLs.
   #     Required if the design contains relative URLs.

@@ -2,7 +2,7 @@
 
 The engine is the central piece of livingdocs and defines the APIs for manipulating, displaying and storing the document.
 
-For a more detailed documentation see our [livingdocs documentation](https://github.com/upfrontIO/livingdocs). For a quick overview stay right here.
+For a more detailed documentation see our [livingdocs documentation](https://github.com/livingdocsIO/livingdocs). For a quick overview stay right here.
 
 
 ## Usage
@@ -30,7 +30,7 @@ The engine then sets the global variable `doc`. Here you'll find the API of the 
 ```javascript
 doc.design.load(design.bootstrap);
 ```
-If you want to create your own design get started with the [livingdocs-design-boilerplate](https://github.com/upfrontIO/livingdocs-design-boilerplate) project.
+If you want to create your own design get started with the [livingdocs-design-boilerplate](https://github.com/livingdocsIO/livingdocs-design-boilerplate) project.
 
 #### Create a new livingdoc:
 
@@ -80,7 +80,7 @@ grunt build
 
 #### Release
 
-For a detailed description see: [guides/repositories/versioning](https://github.com/upfrontIO/guides/blob/master/repositories/versioning.md)
+For a detailed description see: [guides/repositories/versioning](https://github.com/livingdocsIO/guides/blob/master/repositories/versioning.md)
 
 1. **Build and Update Changelog**
 
