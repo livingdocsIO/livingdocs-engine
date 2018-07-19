@@ -1,7 +1,7 @@
 {
   "name": "livingdocs-engine",
   "version": "0.12.1",
-  "homepage": "https://github.com/upfrontIO/livingdocs-engine",
+  "homepage": "https://github.com/livingdocsIO/livingdocs-engine",
   "description": "Livingdocs Engine",
   "private": true,
   "license": "LGPL-3.0+",
@@ -13,6 +13,6 @@
     "editable": "0.5.2"
   },
   "devDependencies": {
-    "livingdocs-design-boilerplate": "git@github.com:upfrontIO/livingdocs-design-boilerplate#v0.3.0"
+    "livingdocs-design-boilerplate": "git@github.com:livingdocsIO/livingdocs-design-boilerplate#v0.3.0"
   }
 }

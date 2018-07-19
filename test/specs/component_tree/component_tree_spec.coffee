@@ -358,7 +358,7 @@ describe 'component_tree:', ->
         @componentTree.append(@components[index])
 
 
-    # regression test for https://github.com/upfrontIO/livingdocs-engine/issues/13
+    # regression test for https://github.com/livingdocsIO/livingdocs-engine/issues/13
     it 'moving the last component one up does not currupt the componentTree', ->
       @components[2].up()
       visitedComponents = []
